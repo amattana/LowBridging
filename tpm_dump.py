@@ -314,6 +314,9 @@ if __name__ == "__main__":
 				os.system(POWER_DAY+today.strftime("%Y-%m-%d"))
 				OUT_PATH = OUT_PATH[:-11] + datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(time.time()),
 																	   "%Y-%m-%d/")
+				measnum = 0
+				tot_triggered = 0
+
 			tpath = OUT_PATH + TRIGGER_DIR
 			pdir = OUT_PATH + POWER_DIR
 			if not os.path.exists(OUT_PATH):
