@@ -316,6 +316,7 @@ if __name__ == "__main__":
 																	   "%Y-%m-%d/")
 				measnum = 0
 				tot_triggered = 0
+				today = datetime.datetime.utcfromtimestamp(time.time()).date()
 
 			tpath = OUT_PATH + TRIGGER_DIR
 			pdir = OUT_PATH + POWER_DIR
