@@ -180,6 +180,16 @@ if __name__ == "__main__":
 					  default=160,
 					  help="Frequency channel in MHz to be used to plot the power")
 
+	parser.add_option("--start-freq",
+					  dest="startfreq",
+					  default=0, type="int",
+					  help="Start Frequency for Waterfall")
+
+	parser.add_option("--stop-freq",
+					  dest="stopfreq",
+					  default=400, type="int",
+					  help="Stop Frequency for Waterfall")
+
 
 	(options, args) = parser.parse_args()
 
@@ -236,9 +246,13 @@ if __name__ == "__main__":
 			ax2 = fig.add_subplot(gs[1])
 
 			bw = nsamples / 2
-			spgramma = np.empty((1000, bw,))
+			asse_x = np.linspace(0, 400, bw)
+			xmin = closest(asse_x,options.startfreq)
+			xmax = closest(asse_x,options.stopfreq)
+
+			spgramma = np.empty((1000, xmax-xmin+1,))
 			spgramma[:] = np.nan
-			dayspgramma = np.empty((10, bw,))
+			dayspgramma = np.empty((10, xmax-xmin+1,))
 			dayspgramma[:] = np.nan
 
 	else:
@@ -328,7 +342,7 @@ if __name__ == "__main__":
 
 		ax1.cla()
 		if options.water:
-			ax1.imshow(spgramma, interpolation='none', aspect='auto', extent=[0, 400, 60, 0], cmap='jet', clim=wclim)
+			ax1.imshow(spgramma, interpolation='none', aspect='auto', extent=[xmin, xmax, 60, 0], cmap='jet', clim=wclim)
 			ax1.set_title(" Spectrogram of "+str(len(spgramma))+" spectra")
 			ax1.set_ylabel("Time (minutes)")
 			ax1.set_xlabel('MHz')
@@ -384,8 +398,12 @@ if __name__ == "__main__":
 
 			if options.water:
 				last, spgramma = spgramma[0], spgramma[1:]
-				#print len(spgramma), len(spgramma[0]), bw, len(spettro)
-				spgramma = np.concatenate((spgramma, [spettro[1:].astype(np.float)]), axis=0)
+				#print len(spgramma), len(spgramma[0]), bw, len(spettro), len(spettro[xmin:xmax+1])
+				if xmin==0:
+					# se xmin == 0 butto il canale zero
+					spgramma = np.concatenate((spgramma, [spettro[1:xmax+1].astype(np.float)]), axis=0)
+				else:
+					spgramma = np.concatenate((spgramma, [spettro[xmin:xmax+1].astype(np.float)]), axis=0)
 
 			if ((orario - ora_inizio).seconds / 60. ) > 60:
 
@@ -397,7 +415,7 @@ if __name__ == "__main__":
 
 					if options.water:
 						ax1.cla()
-						ax1.imshow(spgramma, interpolation='none', aspect='auto', extent=[0, 400, 60, 0], cmap='jet', clim=wclim)
+						ax1.imshow(spgramma, interpolation='none', aspect='auto', extent=[asse_x[xmin], asse_x[xmax], 60, 0], cmap='jet', clim=wclim)
 						ax1.set_title(" Spectrogram of "+str(len(spgramma))+" spectra")
 						ax1.set_ylabel("Time (minutes)")
 						ax1.set_xlabel('MHz')
@@ -412,7 +430,7 @@ if __name__ == "__main__":
 						ax2.plot(x, spettro, color="b")
 						ax2.plot(x, max_hold, color="r")
 						ax2.plot(x, min_hold, color="g")
-						ax2.set_xlim(0, 400)
+						ax2.set_xlim(asse_x[xmin], asse_x[xmax])
 						ax2.set_ylim(-100, 0)
 						ax2.set_xlabel('MHz')
 						ax2.set_ylabel("dBm")
@@ -424,10 +442,10 @@ if __name__ == "__main__":
 						plt.title(fname.split("/")[-1][:-4].replace("_", "  "), fontsize=18)
 
 						plt.tight_layout()
-						#print fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png"
+						print fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png"
 						plt.savefig(fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png")
 
-						spgramma = np.empty((1000, bw,))
+						spgramma = np.empty((1000, xmax-xmin+1,))
 						spgramma[:] = np.nan
 					ora_inizio = orario
 
@@ -439,7 +457,7 @@ if __name__ == "__main__":
 		if len(spgramma) > 5:
 			if options.water:
 				ax1.cla()
-				ax1.imshow(spgramma, interpolation='none', aspect='auto', extent=[0, 400, 60, 0], cmap='jet', clim=wclim)
+				ax1.imshow(spgramma, interpolation='none', aspect='auto', extent=[asse_x[xmin], asse_x[xmax], 1, 0], cmap='jet', clim=wclim)
 				ax1.set_title(" Spectrogram of " + str(len(spgramma)) + " spectra")
 				ax1.set_ylabel("Time (minutes)")
 				ax1.set_xlabel('MHz')
@@ -454,7 +472,7 @@ if __name__ == "__main__":
 				ax2.plot(x, spettro, color="b")
 				ax2.plot(x, max_hold, color="r")
 				ax2.plot(x, min_hold, color="g")
-				ax2.set_xlim(0, 400)
+				ax2.set_xlim(asse_x[xmin], asse_x[xmax])
 				ax2.set_ylim(-100, 0)
 				ax2.set_xlabel('MHz')
 				ax2.set_ylabel("dBm")
@@ -477,7 +495,7 @@ if __name__ == "__main__":
 
 		ax1.cla()
 		if options.water:
-			ax1.imshow(dayspgramma, interpolation='none', aspect='auto', extent=[0, 400, 1, 0], cmap='jet', clim=wclim)
+			ax1.imshow(dayspgramma, interpolation='none', aspect='auto', extent=[asse_x[xmin], asse_x[xmax], 1, 0], cmap='jet', clim=wclim)
 			ax1.set_title(" Spectrogram of " + fname.split("/")[-1][:-11].replace("_", "  "), fontsize=14)
 			ax1.set_ylabel("A Day of 24 Hours")
 			ax1.set_xlabel('MHz')
@@ -491,7 +509,7 @@ if __name__ == "__main__":
 		x = np.linspace(0, 400, len(spettro))
 		ax2.plot(x, max_hold, color="r")
 		ax2.plot(x, min_hold, color="g")
-		ax2.set_xlim(0, 400)
+		ax2.set_xlim(asse_x[xmin], asse_x[xmax])
 		ax2.set_ylim(-100, 0)
 		ax2.set_xlabel('MHz')
 		ax2.set_ylabel("dBm")
