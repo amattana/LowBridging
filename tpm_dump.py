@@ -56,7 +56,7 @@ OUT_PATH = "/data/data_2/2018-11-LOW-BRIDGING/"
 DATA_PATH = "DATA/"
 POWER_DIR = "POWER/"
 TRIGGER_DIR = "TRIGGER/"
-POWER_DAY = "~/work/LowBridging/power_plot.py --silent -a --dir="
+POWER_DAY = "~/work/LowBridging/power_plot.py --silent -a --dir="+OUT_PATH
 
 PHASE_0_MAP = [[1, "SKALA-4"], [0, "EDA2"]]
 
@@ -311,7 +311,7 @@ if __name__ == "__main__":
 
 			# Creating Directory for today's data
 			if not actual_time.date() == today:
-				os.system(POWER_DAY+today.strftime("%Y-%m-%d"))
+				#os.system(POWER_DAY+today.strftime("%Y-%m-%d")+"/POWER/")
 				OUT_PATH = OUT_PATH[:-11] + datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(time.time()),
 																	   "%Y-%m-%d/")
 				measnum = 0

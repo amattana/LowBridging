@@ -46,6 +46,7 @@ if __name__ == "__main__":
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/POWER" + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/POWER" + "\"")
+		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/POWER/CH-160" + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/VIDEO" + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/TRIGGER" + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/SPECTROGRAM" + "\"")
@@ -72,7 +73,7 @@ if __name__ == "__main__":
 
 		if not options.nopower:
 			print "\nGenerating Power Plot..."
-			os.system("~/work/LowBridging/power_plot.py -a --dir="+data )
+			os.system("~/work/LowBridging/power_plot.py -a --dir=" + DEF_PATH + data + "/POWER/" )
 
 		print "\nCopying data to Cerberus...\n\n"
 
@@ -88,15 +89,18 @@ if __name__ == "__main__":
 			os.system("scp " + DEF_PATH + data + "/VIDEO/LB_PHASE-0_*avi aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/VIDEO/")
 
 		if not options.nopower:
-			os.system("scp " + DEF_PATH + data + "/POWER/* aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/POWER/")
+			os.system("scp " + DEF_PATH + data + "/POWER/*png aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/POWER/")
+			os.system("scp " + DEF_PATH + data + "/POWER/*csv aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/POWER/")
 
 		if not options.nospectrogram:
 			for tpm_rx in TPM_INPUTS:
 				for pol in POLS:
 					print "\nGenerating Spectrograms for " + tpm_rx + " " + pol + "..."
-					os.system("~/work/LowBridging/tpm_tdd_view.py --average=16  --recursive --water --dir=" + DEF_PATH + data + "/DATA/" + tpm_rx + "/" + pol)
+					os.system("~/work/LowBridging/tpm_tdd_view.py --average=16 --power --channel=160 --recursive --water --dir=" + DEF_PATH + data + "/DATA/" + tpm_rx + "/" + pol)
 					os.system("scp -r " + DEF_PATH + data + "/DATA/" + tpm_rx + "/" + pol + "/PNG/* aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/SPECTROGRAM/" + tpm_rx + "/" + pol + "/")
 					os.system("scp " + DEF_PATH + "SPECTROGRAM/" + tpm_rx + "/" + pol + "/*"+data+"* aavs@cerberus.mwa128t.org:/home/aavs/mattana/SPECTROGRAM/" + tpm_rx + "/" + pol + "/")
+			os.system("~/work/LowBridging/power_plot.py --ymin=-50 --ymax=-30 --all --dir=" + DEF_PATH + data + "/POWER/CH-160/")
+			os.system("scp " + DEF_PATH + data + "/POWER/CH-160/* aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/POWER/CH-160/")
 
 		print "\nSuccessfully executed!!\n"
 	else:

@@ -23,6 +23,24 @@ import numpy as np
 import matplotlib.gridspec as gridspec
 import pytz
 from optparse import OptionParser
+from scipy.interpolate import make_interp_spline, BSpline
+
+def weighted_moving_average(x,y,step_size=0.05,width=1):
+    bin_centers  = np.arange(np.min(x),np.max(x)-0.5*step_size,step_size)+0.5*step_size
+    bin_avg = np.zeros(len(bin_centers))
+
+    #We're going to weight with a Gaussian function
+    def gaussian(x,amp=1,mean=0,sigma=1):
+        return amp*np.exp(-(x-mean)**2/(2*sigma**2))
+
+    for index in range(0,len(bin_centers)):
+        bin_center = bin_centers[index]
+        weights = gaussian(x,mean=bin_center,sigma=width)
+        bin_avg[index] = np.average(y,weights=weights)
+
+    return (bin_centers,bin_avg)
+
+
 
 if __name__ == "__main__":
 	parser = OptionParser()
@@ -45,6 +63,16 @@ if __name__ == "__main__":
 					  dest="dir",
 					  default="",
 					  help="Directory to be processed")
+
+	parser.add_option("--ymin",
+					  dest="ymin",
+					  default=-20,
+					  help="Y Min for range of plot")
+
+	parser.add_option("--ymax",
+					  dest="ymax",
+					  default=10,
+					  help="Y Max for range of plot")
 
 	# parser.add_option("-b", "--band",
 	# 				  dest="band",
@@ -72,7 +100,7 @@ if __name__ == "__main__":
 			print "\nNo file selected, exiting...\n"
 			exit(0)
 	else:
-		datafile = "/data/data_2/2018-11-LOW-BRIDGING/" + options.dir + "/POWER/"
+		datafile = options.dir
 		#print "\n", datafile, "\n", sorted(glob.glob(datafile + "*.csv"))
 		datafile = sorted(glob.glob(datafile + "*.csv"))[0]
 		#print "\n\n", datafile
@@ -126,7 +154,7 @@ if __name__ == "__main__":
 		ax[i].set_xticks([0, 10800, 21600, 32400, 43200, 54000, 64800, 75600, 86400])
 		ax[i].set_xticklabels(["0", "3", "6", "9", "12", "15", "18", "21", "24"])
 		ax[i].set_xlim([0, 86400])
-		ax[i].set_ylim([-25, 15])
+		ax[i].set_ylim([int(options.ymin), int(options.ymax)])
 		ax[i].set_xlabel("Day Hours")
 		ax[i].set_ylabel("dBm")
 
@@ -139,11 +167,10 @@ if __name__ == "__main__":
 	MEAS_per_min = 60
 	# pst = pytz.timezone('Europe/Rome')
 
-	x = np.zeros(H_per_day * MIN_per_hour * MEAS_per_min)
-	x += H_per_day * MIN_per_hour * MEAS_per_min
-	tot_power = np.zeros(H_per_day * MIN_per_hour * MEAS_per_min)
-	tot_power -= 100
-	cnt = 0
+	#x = np.zeros(H_per_day * MIN_per_hour * MEAS_per_min)
+	#x += H_per_day * MIN_per_hour * MEAS_per_min
+	#tot_power = np.zeros(H_per_day * MIN_per_hour * MEAS_per_min)
+	#tot_power += -100
 
 	for counter, df in enumerate(datafiles):
 		antname = df[6:-4].replace("_", " ")
@@ -151,24 +178,22 @@ if __name__ == "__main__":
 			data = f.readlines()
 		# print "Generating images for file: ",l
 
+		tot_power = []
+		x = []
 		cnt = 0
 		for d in data:
 
 			dati = d.replace("\n", "").replace("  ", "\t").split("\t")
-			t = datetime.datetime.utcfromtimestamp(float(dati[0]))
+			t = datetime.datetime.strptime(dati[1]+" "+dati[2],"%Y/%m/%d %H:%M:%S")
 			# t = pytz.UTC.localize(t)
 			# t = t.astimezone(pst)
 			day = datetime.datetime(t.year, t.month, t.day)
 			# t = t.replace(tzinfo=None)
 
-			x[cnt] = (t - day).seconds
-			if float(dati[-1]) > -50:
-				tot_power[cnt] = float(dati[-1])
-			else:
-				tot_power[cnt] = None
+			x += [(t - day).seconds]
+			tot_power += [float(dati[3])]
 
 			cnt = cnt + 1
-
 		if options.week:
 			weekday = t.weekday()
 		else:
@@ -182,13 +207,33 @@ if __name__ == "__main__":
 			dx[weekday].annotate(datetime.datetime.strftime(t, "%d/%m/%Y"), (0, -27), fontsize=10)
 
 		# ax[weekday].cla()
-		ax[weekday].plot(x[:cnt], tot_power[:cnt], label=antname)
+		#ax[weekday].plot(x[:cnt], tot_power[:cnt], label=antname)
+
+		T = np.array(x)
+		xnew = np.linspace(T.min(),T.max(),1000)
+		spl = make_interp_spline(T, tot_power, k=3) #BSpline object
+		power_smooth = spl(xnew)
+		#ax[weekday].plot(xnew, power_smooth, label=antname)
+
+		sigma = 10
+		y_gau = np.zeros(len(power_smooth))
+		gau_x = np.linspace(-2.7*sigma, 2.7*sigma, 6*sigma)
+		gaussian_func = lambda z, sigma: 1/np.sqrt(2*np.pi*sigma**2) * np.exp(-(z**2)/(2*sigma**2))
+		gau_mask = gaussian_func(gau_x, sigma)
+		y_gau = np.convolve(power_smooth, gau_mask, 'same')
+		y_gau = y_gau[3*sigma:-5*sigma]
+
+		ax[weekday].plot(np.linspace(0,len(tot_power),len(y_gau)), y_gau, label=antname)
+		#print len(tot_power)
+		#ax[weekday].plot(x, tot_power, label=antname)
 		if counter == 0:
 			ax[weekday].grid(True)
-			ax[weekday].set_xticks([0, 10800, 21600, 32400, 43200, 54000, 64800, 75600, 86400])
+			#ax[weekday].set_xticks([0, 10800, 21600, 32400, 43200, 54000, 64800, 75600, 86400])
+			ax[weekday].set_xticks(np.linspace(0,len(tot_power),9))
 			ax[weekday].set_xticklabels(["0", "3", "6", "9", "12", "15", "18", "21", "24"])
-			ax[weekday].set_xlim([0, 86400])
-			ax[weekday].set_ylim([-80, -30])
+			ax[weekday].set_xlim([0, len(tot_power)])
+			ax[weekday].set_ylim([int(options.ymin), int(options.ymax)])
+			ax[weekday].set_yticks(np.arange(int(options.ymin), int(options.ymax) + 1, 2))
 			ax[weekday].set_xlabel("Day Hours (UTC)")
 			ax[weekday].set_ylabel("dBm")
 
@@ -217,17 +262,21 @@ if __name__ == "__main__":
 
 		# ax[0].set_title("Weekly Total Power (dBm/hours)")
 	if len(datafiles) == 1:
-		ax[0].set_title(antname + "   Total Power")
+		titolo = antname + "   Total Power"
 	else:
-		ax[0].set_title("Total Power")
-	ax[0].legend()
+		titolo = "Total Power"
+	if not datapath.split("/")[-2] == "POWER":
+		titolo += " of Frequency Channel " + datapath.split("/")[-2].split("-")[1] + " MHz"
+	ax[0].set_title(titolo)
+	ax[0].legend(fontsize=10)
 	plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 
 	#plt.show()
 	# weeknumber = "%02d" % (day.isocalendar()[1])
 	# if not os.path.isdir("data/weekly"):
 	#    os.makedirs("data/weekly")
-	fig.savefig(datapath + giorno + "POWER.png")
+	fname = datapath + giorno + "POWER.png"
+	fig.savefig(fname)
 	if not options.silent:
-		print "\n\nSaved image: " + datapath + giorno + "POWER.png\n"
-		print "\nExecution terminated!\n"
+		print "\nSaved image: " + datapath + giorno + "POWER.png"
+		#print "\nExecution terminated!\n"

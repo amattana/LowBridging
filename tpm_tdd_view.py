@@ -41,8 +41,6 @@ def calcSpectra(vett):
 	N = len(spettro)
 	acf = 2  # amplitude correction factor
 	spettro[:] = abs((acf * spettro) / N)
-	with np.errstate(divide='ignore', invalid='ignore'):
-		spettro[:] = 20 * np.log10(spettro / 127.0)
 	return (np.real(spettro))
 
 
@@ -55,10 +53,89 @@ def calcolaspettro(dati, nsamples=131072):
 		mediato[:] += singolo
 	# singoli[:] /= 16 # originale
 	mediato[:] /= (2 ** 17 / nsamples)  # federico
+	with np.errstate(divide='ignore', invalid='ignore'):
+		mediato[:] = 20 * np.log10(mediato / 127.0)
 	return mediato
 
 def closest(serie, num):
 	return serie.tolist().index(min(serie.tolist(), key=lambda z: abs(z-num)))
+
+def dB2Linear(valueIndB):
+    """
+    Convert input from dB to linear scale.
+    Parameters
+    ----------
+    valueIndB : float | np.ndarray
+        Value in dB
+    Returns
+    -------
+    valueInLinear : float | np.ndarray
+        Value in Linear scale.
+    Examples
+    --------
+    #>>> dB2Linear(30)
+    1000.0
+    """
+    return pow(10, valueIndB / 10.0)
+
+
+def linear2dB(valueInLinear):
+    """
+    Convert input from linear to dB scale.
+    Parameters
+    ----------
+    valueInLinear : float | np.ndarray
+        Value in Linear scale.
+    Returns
+    -------
+    valueIndB : float | np.ndarray
+        Value in dB scale.
+    Examples
+    --------
+    #>>> linear2dB(1000)
+    30.0
+    """
+    return 10.0 * np.log10(valueInLinear)
+
+
+def dBm2Linear(valueIndBm):
+    """
+    Convert input from dBm to linear scale.
+    Parameters
+    ----------
+    valueIndBm : float | np.ndarray
+        Value in dBm.
+    Returns
+    -------
+    valueInLinear : float | np.ndarray
+        Value in linear scale.
+    Examples
+    --------
+    #>>> dBm2Linear(60)
+    1000.0
+    """
+    return dB2Linear(valueIndBm) / 1000.
+
+
+def linear2dBm(valueInLinear):
+    """
+    Convert input from linear to dBm scale.
+    Parameters
+    ----------
+    valueInLinear : float | np.ndarray
+        Value in Linear scale
+    Returns
+    -------
+    valueIndBm : float | np.ndarray
+        Value in dBm.
+    Examples
+    --------
+    #>>> linear2dBm(1000)
+    60.0
+    """
+    return linear2dB(valueInLinear * 1000.)
+
+
 
 if __name__ == "__main__":
 	parser = OptionParser()
@@ -250,10 +327,11 @@ if __name__ == "__main__":
 		ora_inizio = datetime.datetime.strptime(fname.split("/")[-1][-21:-4], "%Y-%m-%d_%H%M%S")
 
 		ax1.cla()
-		ax1.imshow(spgramma, interpolation='none', aspect='auto', extent=[0, 400, 60, 0], cmap='jet', clim=wclim)
-		ax1.set_title(" Spectrogram of "+str(len(spgramma))+" spectra")
-		ax1.set_ylabel("Time (minutes)")
-		ax1.set_xlabel('MHz')
+		if options.water:
+			ax1.imshow(spgramma, interpolation='none', aspect='auto', extent=[0, 400, 60, 0], cmap='jet', clim=wclim)
+			ax1.set_title(" Spectrogram of "+str(len(spgramma))+" spectra")
+			ax1.set_ylabel("Time (minutes)")
+			ax1.set_xlabel('MHz')
 
 		nmax_hold = np.maximum(spettro.astype(np.float), max_hold.astype(np.float))
 		max_hold = nmax_hold
@@ -295,15 +373,19 @@ if __name__ == "__main__":
 			power_rf = power_adc + 12  # single ended to diff net loose 12 dBm
 
 			if options.power:
-				amp = spettro[closest(x, float(options.channel))]
+				centro = closest(x, float(options.channel))
+				integra = linear2dBm(np.sum(dBm2Linear(spettro[centro-30:centro+30])))
+				#print centro, spettro[centro-10:centro+10], integra
+				#amp = spettro[closest(x, float(options.channel))]
 				epoch = time.mktime(orario.timetuple())
 				data = orario.strftime("%Y/%m/%d")
 				ora = orario.strftime("%H:%M:%S")
-				pfile.write(str(epoch)+"\t"+str(data)+"\t"+str(ora)+"\t"+str("%3.1f"%(amp))+"\n")
+				pfile.write(str(epoch)+"\t"+str(data)+"\t"+str(ora)+"\t"+str("%3.1f"%(integra))+"\n")
 
-			last, spgramma = spgramma[0], spgramma[1:]
-			#print len(spgramma), len(spgramma[0]), bw, len(spettro)
-			spgramma = np.concatenate((spgramma, [spettro[1:].astype(np.float)]), axis=0)
+			if options.water:
+				last, spgramma = spgramma[0], spgramma[1:]
+				#print len(spgramma), len(spgramma[0]), bw, len(spettro)
+				spgramma = np.concatenate((spgramma, [spettro[1:].astype(np.float)]), axis=0)
 
 			if ((orario - ora_inizio).seconds / 60. ) > 60:
 
@@ -345,8 +427,8 @@ if __name__ == "__main__":
 						#print fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png"
 						plt.savefig(fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png")
 
-					spgramma = np.empty((1000, bw,))
-					spgramma[:] = np.nan
+						spgramma = np.empty((1000, bw,))
+						spgramma[:] = np.nan
 					ora_inizio = orario
 
 		while np.isnan(spgramma[0][0]):
@@ -394,10 +476,11 @@ if __name__ == "__main__":
 		first_empty, dayspgramma = dayspgramma[:10], dayspgramma[10:]
 
 		ax1.cla()
-		ax1.imshow(dayspgramma, interpolation='none', aspect='auto', extent=[0, 400, 1, 0], cmap='jet', clim=wclim)
-		ax1.set_title(" Spectrogram of " + fname.split("/")[-1][:-11].replace("_", "  "), fontsize=14)
-		ax1.set_ylabel("A Day of 24 Hours")
-		ax1.set_xlabel('MHz')
+		if options.water:
+			ax1.imshow(dayspgramma, interpolation='none', aspect='auto', extent=[0, 400, 1, 0], cmap='jet', clim=wclim)
+			ax1.set_title(" Spectrogram of " + fname.split("/")[-1][:-11].replace("_", "  "), fontsize=14)
+			ax1.set_ylabel("A Day of 24 Hours")
+			ax1.set_xlabel('MHz')
 
 		nmax_hold = np.maximum(spettro.astype(np.float), max_hold.astype(np.float))
 		max_hold = nmax_hold
