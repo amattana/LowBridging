@@ -401,7 +401,7 @@ if __name__ == "__main__":
 				#print len(spgramma), len(spgramma[0]), bw, len(spettro), len(spettro[xmin:xmax+1])
 				if xmin==0:
 					# se xmin == 0 butto il canale zero
-					spgramma = np.concatenate((spgramma, [spettro[1:xmax+1].astype(np.float)]), axis=0)
+					spgramma = np.concatenate((spgramma, [spettro[:xmax+1].astype(np.float)]), axis=0)
 				else:
 					spgramma = np.concatenate((spgramma, [spettro[xmin:xmax+1].astype(np.float)]), axis=0)
 
@@ -442,7 +442,7 @@ if __name__ == "__main__":
 						plt.title(fname.split("/")[-1][:-4].replace("_", "  "), fontsize=18)
 
 						plt.tight_layout()
-						print fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png"
+						#print fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png"
 						plt.savefig(fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png")
 
 						spgramma = np.empty((1000, xmax-xmin+1,))
