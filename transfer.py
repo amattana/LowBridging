@@ -17,6 +17,7 @@ from optparse import OptionParser
 
 
 DEF_PATH = "/data/data_2/2018-11-LOW-BRIDGING/"
+SPG_DIR = "SPECTROGRAM/"
 TPM_INPUTS = ["RX-01_EDA2", "RX-02_SKALA-4"]
 POLS = ["Pol-X", "Pol-Y"]
 
@@ -57,9 +58,6 @@ if __name__ == "__main__":
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/SPECTROGRAM/"+ TPM_INPUTS[1] + "/" + POLS[0] + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/SPECTROGRAM/"+ TPM_INPUTS[1] + "/" + POLS[1] + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/SPECTROGRAM" + "\"")
-		for tpm_rx in TPM_INPUTS:
-			for pol in POLS:
-				os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/SPECTROGRAM/" + tpm_rx + "/" + pol + "\"")
 
 		if not options.novideo:
 			print "\nGenerating Videos... "
@@ -96,9 +94,17 @@ if __name__ == "__main__":
 			for tpm_rx in TPM_INPUTS:
 				for pol in POLS:
 					print "\nGenerating Spectrograms for " + tpm_rx + " " + pol + "..."
-					os.system("~/work/LowBridging/tpm_tdd_view.py --average=16 --power --channel=160 --recursive --water --dir=" + DEF_PATH + data + "/DATA/" + tpm_rx + "/" + pol)
-					os.system("scp -r " + DEF_PATH + data + "/DATA/" + tpm_rx + "/" + pol + "/PNG/* aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/SPECTROGRAM/" + tpm_rx + "/" + pol + "/")
-					os.system("scp " + DEF_PATH + "SPECTROGRAM/" + tpm_rx + "/" + pol + "/*"+data+"* aavs@cerberus.mwa128t.org:/home/aavs/mattana/SPECTROGRAM/" + tpm_rx + "/" + pol + "/")
+					os.system("~/work/LowBridging/tpm_tdd_view.py --average=16  --start-freq=0 --stop-freq=400 --power --channel=160 --recursive --water --dir=" + DEF_PATH + data + "/DATA/" + tpm_rx + "/" + pol)
+					os.system("scp -r " + DEF_PATH + data + "/DATA/" + tpm_rx + "/" + pol + "/SPECTROGRAMS* aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/SPECTROGRAM/" + tpm_rx + "/" + pol + "/")
+			lista_bands = os.listdir(DEF_PATH + SPG_DIR)
+			lista_bands = [x for x in lista_bands if x.startswith('SPECTROGRAM')]
+			for band in lista_bands:
+				os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/SPECTROGRAM/" + band + "\"")
+				for tpm_rx in TPM_INPUTS:
+					os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/SPECTROGRAM/" + band + "/" + tpm_rx + "\"")
+					for pol in POLS:
+						os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/SPECTROGRAM/" + band + "/" + tpm_rx + "/" + pol + "\"")
+						os.system("scp " + DEF_PATH + SPG_DIR + band + "/" + tpm_rx + "/" + pol + "/*" + data + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/SPECTROGRAM/" + band + "/" + tpm_rx + "/" + pol + "/")
 			os.system("~/work/LowBridging/power_plot.py --ymin=-50 --ymax=-30 --all --dir=" + DEF_PATH + data + "/POWER/CH-160/")
 			os.system("scp " + DEF_PATH + data + "/POWER/CH-160/* aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/POWER/CH-160/")
 

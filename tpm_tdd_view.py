@@ -33,6 +33,7 @@ import datetime, time
 from tqdm import tqdm
 
 BASE_DIR = "/data/data_2/2018-11-LOW-BRIDGING/"
+SPG_DIR = "SPECTROGRAMS_BAND_"
 
 
 def calcSpectra(vett):
@@ -255,6 +256,8 @@ if __name__ == "__main__":
 			dayspgramma = np.empty((10, xmax-xmin+1,))
 			dayspgramma[:] = np.nan
 
+			SPG_DIR += str("%03d" % int(options.startfreq)) + "-" + str("%03d" % int(options.stopfreq))
+
 	else:
 		if options.raw:
 			gs = gridspec.GridSpec(2, 1, height_ratios=[2, 6])
@@ -321,8 +324,8 @@ if __name__ == "__main__":
 
 		fname = datafiles[0]
 		plt.ion()
-		if not os.path.isdir(datapath + "/PNG"):
-			os.makedirs(datapath + "/PNG")
+		if not os.path.isdir(datapath + "/" + SPG_DIR):
+			os.makedirs(datapath + "/" + SPG_DIR)
 		RX_DIR = fname.split("/")[-3] + "/"
 		POL_DIR = fname.split("/")[-2] + "/"
 
@@ -367,8 +370,8 @@ if __name__ == "__main__":
 		plt.title(fname.split("/")[-1][:-4].replace("_", "  "), fontsize=18)
 
 		plt.tight_layout()
-		plt.savefig(fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png")
-		os.system("rm "+fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png")
+		plt.savefig(fname[:fname.rfind("/")+1]+SPG_DIR+"/"+fname.split("/")[-1][:-4]+".png")
+		os.system("rm "+fname[:fname.rfind("/")+1]+SPG_DIR+"/"+fname.split("/")[-1][:-4]+".png")
 
 		for cnt in tqdm(range(len(datafiles))):
 			fname = datafiles[cnt]
@@ -443,7 +446,7 @@ if __name__ == "__main__":
 
 						plt.tight_layout()
 						#print fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png"
-						plt.savefig(fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png")
+						plt.savefig(fname[:fname.rfind("/")+1]+SPG_DIR+"/"+fname.split("/")[-1][:-4]+".png")
 
 						spgramma = np.empty((1000, xmax-xmin+1,))
 						spgramma[:] = np.nan
@@ -485,7 +488,7 @@ if __name__ == "__main__":
 
 				plt.tight_layout()
 				# print fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png"
-				plt.savefig(fname[:fname.rfind("/") + 1] + "PNG/" + fname.split("/")[-1][:-4] + ".png")
+				plt.savefig(fname[:fname.rfind("/") + 1] + SPG_DIR + "/" + fname.split("/")[-1][:-4] + ".png")
 
 			#spgramma = np.empty((1000, bw - 5,))
 			#spgramma[:] = np.nan
@@ -522,10 +525,10 @@ if __name__ == "__main__":
 
 		plt.tight_layout()
 		# print fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png"
-		if not os.path.isdir(BASE_DIR + "SPECTROGRAM/" + RX_DIR + POL_DIR):
-			os.makedirs(BASE_DIR + "SPECTROGRAM/" + RX_DIR + POL_DIR)
+		if not os.path.isdir(BASE_DIR + "SPECTROGRAM/" + SPG_DIR + "/" + RX_DIR + POL_DIR):
+			os.makedirs(BASE_DIR + "SPECTROGRAM/" + SPG_DIR + "/" + RX_DIR + POL_DIR)
 
-		plt.savefig(BASE_DIR + "SPECTROGRAM/" + RX_DIR + POL_DIR + fname.split("/")[-1][:-11] + ".png")
+		plt.savefig(BASE_DIR + "SPECTROGRAM/" + SPG_DIR + "/" + RX_DIR + POL_DIR + SPG_DIR[13:] + "_" + fname.split("/")[-1][:-11] + ".png")
 		if options.power:
 			pfile.close()
 
