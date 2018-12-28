@@ -40,7 +40,8 @@ def weighted_moving_average(x,y,step_size=0.05,width=1):
 
     return (bin_centers,bin_avg)
 
-
+BASE_DIR = "/data/data_2/2018-11-LOW-BRIDGING/"
+POWER_DIR = "POWER/"
 
 if __name__ == "__main__":
 	parser = OptionParser()
@@ -74,6 +75,16 @@ if __name__ == "__main__":
 					  default=10,
 					  help="Y Max for range of plot")
 
+	parser.add_option("--sigma",
+					  dest="sigma",
+					  default=10,
+					  help="Moving Average Sigma (def: 10)")
+
+	parser.add_option("--smooth", action='store_true',
+					  dest="smooth",
+					  default=False,
+					  help="Smooth the raw data series with moving average")
+
 	# parser.add_option("-b", "--band",
 	# 				  dest="band",
 	# 				  default="",
@@ -101,6 +112,8 @@ if __name__ == "__main__":
 			exit(0)
 	else:
 		datafile = options.dir
+		if not datafile[-1] == "/":
+			datafile = datafile[:] + "/"
 		#print "\n", datafile, "\n", sorted(glob.glob(datafile + "*.csv"))
 		datafile = sorted(glob.glob(datafile + "*.csv"))[0]
 		#print "\n\n", datafile
@@ -209,21 +222,27 @@ if __name__ == "__main__":
 		# ax[weekday].cla()
 		#ax[weekday].plot(x[:cnt], tot_power[:cnt], label=antname)
 
-		T = np.array(x)
-		xnew = np.linspace(T.min(),T.max(),1000)
-		spl = make_interp_spline(T, tot_power, k=3) #BSpline object
-		power_smooth = spl(xnew)
-		#ax[weekday].plot(xnew, power_smooth, label=antname)
+		if options.smooth:
+			T = np.array(x)
+			xnew = np.linspace(T.min(),T.max(),1000)
+			spl = make_interp_spline(T, tot_power, k=3) #BSpline object
+			power_smooth = spl(xnew)
+			#ax[weekday].plot(xnew, power_smooth, label=antname)
 
-		sigma = 10
-		y_gau = np.zeros(len(power_smooth))
-		gau_x = np.linspace(-2.7*sigma, 2.7*sigma, 6*sigma)
-		gaussian_func = lambda z, sigma: 1/np.sqrt(2*np.pi*sigma**2) * np.exp(-(z**2)/(2*sigma**2))
-		gau_mask = gaussian_func(gau_x, sigma)
-		y_gau = np.convolve(power_smooth, gau_mask, 'same')
-		y_gau = y_gau[3*sigma:-5*sigma]
+			sigma = int(options.sigma)
+			y_gau = np.zeros(len(power_smooth))
+			gau_x = np.linspace(-2.7*sigma, 2.7*sigma, 6*sigma)
+			gaussian_func = lambda z, sigma: 1/np.sqrt(2*np.pi*sigma**2) * np.exp(-(z**2)/(2*sigma**2))
+			gau_mask = gaussian_func(gau_x, sigma)
+			y_gau = np.convolve(power_smooth, gau_mask, 'same')
+			y_gau = y_gau[3*sigma:-5*sigma]
+
+		else:
+			y_gau = tot_power
+
 
 		ax[weekday].plot(np.linspace(0,len(tot_power),len(y_gau)), y_gau, label=antname)
+
 		#print len(tot_power)
 		#ax[weekday].plot(x, tot_power, label=antname)
 		if counter == 0:
@@ -275,8 +294,20 @@ if __name__ == "__main__":
 	# weeknumber = "%02d" % (day.isocalendar()[1])
 	# if not os.path.isdir("data/weekly"):
 	#    os.makedirs("data/weekly")
-	fname = datapath + giorno + "POWER.png"
+
+	fname = BASE_DIR + POWER_DIR
+	if not datapath.split("/")[-2] == "POWER":
+		fname += "SINGLE_CHANNEL"
+	else:
+		fname += "ALL_BAND"
+	if not os.path.exists(fname):
+		os.makedirs(fname)
+	if options.smooth:
+		fname += "/SMOOTHED"
+		if not os.path.exists(fname):
+			os.makedirs(fname)
+	fname += "/" + giorno + datapath[datapath.index("POWER"):-1].replace("/","_")+".png"
 	fig.savefig(fname)
 	if not options.silent:
-		print "\nSaved image: " + datapath + giorno + "POWER.png"
+		print "\nSaved image: " + fname
 		#print "\nExecution terminated!\n"

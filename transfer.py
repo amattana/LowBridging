@@ -46,6 +46,10 @@ if __name__ == "__main__":
 		print "\nGenerating Directories on Cerberus..."
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/POWER" + "\"")
+		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/POWER/ALL_BAND" + "\"")
+		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/POWER/SINGLE_CHANNEL" + "\"")
+		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/POWER/ALL_BAND/SMOOTHED" + "\"")
+		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/POWER/SINGLE_CHANNEL/SMOOTHED" + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/POWER" + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/POWER/CH-160" + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/VIDEO" + "\"")
@@ -69,10 +73,6 @@ if __name__ == "__main__":
 			os.system(CMD_VIDEO_B+data+".avi")
 			print "\n*  [2/2] " + CMD_VIDEO_B+data+".avi ...done!\n"
 
-		if not options.nopower:
-			print "\nGenerating Power Plot..."
-			os.system("~/work/LowBridging/power_plot.py -a --dir=" + DEF_PATH + data + "/POWER/" )
-
 		print "\nCopying data to Cerberus...\n\n"
 
 		if not options.notrigger:
@@ -87,7 +87,7 @@ if __name__ == "__main__":
 			os.system("scp " + DEF_PATH + data + "/VIDEO/LB_PHASE-0_*avi aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/VIDEO/")
 
 		if not options.nopower:
-			os.system("scp " + DEF_PATH + data + "/POWER/*png aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/POWER/")
+			#os.system("scp " + DEF_PATH + data + "/POWER/*png aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/POWER/")
 			os.system("scp " + DEF_PATH + data + "/POWER/*csv aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/POWER/")
 
 		if not options.nospectrogram:
@@ -105,8 +105,21 @@ if __name__ == "__main__":
 					for pol in POLS:
 						os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/SPECTROGRAM/" + band + "/" + tpm_rx + "/" + pol + "\"")
 						os.system("scp " + DEF_PATH + SPG_DIR + band + "/" + tpm_rx + "/" + pol + "/*" + data + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/SPECTROGRAM/" + band + "/" + tpm_rx + "/" + pol + "/")
-			os.system("~/work/LowBridging/power_plot.py --ymin=-50 --ymax=-30 --all --dir=" + DEF_PATH + data + "/POWER/CH-160/")
-			os.system("scp " + DEF_PATH + data + "/POWER/CH-160/* aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/POWER/CH-160/")
+
+		if not options.nopower:
+			print "\nGenerating Power Plot..."
+			os.system("~/work/LowBridging/power_plot.py --all --silent --dir=" + DEF_PATH + data + "/POWER/" )
+			os.system("~/work/LowBridging/power_plot.py --all --silent --sigma=6 --smooth --dir=" + DEF_PATH + data + "/POWER/" )
+			if not options.nospectrogram:
+				os.system("~/work/LowBridging/power_plot.py --all --silent --ymin=-45 --ymax=-25 --dir=" + DEF_PATH + data + "/POWER/CH-160/")
+				os.system("~/work/LowBridging/power_plot.py --all --silent --sigma=6 --smooth --ymin=-45 --ymax=-25 --dir=" + DEF_PATH + data + "/POWER/CH-160/")
+				os.system("scp " + DEF_PATH + "POWER/SINGLE_CHANNEL/*" + data + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/POWER/SINGLE_CHANNEL/")
+				os.system("scp " + DEF_PATH + "POWER/SINGLE_CHANNEL/SMOOTHED/*" + data + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/POWER/SINGLE_CHANNEL/SMOOTHED/")
+			os.system("scp " + DEF_PATH + "POWER/ALL_BAND/*" + data + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/POWER/ALL_BAND/")
+			os.system("scp " + DEF_PATH + "POWER/ALL_BAND/SMOOTHED/*" + data + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/POWER/ALL_BAND/SMOOTHED/")
+
+
+
 
 		print "\nSuccessfully executed!!\n"
 	else:
