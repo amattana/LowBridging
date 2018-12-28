@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
 	if os.path.isdir(DEF_PATH + data):
 		#os.system("cd " + DEF_PATH + data)
-		print "\nGenerating Directories on Cerberus..."
+		print "\nGenerating Directories on Cerberus for", data
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/POWER" + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/POWER/ALL_BAND" + "\"")
@@ -117,9 +117,6 @@ if __name__ == "__main__":
 				os.system("scp " + DEF_PATH + "POWER/SINGLE_CHANNEL/SMOOTHED/*" + data + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/POWER/SINGLE_CHANNEL/SMOOTHED/")
 			os.system("scp " + DEF_PATH + "POWER/ALL_BAND/*" + data + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/POWER/ALL_BAND/")
 			os.system("scp " + DEF_PATH + "POWER/ALL_BAND/SMOOTHED/*" + data + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/POWER/ALL_BAND/SMOOTHED/")
-
-
-
 
 		print "\nSuccessfully executed!!\n"
 	else:
