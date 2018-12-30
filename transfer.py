@@ -25,6 +25,8 @@ POLS = ["Pol-X", "Pol-Y"]
 if __name__ == "__main__":
 	parser = OptionParser()
 	parser.add_option("-d", "--data", dest="data", default="", help="Date in format YYYY-MM-DD")
+	parser.add_option("--start-freq", dest="startfreq", default="", help="Start Frequency for Waterfall")
+	parser.add_option("--stop-freq", dest="stopfreq", default="", help="Stop Frequency for Waterfall")
 	parser.add_option("--novideo", action='store_true', dest="novideo", default=False, help="If set do not produce videos (to save time)")
 	parser.add_option("--nopower", action='store_true', dest="nopower", default=False, help="If set do not produce power plots (to save time)")
 	parser.add_option("--notrigger", action='store_true', dest="notrigger", default=False, help="If set do not copy trigger plots (to save time)")
@@ -94,7 +96,7 @@ if __name__ == "__main__":
 			for tpm_rx in TPM_INPUTS:
 				for pol in POLS:
 					print "\nGenerating Spectrograms for " + tpm_rx + " " + pol + "..."
-					os.system("~/work/LowBridging/tpm_tdd_view.py --average=16  --start-freq=0 --stop-freq=400 --power --channel=160 --recursive --water --dir=" + DEF_PATH + data + "/DATA/" + tpm_rx + "/" + pol)
+					os.system("~/work/LowBridging/tpm_tdd_view.py --average=16  --start-freq="+str(options.startfreq)+" --stop-freq="+str(options.stopfreq)+" --power --channel=160 --recursive --water --dir=" + DEF_PATH + data + "/DATA/" + tpm_rx + "/" + pol)
 					os.system("scp -r " + DEF_PATH + data + "/DATA/" + tpm_rx + "/" + pol + "/SPECTROGRAMS* aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/SPECTROGRAM/" + tpm_rx + "/" + pol + "/")
 			lista_bands = os.listdir(DEF_PATH + SPG_DIR)
 			lista_bands = [x for x in lista_bands if x.startswith('SPECTROGRAM')]
