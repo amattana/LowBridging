@@ -228,12 +228,6 @@ if __name__ == "__main__":
 		print "Average value must be greater than zero!"
 		exit(0)
 
-	if "EDA2" in fname:
-		wclim=(-70, -40)
-		print "Setting waterfall colors for EDA2"
-	else:
-		wclim=(-80, -30)
-		print "Setting waterfall colors for SKALA-4"
 
 	if options.water or options.power:
 		if not options.recursive:
@@ -343,6 +337,15 @@ if __name__ == "__main__":
 		min_hold = np.array(spettro)
 		ora_inizio = datetime.datetime.strptime(fname.split("/")[-1][-21:-4], "%Y-%m-%d_%H%M%S")
 
+		if ((options.startfreq == 0) and (options.stopfreq == 400)):
+			if "EDA2" in fname:
+				wclim = (-70, -40)
+				print "Setting waterfall colors for EDA2"
+			else:
+				wclim = (-80, -30)
+				print "Setting waterfall colors for SKALA-4"
+		else:
+			wclim = (min(spettro[xmin:xmax+1]), max(spettro[xmin:xmax+1]))
 		ax1.cla()
 		if options.water:
 			ax1.imshow(spgramma, interpolation='none', aspect='auto', extent=[xmin, xmax, 60, 0], cmap='jet', clim=wclim)
