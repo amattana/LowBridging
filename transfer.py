@@ -25,8 +25,8 @@ POLS = ["Pol-X", "Pol-Y"]
 if __name__ == "__main__":
 	parser = OptionParser()
 	parser.add_option("-d", "--data", dest="data", default="", help="Date in format YYYY-MM-DD")
-	parser.add_option("--start-freq", dest="startfreq", default="", help="Start Frequency for Waterfall")
-	parser.add_option("--stop-freq", dest="stopfreq", default="", help="Stop Frequency for Waterfall")
+	parser.add_option("--start-freq", dest="startfreq", default=0, help="Start Frequency for Waterfall")
+	parser.add_option("--stop-freq", dest="stopfreq", default=400, help="Stop Frequency for Waterfall")
 	parser.add_option("--novideo", action='store_true', dest="novideo", default=False, help="If set do not produce videos (to save time)")
 	parser.add_option("--nopower", action='store_true', dest="nopower", default=False, help="If set do not produce power plots (to save time)")
 	parser.add_option("--notrigger", action='store_true', dest="notrigger", default=False, help="If set do not copy trigger plots (to save time)")
