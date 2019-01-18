@@ -467,7 +467,7 @@ if __name__ == "__main__":
     for b in list_spgramma:
         first_empty, b["dwater"] = b["dwater"][:10], b["dwater"][10:]
         ax_water.cla()
-        ax_water.imshow(np.rot90(b["dwater"]), interpolation='none', aspect='auto', extent=[0, 1, asse_x[b["xmin"]], asse_x[b["xmax"]]], cmap='jet', clim=(None, None))
+        ax_water.imshow(np.rot90(b["dwater"]), interpolation='none', aspect='auto', extent=[0, 1, asse_x[b["xmin"]], asse_x[b["xmax"]]], cmap='jet', clim=b["wclim"])
         #if b["band"] == "0-400":
         #    ax_water.imshow(np.transpose(b["dwater"], axes=0), interpolation='none', aspect='auto', extent=[asse_x[b["xmin"]], asse_x[b["xmax"]], 1, 0], cmap='jet', clim=b["wclim"])
         #    #print b["band"], b["wclim"]
