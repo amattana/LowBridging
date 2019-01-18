@@ -35,6 +35,7 @@ from tqdm import tqdm
 BASE_DIR = "/data/data_2/2018-11-LOW-BRIDGING/"
 SPG_DIR = "SPECTROGRAMS_BAND_"
 FILE_HUMIDITY = "/data/data_2/2018-11-LOW-BRIDGING/WEATHER/Humidity.txt"
+FILE_TEMPERATURE = "/data/data_2/2018-11-LOW-BRIDGING/WEATHER/Temperature.txt"
 FILE_WIND_SPEED = "/data/data_2/2018-11-LOW-BRIDGING/WEATHER/WindSpeed.txt"
 FILE_WIND_DIR = "/data/data_2/2018-11-LOW-BRIDGING/WEATHER/WindDir.txt"
 
@@ -298,11 +299,8 @@ if __name__ == "__main__":
         xmin = closest(asse_x, int(b.split("-")[0]))
         xmax = closest(asse_x, int(b.split("-")[1]))
         dic_spgramma = {}
-        spgramma = np.empty((500, xmax - xmin + 1,))
-        spgramma[:] = np.nan
         dayspgramma = np.empty((10, xmax - xmin + 1,))
         dayspgramma[:] = np.nan
-        dic_spgramma["water"] = spgramma
         dic_spgramma["dwater"] = dayspgramma
         dic_spgramma["band"] = b
         dic_spgramma["dir"] = SPG_DIR + str("%03d" % int(b.split("-")[0])) + "-" + str("%03d" % int(b.split("-")[1]))
@@ -343,9 +341,9 @@ if __name__ == "__main__":
     else:
         wclim = (min(spettro[xmin:xmax + 1]), max(spettro[xmin:xmax + 1]))
     ax_water.cla()
-    ax_water.imshow(spgramma, interpolation='none', aspect='auto', extent=[xmin, xmax, 60, 0], cmap='jet',
+    ax_water.imshow(dayspgramma, interpolation='none', aspect='auto', extent=[xmin, xmax, 60, 0], cmap='jet',
                clim=wclim)
-    ax_water.set_title(" Spectrogram of " + str(len(spgramma)) + " spectra")
+    #ax_water.set_title(" Spectrogram of " + str(len(spgramma)) + " spectra")
     ax_water.set_ylabel("Time (minutes)")
     ax_water.set_xlabel('MHz')
 
@@ -389,103 +387,119 @@ if __name__ == "__main__":
 
         # per ognuno
         for b in list_spgramma:
-            last, b["water"] = b["water"][0], b["water"][1:]
+            #last, b["water"] = b["water"][0], b["water"][1:]
             #last, spgramma = spgramma[0], spgramma[1:]
             # print len(spgramma), len(spgramma[0]), bw, len(spettro), len(spettro[xmin:xmax+1])
             if b["xmin"] == 0:
                 # se xmin == 0 butto il canale zero
-                b["water"] = np.concatenate((b["water"], [spettro[:b["xmax"] + 1].astype(np.float)]), axis=0)
-                #spgramma = np.concatenate((spgramma, [spettro[:xmax + 1].astype(np.float)]), axis=0)
+                b["dwater"] = np.concatenate((b["dwater"], [spettro[:b["xmax"] + 1].astype(np.float)]), axis=0)
             else:
-                b["water"] = np.concatenate((b["water"], [spettro[b["xmin"]:b["xmax"] + 1].astype(np.float)]), axis=0)
-                #spgramma = np.concatenate((spgramma, [spettro[xmin:xmax + 1].astype(np.float)]), axis=0)
+                b["dwater"] = np.concatenate((b["dwater"], [spettro[b["xmin"]:b["xmax"] + 1].astype(np.float)]), axis=0)
 
-        if ((orario - ora_inizio).seconds / 60.) > options.framerate:
+        #if ((orario - ora_inizio).seconds / 60.) > options.framerate:
 
-            for b in list_spgramma:
-                while np.isnan(b["water"][0][0]):
-                    last, b["water"] = b["water"][0], b["water"][1:]
-                b["dwater"] = np.concatenate((b["dwater"], b["water"]), axis=0)
+            #for b in list_spgramma:
+                #while np.isnan(b["water"][0][0]):
+                #    last, b["water"] = b["water"][0], b["water"][1:]
+                #b["dwater"] = np.concatenate((b["dwater"], b["water"]), axis=0)
+            #print len(b["water"]), len(b["dwater"])
 
-            ora_inizio = orario
+        #    ora_inizio = orario
 
-    for b in list_spgramma:
-        while np.isnan(b["water"][0][0]):
-            last, b["water"] = b["water"][0], b["water"][1:]
-        b["dwater"] = np.concatenate((b["dwater"], b["water"]), axis=0)
+    # for b in list_spgramma:
+    #     while np.isnan(b["water"][0][0]):
+    #         print "PRIMA", len()
+    #         last, b["water"] = b["water"][0], b["water"][1:]
+    #     b["dwater"] = np.concatenate((b["dwater"], b["water"]), axis=0)
+    # #print len(b["water"]), len(b["dwater"])
 
-    for b in list_spgramma:
-        ax_water.cla()
-        if b["band"] == "0-400":
-            ax_water.imshow(b["water"], interpolation='none', aspect='auto', extent=[asse_x[b["xmin"]], asse_x[b["xmax"]], 1, 0],
-                   cmap='jet', clim=b["wclim"])
-        else:
-            ax_water.imshow(b["water"], interpolation='none', aspect='auto', extent=[asse_x[b["xmin"]], asse_x[b["xmax"]], 1, 0],
-                   cmap='jet')
-            ax_water.set_title(" Spectrogram of " + str(len(b["water"])) + " spectra")
-            ax_water.set_ylabel("Time (minutes)")
-            ax_water.set_xlabel('MHz')
-
-        ax_wspeed.cla()
-        x = np.linspace(0, 400, len(spettro))
-        ax_wspeed.plot(x, spettro, color="b")
-        if options.maxhold:
-            ax_wspeed.plot(x, max_hold, color="r")
-        if options.minhold:
-            ax_wspeed.plot(x, min_hold, color="g")
-        ax_wspeed.set_xlim(asse_x[b["xmin"]], asse_x[b["xmax"]])
-        # ax2.set_ylim(-90, -40)
-        # ax_wspeed.set_ylim(-100, 0)
-        # ax_wspeed.set_xlabel('MHz')
-        # ax_wspeed.set_ylabel("dBm")
-        # ax_wspeed.set_title("Power Spectrum", fontsize=10)
-        # ax_wspeed.annotate("RF Power: " + "%3.1f" % (power_rf) + " dBm", (10, -15), fontsize=16)
-        # ax_wspeed.annotate("RBW: " + str("%3.1f" % RBW) + "KHz", (320, -15), fontsize=12)
-        ax_wspeed.grid(True)
-
-        # plt.title(fname.split("/")[-1][:-4].replace("_", "  "), fontsize=18)
-
-        plt.tight_layout()
-        # print fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png"
-        plt.savefig(fname[:fname.rfind("/") + 1] + b["dir"] + "/" + fname.split("/")[-1][:-4] + ".png")
-
-        # spgramma = np.empty((1000, bw - 5,))
-        # spgramma[:] = np.nan
-        ora_inizio = orario
+    # for b in list_spgramma:
+    #     ax_water.cla()
+    #     if b["band"] == "0-400":
+    #         ax_water.imshow(b["water"], interpolation='none', aspect='auto', extent=[asse_x[b["xmin"]], asse_x[b["xmax"]], 1, 0],
+    #                cmap='jet', clim=b["wclim"])
+    #     else:
+    #         ax_water.imshow(b["water"], interpolation='none', aspect='auto', extent=[asse_x[b["xmin"]], asse_x[b["xmax"]], 1, 0],
+    #                cmap='jet')
+    #         ax_water.set_title(" Spectrogram of " + str(len(b["water"])) + " spectra")
+    #         ax_water.set_ylabel("Time (minutes)")
+    #         ax_water.set_xlabel('MHz')
+    #
+    #     ax_wspeed.cla()
+    #     x = np.linspace(0, 400, len(spettro))
+    #     ax_wspeed.plot(x, spettro, color="b")
+    #     if options.maxhold:
+    #         ax_wspeed.plot(x, max_hold, color="r")
+    #     if options.minhold:
+    #         ax_wspeed.plot(x, min_hold, color="g")
+    #     ax_wspeed.set_xlim(asse_x[b["xmin"]], asse_x[b["xmax"]])
+    #     # ax2.set_ylim(-90, -40)
+    #     # ax_wspeed.set_ylim(-100, 0)
+    #     # ax_wspeed.set_xlabel('MHz')
+    #     # ax_wspeed.set_ylabel("dBm")
+    #     # ax_wspeed.set_title("Power Spectrum", fontsize=10)
+    #     # ax_wspeed.annotate("RF Power: " + "%3.1f" % (power_rf) + " dBm", (10, -15), fontsize=16)
+    #     # ax_wspeed.annotate("RBW: " + str("%3.1f" % RBW) + "KHz", (320, -15), fontsize=12)
+    #     ax_wspeed.grid(True)
+    #
+    #     # plt.title(fname.split("/")[-1][:-4].replace("_", "  "), fontsize=18)
+    #
+    #     plt.tight_layout()
+    #     # print fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png"
+    #     plt.savefig(fname[:fname.rfind("/") + 1] + b["dir"] + "/" + fname.split("/")[-1][:-4] + ".png")
+    #
+    #     # spgramma = np.empty((1000, bw - 5,))
+    #     # spgramma[:] = np.nan
+    #     ora_inizio = orario
 
     print "\nReading Humidity file...",
     humidity_x, humidity_y = read_weather(FILE_HUMIDITY, ora_inizio)
+    print "done!\nReading Temperature file...",
+    temperature_x, temperature_y = read_weather(FILE_TEMPERATURE, ora_inizio)
     print "done!\nReading Wind Direction file...",
     wind_dir_x, wind_dir_y = read_weather(FILE_WIND_DIR, ora_inizio)
     print "done!\nReading Wind Speed file...",
     wind_speed_x, wind_speed_y = read_weather(FILE_WIND_SPEED, ora_inizio)
     print "done!\n\nProcessing weather files...\n"
     humidity_x = np.array(humidity_x)
+    temperature_x = np.array(temperature_x)
     wind_dir_x = np.array(wind_dir_x)
     wind_speed_x = np.array(wind_speed_x)
+
+    x_tick = []
+    step = 0
+    for z in range(len(orari)):
+        if orari[z].hour == step:
+            #print str(orari[z])
+            x_tick += [z]
+            step = step + 3
+    #print str(orari[-1])
+    x_tick += [len(b["dwater"][10:])]
+    #print "ORARI:", len(orari), "D", len(b["dwater"][10:])
 
     for b in list_spgramma:
         first_empty, b["dwater"] = b["dwater"][:10], b["dwater"][10:]
         ax_water.cla()
-        ax_water.imshow(np.rot90(b["dwater"]), interpolation='none', aspect='auto', extent=[0, 1, asse_x[b["xmin"]], asse_x[b["xmax"]]], cmap='jet', clim=b["wclim"])
-        #if b["band"] == "0-400":
-        #    ax_water.imshow(np.transpose(b["dwater"], axes=0), interpolation='none', aspect='auto', extent=[asse_x[b["xmin"]], asse_x[b["xmax"]], 1, 0], cmap='jet', clim=b["wclim"])
-        #    #print b["band"], b["wclim"]
-        #else:
-        #    ax_water.imshow(b["dwater"], interpolation='none', aspect='auto', extent=[asse_x[b["xmin"]], asse_x[b["xmax"]], 1, 0], cmap='jet', clim=(None, None))
-        #    #print b["band"]
+        ax_water.imshow(np.rot90(b["dwater"]), interpolation='none', aspect='auto', cmap='jet', clim=b["wclim"])
         ax_water.set_title(" Spectrogram of " + fname.split("/")[-1][:-11].replace("_", "  "), fontsize=14)
         ax_water.set_ylabel("MHz")
         ax_water.set_xlabel('daytime')
+        ax_water.set_xticks(x_tick)
+        ax_water.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
+        ax_water.set_yticks(np.linspace(0,len(np.rot90(b["dwater"])),6))
+        ax_water.set_yticklabels(np.array(range(0, 20*6, 20)).astype("str").tolist()[::-1])
+        #print x_tick, np.array(range(0, 3*9, 3)).astype("str").tolist()
 
         # humidity
         ax_humidity.cla()
         serie_humidity = []
+        serie_temperature = []
         serie_wind_dir = []
         serie_wind_speed = []
         for i in tqdm(range(len(orari))):
             ora_x = toTimestamp(orari[i])
             serie_humidity += [humidity_y[closest(humidity_x, ora_x)]]
+            serie_temperature += [temperature_y[closest(temperature_x, ora_x)]]
             serie_wind_dir += [wind_dir_y[closest(wind_dir_x, ora_x)]]
             serie_wind_speed += [wind_speed_y[closest(wind_speed_x, ora_x)]]
 
@@ -496,6 +510,9 @@ if __name__ == "__main__":
         ax_wspeed.set_ylim(0,40)
         ax_wspeed.set_yticks(range(0, 10*5, 10))
         ax_wspeed.set_title("Wind Speed", fontsize=14)
+        ax_wspeed.set_xticks(x_tick)
+        ax_wspeed.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
+
         ax_wspeed.grid(True)
         ax_wdir.cla()
         ax_wdir.plot(serie_wind_dir)
@@ -505,29 +522,21 @@ if __name__ == "__main__":
         ax_wdir.set_yticks(range(0, 90*5, 90))
         ax_wdir.set_title("Wind Direction", fontsize=14)
         ax_wdir.grid(True)
+        ax_wdir.set_xticks(x_tick)
+        ax_wdir.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
+
         ax_humidity.cla()
-        ax_humidity.plot(serie_humidity)
+        ax_humidity.plot(serie_humidity, color='b', label="Humidity")
+        ax_humidity.plot(serie_temperature, color='r', label="Temperature")
         #ax_humidity.plot(humidity_y)
         ax_humidity.set_xlim(0, len(serie_wind_speed))
-        ax_humidity.set_ylim(10, 50)
-        ax_humidity.set_yticks(range(10, 10 * 6, 10))
-        ax_humidity.set_title("Humidity", fontsize=14)
+        ax_humidity.set_ylim(0, 50)
+        ax_humidity.set_yticks(range(0, 10 * 7, 10))
+        ax_humidity.set_title("Humidity (Blue) and Temperature (Red)", fontsize=14)
+        #ax_humidity.legend(fontsize=10)
         ax_humidity.grid(True)
-        #print len(serie_wind_speed)
-
-        # ax_wspeed.plot(x, max_hold, color="r")
-        # ax_wspeed.plot(x, min_hold, color="g")
-        #ax_wspeed.set_xlim(asse_x[b["xmin"]], asse_x[b["xmax"]])
-        # ax2.set_ylim(-90, -40)
-        # ax_wspeed.set_ylim(-100, 0)
-        # ax_wspeed.set_xlabel('MHz')
-        # ax_wspeed.set_ylabel("dBm")
-        # ax_wspeed.set_title("Power Spectrum", fontsize=10)
-        # ax2.annotate("RF Power: " + "%3.1f" % (power_rf) + " dBm", (10, -15), fontsize=16)
-        # ax_wspeed.annotate("RBW: " + str("%3.1f" % RBW) + "KHz", (320, -15), fontsize=12)
-        #ax_wspeed.grid(True)
-
-        # plt.title("Max Hold and Min Hold of " + fname.split("/")[-1][:-11].replace("_", "  "), fontsize=14)
+        ax_humidity.set_xticks(x_tick)
+        ax_humidity.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
 
         plt.tight_layout()
         # print fname[:fname.rfind("/")+1]+"PNG/"+fname.split("/")[-1][:-4]+".png"
