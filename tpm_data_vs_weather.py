@@ -36,6 +36,7 @@ BASE_DIR = "/data/data_2/2018-11-LOW-BRIDGING/"
 SPG_DIR = "SPECTROGRAMS_BAND_"
 FILE_HUMIDITY = "/data/data_2/2018-11-LOW-BRIDGING/WEATHER/Humidity.txt"
 FILE_TEMPERATURE = "/data/data_2/2018-11-LOW-BRIDGING/WEATHER/Temperature.txt"
+FILE_IRRADIATION = "/data/data_2/2018-11-LOW-BRIDGING/WEATHER/Irradiation.txt"
 FILE_WIND_SPEED = "/data/data_2/2018-11-LOW-BRIDGING/WEATHER/WindSpeed.txt"
 FILE_WIND_DIR = "/data/data_2/2018-11-LOW-BRIDGING/WEATHER/WindDir.txt"
 
@@ -456,6 +457,8 @@ if __name__ == "__main__":
     humidity_x, humidity_y = read_weather(FILE_HUMIDITY, ora_inizio)
     print "done!\nReading Temperature file...",
     temperature_x, temperature_y = read_weather(FILE_TEMPERATURE, ora_inizio)
+    print "done!\nReading Solar Irradiation file...",
+    irradiation_x, irradiation_y = read_weather(FILE_IRRADIATION, ora_inizio)
     print "done!\nReading Wind Direction file...",
     wind_dir_x, wind_dir_y = read_weather(FILE_WIND_DIR, ora_inizio)
     print "done!\nReading Wind Speed file...",
@@ -463,6 +466,7 @@ if __name__ == "__main__":
     print "done!\n\nProcessing weather files...\n"
     humidity_x = np.array(humidity_x)
     temperature_x = np.array(temperature_x)
+    irradiation_x = np.array(irradiation_x)
     wind_dir_x = np.array(wind_dir_x)
     wind_speed_x = np.array(wind_speed_x)
 
@@ -486,20 +490,31 @@ if __name__ == "__main__":
         ax_water.set_xlabel('daytime')
         ax_water.set_xticks(x_tick)
         ax_water.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
-        ax_water.set_yticks(np.linspace(0,len(np.rot90(b["dwater"])),6))
-        ax_water.set_yticklabels(np.array(range(0, 20*6, 20)).astype("str").tolist()[::-1])
+        if int(b["band"].split("-")[1]) <= 100:
+            ystep = 10
+        elif int(b["band"].split("-")[1]) <= 200:
+            ystep = 20
+        elif int(b["band"].split("-")[1]) > 200:
+            ystep = 50
+        ytic = np.array(range(((int(b["band"].split("-")[1])-int(b["band"].split("-")[0])) / ystep)))* int((len(np.rot90(b["dwater"])) / ((int(b["band"].split("-")[1])-int(b["band"].split("-")[0])) / float(ystep))))
+        ytic = np.concatenate(ytic, len(np.rot90(b["dwater"])))
+        ax_water.set_yticks(ytic)
+        ylabmax = np.array(range(0,(int(b["band"].split("-")[1])/ystep) +1))*ystep
+        ax_water.set_yticklabels(ylabmax.astype("str").tolist()[::-1])
         #print x_tick, np.array(range(0, 3*9, 3)).astype("str").tolist()
 
         # humidity
         ax_humidity.cla()
         serie_humidity = []
         serie_temperature = []
+        serie_irradiation = []
         serie_wind_dir = []
         serie_wind_speed = []
         for i in tqdm(range(len(orari))):
             ora_x = toTimestamp(orari[i])
             serie_humidity += [humidity_y[closest(humidity_x, ora_x)]]
             serie_temperature += [temperature_y[closest(temperature_x, ora_x)]]
+            serie_irradiation += [irradiation_y[closest(irradiation_x, ora_x)]/20]
             serie_wind_dir += [wind_dir_y[closest(wind_dir_x, ora_x)]]
             serie_wind_speed += [wind_speed_y[closest(wind_speed_x, ora_x)]]
 
@@ -528,11 +543,12 @@ if __name__ == "__main__":
         ax_humidity.cla()
         ax_humidity.plot(serie_humidity, color='b', label="Humidity")
         ax_humidity.plot(serie_temperature, color='r', label="Temperature")
+        ax_humidity.plot(serie_irradiation, color='g', label="Irradiation")
         #ax_humidity.plot(humidity_y)
         ax_humidity.set_xlim(0, len(serie_wind_speed))
         ax_humidity.set_ylim(0, 50)
         ax_humidity.set_yticks(range(0, 10 * 7, 10))
-        ax_humidity.set_title("Humidity (Blue) and Temperature (Red)", fontsize=14)
+        ax_humidity.set_title("Humidity (Blue), Temperature (Red) and Solar Irradiation* (Green)   *:[1/20]", fontsize=14)
         #ax_humidity.legend(fontsize=10)
         ax_humidity.grid(True)
         ax_humidity.set_xticks(x_tick)
