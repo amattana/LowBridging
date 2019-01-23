@@ -496,10 +496,13 @@ if __name__ == "__main__":
             ystep = 20
         elif int(b["band"].split("-")[1]) > 200:
             ystep = 50
-        ytic = np.array(range(((int(b["band"].split("-")[1])-int(b["band"].split("-")[0])) / ystep)))* int((len(np.rot90(b["dwater"])) / ((int(b["band"].split("-")[1])-int(b["band"].split("-")[0])) / float(ystep))))
-        ytic = np.concatenate(ytic, len(np.rot90(b["dwater"])))
-        ax_water.set_yticks(ytic)
-        ylabmax = np.array(range(0,(int(b["band"].split("-")[1])/ystep) +1))*ystep
+        BW = int(b["band"].split("-")[1]) - int(b["band"].split("-")[0])
+        #ytic = np.array(range(((int(b["band"].split("-")[1])-int(b["band"].split("-")[0])) / ystep))) * int((len(np.rot90(b["dwater"])) / ((int(b["band"].split("-")[1])-int(b["band"].split("-")[0])) )))
+        ytic = np.array(range(( BW / ystep) + 1 )) * ystep * (len(np.rot90(b["dwater"])) / float(BW))
+        #ytic = np.concatenate(ytic, len(np.rot90(b["dwater"])))
+        ax_water.set_yticks(len(np.rot90(b["dwater"])) - ytic)
+        #ylabmax = np.array(range(0,(int(b["band"].split("-")[1])/ystep) +1))*ystep
+        ylabmax = np.array(range(( BW / ystep) + 1 )) * ystep
         ax_water.set_yticklabels(ylabmax.astype("str").tolist()[::-1])
         #print x_tick, np.array(range(0, 3*9, 3)).astype("str").tolist()
 
@@ -535,7 +538,7 @@ if __name__ == "__main__":
         ax_wdir.set_xlim(0, len(serie_wind_speed))
         ax_wdir.set_ylim(0, 360)
         ax_wdir.set_yticks(range(0, 90*5, 90))
-        ax_wdir.set_title("Wind Direction", fontsize=14)
+        ax_wdir.set_title("Wind Direction (0-180 = N-S)", fontsize=14)
         ax_wdir.grid(True)
         ax_wdir.set_xticks(x_tick)
         ax_wdir.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
