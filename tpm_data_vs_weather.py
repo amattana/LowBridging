@@ -503,7 +503,7 @@ if __name__ == "__main__":
         ax_water.set_yticks(len(np.rot90(b["dwater"])) - ytic)
         #ylabmax = np.array(range(0,(int(b["band"].split("-")[1])/ystep) +1))*ystep
         ylabmax = np.array(range(( BW / ystep) + 1 )) * ystep
-        ax_water.set_yticklabels(ylabmax.astype("str").tolist()[::-1])
+        ax_water.set_yticklabels(ylabmax.astype("str").tolist())
         #print x_tick, np.array(range(0, 3*9, 3)).astype("str").tolist()
 
         # humidity
