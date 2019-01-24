@@ -316,6 +316,7 @@ if __name__ == "__main__":
         ax2.set_title("Power Spectrum", fontsize=14)
         ax2.annotate("RF Power: " + "%3.1f" % (power_rf) + " dBm", (10, -15), fontsize=16)
         ax2.annotate("Averaged Spectra: " + str(options.average), (280, -15), fontsize=16)
+        ax2.annotate("RBW: " + str("%3.1f" % RBW) + "KHz", (280, -20), fontsize=16)
         ax2.grid(True)
 
         # ax3.cla()
@@ -433,7 +434,7 @@ if __name__ == "__main__":
                     spgramma = np.concatenate((spgramma, [spettro[xmin:xmax + 1].astype(np.float)]), axis=0)
 
             if options.framerate == 0:
-                print "qua"
+                #print "qua"
                 if options.water:
                     ax1.cla()
                     ax1.imshow(spgramma, interpolation='none', aspect='auto', extent=[asse_x[xmin], asse_x[xmax], 60, 0],
