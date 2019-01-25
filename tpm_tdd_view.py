@@ -340,7 +340,7 @@ if __name__ == "__main__":
         plt.show()
 
         if options.savetxt:
-            with open(fname[:-4]+".txt", "w") as f:
+            with open(fname[:-4]+"_RBW-"+str("%03d" % int(RBW))"KHz.txt", "w") as f:
                 for i in range(len(singolo)):
                     f.write(str("%9.6f\t%5.2f\n"%(asse_x[i], singolo[i])))
 
