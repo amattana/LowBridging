@@ -208,6 +208,18 @@ if __name__ == "__main__":
                       default=400, type="int",
                       help="Stop Frequency for Waterfall")
 
+    parser.add_option("--wclim",
+                      dest="wclim",
+                      default="auto",
+                      help="Waterfall Color Limits (String like: \"-70,-30\", default \"auto\" that means autoscale)")
+
+    parser.add_option("--savetxt", action="store_true",
+                      dest="savetxt",
+                      default=False,
+                      help="Save the Spectrum ")
+
+
+
     (options, args) = parser.parse_args()
 
     plt.ioff()
@@ -307,8 +319,8 @@ if __name__ == "__main__":
 
         if options.water:
             ax1.plot(range(100))
-
-        ax2.plot(np.linspace(0, 400, len(singolo)), singolo)
+        asse_x = np.linspace(0, 400, len(singolo))
+        ax2.plot(asse_x, singolo)
         ax2.set_xlim(0, 400)
         ax2.set_ylim(-100, 0)
         ax2.set_xlabel('MHz')
@@ -319,11 +331,6 @@ if __name__ == "__main__":
         ax2.annotate("RBW: " + str("%3.1f" % RBW) + "KHz", (280, -20), fontsize=16)
         ax2.grid(True)
 
-        # ax3.cla()
-        # ax3.plot(range(100),color='w')
-        # ax3.set_axis_off()
-        # ax3.annotate(fname.split("/")[-1][:-4], (3,70), fontsize=14)
-        # ax3.annotate("RF Power: " + "%3.1f" % (power_rf) + " dBm", (3, 30), fontsize=16)
         plt.title(fname.split("/")[-1][:-4].replace("_", "  "), fontsize=18)
 
         plt.tight_layout()
@@ -332,7 +339,11 @@ if __name__ == "__main__":
         # plt.clf()
         plt.show()
 
-    # exit()
+        if options.savetxt:
+            with open(fname[:-4]+".txt", "w") as f:
+                for i in range(len(singolo)):
+                    f.write(str("%9.6f\t%5.2f\n"%(asse_x[i], singolo[i])))
+
 
     else:
 
@@ -366,8 +377,15 @@ if __name__ == "__main__":
                 wclim = (-80, -30)
                 print "Setting waterfall colors for SKALA-4"
         else:
-            wclim = (min(spettro[xmin:xmax + 1]), max(spettro[xmin:xmax + 1]))
+            if options.wclim == "auto":
+                wclim = (min(spettro[xmin:xmax + 1]), max(spettro[xmin:xmax + 1]))
+            else:
+                wclim = (int(options.wclim.split(",")[0]), int(options.wclim.split(",")[1]))
+
+        #print "Setting waterfall colors ", wclim, options.wclim
+
         ax1.cla()
+
         if options.water:
             ax1.imshow(spgramma, interpolation='none', aspect='auto', extent=[xmin, xmax, 60, 0], cmap='jet',
                        clim=wclim)
@@ -587,7 +605,8 @@ if __name__ == "__main__":
         ax2.set_ylabel("dBm")
         ax2.set_title("Power Spectrum", fontsize=10)
         # ax2.annotate("RF Power: " + "%3.1f" % (power_rf) + " dBm", (10, -15), fontsize=16)
-        ax2.annotate("RBW: " + str("%3.1f" % RBW) + "KHz", (320, -15), fontsize=12)
+        x_annotation = asse_x[xmin]+((asse_x[xmax]-asse_x[xmin])/4*3)
+        ax2.annotate("RBW: " + str("%3.1f" % RBW) + "KHz", (x_annotation, -15), fontsize=12)
         ax2.grid(True)
 
         plt.title("Max Hold and Min Hold of " + fname.split("/")[-1][:-11].replace("_", "  "), fontsize=14)
