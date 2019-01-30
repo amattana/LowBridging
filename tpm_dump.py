@@ -58,7 +58,7 @@ POWER_DIR = "POWER/"
 TRIGGER_DIR = "TRIGGER/"
 POWER_DAY = "~/work/LowBridging/power_plot.py --silent -a --dir="+OUT_PATH
 
-PHASE_0_MAP = [[1, "SKALA-4"], [0, "EDA2"]]
+PHASE_0_MAP = [[0, "EDA2"], [1, "SKALA-4"], [2, "SKALA-2"], [3, "SKALA-41"]]
 
 
 # rms_remap = [1, 0, 3, 2, 5, 4, 7, 6, 17, 16, 19, 18, 21, 20, 23, 22, 30, 31, 28, 29, 26, 27, 24, 25, 14, 15, 12, 13, 10, 11,
@@ -93,53 +93,19 @@ def plottali4(spettro, rfpower, ora):
 	p4_ax += [figA.add_subplot(gs[2])]
 	p4_ax += [figA.add_subplot(gs[3])]
 
-	p4_ax[0].cla()
-	p4_ax[0].plot(np.linspace(0, 400, len(spettro[(PHASE_0_MAP[0][0] * 2)][1:])), spettro[(PHASE_0_MAP[0][0] * 2)][1:],
-				  color='b')
-	p4_ax[0].set_xlim(0, 400)
-	p4_ax[0].set_ylim(-80, 0)
-	p4_ax[0].set_xlabel('MHz')
-	p4_ax[0].set_ylabel("dBm")
-	p4_ax[0].set_title(PHASE_0_MAP[0][1] + " Pol X", fontsize=15)
-	# ax1.annotate("RF Power: " + "%3.1f" % (rfpower[rms_remap[(PHASE_0_MAP[0][0]*2)]]) + " dBm", (10, -17), fontsize=16)
-	p4_ax[0].annotate("RF Power: " + "%3.1f" % (rfpower[(PHASE_0_MAP[0][0] * 2)]) + " dBm", (10, -17), fontsize=16)
-	p4_ax[0].grid(True)
+	for cnt in xrange(len(PHASE_0_MAP)):
 
-	p4_ax[1].cla()
-	p4_ax[1].plot(np.linspace(0, 400, len(spettro[(PHASE_0_MAP[0][0] * 2) + 1][1:])),
-				  spettro[(PHASE_0_MAP[0][0] * 2) + 1][1:], color='g')
-	p4_ax[1].set_xlim(0, 400)
-	p4_ax[1].set_ylim(-80, 0)
-	p4_ax[1].set_xlabel('MHz')
-	p4_ax[1].set_ylabel("dBm")
-	p4_ax[1].set_title(PHASE_0_MAP[0][1] + " Pol Y", fontsize=15)
-	# ax2.annotate("RF Power: " + "%3.1f" % (rfpower[rms_remap[(PHASE_0_MAP[0][0]*2)+1]]) + " dBm", (10, -17), fontsize=16)
-	p4_ax[1].annotate("RF Power: " + "%3.1f" % (rfpower[(PHASE_0_MAP[0][0] * 2) + 1]) + " dBm", (10, -17), fontsize=16)
-	p4_ax[1].grid(True)
-
-	p4_ax[2].cla()
-	p4_ax[2].plot(np.linspace(0, 400, len(spettro[(PHASE_0_MAP[1][0] * 2)][1:])), spettro[(PHASE_0_MAP[1][0] * 2)][1:],
-				  color='b')
-	p4_ax[2].set_xlim(0, 400)
-	p4_ax[2].set_ylim(-80, 0)
-	p4_ax[2].set_xlabel('MHz')
-	p4_ax[2].set_ylabel("dBm")
-	p4_ax[2].set_title(PHASE_0_MAP[1][1] + " Pol X", fontsize=15)
-	p4_ax[2].annotate("RF Power: " + "%3.1f" % (rfpower[(PHASE_0_MAP[1][0] * 2)]) + " dBm", (10, -17), fontsize=16)
-	# ax3.annotate("RF Power: " + "%3.1f" % (rfpower[rms_remap[(PHASE_0_MAP[1][0]*2)]]) + " dBm", (10, -17), fontsize=16)
-	p4_ax[2].grid(True)
-
-	p4_ax[3].cla()
-	p4_ax[3].plot(np.linspace(0, 400, len(spettro[(PHASE_0_MAP[1][0] * 2) + 1][1:])),
-				  spettro[(PHASE_0_MAP[1][0] * 2) + 1][1:], color='g')
-	p4_ax[3].set_xlim(0, 400)
-	p4_ax[3].set_ylim(-80, 0)
-	p4_ax[3].set_xlabel('MHz')
-	p4_ax[3].set_ylabel("dBm")
-	p4_ax[3].set_title(PHASE_0_MAP[1][1] + " Pol Y", fontsize=15)
-	# ax4.annotate("RF Power: " + "%3.1f" % (rfpower[rms_remap[(PHASE_0_MAP[1][0]*2)+1]]) + " dBm", (10, -15), fontsize=16)
-	p4_ax[3].annotate("RF Power: " + "%3.1f" % (rfpower[(PHASE_0_MAP[1][0] * 2) + 1]) + " dBm", (10, -15), fontsize=16)
-	p4_ax[3].grid(True)
+		p4_ax[cnt].cla()
+		p4_ax[cnt].plot(np.linspace(0, 400, len(spettro[(PHASE_0_MAP[cnt][0] * 2)][1:])), spettro[(PHASE_0_MAP[cnt][0] * 2)][1:], color='b')
+		p4_ax[cnt].plot(np.linspace(0, 400, len(spettro[(PHASE_0_MAP[cnt][0] * 2) + 1][1:])), spettro[(PHASE_0_MAP[cnt][0] * 2) + 1][1:], color='g')
+		p4_ax[cnt].set_xlim(0, 400)
+		p4_ax[cnt].set_ylim(-80, 0)
+		p4_ax[cnt].set_xlabel('MHz')
+		p4_ax[cnt].set_ylabel("dBm")
+		p4_ax[cnt].set_title(PHASE_0_MAP[cnt][1] + " Pol X", fontsize=15)
+		# ax1.annotate("RF Power: " + "%3.1f" % (rfpower[rms_remap[(PHASE_0_MAP[0][0]*2)]]) + " dBm", (10, -17), fontsize=16)
+		p4_ax[cnt].annotate("RF Power: " + "%3.1f" % (rfpower[(PHASE_0_MAP[cnt][0] * 2)]) + " dBm", (10, -17), fontsize=16)
+		p4_ax[cnt].grid(True)
 
 	# plt.title(fname.split("/")[-1][:-4].replace("_","  "), fontsize=18)
 	titolo = ora[:-7] + "  " + ora[-6:-4] + ":" + ora[-4:-2] + ":" + ora[-2:] + " UTC"
@@ -153,11 +119,13 @@ def plottali4(spettro, rfpower, ora):
 
 
 def plottali2(spettro, rfpower, ora):
+	RBW = 400000.0 / len(spettro[(PHASE_0_MAP[0][0] * 2)][1:])
 	gs = gridspec.GridSpec(2, 1)
 	figB = plt.figure(figsize=(12, 7), facecolor='w')
 	p2_ax = []
 	p2_ax += [figB.add_subplot(gs[0])]
 	p2_ax += [figB.add_subplot(gs[1])]
+
 
 	p2_ax[0].cla()
 	p2_ax[0].plot(np.linspace(0, 400, len(spettro[(PHASE_0_MAP[0][0] * 2)][1:])), spettro[(PHASE_0_MAP[0][0] * 2)][1:],
@@ -176,6 +144,7 @@ def plottali2(spettro, rfpower, ora):
 					  color='b')
 	p2_ax[0].annotate("RF Power: " + "%3.1f" % (rfpower[(PHASE_0_MAP[0][0] * 2) + 1]) + " dBm", (12, -17), fontsize=16,
 					  color='g')
+	p2_ax[0].annotate("RBW: " + str("%3.1f" % RBW) + "KHz", (320, -15), fontsize=12)
 	p2_ax[0].grid(True)
 
 	p2_ax[1].cla()
@@ -194,6 +163,7 @@ def plottali2(spettro, rfpower, ora):
 					  color='b')
 	p2_ax[1].annotate("RF Power: " + "%3.1f" % (rfpower[(PHASE_0_MAP[1][0] * 2) + 1]) + " dBm", (12, -17), fontsize=16,
 					  color='g')
+	p2_ax[1].annotate("RBW: " + str("%3.1f" % RBW) + "KHz", (320, -15), fontsize=12)
 	p2_ax[1].grid(True)
 
 	titolo = ora[:-7] + "  " + ora[-6:-4] + ":" + ora[-4:-2] + ":" + ora[-2:] + " UTC"
