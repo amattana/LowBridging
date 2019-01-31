@@ -104,7 +104,8 @@ def plottali4(spettro, rfpower, ora):
 		p4_ax[cnt].set_ylabel("dBm")
 		p4_ax[cnt].set_title(PHASE_0_MAP[cnt][1] + " Pol X", fontsize=15)
 		# ax1.annotate("RF Power: " + "%3.1f" % (rfpower[rms_remap[(PHASE_0_MAP[0][0]*2)]]) + " dBm", (10, -17), fontsize=16)
-		p4_ax[cnt].annotate("RF Power: " + "%3.1f" % (rfpower[(PHASE_0_MAP[cnt][0] * 2)]) + " dBm", (10, -17), fontsize=16)
+		p4_ax[cnt].annotate("RF Power: " + "%3.1f" % (rfpower[(PHASE_0_MAP[cnt][0] * 2)]) + " dBm", (10, -17), fontsize=16, color='b')
+		p4_ax[cnt].annotate("RF Power: " + "%3.1f" % (rfpower[(PHASE_0_MAP[cnt][0] * 2) + 1]) + " dBm", (10, -27), fontsize=16, color='g')
 		p4_ax[cnt].grid(True)
 
 	# plt.title(fname.split("/")[-1][:-4].replace("_","  "), fontsize=18)
@@ -397,7 +398,7 @@ if __name__ == "__main__":
 								plotta(spettro[(rx * 2) + p], fpath + rxpath + fname, pol, rfpow)
 
 				plottali4(spettro, rfpower, ora)
-				plottali2(spettro, rfpower, ora)
+				#plottali2(spettro, rfpower, ora)
 			if triggered:
 				mask_trigger = True
 			if int(epoch) - trigger_time >= 60:

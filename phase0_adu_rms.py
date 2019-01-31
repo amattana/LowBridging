@@ -128,7 +128,7 @@ if __name__ == "__main__":
     ax1.set_yticks(xrange(0, 55, 5))
     ax1.set_xticks(xrange(0, (24*60*60)+60, 60*60))
     ax1.set_xticklabels(np.array(xrange(25)).astype("str"))
-    ax1.set_xlabel('Day Hours')
+    ax1.set_xlabel('UTC Day Hours')
     ax1.set_ylabel("ADU RMS")
     ax1.set_title("ADU RMS of Day " + str(orario.date()), fontsize=14)
     ax1.grid(True)
