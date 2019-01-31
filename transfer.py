@@ -41,7 +41,7 @@ if __name__ == "__main__":
 		data = options.data
 
 	CMD_VIDEO_A = "ffmpeg -y -f image2 -i " + DEF_PATH + data + "/IMG/PLOT-A/%*.png -vcodec libx264 " + DEF_PATH + data + "/VIDEO/LB_PHASE-0_A_"
-	CMD_VIDEO_B = "ffmpeg -y -f image2 -i " + DEF_PATH + data + "/IMG/PLOT-B/%*.png -vcodec libx264 " + DEF_PATH + data + "/VIDEO/LB_PHASE-0_B_"
+	#CMD_VIDEO_B = "ffmpeg -y -f image2 -i " + DEF_PATH + data + "/IMG/PLOT-B/%*.png -vcodec libx264 " + DEF_PATH + data + "/VIDEO/LB_PHASE-0_B_"
 
 	if os.path.isdir(DEF_PATH + data):
 		#os.system("cd " + DEF_PATH + data)
@@ -71,9 +71,9 @@ if __name__ == "__main__":
 			print "\n\n*  [1/2] " + CMD_VIDEO_A+data+".avi ...\n\n"
 			os.system(CMD_VIDEO_A+data+".avi")
 			print "\n\n*  [1/2] " + CMD_VIDEO_A+data+".avi ...done!"
-			print "\n*  [2/2] " + CMD_VIDEO_B+data+".avi ...\n\n"
-			os.system(CMD_VIDEO_B+data+".avi")
-			print "\n*  [2/2] " + CMD_VIDEO_B+data+".avi ...done!\n"
+			#print "\n*  [2/2] " + CMD_VIDEO_B+data+".avi ...\n\n"
+			#os.system(CMD_VIDEO_B+data+".avi")
+			#print "\n*  [2/2] " + CMD_VIDEO_B+data+".avi ...done!\n"
 
 		print "\nCopying data to Cerberus...\n\n"
 
