@@ -148,10 +148,10 @@ if __name__ == "__main__":
                       default="",
                       help="Input Time Domain Data file '.tdd' saved using tpm_dump.py")
 
-    parser.add_option("--average",
-                      dest="average",
-                      default=16,
-                      help="Number of time domain segments to be averaged. 1 means NO average")
+    # parser.add_option("--average",
+    #                   dest="average",
+    #                   default=16,
+    #                   help="Number of time domain segments to be averaged. 1 means NO average")
 
     parser.add_option("--framerate",
                       dest="framerate",
@@ -218,13 +218,21 @@ if __name__ == "__main__":
                       default=False,
                       help="Save the Spectrum ")
 
-
+    parser.add_option("--resolution",
+                      dest="resolution",
+                      default=6, type="int",
+                      help="Frequency resolution in KHz (it will be truncated to the closest possible)")
 
     (options, args) = parser.parse_args()
 
     plt.ioff()
 
-    nsamples = 2 ** 17 / int(options.average)
+
+    resolutions = 2 ** np.array(range(16)) * (800000.0 / 2 ** 17)
+    rbw = int(closest(resolutions, options.resolution))
+    avg = 2 ** rbw
+
+    nsamples = 2 ** 17 / avg
 
     if not options.dir == "":
         datapath = options.dir
@@ -252,11 +260,7 @@ if __name__ == "__main__":
         datafiles = sorted(glob.glob(datapath + "/*.tdd"))
         print "Found " + str(len(datafiles)) + " \"tdd\" files.\n"
 
-    if int(options.average) < 1:
-        print "Average value must be greater than zero!"
-        exit(0)
-
-    RBW = (int(options.average) * (400000.0 / 65536.0))
+    RBW = (avg * (400000.0 / 65536.0))
 
     if options.water or options.power:
         if not options.recursive:
@@ -327,7 +331,7 @@ if __name__ == "__main__":
         ax2.set_ylabel("dBm")
         ax2.set_title("Power Spectrum", fontsize=14)
         ax2.annotate("RF Power: " + "%3.1f" % (power_rf) + " dBm", (10, -15), fontsize=16)
-        ax2.annotate("Averaged Spectra: " + str(options.average), (280, -15), fontsize=16)
+        ax2.annotate("Averaged Spectra: " + str(avg), (280, -15), fontsize=16)
         ax2.annotate("RBW: " + str("%3.1f" % RBW) + "KHz", (280, -20), fontsize=16)
         ax2.grid(True)
 
@@ -340,7 +344,7 @@ if __name__ == "__main__":
         plt.show()
 
         if options.savetxt:
-            with open(fname[:-4]+"_RBW-"+str("%03d" % int(RBW))"KHz.txt", "w") as f:
+            with open(fname[:-4]+"_RBW-"+str("%03d" % int(RBW))+"KHz.txt", "w") as f:
                 for i in range(len(singolo)):
                     f.write(str("%9.6f\t%5.2f\n"%(asse_x[i], singolo[i])))
 
