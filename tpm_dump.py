@@ -50,6 +50,7 @@ import matplotlib.gridspec as gridspec
 import numpy as np
 import struct
 import datetime
+import time
 
 # Some globals
 OUT_PATH = "/data/data_2/2018-11-LOW-BRIDGING/"
@@ -84,14 +85,7 @@ def plotta(dati, kname, pol, rfpow):
 	plt.close()
 
 
-def plottali4(spettro, rfpower, ora):
-	gs = gridspec.GridSpec(2, 2)
-	figA = plt.figure(figsize=(12, 7), facecolor='w')
-	p4_ax = []
-	p4_ax += [figA.add_subplot(gs[0])]
-	p4_ax += [figA.add_subplot(gs[1])]
-	p4_ax += [figA.add_subplot(gs[2])]
-	p4_ax += [figA.add_subplot(gs[3])]
+def plottali4(spettro, rfpower, ora, p4_ax):
 
 	for cnt in xrange(len(PHASE_0_MAP)):
 
@@ -114,6 +108,7 @@ def plottali4(spettro, rfpower, ora):
 	plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 	plt.savefig(OUT_PATH + "IMG/PLOT-A/LB_PHASE-0_A_" + ora + ".png")
 	plt.close()
+	del figA
 
 
 # plt.show()
@@ -227,6 +222,9 @@ if __name__ == "__main__":
 	# tpm_used = max([a['TPM'] for a in cells if not a['TPM'] == ""])+1
 	tpm_used = 1
 
+	nsamples = 1024
+	rbw = (800000.0 / 2 ** 17) * (2 ** 17 / nsamples)
+
 	# inputs = options.inputs.split(",")
 
 	# Search for TPMs
@@ -259,7 +257,6 @@ if __name__ == "__main__":
 
 	pdir = OUT_PATH + POWER_DIR
 
-	plt.ioff()
 	counter = 0
 	try:
 		# num = long(options.num)
@@ -272,6 +269,12 @@ if __name__ == "__main__":
 
 		last_meas = last_power = trigger_time = time.time()
 		mask_trigger = False
+
+		plt.ioff()
+		fig, p4_ax = plt.subplots(nrows=2, ncols=2, figsize=(12, 7), facecolor='w')
+		p4_ax = p4_ax.reshape(1,4)[0]
+		plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+		fig.show()
 
 		while True:
 			counter = counter + 1
@@ -306,7 +309,7 @@ if __name__ == "__main__":
 			if not os.path.exists(tpath):
 				os.makedirs(tpath)
 
-			save_data = 0
+			save_data = 1
 			if ((measnum == 0) or (int(epoch) - last_meas >= (int(options.dtime)))):
 				save_data = 1
 				measnum = measnum + 1
@@ -388,16 +391,47 @@ if __name__ == "__main__":
 									f.write(struct.pack(">d", len(rawdata[(rx * 2) + p])))
 									f.write(struct.pack(">" + str(len(rawdata[(rx * 2) + p])) + "b",
 														*rawdata[(rx * 2) + p]))
-								plotta(spettro[(rx * 2) + p], tpath + rxpath + fname, pol, rfpow)
+								#plotta(spettro[(rx * 2) + p], tpath + rxpath + fname, pol, rfpow)
 
 							if save_data:
 								with open(fpath + rxpath + fname + ".tdd", "wb") as f:
 									f.write(struct.pack(">d", len(rawdata[(rx * 2) + p])))
 									f.write(struct.pack(">" + str(len(rawdata[(rx * 2) + p])) + "b",
 														*rawdata[(rx * 2) + p]))
-								plotta(spettro[(rx * 2) + p], fpath + rxpath + fname, pol, rfpow)
+								#plotta(spettro[(rx * 2) + p], fpath + rxpath + fname, pol, rfpow)
 
-				plottali4(spettro, rfpower, ora)
+				for cnt in xrange(len(PHASE_0_MAP)):
+					p4_ax[cnt].cla()
+					p4_ax[cnt].plot(np.linspace(0, 400, len(spettro[(PHASE_0_MAP[cnt][0] * 2)][1:])),
+									spettro[(PHASE_0_MAP[cnt][0] * 2)][1:], color='b')
+					p4_ax[cnt].plot(np.linspace(0, 400, len(spettro[(PHASE_0_MAP[cnt][0] * 2) + 1][1:])),
+									spettro[(PHASE_0_MAP[cnt][0] * 2) + 1][1:], color='g')
+					p4_ax[cnt].set_xlim(0, 400)
+					p4_ax[cnt].set_ylim(-80, 0)
+					p4_ax[cnt].set_xlabel('MHz')
+					p4_ax[cnt].set_ylabel("dBm")
+					p4_ax[cnt].set_title(PHASE_0_MAP[cnt][1] + " Pol X", fontsize=15)
+					# ax1.annotate("RF Power: " + "%3.1f" % (rfpower[rms_remap[(PHASE_0_MAP[0][0]*2)]]) + " dBm", (10, -17), fontsize=16)
+					p4_ax[cnt].annotate("RF Power:  " + "%3.1f" % (rfpower[(PHASE_0_MAP[cnt][0] * 2)]) + " dBm", (228, -9),
+										fontsize=14, color='b')
+					p4_ax[cnt].annotate("RF Power:  " + "%3.1f" % (rfpower[(PHASE_0_MAP[cnt][0] * 2) + 1]) + " dBm",
+										(228, -16), fontsize=14, color='g')
+					#p4_ax[cnt].annotate("RBW: " + "%3.1f" % rbw + " KHz", (320, -9), fontsize=14, color='b')
+					p4_ax[cnt].grid(True)
+
+				# plt.title(fname.split("/")[-1][:-4].replace("_","  "), fontsize=18)
+				titolo = ora[:-7] + "  " + ora[-6:-4] + ":" + ora[-4:-2] + ":" + ora[-2:] + " UTC   (RBW: " + "%3.1f" % rbw + " KHz)"
+				fig.suptitle(titolo, fontsize=16)
+				plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+				fig.canvas.draw()
+				time.sleep(1)
+				plt.savefig(OUT_PATH + "IMG/PLOT-A/LB_PHASE-0_A_" + ora + ".png")
+				time.sleep(1)
+
+				#plt.close()
+				#del figA
+
+				#plottali4(spettro, rfpower, ora)
 				#plottali2(spettro, rfpower, ora)
 			if triggered:
 				mask_trigger = True
