@@ -82,7 +82,7 @@ if __name__ == "__main__":
 			lista = sorted(glob.glob(DEF_PATH + data + "/TRIGGER/" + TPM_INPUTS[0] + "/" + POLS[0] + "/*png"))
 			for l in lista:
 				os.system("scp " + DEF_PATH + data + "/IMG/PLOT-A/*" + l[-10:-4] + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/TRIGGER/")
-				os.system("scp " + DEF_PATH + data + "/IMG/PLOT-B/*" + l[-10:-4] + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/TRIGGER/")
+				#os.system("scp " + DEF_PATH + data + "/IMG/PLOT-B/*" + l[-10:-4] + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/TRIGGER/")
 			os.system("scp -r " + DEF_PATH + data + "/TRIGGER aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/")
 
 		if not options.novideo:
