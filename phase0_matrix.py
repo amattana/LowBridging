@@ -229,6 +229,7 @@ if __name__ == "__main__":
     max_hold = np.array(spettro)
     min_hold = np.array(spettro)
     ora_inizio = datetime.datetime.strptime(fname.split("/")[-1][-21:-4], "%Y-%m-%d_%H%M%S")
+    asse_x = np.linspace(0,400,len(spettro))
 
     if (options.startfreq == 0) and (options.stopfreq == 400):
         if "EDA2" in fname:
@@ -243,8 +244,14 @@ if __name__ == "__main__":
         else:
             wclim = (int(options.wclim.split(",")[0]), int(options.wclim.split(",")[1]))
 
-    #ax1.cla()
+    #ax1.cla
 
+
+    fout = open(fname[:-4] + "_RBW-" + str("%03d" % int(RBW)) + "KHz.txt", "w")
+    fout.write(fname.split("/")[-1][-21:-11] + "\t" + "FREQ")
+    for i in range(len(asse_x)):
+        fout.write(str("\t%9.6f" % asse_x[i]))
+    fout.write("\n")
     for cnt in tqdm(range(len(datafiles))):
         fname = datafiles[cnt]
         # print fname.split("/")[-1][-21:-4]
@@ -262,7 +269,7 @@ if __name__ == "__main__":
         power_rf = power_adc + 12  # single ended to diff net loose 12 dBm
 
         #print power_rf, 0 - power_rf, spettro[100], spettro[100] + (0 - power_rf)
-        spettro += (0 - power_rf) # Equalizzazione a zero
+        #spettro += (0 - power_rf) # Equalizzazione a zero
 
         if power_rf < 8:
             nmax_hold = np.maximum(spettro.astype(np.float), max_hold.astype(np.float))
@@ -273,11 +280,18 @@ if __name__ == "__main__":
 
             spgramma = np.concatenate((spgramma, [spettro[xmin:xmax + 1].astype(np.float)]), axis=0)
 
+        fout.write(fname.split("/")[-1][-21:-4]+"\t"+str("%3.1f" % power_rf))
+        for i in range(len(spettro)):
+            fout.write(str("\t%3.1f" % spettro[i]))
+        fout.write("\n")
+        fout.flush()
+    fout.close()
+
     first_empty, spgramma = spgramma[:10], spgramma[10:]
 
     # gs = gridspec.GridSpec(2, 1, height_ratios=[1, 1])
-    gs = gridspec.GridSpec(2, 1, height_ratios=[20, 1])
-    fig = plt.figure(figsize=((len(spgramma[0])/100)+2, (len(spgramma)/100) + 10), facecolor='w', dpi=100)
+    gs = gridspec.GridSpec(2, 1, height_ratios=[6, 3])
+    fig = plt.figure(figsize=(12,7), facecolor='w', dpi=100)
 
     ax1 = fig.add_subplot(gs[0])
     ax2 = fig.add_subplot(gs[1])
