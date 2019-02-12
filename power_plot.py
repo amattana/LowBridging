@@ -300,7 +300,7 @@ if __name__ == "__main__":
 	if not datapath.split("/")[-2] == "POWER":
 		fname += "SINGLE_CHANNEL"
 	else:
-		fname += "ALL_BAND"
+		fname += "FULL_BAND"
 	if not os.path.exists(fname):
 		os.makedirs(fname)
 	if options.smooth:
