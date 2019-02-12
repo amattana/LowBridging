@@ -18,7 +18,7 @@ from optparse import OptionParser
 
 DEF_PATH = "/data/data_2/2018-11-LOW-BRIDGING/"
 SPG_DIR = "SPECTROGRAM/"
-TPM_INPUTS = ["RX-01_EDA2", "RX-02_SKALA-4"]
+TPM_INPUTS = ["RX-01_EDA-2", "RX-02_SKALA-4.0", "RX-05_SKALA-2", "RX-06_SKALA-4.1"]
 POLS = ["Pol-X", "Pol-Y"]
 
 

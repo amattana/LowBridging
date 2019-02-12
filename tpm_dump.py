@@ -59,7 +59,7 @@ POWER_DIR = "POWER/"
 TRIGGER_DIR = "TRIGGER/"
 POWER_DAY = "~/work/LowBridging/power_plot.py --silent -a --dir="+OUT_PATH
 
-PHASE_0_MAP = [[0, "EDA2"], [1, "SKALA-4"], [2, "SKALA-2"], [3, "SKALA-41"]]
+PHASE_0_MAP = [[0, "EDA-2"], [1, "SKALA-4.0"], [4, "SKALA-2"], [5, "SKALA-4.1"]]
 
 
 # rms_remap = [1, 0, 3, 2, 5, 4, 7, 6, 17, 16, 19, 18, 21, 20, 23, 22, 30, 31, 28, 29, 26, 27, 24, 25, 14, 15, 12, 13, 10, 11,
@@ -96,7 +96,7 @@ def plottali4(spettro, rfpower, ora, p4_ax):
 		p4_ax[cnt].set_ylim(-80, 0)
 		p4_ax[cnt].set_xlabel('MHz')
 		p4_ax[cnt].set_ylabel("dBm")
-		p4_ax[cnt].set_title(PHASE_0_MAP[cnt][1] + " Pol X", fontsize=15)
+		p4_ax[cnt].set_title(PHASE_0_MAP[cnt][1] + " ", fontsize=15)
 		# ax1.annotate("RF Power: " + "%3.1f" % (rfpower[rms_remap[(PHASE_0_MAP[0][0]*2)]]) + " dBm", (10, -17), fontsize=16)
 		p4_ax[cnt].annotate("RF Power: " + "%3.1f" % (rfpower[(PHASE_0_MAP[cnt][0] * 2)]) + " dBm", (10, -17), fontsize=16, color='b')
 		p4_ax[cnt].annotate("RF Power: " + "%3.1f" % (rfpower[(PHASE_0_MAP[cnt][0] * 2) + 1]) + " dBm", (10, -27), fontsize=16, color='g')
@@ -410,7 +410,7 @@ if __name__ == "__main__":
 					p4_ax[cnt].set_ylim(-80, 0)
 					p4_ax[cnt].set_xlabel('MHz')
 					p4_ax[cnt].set_ylabel("dBm")
-					p4_ax[cnt].set_title(PHASE_0_MAP[cnt][1] + " Pol X", fontsize=15)
+					p4_ax[cnt].set_title(PHASE_0_MAP[cnt][1] + " ", fontsize=15)
 					# ax1.annotate("RF Power: " + "%3.1f" % (rfpower[rms_remap[(PHASE_0_MAP[0][0]*2)]]) + " dBm", (10, -17), fontsize=16)
 					p4_ax[cnt].annotate("RF Power:  " + "%3.1f" % (rfpower[(PHASE_0_MAP[cnt][0] * 2)]) + " dBm", (228, -9),
 										fontsize=14, color='b')
