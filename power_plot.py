@@ -102,7 +102,8 @@ if __name__ == "__main__":
 
 	(options, args) = parser.parse_args()
 
-	wday = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"]
+	#wday = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"] # IT
+	wday = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]  # EN
 
 	# lista = sorted(glob.glob("data/data_2/*.txt"))
 	if options.dir == "":
