@@ -48,22 +48,20 @@ if __name__ == "__main__":
 		print "\nGenerating Directories on Cerberus for", data
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/POWER" + "\"")
-		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/POWER/ALL_BAND" + "\"")
+		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/POWER/FULL_BAND" + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/POWER/SINGLE_CHANNEL" + "\"")
-		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/POWER/ALL_BAND/SMOOTHED" + "\"")
+		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/POWER/FULL_BAND/SMOOTHED" + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/POWER/SINGLE_CHANNEL/SMOOTHED" + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/POWER" + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/POWER/CH-160" + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/VIDEO" + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/TRIGGER" + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/SPECTROGRAM" + "\"")
-		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/SPECTROGRAM/"+ TPM_INPUTS[0] + "\"")
-		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/SPECTROGRAM/"+ TPM_INPUTS[0] + "/" + POLS[0] + "\"")
-		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/SPECTROGRAM/"+ TPM_INPUTS[0] + "/" + POLS[1] + "\"")
-		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/SPECTROGRAM/"+ TPM_INPUTS[1] + "\"")
-		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/SPECTROGRAM/"+ TPM_INPUTS[1] + "/" + POLS[0] + "\"")
-		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/SPECTROGRAM/"+ TPM_INPUTS[1] + "/" + POLS[1] + "\"")
 		os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/SPECTROGRAM" + "\"")
+		for rx in TPM_INPUTS:
+			os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/SPECTROGRAM/"+ rx + "\"")
+			os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/SPECTROGRAM/"+ rx + "/" + POLS[0] + "\"")
+			os.system("ssh aavs@10.128.0.1 \"mkdir -p /home/aavs/mattana/" + data + "/SPECTROGRAM/"+ rx + "/" + POLS[1] + "\"")
 
 		if not options.novideo:
 			print "\nGenerating Videos... "
@@ -117,8 +115,8 @@ if __name__ == "__main__":
 				os.system("~/work/LowBridging/power_plot.py --all --silent --sigma=6 --smooth --ymin=-45 --ymax=-25 --dir=" + DEF_PATH + data + "/POWER/CH-160/")
 				os.system("scp " + DEF_PATH + "POWER/SINGLE_CHANNEL/*" + data + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/POWER/SINGLE_CHANNEL/")
 				os.system("scp " + DEF_PATH + "POWER/SINGLE_CHANNEL/SMOOTHED/*" + data + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/POWER/SINGLE_CHANNEL/SMOOTHED/")
-			os.system("scp " + DEF_PATH + "POWER/ALL_BAND/*" + data + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/POWER/ALL_BAND/")
-			os.system("scp " + DEF_PATH + "POWER/ALL_BAND/SMOOTHED/*" + data + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/POWER/ALL_BAND/SMOOTHED/")
+			os.system("scp " + DEF_PATH + "POWER/FULL_BAND/*" + data + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/POWER/FULL_BAND/")
+			os.system("scp " + DEF_PATH + "POWER/FULL_BAND/SMOOTHED/*" + data + "* aavs@cerberus.mwa128t.org:/home/aavs/mattana/POWER/FULL_BAND/SMOOTHED/")
 
 		print "\nSuccessfully executed!!\n"
 	else:
