@@ -322,7 +322,7 @@ if __name__ == "__main__":
             data = struct.unpack(">" + str(int(l)) + "b", a[8:])
             spettro = calcolaspettro(data, nsamples)
             orari += [datetime.datetime.strptime(datafiles[cnt][-21:-4], "%Y-%m-%d_%H%M%S")]
-            orario = datetime.datetime.strptime(fname.split("/")[-1][-21:-4], "%Y-%m-%d_%H%M%S")
+            #orario = datetime.datetime.strptime(fname.split("/")[-1][-21:-4], "%Y-%m-%d_%H%M%S")
 
             adu_rms = np.sqrt(np.mean(np.power(data, 2), 0))
             volt_rms = adu_rms * (1.7 / 256.)  # VppADC9680/2^bits * ADU_RMS
@@ -348,23 +348,6 @@ if __name__ == "__main__":
         except:
             pass
 
-    # print "\nReading Humidity file...",
-    # humidity_x, humidity_y = read_weather(FILE_HUMIDITY, ora_inizio)
-    # print "done!\nReading Temperature file...",
-    # temperature_x, temperature_y = read_weather(FILE_TEMPERATURE, ora_inizio)
-    # print "done!\nReading Solar Irradiation file...",
-    # irradiation_x, irradiation_y = read_weather(FILE_IRRADIATION, ora_inizio)
-    # print "done!\nReading Wind Direction file...",
-    # wind_dir_x, wind_dir_y = read_weather(FILE_WIND_DIR, ora_inizio)
-    # print "done!\nReading Wind Speed file...",
-    # wind_speed_x, wind_speed_y = read_weather(FILE_WIND_SPEED, ora_inizio)
-    # print "done!\n\nProcessing weather files...\n"
-    # humidity_x = np.array(humidity_x)
-    # temperature_x = np.array(temperature_x)
-    # irradiation_x = np.array(irradiation_x)
-    # wind_dir_x = np.array(wind_dir_x)
-    # wind_speed_x = np.array(wind_speed_x)
-
     x_tick = []
     step = 0
     for z in range(len(orari)):
@@ -386,6 +369,7 @@ if __name__ == "__main__":
         ax_water.set_xlabel('Time (UTC)')
         ax_water.set_xticks(x_tick)
         ax_water.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
+        #print x_tick, np.array(range(0, 3*9, 3)).astype("str").tolist()
         ystep = 10
         if int(b["band"].split("-")[1]) <= 100:
             ystep = 10
