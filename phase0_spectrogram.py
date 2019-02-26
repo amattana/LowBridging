@@ -378,7 +378,7 @@ if __name__ == "__main__":
         first_empty, b["dwater"] = b["dwater"][:10], b["dwater"][10:]
         ax_water.cla()
         ax_water.imshow(np.rot90(b["dwater"]), interpolation='none', aspect='auto', cmap='jet', clim=b["wclim"])
-        ax_water.set_title(" Spectrogram of " + fname.split("/")[-1][:-11].replace("_", "  "), fontsize=14)
+        ax_water.set_title(" Spectrogram of " + fname.split("/")[-1][:-11].replace("_", "  ") + " RBW: %3.1f"%(RBW)+" KHz", fontsize=14)
         ax_water.set_ylabel("MHz")
         ax_water.set_xlabel('Time (UTC)')
         ax_water.set_xticks(x_tick)
