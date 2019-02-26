@@ -418,5 +418,6 @@ if __name__ == "__main__":
         if not os.path.isdir(BASE_DIR + "SPECTROGRAM/" + b["dir"] + "/" + RX_DIR + POL_DIR):
             os.makedirs(BASE_DIR + "SPECTROGRAM/" + b["dir"] + "/" + RX_DIR + POL_DIR)
 
-        plt.savefig(BASE_DIR + "SPECTROGRAM/" + b["dir"] + "/" + RX_DIR + POL_DIR + b["dir"][13:] + "_" + fname.split("/")[-1][:-11] + ".png")
+        plt.savefig(BASE_DIR + "SPECTROGRAM/" + b["dir"] + "/" + RX_DIR + POL_DIR + b["dir"][13:] + "_" +
+                    fname.split("/")[-1][:6] + "_" + RX_DIR[:-1] + "_" + POL_DIR[:-1] + "_" + fname.split("/")[-1][-21:-11] + ".png")
     print "done!"
