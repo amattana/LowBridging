@@ -314,37 +314,39 @@ if __name__ == "__main__":
     power_fb = []
     power_sc = []
     for cnt in tqdm(range(len(datafiles))):
+        try:
+            fname = datafiles[cnt]
+            with open(fname, "r") as f:
+                a = f.read()
+            l = struct.unpack(">d", a[0:8])[0]
+            data = struct.unpack(">" + str(int(l)) + "b", a[8:])
+            spettro = calcolaspettro(data, nsamples)
+            orari += [datetime.datetime.strptime(datafiles[cnt][-21:-4], "%Y-%m-%d_%H%M%S")]
+            orario = datetime.datetime.strptime(fname.split("/")[-1][-21:-4], "%Y-%m-%d_%H%M%S")
 
-        fname = datafiles[cnt]
-        orari += [datetime.datetime.strptime(datafiles[cnt][-21:-4], "%Y-%m-%d_%H%M%S")]
-        orario = datetime.datetime.strptime(fname.split("/")[-1][-21:-4], "%Y-%m-%d_%H%M%S")
-        with open(fname, "r") as f:
-            a = f.read()
-        l = struct.unpack(">d", a[0:8])[0]
-        data = struct.unpack(">" + str(int(l)) + "b", a[8:])
-        spettro = calcolaspettro(data, nsamples)
+            adu_rms = np.sqrt(np.mean(np.power(data, 2), 0))
+            volt_rms = adu_rms * (1.7 / 256.)  # VppADC9680/2^bits * ADU_RMS
+            power_adc = 10 * np.log10(
+                np.power(volt_rms, 2) / 400.) + 30  # 10*log10(Vrms^2/Rin) in dBWatt, +3 decadi per dBm
+            power_rf = power_adc + 12  # single ended to diff net loose 12 dBm
+            power_fb.append(power_rf)
 
-        adu_rms = np.sqrt(np.mean(np.power(data, 2), 0))
-        volt_rms = adu_rms * (1.7 / 256.)  # VppADC9680/2^bits * ADU_RMS
-        power_adc = 10 * np.log10(
-            np.power(volt_rms, 2) / 400.) + 30  # 10*log10(Vrms^2/Rin) in dBWatt, +3 decadi per dBm
-        power_rf = power_adc + 12  # single ended to diff net loose 12 dBm
-        power_fb.append(power_rf)
+            centro = closest(x, float(options.channel))
+            integra = linear2dBm(np.sum(dBm2Linear(spettro[centro - 10:centro + 10])))
+            power_sc.append(integra)
 
-        centro = closest(x, float(options.channel))
-        integra = linear2dBm(np.sum(dBm2Linear(spettro[centro - 10:centro + 10])))
-        power_sc.append(integra)
-
-        # per ognuno
-        for b in list_spgramma:
-            #last, b["water"] = b["water"][0], b["water"][1:]
-            #last, spgramma = spgramma[0], spgramma[1:]
-            # print len(spgramma), len(spgramma[0]), bw, len(spettro), len(spettro[xmin:xmax+1])
-            if b["xmin"] == 0:
-                # se xmin == 0 butto il canale zero
-                b["dwater"] = np.concatenate((b["dwater"], [spettro[:b["xmax"] + 1].astype(np.float)]), axis=0)
-            else:
-                b["dwater"] = np.concatenate((b["dwater"], [spettro[b["xmin"]:b["xmax"] + 1].astype(np.float)]), axis=0)
+            # per ognuno
+            for b in list_spgramma:
+                #last, b["water"] = b["water"][0], b["water"][1:]
+                #last, spgramma = spgramma[0], spgramma[1:]
+                # print len(spgramma), len(spgramma[0]), bw, len(spettro), len(spettro[xmin:xmax+1])
+                if b["xmin"] == 0:
+                    # se xmin == 0 butto il canale zero
+                    b["dwater"] = np.concatenate((b["dwater"], [spettro[:b["xmax"] + 1].astype(np.float)]), axis=0)
+                else:
+                    b["dwater"] = np.concatenate((b["dwater"], [spettro[b["xmin"]:b["xmax"] + 1].astype(np.float)]), axis=0)
+        except:
+            pass
 
     # print "\nReading Humidity file...",
     # humidity_x, humidity_y = read_weather(FILE_HUMIDITY, ora_inizio)
