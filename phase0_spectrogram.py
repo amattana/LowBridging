@@ -288,14 +288,15 @@ if __name__ == "__main__":
             wclim = (-80, -30)
             print "Setting waterfall colors for SKALA-4"
     else:
-        wclim = (min(spettro[xmin:xmax + 1]), max(spettro[xmin:xmax + 1]))
+        wclim = (min(spettro[xmin:xmax + 1])+20, max(spettro[xmin:xmax + 1]))
+        #wclim = (0, 20)
+    #print "Colors:", wclim
     ax_water.cla()
     ax_water.imshow(dayspgramma, interpolation='none', aspect='auto', extent=[xmin, xmax, 60, 0], cmap='jet',
                clim=wclim)
     #ax_water.set_title(" Spectrogram of " + str(len(spgramma)) + " spectra")
     ax_water.set_ylabel("Time (minutes)")
     ax_water.set_xlabel('MHz')
-
 
 
     ax_power.cla()
