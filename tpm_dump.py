@@ -54,6 +54,7 @@ import time
 
 # Some globals
 OUT_PATH = "/data/data_2/2018-11-LOW-BRIDGING/"
+WWW_PATH = "/data/data_2/2018-11-LOW-BRIDGING/WWW/"
 DATA_PATH = "DATA/"
 POWER_DIR = "POWER/"
 TRIGGER_DIR = "TRIGGER/"
@@ -426,6 +427,7 @@ if __name__ == "__main__":
 				fig.canvas.draw()
 				time.sleep(1)
 				plt.savefig(OUT_PATH + "IMG/PLOT-A/LB_PHASE-0_A_" + ora + ".png")
+				plt.savefig(WWW_PATH + "spectra.png")
 				time.sleep(1)
 
 				#plt.close()
