@@ -94,7 +94,7 @@ if __name__ == "__main__":
 			for tpm_rx in TPM_INPUTS:
 				for pol in POLS:
 					print "\nGenerating Spectrograms for " + tpm_rx + " " + pol + "..."
-					os.system("~/work/LowBridging/tpm_tdd_view.py --average=16  --start-freq="+str(options.startfreq)+" --stop-freq="+str(options.stopfreq)+" --power --channel=160 --recursive --water --dir=" + DEF_PATH + data + "/DATA/" + tpm_rx + "/" + pol)
+					os.system("~/work/LowBridging/tpm_tdd_view.py --average=16  --start-freq="+str(options.startfreq)+" --stop-freq="+str(options.stopfreq)+" --power --channel=160 --recursive --dir=" + DEF_PATH + data + "/DATA/" + tpm_rx + "/" + pol)
 					os.system("scp -r " + DEF_PATH + data + "/DATA/" + tpm_rx + "/" + pol + "/SPECTROGRAMS* aavs@cerberus.mwa128t.org:/home/aavs/mattana/" + data + "/SPECTROGRAM/" + tpm_rx + "/" + pol + "/")
 			lista_bands = os.listdir(DEF_PATH + SPG_DIR)
 			lista_bands = [x for x in lista_bands if x.startswith('SPECTROGRAM')]

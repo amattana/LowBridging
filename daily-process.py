@@ -22,8 +22,8 @@ if __name__ == "__main__":
     parser.add_option("--now", action='store_true', dest="now", default=False, help="If set it starts now")
     (options, args) = parser.parse_args()
 
-if options.now:
-    yesterday -= datetime.timedelta(1)
+    if options.now:
+        yesterday -= datetime.timedelta(1)
 
     while True:
         today = datetime.datetime.utcfromtimestamp(time.time())

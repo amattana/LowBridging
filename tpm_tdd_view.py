@@ -227,7 +227,6 @@ if __name__ == "__main__":
 
     plt.ioff()
 
-
     resolutions = 2 ** np.array(range(16)) * (800000.0 / 2 ** 17)
     rbw = int(closest(resolutions, options.resolution))
     avg = 2 ** rbw
@@ -348,7 +347,6 @@ if __name__ == "__main__":
                 for i in range(len(singolo)):
                     f.write(str("%9.6f\t%5.2f\n"%(asse_x[i], singolo[i])))
 
-
     else:
 
         fname = datafiles[0]
@@ -420,6 +418,7 @@ if __name__ == "__main__":
         plt.savefig(fname[:fname.rfind("/") + 1] + SPG_DIR + "/" + fname.split("/")[-1][:-4] + ".png")
         os.system("rm " + fname[:fname.rfind("/") + 1] + SPG_DIR + "/" + fname.split("/")[-1][:-4] + ".png")
 
+        #print "VAI!"
         for cnt in tqdm(range(len(datafiles))):
             fname = datafiles[cnt]
             # print fname.split("/")[-1][-21:-4]
