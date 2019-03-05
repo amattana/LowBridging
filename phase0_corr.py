@@ -58,6 +58,16 @@ if __name__ == "__main__":
                       default="",
                       help="Label to be attached to the output file name")
 
+    parser.add_option("--freq",
+                      dest="freq",
+                      default=160, type='float',
+                      help="Frequency (MHz) to be correlated (default: 160 MHz)")
+
+    parser.add_option("--resolution",
+                      dest="resolution",
+                      default=6, type="int",
+                      help="Frequency resolution in KHz (it will be truncated to the closest possible)")
+
     (options, args) = parser.parse_args()
 
     if options.dirA == "":
@@ -83,13 +93,14 @@ if __name__ == "__main__":
             exit(0)
 
     resolutions = 2 ** np.array(range(16)) * (800000.0 / 2 ** 17)
-    rbw = int(closest(resolutions, 6))
+    rbw = int(closest(resolutions, options.resolution))
     avg = 2 ** rbw
     nsamples = 2 ** 17 / avg
     RBW = (avg * (400000.0 / 65536.0))
     bw = (nsamples / 2) + 1
     asse_x = np.linspace(0, 400, bw)
-    freq_bin = closest(asse_x, 150)
+    freq_bin = closest(asse_x, options.freq)
+    print "\nCorrelation Frequency: ", options.freq, "MHZ, Channel #", freq_bin, "at resolution ", RBW, "KHz\n"
 
     datafilesA = sorted(glob.glob(dirA + "/*.tdd"))
     print " - Found " + str(len(datafilesA)) + " \"tdd\" files in dir:",dirA
@@ -114,8 +125,8 @@ if __name__ == "__main__":
                 a = f.read()
             l = struct.unpack(">d", a[0:8])[0]
             data = struct.unpack(">" + str(int(l)) + "b", a[8:])
-            window = np.hanning(len(data))
-            spettroA = np.fft.rfft(data * window)
+            window = np.hanning(len(data[:nsamples]))
+            spettroA = np.fft.rfft(data[:nsamples] * window)
             bin_A += [spettroA[freq_bin]]
 
             adu_rms = np.sqrt(np.mean(np.power(data, 2), 0))
@@ -159,7 +170,7 @@ if __name__ == "__main__":
     ax1.plot(10*np.log10(np.abs(crossAB)))
     ax1.grid(True)
     ax1.set_xlim(0, len(crossAB))
-    ax1.set_ylim(100, 130)
+    ax1.set_ylim(0, 150)
     ax1.set_xticks(x_tick)
     ax1.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
     ax1.set_ylabel("Magnitude")
@@ -187,7 +198,7 @@ if __name__ == "__main__":
         os.makedirs(BASE_DIR + "CORR/DATA")
 
     outdir = BASE_DIR + "CORR/"
-    foutname = datetime.datetime.strftime(orari[0], "%Y-%m-%d") + options.flabel
+    foutname = datetime.datetime.strftime(orari[0], "%Y-%m-%d") + options.flabel + "_Freq-%6.3fMHz"%(options.freq)
 
     plt.savefig(outdir + "IMG/" + foutname + ".png")
 
