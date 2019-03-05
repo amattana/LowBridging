@@ -22,12 +22,19 @@ import datetime, time
 from tqdm import tqdm
 
 BASE_DIR = "/data/data_2/2018-11-LOW-BRIDGING/"
+epoch = datetime.datetime(1970, 1, 1)
+
+
+def toTimestamp(t):
+    dt = t - epoch
+    return (dt.microseconds + (dt.seconds + dt.days * 86400) * 10**6) / 10**6
 
 
 def corr(a, b):
     re = (a.real * b.real)+(a.imag * b.imag)
     im = (a.imag * b.real)-(a.real * b.imag)
     return np.complex(re, im)
+
 
 def closest(serie, num):
     return serie.tolist().index(min(serie.tolist(), key=lambda z: abs(z - num)))
@@ -45,6 +52,11 @@ if __name__ == "__main__":
                       dest="dirB",
                       default="",
                       help="Directory containing tdd files of Antenna B")
+
+    parser.add_option("--flabel",
+                      dest="flabel",
+                      default="",
+                      help="Label to be attached to the output file name")
 
     (options, args) = parser.parse_args()
 
@@ -146,21 +158,42 @@ if __name__ == "__main__":
 
     ax1.plot(10*np.log10(np.abs(crossAB)))
     ax1.grid(True)
+    ax1.set_xlim(0, len(crossAB))
+    ax1.set_ylim(100, 130)
     ax1.set_xticks(x_tick)
     ax1.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
     ax1.set_ylabel("Magnitude")
     ax1.set_xlabel("Time UTC")
     ax1.set_title("Correlation between Syncbox Signals: AAVS1_Loop and Direct Pol-Y", fontsize=14)
 
-    ax2.plot(np.angle(crossAB, deg=True), linestyle="None", marker=".")
+    phs = np.angle(crossAB, deg=True)
+    ax2.plot(phs, linestyle="None", marker=".")
     ax2.grid(True)
+    ax2.set_xlim(0, len(crossAB))
     ax2.set_xticks(x_tick)
+    ax2.set_yticks(range(-180, 180 + 45, 45))
     ax2.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
     ax2.set_ylabel("Phase (deg)")
     ax2.set_xlabel("Time UTC")
     ax2.set_title(datetime.datetime.strftime(orari[0], "%Y-%m-%d ")+" Pol-Y", fontsize=14)
 
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-    plt.show()
+
+    if not os.path.isdir(BASE_DIR + "CORR"):
+        os.makedirs(BASE_DIR + "CORR")
+    if not os.path.isdir(BASE_DIR + "CORR/IMG"):
+        os.makedirs(BASE_DIR + "CORR/IMG")
+    if not os.path.isdir(BASE_DIR + "CORR/DATA"):
+        os.makedirs(BASE_DIR + "CORR/DATA")
+
+    outdir = BASE_DIR + "CORR/"
+    foutname = datetime.datetime.strftime(orari[0], "%Y-%m-%d") + options.flabel
+
+    plt.savefig(outdir + "IMG/" + foutname + ".png")
+
+    with open(outdir + "DATA/" + foutname + ".txt", "w") as f:
+        for i in range(len(crossAB)):
+            timestamp = toTimestamp(orari[i])
+            f.write(str(timestamp) + "\t" + "%6.3f"%(phs[i]) + "\n")
 
 
