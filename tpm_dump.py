@@ -409,9 +409,9 @@ if __name__ == "__main__":
 									spettro[(PHASE_0_MAP[cnt][0] * 2) + 1][1:], color='g')
 					p4_ax[cnt].set_xlim(0, 400)
 					p4_ax[cnt].set_ylim(-80, 0)
-					p4_ax[cnt].set_xlabel('MHz')
-					p4_ax[cnt].set_ylabel("dBm")
-					p4_ax[cnt].set_title(PHASE_0_MAP[cnt][1] + " ", fontsize=15)
+					p4_ax[cnt].set_xlabel('MHz ')
+					p4_ax[cnt].set_ylabel("dBm ")
+					p4_ax[cnt].set_title(" " + PHASE_0_MAP[cnt][1] + " ", fontsize=15)
 					# ax1.annotate("RF Power: " + "%3.1f" % (rfpower[rms_remap[(PHASE_0_MAP[0][0]*2)]]) + " dBm", (10, -17), fontsize=16)
 					p4_ax[cnt].annotate("RF Power:  " + "%3.1f" % (rfpower[(PHASE_0_MAP[cnt][0] * 2)]) + " dBm", (228, -9),
 										fontsize=14, color='b')
