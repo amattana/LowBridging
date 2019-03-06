@@ -35,6 +35,16 @@ def corr(a, b):
     im = (a.imag * b.real)-(a.real * b.imag)
     return np.complex(re, im)
 
+def corrint(a, b, avg, freq_bin):
+    nsamples = 2 ** 17 / avg
+    window = np.hanning(nsamples)
+    xAB = []
+    for i in range(avg):
+        bina = np.fft.rfft(a[(i * nsamples):(i * nsamples) + nsamples] * window)[freq_bin]
+        binb = np.fft.rfft(b[(i * nsamples):(i * nsamples) + nsamples] * window)[freq_bin]
+        xAB += [corr(bina, binb)]
+    return np.sum(xAB)
+
 
 def closest(serie, num):
     return serie.tolist().index(min(serie.tolist(), key=lambda z: abs(z - num)))
@@ -108,11 +118,13 @@ if __name__ == "__main__":
     print " - Found " + str(len(datafilesB)) + " \"tdd\" files in dir:",dirB
 
     orari = []       # Timestamps
-    power_rfA = []   # RF Power
-    power_rfB = []   # RF Power
+    #power_rfA = []   # RF Power
+    #power_rfB = []   # RF Power
     bin_A = []       # Complex values of bin channel to be correlated
     bin_B = []       # Complex values of bin channel to be correlated
-    crossAB = []     # Cross Correlation
+    crossAB = []     # Cross Correlation A*B^
+    autoA = []       # Auto Correlation A
+    autoB = []       # Auto Correlation B
 
     for cnt in tqdm(range(len(datafilesA))):
         fnameA = datafilesA[cnt]
@@ -124,32 +136,16 @@ if __name__ == "__main__":
             with open(fnameA, "r") as f:
                 a = f.read()
             l = struct.unpack(">d", a[0:8])[0]
-            data = struct.unpack(">" + str(int(l)) + "b", a[8:])
-            window = np.hanning(len(data[:nsamples]))
-            spettroA = np.fft.rfft(data[:nsamples] * window)
-            bin_A += [spettroA[freq_bin]]
-
-            adu_rms = np.sqrt(np.mean(np.power(data, 2), 0))
-            volt_rms = adu_rms * (1.7 / 256.)  # VppADC9680/2^bits * ADU_RMS
-            power_adc = 10 * np.log10(
-                np.power(volt_rms, 2) / 400.) + 30  # 10*log10(Vrms^2/Rin) in dBWatt, +3 decadi per dBm
-            power_rfA += [power_adc + 12]  # single ended to diff net loose 12 dBm
+            dataA = struct.unpack(">" + str(int(l)) + "b", a[8:])
 
             with open(fnameB, "r") as f:
                 a = f.read()
             l = struct.unpack(">d", a[0:8])[0]
-            data = struct.unpack(">" + str(int(l)) + "b", a[8:])
-            window = np.hanning(len(data))
-            spettroB = np.fft.rfft(data * window)
-            bin_B += [spettroB[freq_bin]]
+            dataB = struct.unpack(">" + str(int(l)) + "b", a[8:])
 
-            adu_rms = np.sqrt(np.mean(np.power(data, 2), 0))
-            volt_rms = adu_rms * (1.7 / 256.)  # VppADC9680/2^bits * ADU_RMS
-            power_adc = 10 * np.log10(
-                np.power(volt_rms, 2) / 400.) + 30  # 10*log10(Vrms^2/Rin) in dBWatt, +3 decadi per dBm
-            power_rfB += [power_adc + 12]  # single ended to diff net loose 12 dBm
-
-            crossAB += [corr(spettroA[freq_bin], spettroB[freq_bin])]
+            crossAB += [corrint(dataA, dataB, avg, freq_bin)]
+            autoA += [np.real(corrint(dataA, dataA, avg, freq_bin))]
+            autoB += [np.real(corrint(dataB, dataB, avg, freq_bin))]
 
     plt.ioff()
 
@@ -168,17 +164,20 @@ if __name__ == "__main__":
     x_tick += [len(crossAB)]
 
     ax1.plot(10*np.log10(np.abs(crossAB)))
+    ax1.plot(10*np.log10(autoA))
+    ax1.plot(10*np.log10(autoB))
     ax1.grid(True)
     ax1.set_xlim(0, len(crossAB))
-    ax1.set_ylim(0, 150)
+    #ax1.set_ylim(0, 150)
     ax1.set_xticks(x_tick)
     ax1.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
     ax1.set_ylabel("Magnitude")
     ax1.set_xlabel("Time UTC")
-    ax1.set_title("Correlation between Syncbox Signals: AAVS1_Loop and Direct Pol-Y", fontsize=14)
+    ax1.set_title("AutoCorrelation between: (add description here)", fontsize=14)
 
     phs = np.angle(crossAB, deg=True)
     ax2.plot(phs, linestyle="None", marker=".")
+    #ax2.plot(phs, color='r')
     ax2.grid(True)
     ax2.set_xlim(0, len(crossAB))
     ax2.set_xticks(x_tick)
@@ -186,10 +185,10 @@ if __name__ == "__main__":
     ax2.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
     ax2.set_ylabel("Phase (deg)")
     ax2.set_xlabel("Time UTC")
-    ax2.set_title(datetime.datetime.strftime(orari[0], "%Y-%m-%d ")+" Pol-Y", fontsize=14)
+    ax2.set_title("Phase computed Cross Correlating signals - "+datetime.datetime.strftime(orari[0], "%Y-%m-%d ")+" ", fontsize=14)
 
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-
+    #plt.show()
     if not os.path.isdir(BASE_DIR + "CORR"):
         os.makedirs(BASE_DIR + "CORR")
     if not os.path.isdir(BASE_DIR + "CORR/IMG"):
@@ -201,10 +200,12 @@ if __name__ == "__main__":
     foutname = datetime.datetime.strftime(orari[0], "%Y-%m-%d") + options.flabel + "_Freq-%6.3fMHz"%(options.freq)
 
     plt.savefig(outdir + "IMG/" + foutname + ".png")
+    print "\nSaved File: " + outdir + "IMG/" + foutname + ".png"
 
     with open(outdir + "DATA/" + foutname + ".txt", "w") as f:
         for i in range(len(crossAB)):
             timestamp = toTimestamp(orari[i])
             f.write(str(timestamp) + "\t" + "%6.3f"%(phs[i]) + "\n")
+    print "Saved File: " + outdir + "DATA/" + foutname + ".txt\n"
 
 
