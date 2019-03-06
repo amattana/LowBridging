@@ -42,8 +42,11 @@ while True:
     d = str(soup.findAll("b")[2].text.split()[-2])
     t = int(record[0].text.split()[1].split(":")[0]) * 60 * 60 + int(record[0].text.split()[1].split(":")[1]) * 60
     data = datetime.datetime.strptime(d, "%Y-%m-%d") + datetime.timedelta(0, t)
+    data = data - datetime.timedelta(0, 3600*8) # Converting in UTC (GMT+8)
     temp = float(record[1].text)
-    with open("/data/data_2/2018-11-LOW-BRIDGING/WEATHER/TEMP/"+d+".txt","a") as f:
+    fname = "/data/data_2/2018-11-LOW-BRIDGING/WEATHER/TEMP/"
+    fname += datetime.datetime.strftime(data, "%Y-%m-%d.txt")
+    with open(fname, "a") as f:
         f.write("%d\t%s\t%s\t%3.1f\n"%(toTimestamp(data), d, record[0].text.split()[1], temp))
     print "%d\t%s\t%s\t%3.1f"%(toTimestamp(data), d, record[0].text.split()[1], temp)
     time.sleep(15*60)
