@@ -381,7 +381,7 @@ if __name__ == "__main__":
         BW = int(b["band"].split("-")[1]) - int(b["band"].split("-")[0])
         ytic = np.array(range(( BW / ystep) + 1 )) * ystep * (len(np.rot90(b["dwater"])) / float(BW))
         ax_water.set_yticks(len(np.rot90(b["dwater"])) - ytic)
-        ylabmax = np.array(range(( BW / ystep) + 1 )) * ystep
+        ylabmax = (np.array(range(( BW / ystep) + 1 )) * ystep) + int(b["band"].split("-")[0])
         ax_water.set_yticklabels(ylabmax.astype("str").tolist())
 
         ax_power.cla()
