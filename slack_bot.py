@@ -19,6 +19,6 @@ urllib3.disable_warnings()
 
 
 from slacker import Slacker
-slack = Slacker("xoxb-576613474708-574252753088-sSeV7bNIQoq2AswUVr4YFzhE")
+slack = Slacker("put the BOT token here")
 slack.chat.post_message("ska-low-bridging", "A message from me :grin: (ciao)", as_user=True)
 
