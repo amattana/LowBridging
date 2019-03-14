@@ -15,7 +15,7 @@ __license__ = "GPL"
 __version__ = "1.0"
 __maintainer__ = "Andrea Mattana"
 
-import sys, easygui, os
+import easygui, os
 
 from optparse import OptionParser
 
@@ -26,7 +26,8 @@ import matplotlib.gridspec as gridspec
 import numpy as np
 import struct
 import datetime
-import time
+import glob
+from tqdm import tqdm
 
 # Some globals
 OUT_PATH = "/data/data_2/2018-11-LOW-BRIDGING/"
@@ -90,7 +91,7 @@ if __name__ == "__main__":
     nsamples = 2 ** 17 / avg
 
     print "\n######################################################"
-    print "\n TPM Data Logger"
+    print "\n\n - Regenerate TPM Data Logger Pictures\n"
 
     if not options.dir == "":
         datapath = options.dir
@@ -109,56 +110,92 @@ if __name__ == "__main__":
     if not len(datafiles)>0:
         print "\nNo measurements found in "+datapath+DATA_PATH+"/Pol-X\n"
         exit(0)
+    else:
 
-    # Creating Directory to store pictures
-    if not os.path.exists(OUT_PATH + "IMG"):
-        os.makedirs(OUT_PATH + "IMG")
-        os.makedirs(OUT_PATH + "IMG/PLOT-A")
+        # Creating Directory to store pictures
+        print "Generating directory tree..."
+        if not os.path.exists(datapath + "IMG"):
+            os.makedirs(datapath + "IMG")
+        if not os.path.exists(datapath + "IMG/PLOT-A"):
+            os.makedirs(datapath + "IMG/PLOT-A")
 
-    fig, axes = plt.subplots(nrows=int(np.ceil(np.sqrt(len(Rxs)))), ncols=int(np.ceil(np.sqrt(len(Rxs)))), figsize=(12, 7), facecolor='w')
-    axes = axes.reshape(1,len(Rxs))[0]
-    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+        gs = gridspec.GridSpec(int(np.ceil(np.sqrt(len(Rxs)))), int(np.ceil(np.sqrt(len(Rxs)))))#, hspace=0.1, wspace=0.2)
+        fig = plt.figure(figsize=(12, 7), facecolor='w')
+        #fig, axes = plt.subplots(nrows=int(np.ceil(np.sqrt(len(Rxs)))), ncols=int(np.ceil(np.sqrt(len(Rxs)))), figsize=(12, 7), facecolor='w')
+        axes = []
+        for i in range(len(Rxs)):
+            axes += [fig.add_subplot(gs[i])]
+        #axes = axes.reshape(1,len(Rxs))[0]
 
+        for x in axes:
+            x.set_xlim(0, 400)
+            x.set_ylim(-80, 0)
+            x.set_xlabel('MHz ')
+            x.set_ylabel("dBm ")
+            x.grid(True)
+            x.plot(np.linspace(0, 400, (nsamples/2)+1), np.linspace(0, 400, (nsamples/2)+1))
+        titolo = "FAKE FIGURE TO FIX MATPLOTLIB - UTC   (RBW: " + "%3.1f" % rbw + " KHz)"
+        fig.suptitle(titolo, fontsize=16)
+        #plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+        plt.savefig(datapath + "IMG/PLOT-A/LB_PHASE-0_A.png")
+        os.system("rm "+datapath + "IMG/PLOT-A/LB_PHASE-0_A.png")
+
+    asse_x = np.linspace(0, 400, (nsamples/2)+1)
     TPM = datafiles[0].split("/")[-1][:7]
-    for z in datafiles:
+    for z in tqdm(range(len(datafiles))):
         skip = False
-        timestamp = z[-21:-4]
-        for n, rx in enumerate(Rxs):
-            axes[n].cla()
-            for pol, col, rf in [("Pol-X", 'b', -9), ("Pol-Y", 'g', -16)]:
-                fname = datapath + DATA_PATH + rx + "/" + pol + "/" + TPM
-                fname += rx + "_" + pol + "_" + timestamp + ".tdd"
 
-                try:
-                    with open(fname, "r") as f:
-                        a = f.read()
-                    l = struct.unpack(">d", a[0:8])[0]
-                    data = struct.unpack(">" + str(int(l)) + "b", a[8:])
-                    spettro = calcolaspettro(data, nsamples)
-
-                    adu_rms = np.sqrt(np.mean(np.power(data, 2), 0))
-                    volt_rms = adu_rms * (1.7 / 256.)  # VppADC9680/2^bits * ADU_RMS
-                    power_adc = 10 * np.log10(
-                        np.power(volt_rms, 2) / 400.) + 30  # 10*log10(Vrms^2/Rin) in dBWatt, +3 decadi per dBm
-                    power_rf = power_adc + 12  # single ended to diff net loose 12 dBm
-
-                    axes[n].plot(np.linspace(0, 400, len(spettro[1:])), spettro[1:], color=col)
-                    axes[n].annotate("RF Power:  " + "%3.1f" % (power_rf) + " dBm",
-                                        (228, rf), fontsize=14, color=col)
-                except:
-                   skip = True
-
-            if not skip:
-                axes[n].set_xlim(0, 400)
-                axes[n].set_ylim(-80, 0)
-                axes[n].set_xlabel('MHz ')
-                axes[n].set_ylabel("dBm ")
-                axes[n].set_title(" " + PHASE_0_MAP[n][1] + " ", fontsize=15)
-                axes[n].grid(True)
+        timestamp = datafiles[z][-21:-4]
+        try:
+            tstamp = datetime.datetime.strptime(timestamp, "%Y-%m-%d_%H%M%S")
+        except:
+            #print "Got: ", timestamp, ", trying with:", datafiles[z][-24:-4]+"000"
+            try:
+                timestamp = datafiles[z][-24:-4]
+                tstamp = datetime.datetime.strptime(timestamp+"000", "%Y-%m-%d_%H%M%S%f")
+            except:
+                print "Bad time format:", timestamp
+                skip = True
 
         if not skip:
-            titolo = timestamp.replace("_", " ")[:-4]+":"+timestamp[-4:-2]+":"+timestamp[-2:] + " UTC   (RBW: " + "%3.1f" % rbw + " KHz)"
+            for n, rx in enumerate(Rxs):
+                axes[n].cla()
+                for pol, col, rf in [("Pol-X", 'b', -9), ("Pol-Y", 'g', -16)]:
+                    fname = datapath + DATA_PATH + rx + "/" + pol + "/" + TPM
+                    fname += rx + "_" + pol + "_" + timestamp + ".tdd"
+
+                    try:
+                        with open(fname, "r") as f:
+                            a = f.read()
+                        l = struct.unpack(">d", a[0:8])[0]
+                        data = struct.unpack(">" + str(int(l)) + "b", a[8:])
+                        spettro = calcolaspettro(data, nsamples)
+                        #print len(spettro), len(asse_x)
+
+                        adu_rms = np.sqrt(np.mean(np.power(data, 2), 0))
+                        volt_rms = adu_rms * (1.7 / 256.)  # VppADC9680/2^bits * ADU_RMS
+                        power_adc = 10 * np.log10(
+                            np.power(volt_rms, 2) / 400.) + 30  # 10*log10(Vrms^2/Rin) in dBWatt, +3 decadi per dBm
+                        power_rf = power_adc + 12  # single ended to diff net loose 12 dBm
+
+                        axes[n].plot(asse_x[1:], spettro[1:], color=col)
+                        axes[n].annotate("RF Power:  " + "%3.1f" % (power_rf) + " dBm",
+                                            (228, rf), fontsize=14, color=col)
+                    except:
+                       skip = True
+
+                if not skip:
+                    axes[n].set_xlim(0, 400)
+                    axes[n].set_ylim(-80, 0)
+                    axes[n].set_xlabel('MHz ')
+                    axes[n].set_ylabel("dBm ")
+                    axes[n].set_title(" " + PHASE_0_MAP[n][1] + " ", fontsize=15)
+                    axes[n].grid(True)
+
+        if not skip:
+            titolo = timestamp.replace("_", " ")[:13]+":"+timestamp.split("_")[1][2:4]+":"+timestamp.split("_")[1][4:6] + " UTC   (RBW: " + "%3.1f" % rbw + " KHz)"
             fig.suptitle(titolo, fontsize=16)
+            #plt.tight_layout()
             plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-            plt.savefig(OUT_PATH + "IMG/PLOT-A/LB_PHASE-0_A_" + timestamp + ".png")
+            plt.savefig(datapath + "IMG/PLOT-A/LB_PHASE-0_A_" + timestamp + ".png")
 
