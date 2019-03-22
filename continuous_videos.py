@@ -57,7 +57,7 @@ if __name__ == "__main__":
     data = datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d")
     last = datetime.datetime.strftime(datetime.datetime.utcnow(), "%H")  # -datetime.timedelta(0,60*60*8) # if AWT GMT+8
     while True:
-        orario = datetime.datetime.now()
+        orario = datetime.datetime.utcnow()
         ora = datetime.datetime.strftime(datetime.datetime.utcnow(), "%H")
         print "\n\nNext op:\n\n  - ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "%*.png -vcodec libx264 " + datapath + debug + videolabel + data + ".avi\n\n"
         os.system(
