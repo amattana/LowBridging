@@ -46,9 +46,9 @@ def do_html():
         f.write("\n<b><font size=5 face=\"Arial\" color=\"black\">Debug Videos, updated every about 15 minutes</font></b>\n</div>")
         lista = sorted(os.listdir(datapath + debug), reverse=True)
         for l in lista:
-            f.write("\n<br><font size=3 face=\"Courier\"><a href=\"DEBUG/" + l + "\">" + l + "</a> ")
-            f.write(str(datetime.datetime.utcfromtimestamp(os.stat("continuous_videos.py").st_mtime))[:-7])
-            f.write("</a></font><br>\n")
+            f.write("\n<br><font size=3 face=\"Courier\"> " + str(datetime.datetime.utcfromtimestamp(os.stat(datapath+debug+l).st_atime))[:-7])
+            f.write("\n<a href=\"DEBUG/" + l + "\">" + l + "</a> ")
+            f.write("</font><br>\n")
         f.write("\n</body>\n</html>\n")
     os.system("scp -r debug.html amattana@192.167.189.30:/home/amattana/public_html/SKA/")
 
