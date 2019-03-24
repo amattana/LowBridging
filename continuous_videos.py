@@ -44,8 +44,9 @@ def do_html():
         f.write("<html>\n<head>\n<title>SKA-Low Bridging Debug Videos</title>")
         f.write("\n<meta http-equiv=\"refresh\" content=\"30\">\n</head>")
         f.write("\n<body>\n<div name=\"intro\">\n")
-        f.write("\n<b><font size=5 face=\"Arial\" color=\"black\">Debug Videos</font><br /><font size=3 face=\"Arial\" color=\"black\">updated every about 15 minutes<br />")
-        f.write("\nLast update: "+str(datetime.datetime.utcnow())+" UTC</font></b>\n</div>")
+        f.write("\n<b><font size=5 face=\"Arial\" color=\"black\">SKA-Low Bridging Debug Videos</font><br />")
+        f.write("\n<font size=3 face=\"Arial\" color=\"blue\">updated every about 15 minutes</font><br /><br />")
+        f.write("\n<font size=2 face=\"Arial\" color=\"red\">Last update: "+str(datetime.datetime.utcnow())[:-7]+" UTC</font></b>\n</div>")
         lista = sorted(os.listdir(datapath + debug), reverse=True)
         f.write("\n<br>\n<p>\n")
         for l in lista:
@@ -54,6 +55,7 @@ def do_html():
             f.write("</font><br />\n")
         f.write("\n</p>\n")
         f.write("\n</body>\n</html>\n")
+    print "\nData Transfer: scp -r debug.html amattana@192.167.189.30:/home/amattana/public_html/SKA/"
     os.system("scp -r debug.html amattana@192.167.189.30:/home/amattana/public_html/SKA/")
 
 
