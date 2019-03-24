@@ -38,12 +38,14 @@ videolabel = "LB_PHASE-0_A_"
 
 '''
 
+
 def do_html():
     with open("debug.html", "w") as f:
         f.write("<html>\n<head>\n<title>SKA-Low Bridging Debug Videos</title>")
         f.write("\n<meta http-equiv=\"refresh\" content=\"30\">\n</head>")
         f.write("\n<body>\n<div name=\"intro\">\n")
-        f.write("\n<b><font size=5 face=\"Arial\" color=\"black\">Debug Videos</font><br /><font size=3 face=\"Arial\" color=\"black\">updated every about 15 minutes</font></b>\n</div>")
+        f.write("\n<b><font size=5 face=\"Arial\" color=\"black\">Debug Videos</font><br /><font size=3 face=\"Arial\" color=\"black\">updated every about 15 minutes<br />")
+        f.write("\nLast update: "+str(datetime.datetime.utcnow())+" UTC</font></b>\n</div>")
         lista = sorted(os.listdir(datapath + debug), reverse=True)
         f.write("\n<br>\n<p>\n")
         for l in lista:
@@ -64,6 +66,7 @@ if __name__ == "__main__":
         print "\n\nNext op:\n\n  - ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "%*.png -vcodec libx264 " + datapath + debug + videolabel + data + ".avi\n\n"
         os.system(
             "ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "%*.png -vcodec libx264 " + datapath + debug + videolabel + data + ".avi")
+        print "\nData trasfer..."+datapath + debug + videolabel + data + ".avi\n"
         os.system(
             "scp -r " + datapath + debug + videolabel + data + ".avi amattana@192.167.189.30:/home/amattana/public_html/SKA/DEBUG/")
         if not ora == last:
@@ -71,6 +74,7 @@ if __name__ == "__main__":
                 print "\n\nNext op:\n\n  - ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "_23%*.png -vcodec libx264 " + datapath + debug + videolabel + data + "_23.avi\n\n"
                 os.system(
                     "ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "_23%*.png -vcodec libx264 " + datapath + debug + videolabel + data + "_23.avi")
+                print "\nData trasfer..."+datapath + debug + videolabel + data + "_23.avi\n"
                 os.system(
                     "scp -r " + datapath + debug + videolabel + data + "_23.avi amattana@192.167.189.30:/home/amattana/public_html/SKA/DEBUG/")
                 data = datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d")
@@ -78,6 +82,7 @@ if __name__ == "__main__":
                 print "\n\nNext op:\n\n  - ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "_" + last + "%*.png -vcodec libx264 " + datapath + debug + videolabel + data + "_" + last + ".avi\n\n"
                 os.system(
                     "ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "_" + last + "%*.png -vcodec libx264 " + datapath + debug + videolabel + data + "_" + last + ".avi")
+                print "\nData trasfer..."+datapath + debug + videolabel + data + "_" + last + ".avi\n"
                 os.system(
                     "scp -r " + datapath + debug + videolabel + data + "_" + last + ".avi amattana@192.167.189.30:/home/amattana/public_html/SKA/DEBUG/")
             last = ora
@@ -85,6 +90,7 @@ if __name__ == "__main__":
         print "\n\nNext op:\n\n  - ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "_" + ora + "%*.png -vcodec libx264 " + datapath + debug + videolabel + data + "_" + ora + ".avi\n\n"
         os.system(
             "ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "_" + ora + "%*.png -vcodec libx264 " + datapath + debug + videolabel + data + "_" + ora + ".avi")
+        print "\nData trasfer..."+datapath + debug + videolabel + data + "_" + ora + ".avi\n"
         os.system(
             "scp -r " + datapath + debug + videolabel + data + "_" + ora + ".avi amattana@192.167.189.30:/home/amattana/public_html/SKA/DEBUG/")
         do_html()
