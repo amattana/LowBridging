@@ -83,6 +83,8 @@ if __name__ == "__main__":
         print "\n\nNext op:\n\n  - ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "_" + ora + "%*.png -vcodec libx264 " + datapath + debug + videolabel + data + "_" + ora + ".avi\n\n"
         os.system(
             "ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "_" + ora + "%*.png -vcodec libx264 " + datapath + debug + videolabel + data + "_" + ora + ".avi")
+        os.system(
+            "scp -r " + datapath + debug + videolabel + data + "_" + ora + ".avi amattana@192.167.189.30:/home/amattana/public_html/SKA/DEBUG/")
         do_html()
         while orario + datetime.timedelta(0, 60*15) > datetime.datetime.utcnow():
             print "Waiting for "+str(orario + datetime.timedelta(0, 60*15))[:-7] + ", actual time is " + str(datetime.datetime.utcnow())[:-7]
