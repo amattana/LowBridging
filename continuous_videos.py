@@ -62,23 +62,27 @@ if __name__ == "__main__":
         print "\n\nNext op:\n\n  - ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "%*.png -vcodec libx264 " + datapath + debug + videolabel + data + ".avi\n\n"
         os.system(
             "ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "%*.png -vcodec libx264 " + datapath + debug + videolabel + data + ".avi")
+        os.system(
+            "scp -r " + datapath + debug + videolabel + data + ".avi amattana@192.167.189.30:/home/amattana/public_html/SKA/DEBUG/")
         if not ora == last:
             if int(ora) == 0:
-                print "\n\nNext op:\n\n  - ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "_23%*.png -vcodec libx264 " + datapath + debug + videolabel + data + "_24.avi\n\n"
+                print "\n\nNext op:\n\n  - ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "_23%*.png -vcodec libx264 " + datapath + debug + videolabel + data + "_23.avi\n\n"
                 os.system(
-                    "ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "_23%*.png -vcodec libx264 " + datapath + debug + videolabel + data + "_24.avi")
+                    "ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "_23%*.png -vcodec libx264 " + datapath + debug + videolabel + data + "_23.avi")
+                os.system(
+                    "scp -r " + datapath + debug + videolabel + data + "_23.avi amattana@192.167.189.30:/home/amattana/public_html/SKA/DEBUG/")
                 data = datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d")
             else:
                 print "\n\nNext op:\n\n  - ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "_" + last + "%*.png -vcodec libx264 " + datapath + debug + videolabel + data + "_" + last + ".avi\n\n"
                 os.system(
                     "ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "_" + last + "%*.png -vcodec libx264 " + datapath + debug + videolabel + data + "_" + last + ".avi")
+                os.system(
+                    "scp -r " + datapath + debug + videolabel + data + "_" + last + ".avi amattana@192.167.189.30:/home/amattana/public_html/SKA/DEBUG/")
             last = ora
 
         print "\n\nNext op:\n\n  - ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "_" + ora + "%*.png -vcodec libx264 " + datapath + debug + videolabel + data + "_" + ora + ".avi\n\n"
         os.system(
             "ffmpeg -y -f image2 -i " + datapath + data + imgpath + videolabel + data + "_" + ora + "%*.png -vcodec libx264 " + datapath + debug + videolabel + data + "_" + ora + ".avi")
-        os.system(
-            "scp -r " + datapath + debug + videolabel + data + "_" + ora + ".avi amattana@192.167.189.30:/home/amattana/public_html/SKA/DEBUG/")
         do_html()
         while orario + datetime.timedelta(0, 60*15) > datetime.datetime.utcnow():
             print "Waiting for "+str(orario + datetime.timedelta(0, 60*15))[:-7] + ", actual time is " + str(datetime.datetime.utcnow())[:-7]
