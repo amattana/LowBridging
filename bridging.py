@@ -62,6 +62,19 @@ from threading import Thread
 
 # Some globals
 
+KEY_ANTENNA_NUMBER = 'Antenna'
+KEY_ANTENNA_X = 'East'
+KEY_ANTENNA_Y = 'North'
+KEY_ANTENNA_SB = 'SmartBox'
+KEY_ANTENNA_FIBRE = 'Fibre'
+KEY_ANTENNA_FCOLOUR = 'Colour'
+KEY_ANTENNA_FEM = 'FEM'
+KEY_ANTENNA_RIBBON = 'Ribbon'
+KEY_ANTENNA_TPM = 'TPM'
+KEY_ANTENNA_RX = 'RX'
+KEY_ANTENNA_DEBUG = 'Debug'
+
+
 COLORS = ['b','g','r','k','y','c']
 RIGHE = 257
 COLONNE = 24
@@ -135,6 +148,7 @@ def read_from_google():
     for i in range(len(cells)):
         cells[i]['East'] = float(cells[i]['East'].replace(",","."))
         cells[i]['North'] = float(cells[i]['North'].replace(",", "."))
+        #print cells[i]['Antenna'], cells[i]['North'], cells[i]['East']
     return cells
 
 
@@ -204,21 +218,21 @@ def create_record(i,diz):
     record['frame'].setFrameShape(1)
     record['frame'].setFixedSize(960,20)
     create_label(record['frame'], 8, 2, 15, 18, str(i))
-    record['Base']=int(diz['Base'])
-    record['TPM']=diz['TPM']
-    record['RX']=diz['RX']
-    create_label(record['frame'], 35, 2, 30, 18, str(int(diz['Base'])))
-    if not diz['HC']=="":
-        create_label(record['frame'], 82, 2, 30, 18, str(int(diz['HC'])))
-    if not diz['ROX']=="":
-        create_label(record['frame'], 120, 2, 30, 18, str(int(diz['ROX'])))
-    if not diz['Ribbon']=="":
-        create_label(record['frame'], 155, 2, 30, 18, str(int(diz['Ribbon'])))
-        create_label(record['frame'], 190, 2, 30, 18, str(int(diz['Fibre'])))
-    create_label(record['frame'], 230, 2, 50, 18, str(diz['Colour']))
-    if not diz['TPM']=="":
-        create_label(record['frame'], 290, 2, 20, 18, str(int(diz['TPM'])))
-        create_label(record['frame'], 320, 2, 20, 18, str(int(diz['RX'])))
+    record[KEY_ANTENNA_NUMBER]=int(diz[KEY_ANTENNA_NUMBER])
+    record[KEY_ANTENNA_TPM]=diz[KEY_ANTENNA_TPM]
+    record[KEY_ANTENNA_RX]=diz[KEY_ANTENNA_RX]
+    create_label(record['frame'], 35, 2, 30, 18, str(int(diz[KEY_ANTENNA_NUMBER])))
+    # if not diz['HC']=="":
+    #     create_label(record['frame'], 82, 2, 30, 18, str(int(diz['HC'])))
+    # if not diz['ROX']=="":
+    #     create_label(record['frame'], 120, 2, 30, 18, str(int(diz['ROX'])))
+    if not diz[KEY_ANTENNA_RIBBON]=="":
+        create_label(record['frame'], 155, 2, 30, 18, str(int(diz[KEY_ANTENNA_RIBBON])))
+        create_label(record['frame'], 190, 2, 30, 18, str(int(diz[KEY_ANTENNA_FIBRE])))
+    create_label(record['frame'], 230, 2, 50, 18, str(diz[KEY_ANTENNA_FCOLOUR]))
+    if not diz[KEY_ANTENNA_TPM]=="":
+        create_label(record['frame'], 290, 2, 20, 18, str(int(diz[KEY_ANTENNA_TPM])))
+        create_label(record['frame'], 320, 2, 20, 18, str(int(diz[KEY_ANTENNA_RX])))
     create_flag(record['frame'], 380, 2, "yellow", "N")
     create_flag(record['frame'], 410, 2, "green", "S")
     create_flag(record['frame'], 440, 2, "green", "D")
@@ -240,22 +254,22 @@ def create_plot_record(ant, cells):
     record['frame'].setFrameShape(1)
     record['frame'].setFixedSize(960,20)
     #create_label(record['frame'], 8, 2, 15, 18, str(i))
-    record['Base']=int(diz['Base'])
-    record['TPM']=diz['TPM']
-    record['RX']=diz['RX']
-    record['HC']=diz['HC']
-    create_label(record['frame'], 35, 2, 30, 18, str(int(diz['Base'])))
-    if not diz['HC']=="":
-        create_label(record['frame'], 82, 2, 30, 18, str(int(diz['HC'])))
-    if not diz['ROX']=="":
-        create_label(record['frame'], 120, 2, 30, 18, str(int(diz['ROX'])))
-    if not diz['Ribbon']=="":
-        create_label(record['frame'], 155, 2, 30, 18, str(int(diz['Ribbon'])))
-        create_label(record['frame'], 190, 2, 30, 18, str(int(diz['Fibre'])))
-    create_label(record['frame'], 230, 2, 50, 18, str(diz['Colour']))
-    if not diz['TPM']=="":
-        create_label(record['frame'], 290, 2, 20, 18, str(int(diz['TPM'])))
-        create_label(record['frame'], 320, 2, 20, 18, str(int(diz['RX'])))
+    record[KEY_ANTENNA_NUMBER]=int(diz[KEY_ANTENNA_NUMBER])
+    record[KEY_ANTENNA_TPM]=diz[KEY_ANTENNA_TPM]
+    record[KEY_ANTENNA_RX]=diz[KEY_ANTENNA_RX]
+    #record['HC']=diz['HC']
+    create_label(record['frame'], 35, 2, 30, 18, str(int(diz[KEY_ANTENNA_NUMBER])))
+    # if not diz['HC']=="":
+    #     create_label(record['frame'], 82, 2, 30, 18, str(int(diz['HC'])))
+    # if not diz['ROX']=="":
+    #     create_label(record['frame'], 120, 2, 30, 18, str(int(diz['ROX'])))
+    if not diz[KEY_ANTENNA_RIBBON]=="":
+        create_label(record['frame'], 155, 2, 30, 18, str(int(diz[KEY_ANTENNA_RIBBON])))
+        create_label(record['frame'], 190, 2, 30, 18, str(int(diz[KEY_ANTENNA_FIBRE])))
+    create_label(record['frame'], 230, 2, 50, 18, str(diz[KEY_ANTENNA_FCOLOUR]))
+    if not diz[KEY_ANTENNA_TPM]=="":
+        create_label(record['frame'], 290, 2, 20, 18, str(int(diz[KEY_ANTENNA_TPM])))
+        create_label(record['frame'], 320, 2, 20, 18, str(int(diz[KEY_ANTENNA_RX])))
     create_flag(record['frame'], 380, 2, "yellow", "N")
     create_flag(record['frame'], 410, 2, "green", "S")
     create_flag(record['frame'], 440, 2, "green", "D")
@@ -527,19 +541,21 @@ class AAVS(QtGui.QMainWindow):
                 self.cells = read_from_google()
                 print "\nSuccessfully connected to the online google spreadsheet!\n\n"
 
+
             except httplib2.ServerNotFoundError:
                 print("\nUnable to find the server at accounts.google.com.\n\nContinuing with local file: %s\n"%(EX_FILE))
                 self.cells = read_from_local(EX_FILE)
                 print "done!"
             tpms = ip_scan()
-        else:
-            if os.path.isfile(EX_FILE):
-                print("\nReading local file: %s\n" % (EX_FILE))
-                self.cells = read_from_local(EX_FILE)
-            else:
-                print("\nReading local file: %s\n" % (EX_FILE_AAVS))
-                self.cells = read_from_local(EX_FILE_AAVS)
-            tpms=["10.0.10."+str(a) for a in xrange(1,17)]
+
+        # else:
+        #     if os.path.isfile(EX_FILE):
+        #         print("\nReading local file: %s\n" % (EX_FILE))
+        #         self.cells = read_from_local(EX_FILE)
+        #     else:
+        #         print("\nReading local file: %s\n" % (EX_FILE_AAVS))
+        #         self.cells = read_from_local(EX_FILE_AAVS)
+        #     tpms=["10.0.10."+str(a) for a in xrange(1,17)]
 
         if not self.tpm_list == []:
             tpms =  self.tpm_list
@@ -559,7 +575,7 @@ class AAVS(QtGui.QMainWindow):
         self.records = []
         for i in xrange(len(self.cells)):
             self.records += [create_record(i, self.cells[i])]
-            ant=int(self.records[i]['Base'])
+            ant=int(self.records[i][KEY_ANTENNA_NUMBER])
             self.records[i]['add'].clicked.connect(lambda status, g=ant: self.addPlot(g))
             self.records[i]['att'].clicked.connect(lambda status, g=ant: self.openPreadu(g))
 
@@ -1033,7 +1049,7 @@ if __name__ == "__main__":
 
     (options, args) = parser.parse_args()
 
-    os.system("python ../SKA-AAVS1/tools/config/setup.py")
+    #os.system("python ../SKA-AAVS1/tools/config/setup.py")
     app = QtGui.QApplication(sys.argv)
     window = AAVS("bridging.ui",options.debug,options.tpms)
 
