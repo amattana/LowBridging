@@ -51,11 +51,10 @@ import datetime
 import time
 
 # Some globals
-OUT_PATH = "/data/data_2/2018-11-LOW-BRIDGING/"
-WWW_PATH = "/data/data_2/2018-11-LOW-BRIDGING/WWW/"
+OUT_PATH = "/data/data_2/2019-LOW-BRIDGING-PHASE1/"
+WWW_PATH = "/data/data_2/2019-LOW-BRIDGING-PHASE1/WWW/"
 DATA_PATH = "DATA/"
 POWER_DIR = "POWER/"
-TRIGGER_DIR = "TRIGGER/"
 POWER_DAY = "~/work/LowBridging/power_plot.py --silent -a --dir=" + OUT_PATH
 
 PHASE_0_MAP = [[0, "EDA-2"], [1, "SKALA-4.0"], [4, "SKALA-2"], [5, "SKALA-4.1"]]
@@ -63,30 +62,15 @@ PHASE_0_MAP = [[0, "EDA-2"], [1, "SKALA-4.0"], [4, "SKALA-2"], [5, "SKALA-4.1"]]
 
 if __name__ == "__main__":
     parser = OptionParser()
-    parser.add_option("-s", "--time_spectra",
-                      dest="dtime",
-                      default=60,
-                      help="Time interval in minutes (Default: 60 seconds)")
-
-    parser.add_option("-p", "--time_power",
-                      dest="ptime",
-                      default=5,
-                      help="Time interval in seconds (Default: 5 seconds)")
-
-    parser.add_option("-n", "--number",
-                      dest="num",
-                      default=-1,
-                      help="Number of measurements, if not given or negative neverending")
-
     parser.add_option("-b", "--board",
                       dest="board",
                       default="10.0.10.2",
                       help="Board ip (def: 10.0.10.2)")
 
-    parser.add_option("-t", "--trigger",
-                      dest="trigger",
-                      default=10,
-                      help="Power trigger in dBm. If RF power is higher than the trigger extra data is saved")
+    parser.add_option("--tile",
+                      dest="tile",
+                      default="10",
+                      help="Numer of the Tile (def: 10)")
 
     parser.add_option("-d", "--debug", action='store_true',
                       dest="debug",
@@ -103,6 +87,8 @@ if __name__ == "__main__":
 
     # Search for TPMs
     TPM = str(options.board)
+    TILE = str(options.tile)
+    TILE_PATH = "TILE-%02d/"%(int(TILE))
     data = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(time.time()), "%Y/%m/%d")
     ora = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(time.time()), "%H:%M:%S")
 
@@ -113,9 +99,12 @@ if __name__ == "__main__":
 
     # Creating Directory for today's data
     OUT_PATH = OUT_PATH + datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(time.time()), "%Y-%m-%d/")
-    if not os.path.exists(OUT_PATH):
-        os.makedirs(OUT_PATH)
-        print "Generating directory for today data... (" + OUT_PATH + ")"
+    try:
+        if not os.path.exists(OUT_PATH):
+            os.makedirs(OUT_PATH)
+            print "Generating directory for today data... (" + OUT_PATH + ")"
+    except:
+        print "Directory " + OUT_PATH + " already exist..."
 
     ## Creating Directory to store the videos
     if not os.path.exists(OUT_PATH + "IMG"):
@@ -124,9 +113,6 @@ if __name__ == "__main__":
         os.makedirs(OUT_PATH + "IMG/PLOT-B")
     if not os.path.exists(OUT_PATH + POWER_DIR):
         os.makedirs(OUT_PATH + POWER_DIR)
-    if not os.path.exists(OUT_PATH + TRIGGER_DIR):
-        os.makedirs(OUT_PATH + TRIGGER_DIR)
-
     pdir = OUT_PATH + POWER_DIR
 
     counter = 0
@@ -152,47 +138,32 @@ if __name__ == "__main__":
             OUT_PATH = OUT_PATH[:-11] + datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(time.time()),
                                                                    "%Y-%m-%d/")
             measnum = 0
-            tot_triggered = 0
             today = datetime.datetime.utcfromtimestamp(time.time()).date()
 
-        tpath = OUT_PATH + TRIGGER_DIR
         pdir = OUT_PATH + POWER_DIR
 
         save_data = 1
-        if ((measnum == 0) or (int(epoch) - last_meas >= (int(options.dtime)))):
-            save_data = 1
-            measnum = measnum + 1
-            last_meas = int(epoch)
+        save_power = 1
 
-        save_power = 0
-        if ((measnum == 0) or (int(epoch) - last_power >= int(options.ptime))):
-            save_power = 1
-            last_power = int(epoch)
-
-        sys.stdout.write(str(TPM) + " " + orario + "  Saved: " + str(measnum) + ",  Triggered: " + str(tot_triggered))
-        sys.stdout.flush()
-
-        #tpm = int(TPM.split(".")[-1])
         freqs, spettro, rawdata, rms, rfpower = get_raw_meas(tpm_obj(TPM), debug=options.debug)
-        triggered = False
+
         for rx in xrange(len(spettro) / 2):
             if rx in np.transpose(PHASE_0_MAP)[0].astype(np.int):
-                if ((rfpower[(rx * 2)] > float(options.trigger)) or (
-                        rfpower[(rx * 2) + 1] > float(options.trigger))):
-                    triggered = True
-        if triggered and not mask_trigger:
-            tot_triggered = tot_triggered + 1
-            trigger_time = int(epoch)
-        for rx in xrange(len(spettro) / 2):
-            if rx in np.transpose(PHASE_0_MAP)[0].astype(np.int):
-                for pol in ["X", "Y"]:
+                for p, pol in enumerate(["X", "Y"]):
                     fpath = OUT_PATH + DATA_PATH
+                    if not os.path.exists(fpath):
+                        os.makedirs(fpath)
+                    fpath += TILE_PATH
+                    if not os.path.exists(fpath):
+                        os.makedirs(fpath)
                     rxpath = str("RX-%02d_" % (int(rx + 1)))
                     rxpath += [x[1] for x in PHASE_0_MAP if (x[0] == rx)][0]
                     rxpath += "/"
                     if not os.path.exists(fpath + rxpath):
                         os.makedirs(fpath + rxpath)
                     fname = "Pol-" + pol + "/"
+                    if not os.path.exists(fpath + rxpath + fname):
+                        os.makedirs(fpath + rxpath + fname)
                     fname += str("TPM-%02d" % (int(TPM.split(".")[-1]))) + str(
                         "_RX-%02d_" % (int(rx + 1)))  # + "_BASE-"
                     fname += [x[1] for x in PHASE_0_MAP if (x[0] == rx)][0]
@@ -204,13 +175,6 @@ if __name__ == "__main__":
                             msg = str("%3.1f" % (epoch)) + "\t" + orario.replace("  ", "\t") + "\t" + str(
                                 "%3.1f" % (rfpow))
                             pfile.write(msg + "\n")
-
-
-                    if triggered and not mask_trigger:
-                        with open(tpath + rxpath + fname + ".tdd", "wb") as f:
-                            f.write(struct.pack(">d", len(rawdata[(rx * 2) + p])))
-                            f.write(struct.pack(">" + str(len(rawdata[(rx * 2) + p])) + "b",
-                                                *rawdata[(rx * 2) + p]))
 
                     if save_data:
                         with open(fpath + rxpath + fname + ".tdd", "wb") as f:

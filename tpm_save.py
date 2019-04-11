@@ -26,20 +26,56 @@ __maintainer__ = "Andrea Mattana"
 import multiprocessing
 import subprocess
 import os
+from optparse import OptionParser
+import urllib3
+# Test application, security unimportant:
+urllib3.disable_warnings()
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+import httplib2
+from openpyxl import load_workbook
 
 
 PYSKA_DIR = "/home/mattana/work/SKA-AAVS1/tools/pyska/"
-TPMs_number = 3
+GOOGLE_SPREADSHEET_NAME = "BRIDGING"
+
+def read_from_google(docname, sheetname):
+    try:
+        # use creds to create a client to interact with the Google Drive API
+        scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+        creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+        client = gspread.authorize(creds)
+    except:
+        print "ERROR: Google Credential file not found or invalid file!"
+
+    # Find a workbook by name and open the first sheet
+    # Make sure you use the right name here.
+    cells = []
+    try:
+        sheet = client.open(docname).worksheet(sheetname)
+        print "Successfully connected to the google doc!"
+
+        # Extract and print all of the values
+        cells = sheet.get_all_records()
+        for i in range(len(cells)):
+            cells[i]['East'] = float(cells[i]['East'].replace(",","."))
+            cells[i]['North'] = float(cells[i]['North'].replace(",", "."))
+            #print cells[i]['Antenna'], cells[i]['North'], cells[i]['East']
+    except:
+        print "ERROR: Google Spreadsheet Name (or Sheet Name) is not correct! {", docname, sheetname, "}"
+    return cells
+
 
 def dump(job_q, results_q):
     DEVNULL = open(os.devnull, 'w')
     while True:
-        FPGA_IP = job_q.get()
+        FPGA_IP, Tile, debug = job_q.get()
         if FPGA_IP == None:
             break
         try:
-            print "Starting process:",'python', 'tpm_get_stream.py', '-b', FPGA_IP, '--debug'
-            if subprocess.call(['python', 'tpm_get_stream.py', '-b', FPGA_IP, '--debug'], stdout=DEVNULL) == 0:
+            Tile = "--tile=%d" % (Tile)
+            print "Starting process:",'python', 'tpm_get_stream.py', '-b', FPGA_IP, Tile, debug
+            if subprocess.call(['python', 'tpm_get_stream.py', '-b', FPGA_IP, Tile, debug], stdout=DEVNULL) == 0:
             #if subprocess.call(['python', 'tpm_get_stream.py', '--board=', FPGA_IP, '--debug'], stdout=DEVNULL) == 0:
                 results_q.put(FPGA_IP)
         except:
@@ -54,9 +90,8 @@ def sort_ip_list(ip_list):
     return [ip[1] for ip in ipl]
 
 
-def save_TPMs():
-    pool_size = TPMs_number
-    print "Starting using", TPMs_number, "TPMs"
+def save_TPMs(STATION):
+    pool_size = len(TPMs)
 
     jobs = multiprocessing.Queue()
     results = multiprocessing.Queue()
@@ -67,12 +102,13 @@ def save_TPMs():
     for p in pool:
         p.start()
 
-    for i in range(1, pool_size + 1):
-        jobs.put('10.0.10.{0}'.format(i))
+    for i in STATION['TPMs']:
+        tile = list(set(x['Tile'] for x in STATION['CELLS'] if x['TPM'] == int(i)))[0]
+        jobs.put(('10.0.10.{0}'.format(i), tile, STATION['DEBUG']))
         # time.sleep(1)
 
     for p in pool:
-        jobs.put(None)
+        jobs.put((None, None, None))
 
     for p in pool:
         p.join()
@@ -92,4 +128,37 @@ def save_TPMs():
 
 
 if __name__ == "__main__":
-    a = save_TPMs()
+    parser = OptionParser()
+    parser.add_option("-d", "--debug", action='store_true',
+                      dest="debug",
+                      default=False,
+                      help="If set the program runs in debug mode")
+
+    parser.add_option("--station",
+                      dest="station",
+                      default="SKALA-4",
+                      help="The station type (def: SKALA-4, alternatives: EDA-2)")
+
+    (options, args) = parser.parse_args()
+    debug = ""
+    if options.debug:
+        debug += "--debug"
+
+    # Search for the antenna file
+    if not os.path.isfile("MAP_" + options.station + ".txt"):
+        cells = read_from_google(GOOGLE_SPREADSHEET_NAME, options.station)
+        #print len(cells)
+    TPMs = list(set([x['TPM'] for x in cells]))
+    TILES = list(set([x['Tile'] for x in cells]))
+
+    STATION = {}
+    STATION['NAME'] = options.station
+    STATION['TPMs'] = TPMs
+    STATION['TILES'] = TILES
+    STATION['DEBUG'] = debug
+    STATION['CELLS'] = cells
+
+    print "\nDetected %d Tiles with %d antennas connected to %d TPMs\n"%(len(TILES), len(cells), len(TPMs))
+    #print "Searching for TPMs: ", TPMs
+    # Starting Acquisition Processes
+    a = save_TPMs(STATION)
