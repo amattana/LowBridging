@@ -25,7 +25,7 @@ __maintainer__ = "Andrea Mattana"
 
 import multiprocessing
 import subprocess
-import os
+import os, datetime
 from optparse import OptionParser
 import urllib3
 # Test application, security unimportant:
@@ -92,7 +92,7 @@ def write_to_local(station, cells):
         for k in keys:
             header += str(k) + "\t"
         f.write(header[:-1])
-        for record in cells[1:]:
+        for record in cells:
             line = "\n"
             for k in keys:
                 line += str(record[k]) + "\t"
@@ -106,7 +106,7 @@ def dump(job_q, results_q):
         if Tile == None:
             break
         try:
-            print "Starting process:",'python', 'tpm_get_stream.py', '--station='+Station, "--tile=%d" % (int(Tile)), Debug
+            #print "Starting process:",'python', 'tpm_get_stream.py', '--station='+Station, "--tile=%d" % (int(Tile)), Debug
             if subprocess.call(['python', 'tpm_get_stream.py', '--station='+Station, "--tile=%d" % (int(Tile)), Debug], stdout=DEVNULL) == 0:
                 results_q.put(Tile)
         except:
@@ -123,6 +123,8 @@ def sort_ip_list(ip_list):
 
 def save_TPMs(STATION):
     pool_size = len(TPMs)
+    t = datetime.datetime.utcnow()
+    print t, "[ASK] Asking data to %d Tiles..."%(pool_size)
 
     jobs = multiprocessing.Queue()
     results = multiprocessing.Queue()
@@ -150,8 +152,13 @@ def save_TPMs(STATION):
         print "No iTPM boards found!"
     else:
         lista_tiles = sorted(lista_tiles)
-        for tile in lista_tiles:
-            print tile
+        t_end = datetime.datetime.utcnow()
+        print t_end, "[RCV] Received data from %d Tiles in %d seconds"%(len(lista_tiles), (t_end-t).seconds)
+        if not pool_size == len(lista_tiles):
+            print t_end, "[ERR] Tiles ok are {",
+            for tile in lista_tiles:
+                print ",", tile,
+            print "}"
     return lista_tiles
 
 
@@ -189,7 +196,7 @@ if __name__ == "__main__":
     STATION['DEBUG'] = debug
     STATION['CELLS'] = cells
 
-    print "\nDetected %d Tiles with %d antennas connected to %d TPMs"%(len(TILES), len(cells), len(TPMs))
+    print "\nDetected %d Tiles with %d antennas connected to %d TPMs\n"%(len(TILES), len(cells), len(TPMs))
     #print "Searching for TPMs: ", TPMs
     # Starting Acquisition Processes
     a = save_TPMs(STATION)

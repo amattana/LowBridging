@@ -59,12 +59,8 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 # Some globals
 OUT_PATH = "/data/data_2/2019-LOW-BRIDGING-PHASE1/"
-WWW_PATH = "/data/data_2/2019-LOW-BRIDGING-PHASE1/WWW/"
 DATA_PATH = "DATA/"
-POWER_DIR = "POWER/"
-POWER_DAY = "~/work/LowBridging/power_plot.py --silent -a --dir=" + OUT_PATH
 
-PHASE_0_MAP = [[0, "EDA-2"], [1, "SKALA-4.0"], [4, "SKALA-2"], [5, "SKALA-4.1"]]
 GOOGLE_SPREADSHEET_NAME = "BRIDGING"
 
 
@@ -164,9 +160,6 @@ if __name__ == "__main__":
         os.makedirs(OUT_PATH + "IMG")
         os.makedirs(OUT_PATH + "IMG/PLOT-A")
         os.makedirs(OUT_PATH + "IMG/PLOT-B")
-    if not os.path.exists(OUT_PATH + POWER_DIR):
-        os.makedirs(OUT_PATH + POWER_DIR)
-    pdir = OUT_PATH + POWER_DIR
 
     # Search for the antenna file
     if not os.path.isfile("STATIONS/MAP_" + options.station + ".txt"):
@@ -174,74 +167,39 @@ if __name__ == "__main__":
     else:
         cells = read_from_local(options.station)
 
-    TPM = "10.0.10." + str(list(set([x['TPM'] for x in cells if x['Tile'] == str(options.tile)]))[0])
+    TPM = str(list(set([x['TPM'] for x in cells if x['Tile'] == str(options.tile)]))[0])
+    board_ip = "10.0.10." + TPM
+    TILE = "%02d"%(int(options.tile))
+    ANT_NAMES = []
+    for i in range(1, 17):
+        print TILE, i, list(set([x['Antenna'] for x in cells if (x['TPM'] == TPM and x['RX'] == str(i))]))
+        ANT_NAMES += ["ANT-%03d"%(int(list(set([x['Antenna'] for x in cells if (x['TPM'] == TPM and x['RX'] == str(i))]))[0]))]
 
-    counter = 0
     try:
-        # num = long(options.num)
-        ora = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(time.time()), "%Y/%m/%d  %H:%M:%S")
-        today = datetime.datetime.utcfromtimestamp(time.time()).date()
-        measnum = 0
-        tot_triggered = 0
 
-        last_meas = last_power = trigger_time = time.time()
-        mask_trigger = False
-
-        counter = counter + 1
-        epoch = time.time()
-        actual_time = datetime.datetime.utcfromtimestamp(epoch)
-        ora = datetime.datetime.strftime(actual_time, "%Y-%m-%d_%H%M%S")
-        orario = datetime.datetime.strftime(actual_time, "%Y/%m/%d  %H:%M:%S")
-
-        # Creating Directory for today's data
-        if not actual_time.date() == today:
-            # os.system(POWER_DAY+today.strftime("%Y-%m-%d")+"/POWER/")
-            OUT_PATH = OUT_PATH[:-11] + datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(time.time()),
-                                                                   "%Y-%m-%d/")
-            measnum = 0
-            today = datetime.datetime.utcfromtimestamp(time.time()).date()
-
-        pdir = OUT_PATH + POWER_DIR
-
-        save_data = 1
-        save_power = 1
-
-        freqs, spettro, rawdata, rms, rfpower = get_raw_meas(tpm_obj(TPM), debug=options.debug)
+        freqs, spettro, rawdata, rms, rfpower = get_raw_meas(tpm_obj(board_ip), debug=options.debug)
+        orario = datetime.datetime.utcnow()
+        ora = str(orario).replace(":","").replace(" ","_").replace(".","_")
 
         for rx in xrange(len(spettro) / 2):
-            if rx in np.transpose(PHASE_0_MAP)[0].astype(np.int):
-                for p, pol in enumerate(["X", "Y"]):
-                    fpath = OUT_PATH + DATA_PATH
-                    if not os.path.exists(fpath):
-                        os.makedirs(fpath)
-                    fpath += TILE_PATH
-                    if not os.path.exists(fpath):
-                        os.makedirs(fpath)
-                    rxpath = str("RX-%02d_" % (int(rx + 1)))
-                    rxpath += [x[1] for x in PHASE_0_MAP if (x[0] == rx)][0]
-                    rxpath += "/"
-                    if not os.path.exists(fpath + rxpath):
-                        os.makedirs(fpath + rxpath)
-                    fname = "Pol-" + pol + "/"
-                    if not os.path.exists(fpath + rxpath + fname):
-                        os.makedirs(fpath + rxpath + fname)
-                    fname += str("TPM-%02d" % (int(TPM.split(".")[-1]))) + str(
-                        "_RX-%02d_" % (int(rx + 1)))  # + "_BASE-"
-                    fname += [x[1] for x in PHASE_0_MAP if (x[0] == rx)][0]
-                    fname += "_Pol-" + pol + "_" + ora
-                    pname = pdir + "POWER_" + [x[1] for x in PHASE_0_MAP if (x[0] == rx)][0] + "_Pol-" + pol + ".csv"
-                    rfpow = rfpower[(rx * 2)]
-                    if save_power:
-                        with open(pname, "a") as pfile:
-                            msg = str("%3.1f" % (epoch)) + "\t" + orario.replace("  ", "\t") + "\t" + str(
-                                "%3.1f" % (rfpow))
-                            pfile.write(msg + "\n")
+            for p, pol in enumerate(["X", "Y"]):
+                fpath = OUT_PATH + DATA_PATH
+                if not os.path.exists(fpath):
+                    os.makedirs(fpath)
+                fpath += TILE_PATH
+                if not os.path.exists(fpath):
+                    os.makedirs(fpath)
+                rxpath = "TILE-" + TILE + "_" + ANT_NAMES[rx] + "/"
+                if not os.path.exists(fpath + rxpath):
+                    os.makedirs(fpath + rxpath)
+                fname = "Pol-" + pol + "/"
+                if not os.path.exists(fpath + rxpath + fname):
+                    os.makedirs(fpath + rxpath + fname)
+                fname +=  TILE + "_" + ANT_NAMES[rx] + "_Pol-" + pol + "_" + ora
 
-                    if save_data:
-                        with open(fpath + rxpath + fname + ".tdd", "wb") as f:
-                            f.write(struct.pack(">d", len(rawdata[(rx * 2) + p])))
-                            f.write(struct.pack(">" + str(len(rawdata[(rx * 2) + p])) + "b",
-                                                *rawdata[(rx * 2) + p]))
+                with open(fpath + rxpath + fname + ".raw", "wb") as f:
+                    f.write(struct.pack(">" + str(len(rawdata[(rx * 2) + p])) + "b",
+                                        *rawdata[(rx * 2) + p]))
 
     except KeyboardInterrupt:
         print "\n\nProgram terminated!\n\n"
