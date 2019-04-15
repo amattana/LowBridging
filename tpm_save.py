@@ -37,6 +37,7 @@ from openpyxl import load_workbook
 
 
 PYSKA_DIR = "/home/mattana/work/SKA-AAVS1/tools/pyska/"
+WORK_DIR = "/data/data_2/2019-LOW-BRIDGING-PHASE1/"
 GOOGLE_SPREADSHEET_NAME = "BRIDGING"
 
 def read_from_google(docname, sheetname):
@@ -196,7 +197,25 @@ if __name__ == "__main__":
     STATION['DEBUG'] = debug
     STATION['CELLS'] = cells
 
+    DATA = str(datetime.datetime.utcnow().date())
+
+
     print "\nDetected %d Tiles with %d antennas connected to %d TPMs\n"%(len(TILES), len(cells), len(TPMs))
     #print "Searching for TPMs: ", TPMs
     # Starting Acquisition Processes
     a = save_TPMs(STATION)
+
+    tiles = os.listdir(WORK_DIR + DATA + "/DATA/")
+    for tile in tiles:
+        ants = os.listdir(WORK_DIR + DATA + "/DATA/" + tile)
+        for ant in ants:
+            for pol in ["/POL-X/", "/POL-Y/"]:
+                fname = WORK_DIR + DATA + "/DATA/" + tile + "/" + ant + pol
+                fname += sorted(os.listdir(WORK_DIR + DATA + "/DATA/" + tile + "/" + ant + pol), reverse=True)[0]
+        t_acq = fname[-28:-4]
+        print t_acq
+
+
+
+
+

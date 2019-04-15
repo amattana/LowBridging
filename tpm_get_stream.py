@@ -158,8 +158,6 @@ if __name__ == "__main__":
     ## Creating Directory to store the videos
     if not os.path.exists(OUT_PATH + "IMG"):
         os.makedirs(OUT_PATH + "IMG")
-        os.makedirs(OUT_PATH + "IMG/PLOT-A")
-        os.makedirs(OUT_PATH + "IMG/PLOT-B")
 
     # Search for the antenna file
     if not os.path.isfile("STATIONS/MAP_" + options.station + ".txt"):
@@ -175,31 +173,26 @@ if __name__ == "__main__":
         print TILE, i, list(set([x['Antenna'] for x in cells if (x['TPM'] == TPM and x['RX'] == str(i))]))
         ANT_NAMES += ["ANT-%03d"%(int(list(set([x['Antenna'] for x in cells if (x['TPM'] == TPM and x['RX'] == str(i))]))[0]))]
 
-    try:
+    freqs, spettro, rawdata, rms, rfpower = get_raw_meas(tpm_obj(board_ip), debug=options.debug)
+    orario = datetime.datetime.utcnow()
+    ora = str(orario).replace(":","").replace(" ","_").replace(".","_")
 
-        freqs, spettro, rawdata, rms, rfpower = get_raw_meas(tpm_obj(board_ip), debug=options.debug)
-        orario = datetime.datetime.utcnow()
-        ora = str(orario).replace(":","").replace(" ","_").replace(".","_")
+    for rx in xrange(len(spettro) / 2):
+        for p, pol in enumerate(["X", "Y"]):
+            fpath = OUT_PATH + DATA_PATH
+            if not os.path.exists(fpath):
+                os.makedirs(fpath)
+            fpath += TILE_PATH
+            if not os.path.exists(fpath):
+                os.makedirs(fpath)
+            rxpath = "TILE-" + TILE + "_" + ANT_NAMES[rx] + "/"
+            if not os.path.exists(fpath + rxpath):
+                os.makedirs(fpath + rxpath)
+            fname = "POL-" + pol + "/"
+            if not os.path.exists(fpath + rxpath + fname):
+                os.makedirs(fpath + rxpath + fname)
+            fname += "TILE-" + TILE + "_" + ANT_NAMES[rx] + "_POL-" + pol + "_" + ora
 
-        for rx in xrange(len(spettro) / 2):
-            for p, pol in enumerate(["X", "Y"]):
-                fpath = OUT_PATH + DATA_PATH
-                if not os.path.exists(fpath):
-                    os.makedirs(fpath)
-                fpath += TILE_PATH
-                if not os.path.exists(fpath):
-                    os.makedirs(fpath)
-                rxpath = "TILE-" + TILE + "_" + ANT_NAMES[rx] + "/"
-                if not os.path.exists(fpath + rxpath):
-                    os.makedirs(fpath + rxpath)
-                fname = "Pol-" + pol + "/"
-                if not os.path.exists(fpath + rxpath + fname):
-                    os.makedirs(fpath + rxpath + fname)
-                fname +=  TILE + "_" + ANT_NAMES[rx] + "_Pol-" + pol + "_" + ora
-
-                with open(fpath + rxpath + fname + ".raw", "wb") as f:
-                    f.write(struct.pack(">" + str(len(rawdata[(rx * 2) + p])) + "b",
-                                        *rawdata[(rx * 2) + p]))
-
-    except KeyboardInterrupt:
-        print "\n\nProgram terminated!\n\n"
+            with open(fpath + rxpath + fname + ".raw", "wb") as f:
+                f.write(struct.pack(">" + str(len(rawdata[(rx * 2) + p])) + "b",
+                                    *rawdata[(rx * 2) + p]))
