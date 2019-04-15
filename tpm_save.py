@@ -50,34 +50,65 @@ def read_from_google(docname, sheetname):
 
     # Find a workbook by name and open the first sheet
     # Make sure you use the right name here.
-    cells = []
     try:
         sheet = client.open(docname).worksheet(sheetname)
         print "Successfully connected to the google doc!"
 
         # Extract and print all of the values
-        cells = sheet.get_all_records()
-        for i in range(len(cells)):
-            cells[i]['East'] = float(cells[i]['East'].replace(",","."))
-            cells[i]['North'] = float(cells[i]['North'].replace(",", "."))
-            #print cells[i]['Antenna'], cells[i]['North'], cells[i]['East']
+        values = sheet.get_all_values()
+        cells = []
+        keys = values[0]
+        for line in values[1:]:
+            record = {}
+            for n, col in enumerate(line):
+                record[keys[n]] = col
+            record['East'] = float(record['East'].replace(",","."))
+            record['North'] = float(record['North'].replace(",", "."))
+
+            cells += [record]
     except:
         print "ERROR: Google Spreadsheet Name (or Sheet Name) is not correct! {", docname, sheetname, "}"
-    return cells
+    return keys, cells
+
+
+def read_from_local(station):
+    with open("STATIONS/MAP_" + station + ".txt") as f:
+        lines = f.readlines()
+    celle = []
+    keys = lines[0].split("\t")
+    for l in lines[1:]:
+        record = {}
+        for n, r in enumerate(l.split("\t")):
+            record[keys[n]] = r
+        celle += [record]
+    return celle
+
+
+def write_to_local(station, cells):
+    if not os.path.exists("STATIONS/"):
+        os.makedirs("STATIONS/")
+    with open("STATIONS/MAP_" + station + ".txt", "w") as f:
+        header = ""
+        for k in keys:
+            header += str(k) + "\t"
+        f.write(header[:-1])
+        for record in cells[1:]:
+            line = "\n"
+            for k in keys:
+                line += str(record[k]) + "\t"
+            f.write(line[:-1])
 
 
 def dump(job_q, results_q):
     DEVNULL = open(os.devnull, 'w')
     while True:
-        FPGA_IP, Tile, debug = job_q.get()
-        if FPGA_IP == None:
+        Station, Tile, Debug = job_q.get()
+        if Tile == None:
             break
         try:
-            Tile = "--tile=%d" % (Tile)
-            print "Starting process:",'python', 'tpm_get_stream.py', '-b', FPGA_IP, Tile, debug
-            if subprocess.call(['python', 'tpm_get_stream.py', '-b', FPGA_IP, Tile, debug], stdout=DEVNULL) == 0:
-            #if subprocess.call(['python', 'tpm_get_stream.py', '--board=', FPGA_IP, '--debug'], stdout=DEVNULL) == 0:
-                results_q.put(FPGA_IP)
+            print "Starting process:",'python', 'tpm_get_stream.py', '--station='+Station, "--tile=%d" % (int(Tile)), Debug
+            if subprocess.call(['python', 'tpm_get_stream.py', '--station='+Station, "--tile=%d" % (int(Tile)), Debug], stdout=DEVNULL) == 0:
+                results_q.put(Tile)
         except:
             pass
 
@@ -102,9 +133,8 @@ def save_TPMs(STATION):
     for p in pool:
         p.start()
 
-    for i in STATION['TPMs']:
-        tile = list(set(x['Tile'] for x in STATION['CELLS'] if x['TPM'] == int(i)))[0]
-        jobs.put(('10.0.10.{0}'.format(i), tile, STATION['DEBUG']))
+    for tile in STATION['TILES']:
+        jobs.put((STATION['NAME'], tile, STATION['DEBUG']))
         # time.sleep(1)
 
     for p in pool:
@@ -113,18 +143,16 @@ def save_TPMs(STATION):
     for p in pool:
         p.join()
 
-    print
-    lista_ip = []
+    lista_tiles = []
     while not results.empty():
-        lista_ip += [results.get()]
-    if lista_ip == []:
+        lista_tiles += [results.get()]
+    if lista_tiles == []:
         print "No iTPM boards found!"
     else:
-        lista_ip = sort_ip_list(lista_ip)
-        for ip in lista_ip:
-            print ip
-        #print lista_ip
-    return lista_ip
+        lista_tiles = sorted(lista_tiles)
+        for tile in lista_tiles:
+            print tile
+    return lista_tiles
 
 
 if __name__ == "__main__":
@@ -145,9 +173,12 @@ if __name__ == "__main__":
         debug += "--debug"
 
     # Search for the antenna file
-    if not os.path.isfile("MAP_" + options.station + ".txt"):
-        cells = read_from_google(GOOGLE_SPREADSHEET_NAME, options.station)
-        #print len(cells)
+    if not os.path.isfile("STATIONS/MAP_" + options.station + ".txt"):
+        keys, cells = read_from_google(GOOGLE_SPREADSHEET_NAME, options.station)
+        write_to_local(options.station, cells)
+    else:
+        cells = read_from_local(options.station)
+
     TPMs = list(set([x['TPM'] for x in cells]))
     TILES = list(set([x['Tile'] for x in cells]))
 
@@ -158,7 +189,7 @@ if __name__ == "__main__":
     STATION['DEBUG'] = debug
     STATION['CELLS'] = cells
 
-    print "\nDetected %d Tiles with %d antennas connected to %d TPMs\n"%(len(TILES), len(cells), len(TPMs))
+    print "\nDetected %d Tiles with %d antennas connected to %d TPMs"%(len(TILES), len(cells), len(TPMs))
     #print "Searching for TPMs: ", TPMs
     # Starting Acquisition Processes
     a = save_TPMs(STATION)

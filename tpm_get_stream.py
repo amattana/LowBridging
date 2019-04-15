@@ -50,6 +50,13 @@ import struct
 import datetime
 import time
 
+import urllib3
+# Test application, security unimportant:
+urllib3.disable_warnings()
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+
 # Some globals
 OUT_PATH = "/data/data_2/2019-LOW-BRIDGING-PHASE1/"
 WWW_PATH = "/data/data_2/2019-LOW-BRIDGING-PHASE1/WWW/"
@@ -58,18 +65,65 @@ POWER_DIR = "POWER/"
 POWER_DAY = "~/work/LowBridging/power_plot.py --silent -a --dir=" + OUT_PATH
 
 PHASE_0_MAP = [[0, "EDA-2"], [1, "SKALA-4.0"], [4, "SKALA-2"], [5, "SKALA-4.1"]]
+GOOGLE_SPREADSHEET_NAME = "BRIDGING"
+
+
+def read_from_google(docname, sheetname):
+    try:
+        # use creds to create a client to interact with the Google Drive API
+        scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+        creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+        client = gspread.authorize(creds)
+    except:
+        print "ERROR: Google Credential file not found or invalid file!"
+
+    # Find a workbook by name and open the first sheet
+    # Make sure you use the right name here.
+    try:
+        sheet = client.open(docname).worksheet(sheetname)
+        print "Successfully connected to the google doc!"
+
+        # Extract and print all of the values
+        values = sheet.get_all_values()
+        cells = []
+        keys = values[0]
+        for line in values[1:]:
+            record = {}
+            for n, col in enumerate(line):
+                record[keys[n]] = col
+            record['East'] = float(record['East'].replace(",","."))
+            record['North'] = float(record['North'].replace(",", "."))
+
+            cells += [record]
+    except:
+        print "ERROR: Google Spreadsheet Name (or Sheet Name) is not correct! {", docname, sheetname, "}"
+    return cells
+
+
+
+def read_from_local(station):
+    with open("STATIONS/MAP_" + station + ".txt") as f:
+        lines = f.readlines()
+    celle = []
+    keys = lines[0].split("\t")
+    for l in lines[1:]:
+        record = {}
+        for n, r in enumerate(l.split("\t")):
+            record[keys[n]] = r
+        celle += [record]
+    return celle
 
 
 if __name__ == "__main__":
     parser = OptionParser()
-    parser.add_option("-b", "--board",
-                      dest="board",
-                      default="10.0.10.2",
-                      help="Board ip (def: 10.0.10.2)")
+    parser.add_option("--station",
+                      dest="station",
+                      default="SKALA-4",
+                      help="The station type (def: SKALA-4, alternatives: EDA-2)")
 
     parser.add_option("--tile",
                       dest="tile",
-                      default="10",
+                      default="10", type=int,
                       help="Numer of the Tile (def: 10)")
 
     parser.add_option("-d", "--debug", action='store_true',
@@ -80,13 +134,12 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     if options.debug:
-        print "["+str(options.board)+"] DEBUG MODE: Using saved data !!!\n"
+        print "[" + str(options.station) + "/" + "%02d"%(options.tile) + "] DEBUG MODE: Using saved data !!!\n"
 
     nsamples = 1024
     rbw = (800000.0 / 2 ** 17) * (2 ** 17 / nsamples)
 
     # Search for TPMs
-    TPM = str(options.board)
     TILE = str(options.tile)
     TILE_PATH = "TILE-%02d/"%(int(TILE))
     data = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(time.time()), "%Y/%m/%d")
@@ -114,6 +167,14 @@ if __name__ == "__main__":
     if not os.path.exists(OUT_PATH + POWER_DIR):
         os.makedirs(OUT_PATH + POWER_DIR)
     pdir = OUT_PATH + POWER_DIR
+
+    # Search for the antenna file
+    if not os.path.isfile("STATIONS/MAP_" + options.station + ".txt"):
+        cells = read_from_google(GOOGLE_SPREADSHEET_NAME, options.station)
+    else:
+        cells = read_from_local(options.station)
+
+    TPM = "10.0.10." + str(list(set([x['TPM'] for x in cells if x['Tile'] == str(options.tile)]))[0])
 
     counter = 0
     try:
