@@ -185,7 +185,7 @@ if __name__ == "__main__":
             fpath += TILE_PATH
             if not os.path.exists(fpath):
                 os.makedirs(fpath)
-            rxpath = "TILE-" + TILE + "_" + ANT_NAMES[rx] + "/"
+            rxpath = ANT_NAMES[rx] + "/"
             if not os.path.exists(fpath + rxpath):
                 os.makedirs(fpath + rxpath)
             fname = "POL-" + pol + "/"

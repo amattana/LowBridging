@@ -35,9 +35,15 @@ from oauth2client.service_account import ServiceAccountCredentials
 import httplib2
 from openpyxl import load_workbook
 
+import numpy as np
+import struct, time
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+
 
 PYSKA_DIR = "/home/mattana/work/SKA-AAVS1/tools/pyska/"
 WORK_DIR = "/data/data_2/2019-LOW-BRIDGING-PHASE1/"
+IMG_DIR = "/IMG/"
 GOOGLE_SPREADSHEET_NAME = "BRIDGING"
 
 def read_from_google(docname, sheetname):
@@ -163,6 +169,34 @@ def save_TPMs(STATION):
     return lista_tiles
 
 
+def calcSpectra(vett):
+    window = np.hanning(len(vett))
+    spettro = np.fft.rfft(vett * window)
+    N = len(spettro)
+    acf = 2  # amplitude correction factor
+    spettro[:] = abs((acf * spettro) / N)
+    # print len(vett), len(spettro), len(np.real(spettro))
+    return (np.real(spettro))
+
+
+def calcolaspettro(dati, nsamples=131072):
+    n = nsamples  # split and average number, from 128k to 16 of 8k # aavs1 federico
+    sp = [dati[x:x + n] for x in xrange(0, len(dati), n)]
+    mediato = np.zeros(len(calcSpectra(sp[0])))
+    for k in sp:
+        singolo = calcSpectra(k)
+        mediato[:] += singolo
+    # singoli[:] /= 16 # originale
+    mediato[:] /= (2 ** 17 / nsamples)  # federico
+    with np.errstate(divide='ignore', invalid='ignore'):
+        mediato[:] = 20 * np.log10(mediato / 127.0)
+    return mediato
+
+
+def closest(serie, num):
+    return serie.tolist().index(min(serie.tolist(), key=lambda z: abs(z - num)))
+
+
 if __name__ == "__main__":
     parser = OptionParser()
     parser.add_option("-d", "--debug", action='store_true',
@@ -174,6 +208,11 @@ if __name__ == "__main__":
                       dest="station",
                       default="SKALA-4",
                       help="The station type (def: SKALA-4, alternatives: EDA-2)")
+
+    parser.add_option("--resolution",
+                      dest="resolution",
+                      default=2000, type="int",
+                      help="Frequency resolution in KHz (it will be truncated to the closest possible)")
 
     (options, args) = parser.parse_args()
     debug = ""
@@ -187,8 +226,8 @@ if __name__ == "__main__":
     else:
         cells = read_from_local(options.station)
 
-    TPMs = list(set([x['TPM'] for x in cells]))
-    TILES = list(set([x['Tile'] for x in cells]))
+    TPMs = sorted(list(set([x['TPM'] for x in cells])))
+    TILES = sorted(list(set([x['Tile'] for x in cells])))
 
     STATION = {}
     STATION['NAME'] = options.station
@@ -199,21 +238,77 @@ if __name__ == "__main__":
 
     DATA = str(datetime.datetime.utcnow().date())
 
+    resolutions = 2 ** np.array(range(16)) * (800000.0 / 2 ** 17)
+    rbw = int(closest(resolutions, options.resolution))
+    avg = 2 ** rbw
+
+    nsamples = 2 ** 17 / avg
+    x_axes = np.linspace(0,400,(nsamples/2)+1)
 
     print "\nDetected %d Tiles with %d antennas connected to %d TPMs\n"%(len(TILES), len(cells), len(TPMs))
     #print "Searching for TPMs: ", TPMs
     # Starting Acquisition Processes
     a = save_TPMs(STATION)
 
+    tile_active = []
     tiles = os.listdir(WORK_DIR + DATA + "/DATA/")
     for tile in tiles:
-        ants = os.listdir(WORK_DIR + DATA + "/DATA/" + tile)
+        #print list(set(x['Power'] for x in cells if x['Tile'] == str(int(tile[-2:]))))
+        if "ON" in list(set(x['Power'] for x in cells if x['Tile'] == str(int(tile[-2:])))):
+            tile_active += [int(tile[-2:])]
+
+    fig = plt.figure(figsize=(12, 7), facecolor='w')
+    plt.ioff()
+    gs = gridspec.GridSpec(2 * len(tile_active), 10)
+    gs.update(left=0.05, right=0.95, wspace=0.05, hspace=0.5)
+    axes = []
+    t_axes = []
+    for t in range(len(tile_active)):
+        t_axes += [plt.subplot(gs[(t*2):(t*2)+2, 0:2])]
+        t_axes[t].set_axis_off()
+        t_axes[t].plot(range(10), color='w')
+        t_axes[t].annotate("Tile "+str(tile_active[t]), (1, 4), fontsize=24, color='black')
+        for r in range(2):
+            for c in range(8):
+                axes += [plt.subplot(gs[(t*2)+r, c+2])]
+    fig.show()
+
+    ax_tile = 0
+    for tile in tile_active:
+        ax_ant = 0
+        #ants = os.listdir(WORK_DIR + DATA + "/DATA/TILE-%02d"%tile)
+        ants = []
+        for j in range(16):
+            ants += ["ANT-%03d"%int([x['Antenna'] for x in cells if ((x['Tile'] == str(tile)) and (x['RX'] == str(j+1)))][0])]
+        #print ants
         for ant in ants:
-            for pol in ["/POL-X/", "/POL-Y/"]:
-                fname = WORK_DIR + DATA + "/DATA/" + tile + "/" + ant + pol
-                fname += sorted(os.listdir(WORK_DIR + DATA + "/DATA/" + tile + "/" + ant + pol), reverse=True)[0]
+            axes[ax_ant + (ax_tile * 16)].cla()
+            for pol, col in [("/POL-X/", "b"), ("/POL-Y/", "g")]:
+                fname = WORK_DIR + DATA + "/DATA/TILE-%02d"%tile + "/" + ant + pol
+                fname += sorted(os.listdir(WORK_DIR + DATA + "/DATA/TILE-%02d"%tile + "/" + ant + pol), reverse=True)[0]
+
+                with open(fname, "r") as f:
+                    a = f.read()
+                data = struct.unpack(">" + str(len(a)) + "b", a)
+                singolo = calcolaspettro(data, nsamples)
+
+                axes[ax_ant+(ax_tile*16)].plot(x_axes, singolo, color=col)
+            axes[ax_ant+(ax_tile*16)].set_ylim(-80, 0)
+            axes[ax_ant+(ax_tile*16)].get_xaxis().set_visible(False)
+            axes[ax_ant+(ax_tile*16)].get_yaxis().set_visible(False)
+            #axes[ax_ant+(ax_tile*16)].set_xlabel('MHz')
+            #axes[ax_ant+(ax_tile*16)].set_ylabel("dBm")
+            axes[ax_ant+(ax_tile*16)].set_title(ant[-7:], fontsize=10)
+            #axes[ax_ant+(ax_tile*16)].grid(True)
+            ax_ant = ax_ant + 1
+        ax_tile = ax_tile + 1
         t_acq = fname[-28:-4]
-        print t_acq
+
+            #print tile, t_acq
+    #plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+    fig.canvas.draw()
+    time.sleep(1)
+    plt.savefig(WORK_DIR + DATA + IMG_DIR + "IMG_" + fname[-28:-11] + ".png")
 
 
 
