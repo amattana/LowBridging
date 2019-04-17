@@ -129,7 +129,7 @@ def sort_ip_list(ip_list):
 
 
 def save_TPMs(STATION):
-    pool_size = len(TPMs)
+    pool_size = len(STATION['TILES'])
     t = datetime.datetime.utcnow()
     print t, "[ASK] Asking data to %d Tiles..."%(pool_size)
 
@@ -226,15 +226,8 @@ if __name__ == "__main__":
     else:
         cells = read_from_local(options.station)
 
-    TPMs = sorted(list(set([x['TPM'] for x in cells])))
-    TILES = sorted(list(set([x['Tile'] for x in cells])))
-
-    STATION = {}
-    STATION['NAME'] = options.station
-    STATION['TPMs'] = TPMs
-    STATION['TILES'] = TILES
-    STATION['DEBUG'] = debug
-    STATION['CELLS'] = cells
+    #TPMs = sorted(list(set([x['TPM'] for x in cells])))
+    #TILES = sorted(list(set([x['Tile'] for x in cells])))
 
     DATA = str(datetime.datetime.utcnow().date())
 
@@ -245,47 +238,83 @@ if __name__ == "__main__":
     nsamples = 2 ** 17 / avg
     x_axes = np.linspace(0,400,(nsamples/2)+1)
 
-    print "\nDetected %d Tiles with %d antennas connected to %d TPMs\n"%(len(TILES), len(cells), len(TPMs))
+    STATION = {}
+    STATION['NAME'] = options.station
+    #STATION['TPMs'] = TPMs
+    STATION['DEBUG'] = debug
+    STATION['CELLS'] = cells
+
+    tile_active = []
+    #tiles = os.listdir(WORK_DIR + DATA + "/DATA/")
+    for tile in range(1,16+1):
+        #print list(set(x['Power'] for x in cells if x['Tile'] == str(int(tile[-2:]))))
+        if "ON" in list(set(x['Power'] for x in cells if x['Tile'] == str(tile))):
+            tile_active += [str(tile)]
+    STATION['TILES'] = tile_active
+
+    print "\nDetected %d Tiles with %d antennas\n"%(len(tile_active), 16*len(tile_active))
     #print "Searching for TPMs: ", TPMs
     # Starting Acquisition Processes
     a = save_TPMs(STATION)
 
-    tile_active = []
-    tiles = os.listdir(WORK_DIR + DATA + "/DATA/")
-    for tile in tiles:
-        #print list(set(x['Power'] for x in cells if x['Tile'] == str(int(tile[-2:]))))
-        if "ON" in list(set(x['Power'] for x in cells if x['Tile'] == str(int(tile[-2:])))):
-            tile_active += [int(tile[-2:])]
 
-    fig = plt.figure(figsize=(12, 7), facecolor='w')
+    # gridspec inside gridspec
+    outer_grid = gridspec.GridSpec(len(tile_active), 1, hspace=0.5, left=0.02, right=0.98, bottom=0.05, top=0.95)
+
+    fig = plt.figure(figsize=(14, 2.5 * len(tile_active)), facecolor='w')
     plt.ioff()
-    gs = gridspec.GridSpec(2 * len(tile_active), 10)
-    gs.update(left=0.05, right=0.95, wspace=0.05, hspace=0.5)
-    axes = []
     t_axes = []
-    for t in range(len(tile_active)):
-        t_axes += [plt.subplot(gs[(t*2):(t*2)+2, 0:2])]
-        t_axes[t].set_axis_off()
-        t_axes[t].plot(range(10), color='w')
-        t_axes[t].annotate("Tile "+str(tile_active[t]), (1, 4), fontsize=24, color='black')
+    axes = []
+    for i in range(len(tile_active)):
+        #print tile_active[i]
+        gs = gridspec.GridSpecFromSubplotSpec(2, 16, wspace=0.05, hspace=0.5, subplot_spec=outer_grid[i])
+        #gs.update(left=0.05, right=0.95, wspace=0.05, hspace=0.5)
+        t_axes += [[plt.subplot(gs[0:2, 0:2]), plt.subplot(gs[0:2, 2:4]), plt.subplot(gs[0, 5:7]), plt.subplot(gs[1, 5:7])]]
+        t_axes[i][0].set_axis_off()
+        t_axes[i][0].plot([0.001,0.002], color='w')
+        t_axes[i][0].set_xlim(-20, 20)
+        t_axes[i][0].set_ylim(-20, 20)
+        t_axes[i][0].annotate("Tile "+str(tile_active[i]), (-15, -4), fontsize=24, color='black')
+        t_axes[i][1].set_axis_off()
+        t_axes[i][1].plot([0.001,0.002], color='w')
+        t_axes[i][1].set_xlim(-20, 20)
+        t_axes[i][1].set_ylim(-20, 20)
+        circle1 = plt.Circle((0, 0), 19, color='wheat', fill=False, linewidth=2.5)
+        t_axes[i][1].add_artist(circle1)
+
+        t_axes[i][2].plot([0.001,0.002], color='w')
+        t_axes[i][2].set_xlim(-20, 20)
+        t_axes[i][2].set_ylim(-20, 20)
+        t_axes[i][2].get_xaxis().set_visible(False)
+        t_axes[i][2].get_yaxis().set_visible(False)
+        t_axes[i][2].set_title("Power Pol X", fontsize=10)
+
+        t_axes[i][3].plot([0.001,0.002], color='w')
+        t_axes[i][3].set_xlim(-20, 20)
+        t_axes[i][3].set_ylim(-20, 20)
+        t_axes[i][3].get_xaxis().set_visible(False)
+        t_axes[i][3].get_yaxis().set_visible(False)
+        t_axes[i][3].set_title("Power Pol y", fontsize=10)
+
         for r in range(2):
             for c in range(8):
-                axes += [plt.subplot(gs[(t*2)+r, c+2])]
+                axes += [plt.subplot(gs[(r, c+8)])]
     fig.show()
 
     ax_tile = 0
-    for tile in tile_active:
+    for n, tile in enumerate(tile_active):
         ax_ant = 0
         #ants = os.listdir(WORK_DIR + DATA + "/DATA/TILE-%02d"%tile)
         ants = []
         for j in range(16):
-            ants += ["ANT-%03d"%int([x['Antenna'] for x in cells if ((x['Tile'] == str(tile)) and (x['RX'] == str(j+1)))][0])]
+            #print j, tile, [x['Antenna'] for x in cells if ((x['Tile'] == tile) and (x['RX'] == str(j+1)))]
+            ants += ["ANT-%03d"%int([x['Antenna'] for x in cells if ((x['Tile'] == tile) and (x['RX'] == str(j+1)))][0])]
         #print ants
         for ant in ants:
             axes[ax_ant + (ax_tile * 16)].cla()
             for pol, col in [("/POL-X/", "b"), ("/POL-Y/", "g")]:
-                fname = WORK_DIR + DATA + "/DATA/TILE-%02d"%tile + "/" + ant + pol
-                fname += sorted(os.listdir(WORK_DIR + DATA + "/DATA/TILE-%02d"%tile + "/" + ant + pol), reverse=True)[0]
+                fname = WORK_DIR + DATA + "/DATA/TILE-%02d"%int(tile) + "/" + ant + pol
+                fname += sorted(os.listdir(WORK_DIR + DATA + "/DATA/TILE-%02d"%int(tile) + "/" + ant + pol), reverse=True)[0]
 
                 with open(fname, "r") as f:
                     a = f.read()
@@ -301,6 +330,9 @@ if __name__ == "__main__":
             axes[ax_ant+(ax_tile*16)].set_title(ant[-7:], fontsize=10)
             #axes[ax_ant+(ax_tile*16)].grid(True)
             ax_ant = ax_ant + 1
+
+            t_axes[n][1].plot(3, 3, marker='+', markersize=6, linestyle='None', color='k')
+
         ax_tile = ax_tile + 1
         t_acq = fname[-28:-4]
 
