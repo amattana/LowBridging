@@ -40,11 +40,13 @@ import struct, time
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
-
 PYSKA_DIR = "/home/mattana/work/SKA-AAVS1/tools/pyska/"
 WORK_DIR = "/data/data_2/2019-LOW-BRIDGING-PHASE1/"
 IMG_DIR = "/IMG/"
 GOOGLE_SPREADSHEET_NAME = "BRIDGING"
+
+FIG_W = 14
+TILE_H = 2.5
 
 def read_from_google(docname, sheetname):
     try:
@@ -224,184 +226,210 @@ if __name__ == "__main__":
     if options.debug:
         debug += "--debug"
 
-    # Search for the antenna file
-    if not os.path.isfile("STATIONS/MAP_" + options.station + ".txt"):
-        keys, cells = read_from_google(GOOGLE_SPREADSHEET_NAME, options.station)
-        write_to_local(options.station, cells)
-    else:
-        cells = read_from_local(options.station)
+    fig = None
 
-    #TPMs = sorted(list(set([x['TPM'] for x in cells])))
-    #TILES = sorted(list(set([x['Tile'] for x in cells])))
+    while True:
 
-    DATA = str(datetime.datetime.utcnow().date())
+        # Search for the antenna file
+        if not os.path.isfile("STATIONS/MAP_" + options.station + ".txt"):
+            keys, cells = read_from_google(GOOGLE_SPREADSHEET_NAME, options.station)
+            write_to_local(options.station, cells)
+        else:
+            cells = read_from_local(options.station)
 
-    resolutions = 2 ** np.array(range(16)) * (800000.0 / 2 ** 17)
-    rbw = int(closest(resolutions, options.resolution))
-    avg = 2 ** rbw
+        #TPMs = sorted(list(set([x['TPM'] for x in cells])))
+        #TILES = sorted(list(set([x['Tile'] for x in cells])))
 
-    nsamples = 2 ** 17 / avg
-    x_axes = np.linspace(0,400,(nsamples/2)+1)
+        DATA = str(datetime.datetime.utcnow().date())
 
-    STATION = {}
-    STATION['NAME'] = options.station
-    STATION['PROJECT'] = options.project
-    STATION['DEBUG'] = debug
-    STATION['TILES'] = []
+        resolutions = 2 ** np.array(range(16)) * (800000.0 / 2 ** 17)
+        rbw = int(closest(resolutions, options.resolution))
+        avg = 2 ** rbw
 
-    tot_antenne = 0
-    #tiles = os.listdir(WORK_DIR + DATA + "/DATA/")
-    for tile in range(1,16+1):
-        #print list(set(x['Power'] for x in cells if x['Tile'] == str(int(tile[-2:]))))
-        if "ON" in list(set(x['Power'] for x in cells if x['Tile'] == str(tile))):
-            #tile_active += [str(tile)]
-            STATION['TILES'] += [{}]
-            STATION['TILES'][-1]['Tile'] = tile
-            STATION['TILES'][-1]['SmartBox'] = {}
-            STATION['TILES'][-1]['SmartBox']['Name'] = "TODO"
-            STATION['TILES'][-1]['SmartBox']['East'] = "TODO"
-            STATION['TILES'][-1]['SmartBox']['North'] = "TODO"
-            STATION['TILES'][-1]['SmartBox']['FEM'] = ["TODO","TODO","TODO","TODO"]
-            STATION['TILES'][-1]['Antenne'] = []
-            for rx in range(1,16+1):
-                antenna_record = [x for x in cells if ((x['Tile'] == str(tile)) and (x['RX'] == str(rx)))][0]
-                STATION['TILES'][-1]['Antenne'] += [{}]
-                STATION['TILES'][-1]['Antenne'][-1]['Name'] = "ANT-%03d" % int(antenna_record['Antenna'])
-                STATION['TILES'][-1]['Antenne'][-1]['North'] = float(antenna_record['North'])
-                STATION['TILES'][-1]['Antenne'][-1]['East'] = float(antenna_record['East'])
-                tot_antenne = tot_antenne + 1
+        nsamples = 2 ** 17 / avg
+        x_axes = np.linspace(0,400,(nsamples/2)+1)
 
-    print "\nDetected %d Tiles with %d antennas\n"%(len(STATION['TILES']), tot_antenne)
-    #print "Searching for TPMs: ", TPMs
+        STATION = {}
+        STATION['NAME'] = options.station
+        STATION['PROJECT'] = options.project
+        STATION['DEBUG'] = debug
+        STATION['TILES'] = []
 
-    # Starting Acquisition Processes
-    a = save_TPMs(STATION)
+        tot_antenne = 0
+        #tiles = os.listdir(WORK_DIR + DATA + "/DATA/")
+        for tile in range(1,16+1):
+            #print list(set(x['Power'] for x in cells if x['Tile'] == str(int(tile[-2:]))))
+            if "ON" in list(set(x['Power'] for x in cells if x['Tile'] == str(tile))):
+                #tile_active += [str(tile)]
+                STATION['TILES'] += [{}]
+                STATION['TILES'][-1]['Tile'] = tile
+                STATION['TILES'][-1]['SmartBox'] = {}
+                STATION['TILES'][-1]['SmartBox']['Name'] = "TODO"
+                STATION['TILES'][-1]['SmartBox']['East'] = "TODO"
+                STATION['TILES'][-1]['SmartBox']['North'] = "TODO"
+                STATION['TILES'][-1]['SmartBox']['FEM'] = ["TODO","TODO","TODO","TODO"]
+                STATION['TILES'][-1]['Antenne'] = []
+                for rx in range(1,16+1):
+                    antenna_record = [x for x in cells if ((x['Tile'] == str(tile)) and (x['RX'] == str(rx)))][0]
+                    STATION['TILES'][-1]['Antenne'] += [{}]
+                    STATION['TILES'][-1]['Antenne'][-1]['Name'] = "ANT-%03d" % int(antenna_record['Antenna'])
+                    STATION['TILES'][-1]['Antenne'][-1]['North'] = float(antenna_record['North'])
+                    STATION['TILES'][-1]['Antenne'][-1]['East'] = float(antenna_record['East'])
+                    tot_antenne = tot_antenne + 1
 
-    # gridspec inside gridspec
-    outer_grid = gridspec.GridSpec(len(STATION['TILES']), 1, hspace=0.5, left=0.02, right=0.98, bottom=0.05, top=0.95)
+        print "\nDetected %d Tiles with %d antennas\n"%(len(STATION['TILES']), tot_antenne)
+        #print "Searching for TPMs: ", TPMs
 
-    fig = plt.figure(figsize=(14, 2.5 * len(STATION['TILES'])), facecolor='w')
-    plt.ioff()
-    t_axes = []
-    axes = []
-    for i in range(len(STATION['TILES'])):
-        #print tile_active[i]
-        gs = gridspec.GridSpecFromSubplotSpec(2, 16, wspace=0.05, hspace=0.5, subplot_spec=outer_grid[i])
-        #gs.update(left=0.05, right=0.95, wspace=0.05, hspace=0.5)
-        t_axes += [[plt.subplot(gs[0:2, 0:2]), plt.subplot(gs[0:2, 2:4]), plt.subplot(gs[0, 5:7]), plt.subplot(gs[1, 5:7])]]
-        t_axes[i][0].set_axis_off()
-        t_axes[i][0].plot([0.001,0.002], color='w')
-        t_axes[i][0].set_xlim(-20, 20)
-        t_axes[i][0].set_ylim(-20, 20)
-        t_axes[i][0].annotate("Tile "+str(STATION['TILES'][i]['Tile']), (-15, -4), fontsize=24, color='black')
-        t_axes[i][1].set_axis_off()
-        t_axes[i][1].plot([0.001,0.002], color='wheat')
-        t_axes[i][1].set_xlim(-25, 25)
-        t_axes[i][1].set_ylim(-25, 25)
-        circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)#, fill=False)
-        t_axes[i][1].add_artist(circle1)
-        t_axes[i][1].annotate("E", (21, -1), fontsize=10, color='black')
-        t_axes[i][1].annotate("W", (-25, -1), fontsize=10, color='black')
-        t_axes[i][1].annotate("N", (-1, 21), fontsize=10, color='black')
-        t_axes[i][1].annotate("S", (-1, -24), fontsize=10, color='black')
+        # Starting Acquisition Processes
+        a = save_TPMs(STATION)
 
-        t_axes[i][2].plot([0.001,0.002], color='w')
-        t_axes[i][2].set_xlim(-20, 20)
-        t_axes[i][2].set_ylim(-20, 20)
-        #t_axes[i][2].get_xaxis().set_visible(False)
-        #t_axes[i][2].get_yaxis().set_visible(False)
-        t_axes[i][2].set_title("Power Pol X", fontsize=10)
+        # gridspec inside gridspec
+        outer_grid = gridspec.GridSpec(len(STATION['TILES']), 1, hspace=0.8, left=0.02, right=0.98, bottom=0.1, top=0.95)
 
-        t_axes[i][3].plot([0.001,0.002], color='w')
-        t_axes[i][3].set_xlim(-20, 20)
-        t_axes[i][3].set_ylim(-20, 20)
-        #t_axes[i][3].get_xaxis().set_visible(False)
-        #t_axes[i][3].get_yaxis().set_visible(False)
-        t_axes[i][3].set_title("Power Pol Y", fontsize=10)
+        if fig == None:
+            fig = plt.figure(figsize=(FIG_W, TILE_H * len(STATION['TILES'])), facecolor='w')
+            plt.ioff()
+            t_axes = []
+            axes = []
+            for i in range(len(STATION['TILES'])):
+                #print tile_active[i]
+                gs = gridspec.GridSpecFromSubplotSpec(2, 17, wspace=0.05, hspace=0.5, subplot_spec=outer_grid[i])
+                t_axes += [[plt.subplot(gs[0:2, 0:3]), plt.subplot(gs[0:2, 3:5]), plt.subplot(gs[0, 6:8]), plt.subplot(gs[1, 6:8])]]
 
-        for r in range(2):
-            for c in range(8):
-                axes += [plt.subplot(gs[(r, c+8)])]
-    fig.show()
+                for r in range(2):
+                    for c in range(8):
+                        axes += [plt.subplot(gs[(r, c+9)])]
+            fig.show()
 
-    ax_tile = 0
-    ind = np.arange(16)
-    for n, tile in enumerate(STATION['TILES']):
-        ax_ant = 0
-        #ants = os.listdir(WORK_DIR + DATA + "/DATA/TILE-%02d"%tile)
-        ants = []
-        for j in range(16):
-            #print j, tile, [x['Antenna'] for x in cells if ((x['Tile'] == tile) and (x['RX'] == str(j+1)))]
-            ants += ["ANT-%03d"%int([x['Antenna'] for x in cells if ((x['Tile'] == str(tile['Tile'])) and (x['RX'] == str(j+1)))][0])]
-        #print ants
-        adu_rms = []
-        for en, ant in enumerate(ants):
-            axes[ax_ant + (ax_tile * 16)].cla()
-            for pol, col in [("/POL-X/", "b"), ("/POL-Y/", "g")]:
-                fname = WORK_DIR + DATA + "/DATA/TILE-%02d"%int(tile['Tile']) + "/" + ant + pol
-                fname += sorted(os.listdir(WORK_DIR + DATA + "/DATA/TILE-%02d"%int(tile['Tile']) + "/" + ant + pol), reverse=True)[0]
+        ax_tile = 0
+        ind = np.arange(16)
+        for n, tile in enumerate(STATION['TILES']):
 
-                with open(fname, "r") as f:
-                    a = f.read()
-                data = struct.unpack(">" + str(len(a)) + "b", a)
-                singolo = calcolaspettro(data, nsamples)
+            t_axes[n][0].cla()
+            t_axes[n][0].set_axis_off()
+            t_axes[n][0].plot([0.001, 0.002], color='w')
+            t_axes[n][0].set_xlim(-20, 20)
+            t_axes[n][0].set_ylim(-20, 20)
+            t_axes[n][0].annotate("Tile " + str(STATION['TILES'][n]['Tile']), (-11, 5), fontsize=26, color='black')
 
-                adu_rms += [np.sqrt(np.mean(np.power(data, 2), 0))]
-                #volt_rms = adu_rms * (1.7 / 256.)  # VppADC9680/2^bits * ADU_RMS
-                #power_adc = 10 * np.log10(
-                #    np.power(volt_rms, 2) / 400.) + 30  # 10*log10(Vrms^2/Rin) in dBWatt, +3 decadi per dBm
-                #power_rf += [power_adc + 12]  # single ended to diff net loose 12 dBm
+            t_axes[n][1].cla()
+            t_axes[n][1].set_axis_off()
+            t_axes[n][1].plot([0.001, 0.002], color='wheat')
+            t_axes[n][1].set_xlim(-25, 25)
+            t_axes[n][1].set_ylim(-25, 25)
+            circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
+            t_axes[n][1].add_artist(circle1)
+            t_axes[n][1].annotate("E", (21, -1), fontsize=10, color='black')
+            t_axes[n][1].annotate("W", (-25, -1), fontsize=10, color='black')
+            t_axes[n][1].annotate("N", (-1, 21), fontsize=10, color='black')
+            t_axes[n][1].annotate("S", (-1, -24), fontsize=10, color='black')
 
-                axes[ax_ant+(ax_tile*16)].plot(x_axes, singolo, color=col)
-            axes[ax_ant+(ax_tile*16)].set_ylim(-80, 0)
-            axes[ax_ant+(ax_tile*16)].get_xaxis().set_visible(False)
-            axes[ax_ant+(ax_tile*16)].get_yaxis().set_visible(False)
-            #axes[ax_ant+(ax_tile*16)].set_xlabel('MHz')
-            #axes[ax_ant+(ax_tile*16)].set_ylabel("dBm")
-            axes[ax_ant+(ax_tile*16)].set_title(ant[-7:], fontsize=10)
-            #axes[ax_ant+(ax_tile*16)].grid(True)
-            ax_ant = ax_ant + 1
-            #print len(power_rf), power_rf
+            t_axes[n][2].cla()
+            t_axes[n][2].plot([0.001, 0.002], color='w')
+            t_axes[n][2].set_xlim(-20, 20)
+            t_axes[n][2].set_ylim(-20, 20)
+            # t_axes[i][2].get_xaxis().set_visible(False)
+            # t_axes[i][2].get_yaxis().set_visible(False)
+            t_axes[n][2].set_title("Power Pol X", fontsize=10)
 
-            # Draw antenna positions
-            t_axes[n][1].plot(float(tile['Antenne'][en]['East']), float(tile['Antenne'][en]['North']), marker='+', markersize=4, linestyle='None', color='k')
+            t_axes[n][3].cla()
+            t_axes[n][3].plot([0.001, 0.002], color='w')
+            t_axes[n][3].set_xlim(-20, 20)
+            t_axes[n][3].set_ylim(-20, 20)
+            # t_axes[i][3].get_xaxis().set_visible(False)
+            # t_axes[i][3].get_yaxis().set_visible(False)
+            t_axes[n][3].set_title("Power Pol Y", fontsize=10)
 
-        # Plot Power X
-        t_axes[n][2].cla()
-        t_axes[n][2].tick_params(axis='both', which='both', labelsize=10)
-        t_axes[n][2].set_xticks(xrange(1,17))
-        t_axes[n][2].set_xticklabels(np.array(range(1,17)).astype("str").tolist(), fontsize=6)
-        t_axes[n][2].set_yticks([15, 20])
-        t_axes[n][2].set_yticklabels(["15", "20"], fontsize=8)
-        t_axes[n][2].set_ylim([0, 40])
-        t_axes[n][2].set_xlim([0, 17])
-        #t_axes[n][2].set_xlabel("ANTENNA")
-        t_axes[n][2].set_ylabel("RMS", fontsize=8)
-        t_axes[n][2].grid()
-        t_axes[n][2].bar(ind+0.5, adu_rms[0::2], 0.8, color='b')
+            ax_ant = 0
+            #ants = os.listdir(WORK_DIR + DATA + "/DATA/TILE-%02d"%tile)
+            ants = []
+            for j in range(16):
+                #print j, tile, [x['Antenna'] for x in cells if ((x['Tile'] == tile) and (x['RX'] == str(j+1)))]
+                ants += ["ANT-%03d"%int([x['Antenna'] for x in cells if ((x['Tile'] == str(tile['Tile'])) and (x['RX'] == str(j+1)))][0])]
+            #print ants
+            adu_rms = []
+            for en, ant in enumerate(ants):
+                axes[ax_ant + (ax_tile * 16)].cla()
+                for pol, col in [("/POL-X/", "b"), ("/POL-Y/", "g")]:
+                    fname = WORK_DIR + DATA + "/DATA/TILE-%02d"%int(tile['Tile']) + "/" + ant + pol
+                    fname += sorted(os.listdir(WORK_DIR + DATA + "/DATA/TILE-%02d"%int(tile['Tile']) + "/" + ant + pol), reverse=True)[0]
 
-        # Plot Power Y
-        t_axes[n][3].cla()
-        t_axes[n][3].tick_params(axis='both', which='both', labelsize=10)
-        t_axes[n][3].set_xticks(xrange(1,17))
-        t_axes[n][3].set_xticklabels(np.array(range(1,17)).astype("str").tolist(), fontsize=6)
-        t_axes[n][3].set_yticks([15, 20])
-        t_axes[n][3].set_yticklabels(["15", "20"], fontsize=8)
-        t_axes[n][3].set_ylim([0, 40])
-        t_axes[n][3].set_xlim([0, 17])
-        #t_axes[n][3].set_xlabel("ANTENNA")
-        t_axes[n][3].set_ylabel("RMS", fontsize=8)
-        t_axes[n][3].grid()
-        t_axes[n][3].bar(ind+0.5, adu_rms[1::2], 0.8, color='g')
+                    with open(fname, "r") as f:
+                        a = f.read()
+                    data = struct.unpack(">" + str(len(a)) + "b", a)
+                    singolo = calcolaspettro(data, nsamples)
 
-        ax_tile = ax_tile + 1
-        t_acq = fname[-28:-4]
+                    adu_rms += [np.sqrt(np.mean(np.power(data, 2), 0))]
+                    #volt_rms = adu_rms * (1.7 / 256.)  # VppADC9680/2^bits * ADU_RMS
+                    #power_adc = 10 * np.log10(
+                    #    np.power(volt_rms, 2) / 400.) + 30  # 10*log10(Vrms^2/Rin) in dBWatt, +3 decadi per dBm
+                    #power_rf += [power_adc + 12]  # single ended to diff net loose 12 dBm
 
-            #print tile, t_acq
-    #plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-    fig.canvas.draw()
-    time.sleep(1)
-    plt.savefig(WORK_DIR + DATA + IMG_DIR + "IMG_" + fname[-28:-11] + ".png")
+                    axes[ax_ant+(ax_tile*16)].plot(x_axes, singolo, color=col)
+                axes[ax_ant+(ax_tile*16)].set_ylim(-80, 0)
+                if not ((en == 0) or (en == 8)):
+                    axes[ax_ant+(ax_tile*16)].get_yaxis().set_visible(False)
+                else:
+                    axes[ax_ant+(ax_tile*16)].set_yticks([0, -20, -40, -60, -80])
+                    axes[ax_ant+(ax_tile*16)].set_yticklabels([0, -20, -40, -60, -80], fontsize=8)
+                    axes[ax_ant+(ax_tile*16)].set_ylabel("dB", fontsize=10)
+                if (en > 7):
+                    axes[ax_ant+(ax_tile*16)].set_xticks([100, 200, 300, 400])
+                    axes[ax_ant+(ax_tile*16)].set_xticklabels([100, 200, 300, 400], fontsize=8, rotation=45)
+                    axes[ax_ant+(ax_tile*16)].set_xlabel("MHz", fontsize=10)
+                else:
+                    axes[ax_ant+(ax_tile*16)].set_xticks([100, 200, 300, 400])
+                    axes[ax_ant+(ax_tile*16)].set_xticklabels(["", "", "", ""], fontsize=1)
+                    #axes[ax_ant+(ax_tile*16)].get_xaxis().set_visible(False)
+                axes[ax_ant+(ax_tile*16)].set_title(ant[-7:], fontsize=10)
+                ax_ant = ax_ant + 1
+
+                # Draw antenna positions
+                t_axes[n][1].plot(float(tile['Antenne'][en]['East']), float(tile['Antenne'][en]['North']), marker='+', markersize=4, linestyle='None', color='k')
+
+            # Plot Power X
+            t_axes[n][2].cla()
+            t_axes[n][2].tick_params(axis='both', which='both', labelsize=10)
+            t_axes[n][2].set_xticks(xrange(1,17))
+            t_axes[n][2].set_xticklabels(np.array(range(1,17)).astype("str").tolist(), fontsize=6)
+            t_axes[n][2].set_yticks([15, 20])
+            t_axes[n][2].set_yticklabels(["15", "20"], fontsize=7)
+            t_axes[n][2].set_ylim([0, 40])
+            t_axes[n][2].set_xlim([0, 17])
+            #t_axes[n][2].set_xlabel("ANTENNA")
+            t_axes[n][2].set_ylabel("RMS", fontsize=10)
+            t_axes[n][2].grid()
+            t_axes[n][2].bar(ind+0.5, adu_rms[0::2], 0.8, color='b')
+            t_axes[n][2].set_title("Power Pol X", fontsize=10)
+
+            # Plot Power Y
+            t_axes[n][3].cla()
+            t_axes[n][3].tick_params(axis='both', which='both', labelsize=10)
+            t_axes[n][3].set_xticks(xrange(1,17))
+            t_axes[n][3].set_xticklabels(np.array(range(1,17)).astype("str").tolist(), fontsize=6)
+            t_axes[n][3].set_yticks([15, 20])
+            t_axes[n][3].set_yticklabels(["15", "20"], fontsize=7)
+            t_axes[n][3].set_ylim([0, 40])
+            t_axes[n][3].set_xlim([0, 17])
+            #t_axes[n][3].set_xlabel("ANTENNA")
+            t_axes[n][3].set_ylabel("RMS", fontsize=10)
+            t_axes[n][3].set_xlabel("Power Pol Y", fontsize=10)
+            t_axes[n][3].grid()
+            t_axes[n][3].bar(ind+0.5, adu_rms[1::2], 0.8, color='g')
+            #t_axes[n][3].set_title("Power Pol Y", fontsize=10)
+
+            ax_tile = ax_tile + 1
+            t_acq = fname[-28:-9]
+            t_axes[n][0].annotate("Acquisition Time (UTC)", (-17.7, -6), fontsize=12, color='black')
+            t_axes[n][0].annotate(t_acq[:-6].replace("_"," ")+":"+t_acq[-6:-4]+":"+t_acq[-4:-2]+"."+t_acq[-1], (-17.8, -12), fontsize=12, color='black')
+
+                #print tile, t_acq
+        #plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+        fig.canvas.draw()
+        time.sleep(1)
+        plt.savefig(WORK_DIR + DATA + IMG_DIR + "IMG_" + fname[-28:-11] + ".png")
+
+        time.sleep(5)
 
 
 
