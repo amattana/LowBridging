@@ -260,8 +260,8 @@ if __name__ == "__main__":
             keys, cells = read_from_google(GOOGLE_SPREADSHEET_NAME, options.station)
             write_to_local(options.station, cells)
         else:
-            print datetime.datetime.utcfromtimestamp(os.path.getmtime("STATIONS/MAP_" + options.station + ".txt"))
-            print datetime.datetime.strptime(mtime[:-5], "%Y-%m-%dT%H:%M:%S")
+            #print datetime.datetime.utcfromtimestamp(os.path.getmtime("STATIONS/MAP_" + options.station + ".txt"))
+            #print datetime.datetime.strptime(mtime[:-5], "%Y-%m-%dT%H:%M:%S")
             if datetime.datetime.utcfromtimestamp(os.path.getmtime("STATIONS/MAP_" + options.station + ".txt")) < \
                     datetime.datetime.strptime(mtime[:-5], "%Y-%m-%dT%H:%M:%S"):
                 print "GSpread modified, updating..."
@@ -323,7 +323,7 @@ if __name__ == "__main__":
             modified = False
 
         if fig == None:
-            print  FIG_W, TILE_H * len(STATION['TILES']) + 0.8 * len(STATION['TILES'])
+            #print  FIG_W, TILE_H * len(STATION['TILES']) + 0.8 * len(STATION['TILES'])
             fig = plt.figure(figsize=(FIG_W, TILE_H * len(STATION['TILES']) + 0.8 * len(STATION['TILES'])), facecolor='w')
             plt.ioff()
             t_axes = []
