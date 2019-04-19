@@ -140,6 +140,7 @@ def read_from_google():
 
     # Find a workbook by name and open the first sheet
     # Make sure you use the right name here.
+    #sheet = client.open("BRIDGING").worksheet("title")
     sheet = client.open("BRIDGING").sheet1
     print "Successfully opened!"
 
