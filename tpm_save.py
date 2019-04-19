@@ -49,6 +49,28 @@ GOOGLE_SPREADSHEET_NAME = "BRIDGING"
 FIG_W = 14
 TILE_H = 2.5
 
+
+def check_gspread_mtime(docname, sheetname):
+    mtime = '1980-01-01T00:00:00.000Z'
+    try:
+        # use creds to create a client to interact with the Google Drive API
+        scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+        creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+        client = gspread.authorize(creds)
+    except:
+        print "ERROR: Google Credential file not found or invalid file!"
+
+    # Find a workbook by name and open the first sheet
+    # Make sure you use the right name here.
+    try:
+        sheet = client.open(docname).worksheet(sheetname)
+        mtime = sheet.updated
+
+    except:
+        pass
+    return mtime
+
+
 def read_from_google(docname, sheetname):
     try:
         # use creds to create a client to interact with the Google Drive API
@@ -91,7 +113,7 @@ def read_from_local(station):
         for n, r in enumerate(l.split("\t")):
             record[keys[n]] = r
         celle += [record]
-    return celle
+    return keys, celle
 
 
 def write_to_local(station, cells):
@@ -232,11 +254,22 @@ if __name__ == "__main__":
     while True:
 
         # Search for the antenna file
+        modified = False
+        mtime = check_gspread_mtime(GOOGLE_SPREADSHEET_NAME, options.station)
         if not os.path.isfile("STATIONS/MAP_" + options.station + ".txt"):
             keys, cells = read_from_google(GOOGLE_SPREADSHEET_NAME, options.station)
             write_to_local(options.station, cells)
         else:
-            cells = read_from_local(options.station)
+            print datetime.datetime.utcfromtimestamp(os.path.getmtime("STATIONS/MAP_" + options.station + ".txt"))
+            print datetime.datetime.strptime(mtime[:-5], "%Y-%m-%dT%H:%M:%S")
+            if datetime.datetime.utcfromtimestamp(os.path.getmtime("STATIONS/MAP_" + options.station + ".txt")) < \
+                    datetime.datetime.strptime(mtime[:-5], "%Y-%m-%dT%H:%M:%S"):
+                print "GSpread modified, updating..."
+                modified = True
+                keys, cells = read_from_google(GOOGLE_SPREADSHEET_NAME, options.station)
+                write_to_local(options.station, cells)
+            else:
+                keys, cells = read_from_local(options.station)
 
         DATA = str(datetime.datetime.utcnow().date())
 
@@ -279,12 +312,19 @@ if __name__ == "__main__":
 
         # Starting Acquisition Processes
         a = save_TPMs(STATION)
+        #print len(STATION['TILES'])
 
         # gridspec inside gridspec
         outer_grid = gridspec.GridSpec(len(STATION['TILES']), 1, hspace=0.8, left=0.02, right=0.98, bottom=0.1, top=0.95)
 
+        if ((not (fig == None)) and (modified)):
+            plt.close(fig)
+            fig = None
+            modified = False
+
         if fig == None:
-            fig = plt.figure(figsize=(FIG_W, TILE_H * len(STATION['TILES'])), facecolor='w')
+            print  FIG_W, TILE_H * len(STATION['TILES']) + 0.8 * len(STATION['TILES'])
+            fig = plt.figure(figsize=(FIG_W, TILE_H * len(STATION['TILES']) + 0.8 * len(STATION['TILES'])), facecolor='w')
             plt.ioff()
             t_axes = []
             axes = []
@@ -296,12 +336,13 @@ if __name__ == "__main__":
                 for r in range(2):
                     for c in range(8):
                         axes += [plt.subplot(gs[(r, c+9)])]
-            fig.show()
+            #fig.show()
 
         ax_tile = 0
         ind = np.arange(16)
         for n, tile in enumerate(STATION['TILES']):
 
+            #print n, len(STATION['TILES'])
             t_axes[n][0].cla()
             t_axes[n][0].set_axis_off()
             t_axes[n][0].plot([0.001, 0.002], color='w')
@@ -411,6 +452,7 @@ if __name__ == "__main__":
         if not os.path.isdir(WWW):
             os.makedirs(WWW)
         plt.savefig(WWW + "/STATION_" + STATION['NAME'] + ".png")
+        #os.system("scp " + WWW + "/STATION_" + STATION['NAME'] + ".png" + " amattana@192.167.189.30:/home/amattana/public_html/SKA/")
 
         time.sleep(5)
 
