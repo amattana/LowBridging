@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>AAVS1</string>
+   <string>BRIDGING</string>
   </property>
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
@@ -30,7 +30,7 @@
    </property>
    <widget class="QWidget" name="tab_map">
     <attribute name="title">
-     <string>AAVS1 Map</string>
+     <string>Bridging Map</string>
     </attribute>
     <widget class="QWidget" name="plotWidgetMap" native="true">
      <property name="geometry">
@@ -118,102 +118,6 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QCheckBox" name="cb_not">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>860</x>
-       <y>370</y>
-       <width>141</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Not Cleaned</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="cb_single">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>860</x>
-       <y>400</y>
-       <width>141</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Single Cleaned</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="cb_double">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>860</x>
-       <y>430</y>
-       <width>141</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Double Cleaned</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="cb_ferrite">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>860</x>
-       <y>460</y>
-       <width>141</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Ferrite</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="cb_gnd">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>860</x>
-       <y>490</y>
-       <width>141</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>GND Jacket</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="cb_base">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>860</x>
-       <y>220</y>
-       <width>141</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Basements</string>
-     </property>
-    </widget>
     <widget class="QCheckBox" name="cb_debug">
      <property name="enabled">
       <bool>false</bool>
@@ -221,7 +125,7 @@
      <property name="geometry">
       <rect>
        <x>860</x>
-       <y>310</y>
+       <y>260</y>
        <width>141</width>
        <height>21</height>
       </rect>
@@ -318,7 +222,7 @@
      <property name="geometry">
       <rect>
        <x>760</x>
-       <y>310</y>
+       <y>260</y>
        <width>81</width>
        <height>20</height>
       </rect>
@@ -327,94 +231,14 @@
       <string/>
      </property>
     </widget>
-    <widget class="QLabel" name="count_nc">
+    <widget class="QLabel" name="count_deployed">
      <property name="enabled">
       <bool>false</bool>
      </property>
      <property name="geometry">
       <rect>
        <x>760</x>
-       <y>370</y>
-       <width>81</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="count_sc">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>760</x>
-       <y>400</y>
-       <width>81</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="count_dbl">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>760</x>
-       <y>430</y>
-       <width>81</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="count_fer">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>760</x>
-       <y>460</y>
-       <width>81</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="count_gnd">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>760</x>
-       <y>490</y>
-       <width>81</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="count_base">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>760</x>
-       <y>220</y>
+       <y>300</y>
        <width>81</width>
        <height>20</height>
       </rect>
@@ -430,7 +254,7 @@
      <property name="geometry">
       <rect>
        <x>760</x>
-       <y>280</y>
+       <y>220</y>
        <width>81</width>
        <height>20</height>
       </rect>
@@ -446,61 +270,13 @@
      <property name="geometry">
       <rect>
        <x>860</x>
-       <y>280</y>
+       <y>220</y>
        <width>141</width>
        <height>21</height>
       </rect>
      </property>
      <property name="text">
       <string>Powered Off</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="count_gold">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>760</x>
-       <y>340</y>
-       <width>81</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="cb_gold">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>860</x>
-       <y>340</y>
-       <width>141</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Golden Outlet</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="cb_ant">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>860</x>
-       <y>250</y>
-       <width>141</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Antennas</string>
      </property>
     </widget>
     <widget class="QLabel" name="count_ant">
@@ -510,13 +286,29 @@
      <property name="geometry">
       <rect>
        <x>760</x>
-       <y>250</y>
-       <width>81</width>
+       <y>350</y>
+       <width>271</width>
        <height>20</height>
       </rect>
      </property>
      <property name="text">
       <string/>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="cb_deployed">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>860</x>
+       <y>300</y>
+       <width>141</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Deployed</string>
      </property>
     </widget>
    </widget>
@@ -634,7 +426,7 @@
        </font>
       </property>
       <property name="text">
-       <string>HC</string>
+       <string>--</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -657,7 +449,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Rox</string>
+       <string>--</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -952,7 +744,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Rox</string>
+       <string>--</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -998,7 +790,7 @@
        </font>
       </property>
       <property name="text">
-       <string>HC</string>
+       <string>--</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>

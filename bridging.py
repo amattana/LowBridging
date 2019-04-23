@@ -22,49 +22,30 @@ sys.path.append("../SKA-AAVS1/tools/config")
 sys.path.append("../SKA-AAVS1/tools/repo_utils")
 sys.path.append("../SKA-AAVS1/tools/pyska")
 from tpm_utils import *
-#from ska_tpm import xmlparser
-#from jig_adu_test import *
 from bsp.tpm import *
-#import config.manager as config_man
-import manager as config_man
-from netproto.sdp_medicina import sdp_medicina as sdp_med
-import subprocess
 DEVNULL = open(os.devnull,'w')
 
-import datetime, time
+import time
 import sys, easygui, datetime
-#from qt_rf_jig_utils import *
-from gui_utils import *
-from rf_jig import *
-from rfjig_bsp import *
 from ip_scan import *
+from gui_utils import *
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-import httplib2
-from openpyxl import load_workbook
 
 from optparse import OptionParser
 
-# Matplotlib stuff
-import matplotlib.patches as mpatches
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
-
-
 # Other stuff
 import numpy as np
-import struct
-
-#import multiprocessing
 from threading import Thread
 
 # Some globals
+GOOGLE_SPREADSHEET_NAME = "BRIDGING"
 
 KEY_ANTENNA_NUMBER = 'Antenna'
 KEY_ANTENNA_X = 'East'
 KEY_ANTENNA_Y = 'North'
+KEY_ANTENNA_TILE = 'Tile'
 KEY_ANTENNA_SB = 'SmartBox'
 KEY_ANTENNA_FIBRE = 'Fibre'
 KEY_ANTENNA_FCOLOUR = 'Colour'
@@ -72,10 +53,13 @@ KEY_ANTENNA_FEM = 'FEM'
 KEY_ANTENNA_RIBBON = 'Ribbon'
 KEY_ANTENNA_TPM = 'TPM'
 KEY_ANTENNA_RX = 'RX'
+KEY_ANTENNA_POWER = 'Power'
+KEY_ANTENNA_DEPLOYED = 'Deployed'
 KEY_ANTENNA_DEBUG = 'Debug'
+KEY_ANTENNA_DESCRIPTION = 'Description'
 
 
-COLORS = ['b','g','r','k','y','c']
+COLORS = ['b', 'g', 'r', 'k', 'y', 'c']
 RIGHE = 257
 COLONNE = 24
 EX_FILE = "/home/amattana/Downloads/AAVS 1.1 Locations and connections.xlsx"
@@ -114,69 +98,106 @@ except AttributeError:
 colori=[['        RMS > 30  ','#c800c8'], ['25 < RMS < 30','#ff1d00'], ['20 < RMS < 25','#ff9f00'], ['15 < RMS < 20','#22ff00'], ['10 < RMS < 15','#00ffc5'], ['  5 < RMS < 10 ','#00c5ff'],['    0 < RMS < 5','#0000ff']]
 colori_tpm=['b','g','r','y']
 
-map_tpm_range = [['TPM-1',[18.8,4.1,22.3,2.8],'b'],
-             ['TPM-2',[16.57,12,20.24,10.77],'g'],
-             ['TPM-3',[9.14,19,13.58,17.81],'r'],
-             ['TPM-4',[1.45,21.37,5.29,19.4],'y'],
-             ['TPM-5',[-5.97,21.28,-1.62,19.68],'b'],
-             ['TPM-6',[-14.09,19.59,-8.54,17.52],'g'],
-             ['TPM-7',[-21.35,12.64,-16.31,10.49],'r'],
-             ['TPM-8',[-22.89,4.48,-18.62,2.41],'y'],
-             ['TPM-9',[18.45,-2.64,22.55,-4.52],'y'],
-             ['TPM-10',[16.14,-10.43,21.18,-12.69],'r'],
-             ['TPM-11',[9.31,-16.25,14,-18.7],'g'],
-             ['TPM-12',[1,-19.35,6.23,-21.7],'b'],
-             ['TPM-13',[-5.97,-19.34,-1.1,-21.7],'y'],
-             ['TPM-14',[-13.75,-16.16,-8.9,-18.8],'r'],
-             ['TPM-15',[-20.84,-10.34,-16.05,-12.78],'g'],
-             ['TPM-16',[-22.8,-2.27,-18,-4.6],'b'],
-            ]
+# map_tpm_range = [['TPM-1',[18.8,4.1,22.3,2.8],'b'],
+#              ['TPM-2',[16.57,12,20.24,10.77],'g'],
+#              ['TPM-3',[9.14,19,13.58,17.81],'r'],
+#              ['TPM-4',[1.45,21.37,5.29,19.4],'y'],
+#              ['TPM-5',[-5.97,21.28,-1.62,19.68],'b'],
+#              ['TPM-6',[-14.09,19.59,-8.54,17.52],'g'],
+#              ['TPM-7',[-21.35,12.64,-16.31,10.49],'r'],
+#              ['TPM-8',[-22.89,4.48,-18.62,2.41],'y'],
+#              ['TPM-9',[18.45,-2.64,22.55,-4.52],'y'],
+#              ['TPM-10',[16.14,-10.43,21.18,-12.69],'r'],
+#              ['TPM-11',[9.31,-16.25,14,-18.7],'g'],
+#              ['TPM-12',[1,-19.35,6.23,-21.7],'b'],
+#              ['TPM-13',[-5.97,-19.34,-1.1,-21.7],'y'],
+#              ['TPM-14',[-13.75,-16.16,-8.9,-18.8],'r'],
+#              ['TPM-15',[-20.84,-10.34,-16.05,-12.78],'g'],
+#              ['TPM-16',[-22.8,-2.27,-18,-4.6],'b'],
+#             ]
+#
 
-def read_from_google():
-    # use creds to create a client to interact with the Google Drive API
-    scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-    creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
-    client = gspread.authorize(creds)
+def check_gspread_mtime(docname, sheetname):
+    mtime = '1980-01-01T00:00:00.000Z'
+    try:
+        # use creds to create a client to interact with the Google Drive API
+        scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+        creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+        client = gspread.authorize(creds)
+    except:
+        print "ERROR: Google Credential file not found or invalid file!"
 
     # Find a workbook by name and open the first sheet
     # Make sure you use the right name here.
-    #sheet = client.open("BRIDGING").worksheet("title")
-    sheet = client.open("BRIDGING").sheet1
-    print "Successfully opened!"
+    try:
+        sheet = client.open(docname).worksheet(sheetname)
+        mtime = sheet.updated
 
-    # Extract and print all of the values
-    cells = sheet.get_all_records()
-    for i in range(len(cells)):
-        cells[i]['East'] = float(cells[i]['East'].replace(",","."))
-        cells[i]['North'] = float(cells[i]['North'].replace(",", "."))
-        #print cells[i]['Antenna'], cells[i]['North'], cells[i]['East']
-    return cells
+    except:
+        pass
+    return mtime
 
 
-def read_from_local(fname):
-    if (os.path.isfile(fname)):
-        wb2 = load_workbook(fname, data_only=True)
-        ws = wb2.active
-        wb2.close()
-        keys=[]
-        for j in range(COLONNE):
-            keys += [ws.cell(row=1, column=j+1).value]
+def read_from_google(docname, sheetname):
+    try:
+        # use creds to create a client to interact with the Google Drive API
+        scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+        creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+        client = gspread.authorize(creds)
+    except:
+        print "ERROR: Google Credential file not found or invalid file!"
 
-        cells=[]
-        for i in range(RIGHE-1):
-            dic={}
-            for j in range(COLONNE):
-                val=ws.cell(row=i+2, column=j+1).value
-                if not val==None:
-                    dic[keys[j]]=val
-                else:
-                    dic[keys[j]]=""
-            cells += [dic]
-    else:
-        print "Unable to find file:", fname
-        print "\nExiting with errors...\n"
-        exit()
-    return cells
+    # Find a workbook by name and open the first sheet
+    # Make sure you use the right name here.
+    try:
+        sheet = client.open(docname).worksheet(sheetname)
+        print "Successfully connected to the google doc!"
+
+        # Extract and print all of the values
+        values = sheet.get_all_values()
+        cells = []
+        keys = values[0]
+        for line in values[1:]:
+            record = {}
+            for n, col in enumerate(line):
+                record[keys[n]] = col
+            record['East'] = float(record['East'].replace(",","."))
+            record['North'] = float(record['North'].replace(",", "."))
+
+            cells += [record]
+    except:
+        print "ERROR: Google Spreadsheet Name (or Sheet Name) is not correct! {", docname, sheetname, "}"
+    return keys, cells
+
+
+def read_from_local(station):
+    print station
+    with open("STATIONS/MAP_" + station + ".txt") as f:
+        lines = f.readlines()
+    celle = []
+    keys = lines[0].split()
+    for l in lines[1:]:
+        record = {}
+        for n, r in enumerate(l.split()):
+            record[keys[n]] = r
+        celle += [record]
+    return keys, celle
+
+
+def write_to_local(station, keys, cells):
+    if not os.path.exists("STATIONS/"):
+        os.makedirs("STATIONS/")
+    print "Writing file " + "STATIONS/MAP_" + station + ".txt"
+    with open("STATIONS/MAP_" + station + ".txt", "w") as f:
+        header = ""
+        for k in keys:
+            header += str(k) + "\t"
+        f.write(header[:-1])
+        for record in cells:
+            line = "\n"
+            for k in keys:
+                line += str(record[k]) + "\t"
+            f.write(line[:-1])
 
 
 # This creates the input label (eg: for input 15 -> "15:")
@@ -317,7 +338,7 @@ class AAVS(QtGui.QMainWindow):
     #jig_pm_signal = QtCore.pyqtSignal()
     #antenna_test_signal = QtCore.pyqtSignal()
 
-    def __init__(self, uiFile, flag_debug=False, opt_tpms=""):
+    def __init__(self, uiFile, STATION):
 
         """ Initialise main window """
         super(AAVS, self).__init__()
@@ -325,35 +346,23 @@ class AAVS(QtGui.QMainWindow):
         # Load window file
         self.mainWidget = uic.loadUi(uiFile)
         self.setCentralWidget(self.mainWidget)
-        self.setWindowTitle("AAVS")
+        self.setWindowTitle("BRIDGING")
         self.resize(1100,680)
 
         # Flag for thread
         self.process_live_enabled = False
 
-        self.debug = flag_debug
-        print "The program is running with flag DEBUG set to:",self.debug 
-
-        if not opt_tpms == "":
-            self.tpm_list = opt_tpms.split(",")
-        else:
-            self.tpm_list = []
-        #self.pic_ska = QtGui.QLabel(self.mainWidget.qtab_conf)
-        #self.pic_ska.setGeometry(590, 300, 480, 200)
-        #self.pic_ska.setPixmap(QtGui.QPixmap(os.getcwd() + "/pic/ska_inaf_logo2.jpg"))
-        #self.mainWidget.qframe_ant_rms.hide()
-
+        self.station = STATION
         self.cells = []
-        self.TPMs=[]
+        self.keys = []
+        self.TPMs = []
+
+        self.debug = STATION['DEBUG']
+        print "The program is running with flag DEBUG set to:", self.debug
 
         self.gb = self.mainWidget.cb_group.isChecked()
-        self.gb_not = self.mainWidget.cb_not.isChecked()
-        self.gb_single = self.mainWidget.cb_single.isChecked()
-        self.gb_double = self.mainWidget.cb_double.isChecked()
-        self.gb_ferrite = self.mainWidget.cb_ferrite.isChecked()
-        self.gb_gnd = self.mainWidget.cb_gnd.isChecked()
-        self.gb_base = self.mainWidget.cb_base.isChecked()
         self.gb_debug = self.mainWidget.cb_debug.isChecked()
+        self.gb_off = self.mainWidget.cb_off.isChecked()
         self.switchtox = False
         self.switchtoy = False
         self.load_events()
@@ -362,12 +371,12 @@ class AAVS(QtGui.QMainWindow):
         self.fft_nsamples = 1024
         self.log = True
 
-        if self.log:
-            for tpm in self.TPMs:
-                directory = LOG_PATH + "/" + tpm['IP']
-                if not os.path.exists(directory):
-                    os.makedirs(directory)
-
+        # if self.log:
+        #     for tpm in self.TPMs:
+        #         directory = LOG_PATH + "/" + tpm['IP']
+        #         if not os.path.exists(directory):
+        #             os.makedirs(directory)
+        #
         self.mapPlot = MapPlot(self.mainWidget.plotWidgetMap)
         self.mapPlot.plotClear()
         self.runMap()
@@ -379,7 +388,6 @@ class AAVS(QtGui.QMainWindow):
         self.updatePlotList()
 
         self.spectraPlot = MiniPlots(self.mainWidget.plotWidgetSpectra, 16, dpi=92)
-        #self.spectraPlot.plotClear()
 
         self.process_livePlot = Thread(target=self.read_tpm_data)
 
@@ -402,73 +410,28 @@ class AAVS(QtGui.QMainWindow):
         else:
             self.map_meas = 'DBM'
         self.map_dBm = self.mainWidget.cb_dBm.isChecked()
-        self.map_base = self.mainWidget.cb_base.isChecked()
-        if self.mainWidget.cb_tpm.isChecked():
-            for i in map_tpm_range:
-                self.color_ant_of_tpm(i[0],i[2])
-        else:
-            self.mapPlot.plotMap(self.cells, marker='8', markersize=12, color='k')
+        # if self.mainWidget.cb_tpm.isChecked():
+        #     for i in map_tpm_range:
+        #         self.color_ant_of_tpm(i[0],i[2])
+        # else:
+        #     self.mapPlot.plotMap(self.cells, marker='8', markersize=12, color='k')
 
         if self.mainWidget.cb_group.isChecked():
-            if self.mainWidget.cb_double.isChecked():
-                dbl=[a for a in self.cells if not a['D_C']==""]
-                self.mapPlot.plotMap(dbl, marker='8', markersize=15, color='k')
-                print("Count Double_Clean: %d"%(len(dbl)))
-
-            if self.mainWidget.cb_single.isChecked():
-                dbl=[a for a in self.cells if not a['S_C']==""]
-                self.mapPlot.plotMap(dbl, marker='8', markersize=15, color='k')
-                print("Count Single_Clean: %d"%(len(dbl)))
-
-            if self.mainWidget.cb_not.isChecked():
-                dbl=[a for a in self.cells if not a['N_C']==""]
-                self.mapPlot.plotMap(dbl, marker='8', markersize=15, color='k')
-                print("Count Not_Clean: %d"%(len(dbl)))
-
-            if self.mainWidget.cb_ferrite.isChecked():
-                dbl=[a for a in self.cells if not a['Fer']==""]
-                self.mapPlot.plotMap(dbl, marker='8', markersize=15, color='k')
-                print("Count Ferrite: %d"%(len(dbl)))
-
             if self.mainWidget.cb_debug.isChecked():
-                dbl=[a for a in self.cells if not a['Debug']==""]
+                dbl=[a for a in self.cells if not a[KEY_ANTENNA_DEBUG]==""]
                 self.mapPlot.plotMap(dbl, marker='8', markersize=15, color='k')
                 print("Count Debug: %d"%(len(dbl)))
 
-            if self.mainWidget.cb_gnd.isChecked():
-                dbl=[a for a in self.cells if not a['HC_GND']==""]
-                self.mapPlot.plotMap(dbl, marker='8', markersize=15, color='k')
-                print("Count GND Jacket: %d"%(len(dbl)))
-
             if self.mainWidget.cb_off.isChecked():
-                dbl = [a for a in self.cells if not a['DC'] == ""]
+                dbl = [a for a in self.cells if not a[KEY_ANTENNA_POWER] == ""]
                 self.mapPlot.plotMap(dbl, marker='8', markersize=15, color='k')
                 print("Count OFF: %d" % (len(dbl)))
 
-            if self.mainWidget.cb_base.isChecked():
-                self.mapPlot.plotMap(self.cells, marker='8', markersize=15, color='k')
-                print("Count Basements: %d" % (len(dbl)))
-
-            if self.mainWidget.cb_ant.isChecked():
-                dbl = [a for a in self.cells if not a['HC'] == ""]
-                self.mapPlot.plotMap(dbl, marker='8', markersize=15, color='k')
-                print("Count Antennas: %d" % (len(dbl)))
-
-            if self.mainWidget.cb_gold.isChecked():
-                dbl = [a for a in self.cells if not a['Gold'] == ""]
-                self.mapPlot.plotMap(dbl, marker='8', markersize=15, color='k')
-                print("Count Gold: %d" % (len(dbl)))
-
-        #self.mapPlot.plotMap(self.cells, marker='8', markersize=10, color='w')
-
-        spente=[a for a in self.cells if a['DC']=="OFF"]
-        #self.mapPlot.plotMap(spente, marker='+', markersize=11, color='k')
         if self.mainWidget.cb_basename.isChecked():
             self.mapPlot.printBase(self.cells)
         else:
-            deployed = [a for a in self.cells if not a['ROX'] == ""]
-            self.mapPlot.plotMap(deployed, marker='+', markersize=11, color='k')
-
+            deployed = [a for a in self.cells if a[KEY_ANTENNA_DEPLOYED] == "Yes"]
+            self.mapPlot.plotMap(deployed, marker='+', markersize=11, markerwidth=2, color='k')
 
         if self.mainWidget.cb_rms.isChecked() or self.mainWidget.cb_dBm.isChecked():
             for tpm in self.TPMs:
@@ -495,7 +458,6 @@ class AAVS(QtGui.QMainWindow):
                                 self.mapPlot.oPlot(x, y, marker='8', markersize=10, color=rms_color(tpm['DBM'][(j*2)+self.pol]))
                         if self.log:
                             self.logMeas(tpm['IP'], tpm['ANTENNE'][j])
-    #                    print("Plotting Antenna "+str(tpm['ANTENNE'][j]['Base'])+" (RX: "+str(tpm['ANTENNE'][j]['RX'])+", J:"+str(j)+", Colour: "+tpm['ANTENNE'][j]['Colour']+") with RMS %4.1f"%(rms[(j*2)+self.pol])+" and power of %4.1f dBm"%(dbm[(j*2)+self.pol]))
                         print("Plotting Antenna "+str(tpm['ANTENNE'][j]['Base'])+" with RMS %4.1f"%(tpm['RMS'][(j*2)+self.pol])+" and power of %4.1f dBm"%(tpm['DBM'][(j*2)+self.pol]))
                     else:
                         print("Plotting Antenna "+str(tpm['ANTENNE'][j]['Base'])+" Powered OFF")
@@ -503,8 +465,7 @@ class AAVS(QtGui.QMainWindow):
                         y = float(str(tpm['ANTENNE'][j]['North']).replace(",", "."))
                         self.mapPlot.oPlot(x, y, marker='8', markersize=10, color='k')
 
-        self.mapPlot.plotMap(spente, marker='8', markersize=8, color='k')
-        noant = [a for a in self.cells if a['HC'] == ""]
+        noant = [a for a in self.cells if a[KEY_ANTENNA_DEPLOYED] == "No"]
         self.mapPlot.plotMap(noant, marker='8', markersize=12, color='w')
         self.annot = self.mapPlot.canvas.ax.annotate("", xy=(0, 0), xytext=(20, 20), textcoords="offset points",
                             bbox=dict(boxstyle="round", fc="w"),
@@ -537,37 +498,48 @@ class AAVS(QtGui.QMainWindow):
         print "PLOT MAP"
 
     def loadAAVSdata(self):
-        if not self.debug:
-            try:
-                self.cells = read_from_google()
-                print "\nSuccessfully connected to the online google spreadsheet!\n\n"
+        # Search for the antenna file
+        modified = False
+        mtime = check_gspread_mtime(GOOGLE_SPREADSHEET_NAME, self.station['NAME'])
+        if not os.path.isfile("STATIONS/MAP_" + self.station['NAME'] + ".txt"):
+            self.keys, self.cells = read_from_google(GOOGLE_SPREADSHEET_NAME, self.station['NAME'])
+            write_to_local(self.station['NAME'], self.keys, self.cells)
+        else:
+            # print datetime.datetime.utcfromtimestamp(os.path.getmtime("STATIONS/MAP_" + options.station + ".txt"))
+            # print datetime.datetime.strptime(mtime[:-5], "%Y-%m-%dT%H:%M:%S")
+            if datetime.datetime.utcfromtimestamp(os.path.getmtime("STATIONS/MAP_" + self.station['NAME'] + ".txt")) < \
+                    datetime.datetime.strptime(mtime[:-5], "%Y-%m-%dT%H:%M:%S"):
+                print "GSpread modified, updating..."
+                modified = True
+                self.keys, self.cells = read_from_google(GOOGLE_SPREADSHEET_NAME, self.station['NAME'])
+                write_to_local(self.station['NAME'], self.keys, self.cells)
+            else:
+                print self.station['NAME']
+                self.keys, self.cells = read_from_local(self.station['NAME'])
 
-
-            except httplib2.ServerNotFoundError:
-                print("\nUnable to find the server at accounts.google.com.\n\nContinuing with local file: %s\n"%(EX_FILE))
-                self.cells = read_from_local(EX_FILE)
-                print "done!"
-            tpms = ip_scan()
-
-        # else:
-        #     if os.path.isfile(EX_FILE):
-        #         print("\nReading local file: %s\n" % (EX_FILE))
-        #         self.cells = read_from_local(EX_FILE)
-        #     else:
-        #         print("\nReading local file: %s\n" % (EX_FILE_AAVS))
-        #         self.cells = read_from_local(EX_FILE_AAVS)
-        #     tpms=["10.0.10."+str(a) for a in xrange(1,17)]
-
-        if not self.tpm_list == []:
-            tpms =  self.tpm_list
-        self.TPMs=[]
-        for i in tpms:
-            tpm = {}
-            tpm['TPM'] = TPM(ip=i, port=10000, timeout=1)
-            tpm['IP']  = i
-            tpm['ANTENNE'] = [x for x in self.cells if x['TPM']==int(i.split(".")[-1])]
-            self.TPMs += [tpm]
-        print("Loaded objects of %d TPM"%(len(self.TPMs)))
+        tot_antenne = 0
+        for tile in range(1,16+1):
+            #print list(set(x['Power'] for x in cells if x['Tile'] == str(int(tile[-2:]))))
+            if "ON" in list(set(x['Power'] for x in self.cells if x['Tile'] == str(tile))):
+                #tile_active += [str(tile)]
+                self.station['TILES'] += [{}]
+                self.station['TILES'][-1]['Tile'] = tile
+                self.station['TILES'][-1]['TPM'] = {}
+                self.station['TILES'][-1]['TPM']['IP'] = "10.0.10." + list(set(x['TPM'] for x in self.cells if x['Tile'] == str(tile)))[0]
+                self.station['TILES'][-1]['TPM']['OBJ'] = TPM(ip=self.station['TILES'][-1]['TPM']['IP'], port=10000, timeout=1)
+                self.station['TILES'][-1]['SmartBox'] = {}
+                self.station['TILES'][-1]['SmartBox']['Name'] = "TODO"
+                self.station['TILES'][-1]['SmartBox']['East'] = "TODO"
+                self.station['TILES'][-1]['SmartBox']['North'] = "TODO"
+                self.station['TILES'][-1]['SmartBox']['FEM'] = ["TODO","TODO","TODO","TODO"]
+                self.station['TILES'][-1]['Antenne'] = []
+                for rx in range(1,16+1):
+                    antenna_record = [x for x in self.cells if ((x['Tile'] == str(tile)) and (x['RX'] == str(rx)))][0]
+                    self.station['TILES'][-1]['Antenne'] += [{}]
+                    self.station['TILES'][-1]['Antenne'][-1]['Name'] = "ANT-%03d" % int(antenna_record['Antenna'])
+                    self.station['TILES'][-1]['Antenne'][-1]['North'] = float(antenna_record['North'])
+                    self.station['TILES'][-1]['Antenne'][-1]['East'] = float(antenna_record['East'])
+                    tot_antenne = tot_antenne + 1
 
         mygroupbox = QtGui.QGroupBox()
         myform = QtGui.QFormLayout()
@@ -765,8 +737,8 @@ class AAVS(QtGui.QMainWindow):
                             self.mapPlot.plotMap(deployed, marker='+', markersize=11, color='k')
                             break
 
-    def update_annot(self, x,y,text):
-
+    def update_annot(self, x, y, text):
+        # TODO bisognerebbe gestire la posizione della nuvola in funzione delle coordinate
         pos = (x,y)
         self.annot.xy = pos
         self.annot.set_text(text)
@@ -774,17 +746,23 @@ class AAVS(QtGui.QMainWindow):
         #self.annot.get_bbox_patch().set_alpha(0.4)
 
     def mouseonbase(self, x, y):
-        if (x - 0.5 < 0) and (x + 0.5 > 0) and (y - 0.5 < 0) and (y + 0.5 >
-                                                                      0):
+        if (x - 0.5 < 0) and (x + 0.5 > 0) and (y - 0.5 < 0) and (y + 0.5 > 0):
             return "APIU"
         else:
+            #print self.cells
             for a in self.cells:
-                if ((a['East'] > x - 0.6) and (a['East'] < x + 0.6)):
-                    if ((a['North'] > y - 0.6) and (a['North'] < y + 0.6)):
-                        if not a['HC']=="":
-                            return "Base: "+str(a['Base'])+"\nHC: "+str(int(a['HC']))+", Rox: "+str(int(a['ROX']))+"\nRib: "+str(int(a['Ribbon']))+", F: "+str(int(a['Fibre']))
+                if ((float(a[KEY_ANTENNA_X]) > x - 0.6) and (float(a[KEY_ANTENNA_X]) < x + 0.6)):
+                    if ((float(a[KEY_ANTENNA_Y]) > y - 0.6) and (float(a[KEY_ANTENNA_Y]) < y + 0.6)):
+                        #print a
+                        if a[KEY_ANTENNA_DEPLOYED] == "Yes":
+                            msg =  "Ant: "+str(a[KEY_ANTENNA_NUMBER])+"\nTile: "+str(int(a[KEY_ANTENNA_TILE]))+", SB: "+str(int(a[KEY_ANTENNA_SB]))+"\nRib: "+str(int(a[KEY_ANTENNA_RIBBON]))+", F: "+str(int(a[KEY_ANTENNA_FIBRE]))
                         else:
-                            return "Base: "+str(a['Base'])+"\nNo Antenna\ndeployed"
+                            msg =  "Ant: "+str(a[KEY_ANTENNA_NUMBER])+"\nAntenna not\nyet deployed!"
+                        if not a[KEY_ANTENNA_DEBUG] == "":
+                            msg += "\n\n" + a[KEY_ANTENNA_DESCRIPTION][:20]
+                            msg += "\n" + a[KEY_ANTENNA_DESCRIPTION][20:40]
+                            msg += "\n" + a[KEY_ANTENNA_DESCRIPTION][40:60]
+                        return msg
             return ""
 
     def onmotion(self, event):
@@ -793,9 +771,11 @@ class AAVS(QtGui.QMainWindow):
         vis = self.annot.get_visible()
         if event.inaxes == self.mapPlot.canvas.ax:
             cont, ind = self.mapPlot.canvas.ax.contains(event)
-            hc = self.mouseonbase(event.xdata, event.ydata)
-            if ((cont) and (not hc=="")):
-                self.update_annot(event.xdata, event.ydata,hc)
+            pos = self.mouseonbase(event.xdata, event.ydata)
+            #print "cont", cont, "pos", pos
+            if ((cont) and (not pos=="")):
+                #print "call update_annot(", event.xdata, event.ydata, pos, ")"
+                self.update_annot(event.xdata, event.ydata, pos)
                 self.annot.set_visible(True)
                 self.mapPlot.updatePlot()
                 #self.mapPlot.canvas.ax.draw_idle()
@@ -841,12 +821,8 @@ class AAVS(QtGui.QMainWindow):
         #self.mainWidget.qbutton_plotStart.clicked.connect(lambda: self.plotSpectra())
         self.mainWidget.qbutton_plotSave.clicked.connect(lambda: self.saveSpectra())
         self.mainWidget.cb_group.stateChanged.connect(lambda: self.select_group_en())
-        self.mainWidget.cb_double.stateChanged.connect(lambda: self.runMap(False))
-        self.mainWidget.cb_single.stateChanged.connect(lambda: self.runMap(False))
-        self.mainWidget.cb_not.stateChanged.connect(lambda: self.runMap(False))
-        self.mainWidget.cb_ferrite.stateChanged.connect(lambda: self.runMap(False))
-        self.mainWidget.cb_gnd.stateChanged.connect(lambda: self.runMap(False))
         self.mainWidget.cb_debug.stateChanged.connect(lambda: self.runMap(False))
+        self.mainWidget.cb_off.stateChanged.connect(lambda: self.runMap(False))
 
         self.mainWidget.qbutton_plotStart.clicked.connect(lambda: self.ant_enable())
         self.mainWidget.qbutton_plotSave.clicked.connect(lambda: self.savePlot())
@@ -871,13 +847,7 @@ class AAVS(QtGui.QMainWindow):
 
     def select_group_en(self):
         if self.mainWidget.cb_group.isChecked():
-            self.mainWidget.cb_double.setEnabled(True)
-            self.mainWidget.cb_single.setEnabled(True)
-            self.mainWidget.cb_not.setEnabled(True)
-            self.mainWidget.cb_ferrite.setEnabled(True)
-            self.mainWidget.cb_gnd.setEnabled(True)
             self.mainWidget.cb_debug.setEnabled(True)
-            self.mainWidget.cb_base.setEnabled(True)
             self.mainWidget.cb_off.setEnabled(True)
             self.mainWidget.count_debug.setEnabled(True)
             self.mainWidget.count_sc.setEnabled(True)
@@ -885,18 +855,12 @@ class AAVS(QtGui.QMainWindow):
             self.mainWidget.count_nc.setEnabled(True)
             self.mainWidget.count_fer.setEnabled(True)
             self.mainWidget.count_off.setEnabled(True)
-            self.mainWidget.count_base.setEnabled(True)
+            self.mainWidget.count_deployed.setEnabled(True)
             self.mainWidget.count_gnd.setEnabled(True)
             self.mainWidget.count_gold.setEnabled(True)
             self.mainWidget.count_ant.setEnabled(True)
         else:
-            self.mainWidget.cb_double.setEnabled(False)
-            self.mainWidget.cb_single.setEnabled(False)
-            self.mainWidget.cb_not.setEnabled(False)
-            self.mainWidget.cb_ferrite.setEnabled(False)
-            self.mainWidget.cb_gnd.setEnabled(False)
             self.mainWidget.cb_debug.setEnabled(False)
-            self.mainWidget.cb_base.setEnabled(False)
             self.mainWidget.cb_off.setEnabled(False)
             self.mainWidget.count_debug.setEnabled(False)
             self.mainWidget.count_sc.setEnabled(False)
@@ -904,7 +868,7 @@ class AAVS(QtGui.QMainWindow):
             self.mainWidget.count_nc.setEnabled(False)
             self.mainWidget.count_fer.setEnabled(False)
             self.mainWidget.count_off.setEnabled(False)
-            self.mainWidget.count_base.setEnabled(False)
+            self.mainWidget.count_deployed.setEnabled(False)
             self.mainWidget.count_gnd.setEnabled(False)
             self.mainWidget.count_gold.setEnabled(False)
             self.mainWidget.count_ant.setEnabled(False)
@@ -914,26 +878,13 @@ class AAVS(QtGui.QMainWindow):
 
     def countgroups(self):
         try:
-            #print self.cells[0],self.cells[-1]
-            dbl=[a for a in self.cells if not a['D_C']==""]
-            self.mainWidget.count_dbl.setText("Count: "+str(len(dbl)))
-            dbl=[a for a in self.cells if not a['S_C']==""]
-            self.mainWidget.count_sc.setText("Count: "+str(len(dbl)))
-            dbl=[a for a in self.cells if not a['N_C']==""]
-            self.mainWidget.count_nc.setText("Count: "+str(len(dbl)))
-            dbl=[a for a in self.cells if not a['Fer']==""]
-            self.mainWidget.count_fer.setText("Count: "+str(len(dbl)))
-            dbl=[a for a in self.cells if not a['Debug']==""]
+            dbl=[a for a in self.cells if not a[KEY_ANTENNA_DEBUG] == ""]
             self.mainWidget.count_debug.setText("Count: "+str(len(dbl)))
-            dbl=[a for a in self.cells if not a['HC_GND']==""]
-            self.mainWidget.count_gnd.setText("Count: "+str(len(dbl)))
-            dbl=[a for a in self.cells if not a['HC']==""]
-            self.mainWidget.count_ant.setText("Count: "+str(len(dbl)))
-            self.mainWidget.count_base.setText("Count: "+str(len(self.cells)))
-            dbl=[a for a in self.cells if a['DC']=="OFF"]
+            dbl=[a for a in self.cells if a[KEY_ANTENNA_DEPLOYED] == "Yes"]
+            self.mainWidget.count_deployed.setText("Count: "+str(len(dbl)))
+            self.mainWidget.count_ant.setText("Antenna records in the SpreadSheet: "+str(len(self.cells)))
+            dbl=[a for a in self.cells if a[KEY_ANTENNA_POWER] == "OFF"]
             self.mainWidget.count_off.setText("Count: "+str(len(dbl)))
-            dbl=[a for a in self.cells if not a['Gold']==""]
-            self.mainWidget.count_gold.setText("Count: "+str(len(dbl)))
         except:
             print "ERROR while counting groups. Please check field names or the number of columns read in the spreadsheet."
 
@@ -1048,11 +999,28 @@ if __name__ == "__main__":
                       default="",
                       help="If given do not scan network but use the given list")
 
+    parser.add_option("--station",
+                      dest="station",
+                      default="SKALA-4",
+                      help="The station type (def: SKALA-4, alternatives: EDA-2)")
+
+    parser.add_option("--project",
+                      dest="project",
+                      default="SKA-Low BRIDGING",
+                      help="The Project name (def: SKA-Low BRIDGING)")
+
     (options, args) = parser.parse_args()
 
     #os.system("python ../SKA-AAVS1/tools/config/setup.py")
     app = QtGui.QApplication(sys.argv)
-    window = AAVS("bridging.ui",options.debug,options.tpms)
+
+    STATION = {}
+    STATION['NAME'] = options.station
+    STATION['PROJECT'] = options.project
+    STATION['DEBUG'] = options.debug
+    STATION['TILES'] = []
+
+    window = AAVS("bridging.ui", STATION)
 
     window.plot_signal.connect(window.uplivePlot)
     #window.jig_pm_signal.connect(window.updateJIGpm)
