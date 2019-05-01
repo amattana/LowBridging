@@ -145,7 +145,7 @@ def read_from_google(docname, sheetname):
         creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
         client = gspread.authorize(creds)
     except:
-        print "ERROR: Google Credential file not found or invalid file!"
+        print "ERROR: Google Credential file not found or invalid file or network unavailable!"
 
     # Find a workbook by name and open the first sheet
     # Make sure you use the right name here.
@@ -178,8 +178,12 @@ def read_from_local(station):
     keys = lines[0].split()
     for l in lines[1:]:
         record = {}
-        for n, r in enumerate(l.split()):
-            record[keys[n]] = r
+        #print l[:-1]
+        for n, r in enumerate(l.split("\t")):
+            if not (keys[n] == KEY_ANTENNA_DESCRIPTION):
+                record[keys[n]] = r
+            else:
+                record[keys[n]] = r
         celle += [record]
     return keys, celle
 
@@ -419,12 +423,14 @@ class AAVS(QtGui.QMainWindow):
         if self.mainWidget.cb_group.isChecked():
             if self.mainWidget.cb_debug.isChecked():
                 dbl=[a for a in self.cells if not a[KEY_ANTENNA_DEBUG]==""]
-                self.mapPlot.plotMap(dbl, marker='8', markersize=15, color='k')
+                self.mapPlot.plotMap(dbl, marker='8', markersize=15, color='c')
+                #self.mapPlot.plotMap(dbl, marker='8', markersize=13, color='w')
                 print("Count Debug: %d"%(len(dbl)))
 
             if self.mainWidget.cb_off.isChecked():
-                dbl = [a for a in self.cells if not a[KEY_ANTENNA_POWER] == ""]
-                self.mapPlot.plotMap(dbl, marker='8', markersize=15, color='k')
+                dbl = [a for a in self.cells if not a[KEY_ANTENNA_POWER] == "ON"]
+                self.mapPlot.plotMap(dbl, marker='8', markersize=13, color='k')
+                self.mapPlot.plotMap(dbl, marker='8', markersize=10, color='w')
                 print("Count OFF: %d" % (len(dbl)))
 
         if self.mainWidget.cb_basename.isChecked():
@@ -465,8 +471,9 @@ class AAVS(QtGui.QMainWindow):
                         y = float(str(tpm['ANTENNE'][j]['North']).replace(",", "."))
                         self.mapPlot.oPlot(x, y, marker='8', markersize=10, color='k')
 
-        noant = [a for a in self.cells if a[KEY_ANTENNA_DEPLOYED] == "No"]
-        self.mapPlot.plotMap(noant, marker='8', markersize=12, color='w')
+        if not self.mainWidget.cb_basename.isChecked():
+            noant = [a for a in self.cells if a[KEY_ANTENNA_DEPLOYED] == "No"]
+            self.mapPlot.plotMap(noant, marker='8', markersize=12, color='w')
         self.annot = self.mapPlot.canvas.ax.annotate("", xy=(0, 0), xytext=(20, 20), textcoords="offset points",
                             bbox=dict(boxstyle="round", fc="w"),
                             arrowprops=dict(arrowstyle="->"))
@@ -759,9 +766,9 @@ class AAVS(QtGui.QMainWindow):
                         else:
                             msg =  "Ant: "+str(a[KEY_ANTENNA_NUMBER])+"\nAntenna not\nyet deployed!"
                         if not a[KEY_ANTENNA_DEBUG] == "":
-                            msg += "\n\n" + a[KEY_ANTENNA_DESCRIPTION][:20]
-                            msg += "\n" + a[KEY_ANTENNA_DESCRIPTION][20:40]
-                            msg += "\n" + a[KEY_ANTENNA_DESCRIPTION][40:60]
+                            msg += "\n\n" + a[KEY_ANTENNA_DESCRIPTION][:20] + "..."
+                            #msg += "\n" + a[KEY_ANTENNA_DESCRIPTION][20:40]
+                            #msg += "\n" + a[KEY_ANTENNA_DESCRIPTION][40:60]
                         return msg
             return ""
 
@@ -823,6 +830,8 @@ class AAVS(QtGui.QMainWindow):
         self.mainWidget.cb_group.stateChanged.connect(lambda: self.select_group_en())
         self.mainWidget.cb_debug.stateChanged.connect(lambda: self.runMap(False))
         self.mainWidget.cb_off.stateChanged.connect(lambda: self.runMap(False))
+        self.mainWidget.cb_deployed.stateChanged.connect(lambda: self.runMap(False))
+        self.mainWidget.cb_basename.stateChanged.connect(lambda: self.runMap(False))
 
         self.mainWidget.qbutton_plotStart.clicked.connect(lambda: self.ant_enable())
         self.mainWidget.qbutton_plotSave.clicked.connect(lambda: self.savePlot())
@@ -850,27 +859,15 @@ class AAVS(QtGui.QMainWindow):
             self.mainWidget.cb_debug.setEnabled(True)
             self.mainWidget.cb_off.setEnabled(True)
             self.mainWidget.count_debug.setEnabled(True)
-            self.mainWidget.count_sc.setEnabled(True)
-            self.mainWidget.count_dbl.setEnabled(True)
-            self.mainWidget.count_nc.setEnabled(True)
-            self.mainWidget.count_fer.setEnabled(True)
             self.mainWidget.count_off.setEnabled(True)
             self.mainWidget.count_deployed.setEnabled(True)
-            self.mainWidget.count_gnd.setEnabled(True)
-            self.mainWidget.count_gold.setEnabled(True)
             self.mainWidget.count_ant.setEnabled(True)
         else:
             self.mainWidget.cb_debug.setEnabled(False)
             self.mainWidget.cb_off.setEnabled(False)
             self.mainWidget.count_debug.setEnabled(False)
-            self.mainWidget.count_sc.setEnabled(False)
-            self.mainWidget.count_dbl.setEnabled(False)
-            self.mainWidget.count_nc.setEnabled(False)
-            self.mainWidget.count_fer.setEnabled(False)
             self.mainWidget.count_off.setEnabled(False)
             self.mainWidget.count_deployed.setEnabled(False)
-            self.mainWidget.count_gnd.setEnabled(False)
-            self.mainWidget.count_gold.setEnabled(False)
             self.mainWidget.count_ant.setEnabled(False)
 
     def select_dblcleaned(self):

@@ -64,7 +64,7 @@ def check_gspread_mtime(docname, sheetname):
     # Make sure you use the right name here.
     try:
         sheet = client.open(docname).worksheet(sheetname)
-        mtime = sheet.updated
+        #mtime = sheet.updated
 
     except:
         pass
@@ -256,6 +256,7 @@ if __name__ == "__main__":
         # Search for the antenna file
         modified = False
         mtime = check_gspread_mtime(GOOGLE_SPREADSHEET_NAME, options.station)
+        #print mtime
         if not os.path.isfile("STATIONS/MAP_" + options.station + ".txt"):
             keys, cells = read_from_google(GOOGLE_SPREADSHEET_NAME, options.station)
             write_to_local(options.station, cells)

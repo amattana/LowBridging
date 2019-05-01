@@ -112,7 +112,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>TPM #</string>
+      <string>SMART BOX</string>
      </property>
      <property name="checked">
       <bool>true</bool>

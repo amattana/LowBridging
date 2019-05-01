@@ -419,9 +419,9 @@ class MapPlot(QtGui.QWidget):
         if len(ant) != 0:
             x = [float(str(a['East']).replace(",", ".")) for a in ant]
             y = [float(str(a['North']).replace(",", ".")) for a in ant]
-        name = [a['Base'] for a in ant]
+        name = [a['Antenna'] for a in ant]
         for i in range(len(x)):
-            self.canvas.ax.annotate("%d"%name[i], xy=(x[i],y[i]), fontsize=10, fontweight='bold')
+            self.canvas.ax.annotate("%d"%int(name[i]), xy=(x[i],y[i]), fontsize=10, fontweight='bold')
         self.updatePlot()
 
     def plotClear(self):
