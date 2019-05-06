@@ -42,7 +42,7 @@ import matplotlib.gridspec as gridspec
 
 PYSKA_DIR = "/home/mattana/work/SKA-AAVS1/tools/pyska/"
 WORK_DIR = "/data/data_2/2019-LOW-BRIDGING-PHASE1/"
-WWW = WORK_DIR + "WWW"
+WWW = "/data/monitoring/phase1/"
 IMG_DIR = "/IMG/"
 GOOGLE_SPREADSHEET_NAME = "BRIDGING"
 
@@ -466,11 +466,21 @@ if __name__ == "__main__":
 
         fig.canvas.draw()
         time.sleep(1)
+        if not os.path.isdir(WORK_DIR):
+            os.makedirs(WORK_DIR)
+        if not os.path.isdir(WORK_DIR + DATA):
+            os.makedirs(WORK_DIR + DATA)
+        if not os.path.isdir(WORK_DIR + DATA + IMG_DIR):
+            os.makedirs(WORK_DIR + DATA + IMG_DIR)
+
         plt.savefig(WORK_DIR + DATA + IMG_DIR + "IMG_" + fname[-28:-11] + ".png")
         if not os.path.isdir(WWW):
             os.makedirs(WWW)
+        WWW += STATION['NAME'].lower()
+        if not os.path.isdir(WWW):
+            os.makedirs(WWW)
+
         plt.savefig(WWW + "/STATION_" + STATION['NAME'] + ".png")
-        #os.system("scp " + WWW + "/STATION_" + STATION['NAME'] + ".png" + " amattana@192.167.189.30:/home/amattana/public_html/SKA/")
 
         time.sleep(5)
 
