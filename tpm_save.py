@@ -268,7 +268,7 @@ if __name__ == "__main__":
 
     if not os.path.isdir(WWW):
         os.makedirs(WWW)
-    WWW += STATION['NAME'].lower()
+    WWW += options.station.lower()
 
     while True:
 
