@@ -138,8 +138,9 @@ def dump(job_q, results_q):
         if Tile == None:
             break
         try:
-            #print "Starting process:",'python', 'tpm_get_stream.py', '--station='+Station, "--tile=%d" % (int(Tile)), Debug
+            print "Starting process:",'python', 'tpm_get_stream.py', '--station='+Station, "--tile=%d" % (int(Tile)), Debug
             if subprocess.call(['python', 'tpm_get_stream.py', '--station='+Station, "--tile=%d" % (int(Tile)), Debug], stdout=DEVNULL) == 0:
+                print "ok Tile ",  int(Tile)
                 results_q.put(Tile)
         except:
             pass
@@ -154,6 +155,20 @@ def sort_ip_list(ip_list):
 
 
 def save_TPMs(STATION):
+	t = datetime.datetime.utcnow()
+	print t, "[ASK] Asking data to %d Tiles..."%(len(STATION['TILES']))
+	lista_tiles = []
+	for tile in STATION['TILES']:
+		os.system("python tpm_get_stream.py --station=" + STATION['NAME'] + "  --tile=%d" % (int(tile['Tile'])))
+		lista_tiles += [tile]
+	lista_tiles = sorted(lista_tiles)
+	t_end = datetime.datetime.utcnow()
+	print t_end, "[RCV] Received data from %d Tiles in %d seconds"%(len(lista_tiles), (t_end-t).seconds)
+	return lista_tiles
+		
+
+
+def saveParallelTPMs(STATION):
     pool_size = len(STATION['TILES'])
     t = datetime.datetime.utcnow()
     print t, "[ASK] Asking data to %d Tiles..."%(pool_size)
@@ -312,7 +327,8 @@ if __name__ == "__main__":
         #print "Searching for TPMs: ", TPMs
 
         # Starting Acquisition Processes
-        a = save_TPMs(STATION)
+        a = saveParallelTPMs(STATION)
+        #a = save_TPMs(STATION)
         #print len(STATION['TILES'])
 
         # gridspec inside gridspec
@@ -383,9 +399,10 @@ if __name__ == "__main__":
             for en, ant in enumerate(ants):
                 axes[ax_ant + (ax_tile * 16)].cla()
                 for pol, col in [("/POL-X/", "b"), ("/POL-Y/", "g")]:
-                    fname = WORK_DIR + DATA + "/DATA/TILE-%02d"%int(tile['Tile']) + "/" + ant + pol
-                    fname += sorted(os.listdir(WORK_DIR + DATA + "/DATA/TILE-%02d"%int(tile['Tile']) + "/" + ant + pol), reverse=True)[0]
+                    fname = WORK_DIR + DATA + "/" + options.station + "/DATA/TILE-%02d"%int(tile['Tile']) + "/" + ant + pol
+                    fname += sorted(os.listdir(WORK_DIR + DATA + "/" + options.station + "/DATA/TILE-%02d"%int(tile['Tile']) + "/" + ant + pol), reverse=True)[0]
 
+                    #print fname
                     with open(fname, "r") as f:
                         a = f.read()
                     data = struct.unpack(">" + str(len(a)) + "b", a)

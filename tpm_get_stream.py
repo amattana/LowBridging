@@ -155,6 +155,10 @@ if __name__ == "__main__":
     except:
         print "Directory " + OUT_PATH + " already exist..."
 
+    OUT_PATH = OUT_PATH + options.station + "/"
+    if not os.path.exists(OUT_PATH):
+        os.makedirs(OUT_PATH)
+
     ## Creating Directory to store the videos
     if not os.path.exists(OUT_PATH + "IMG"):
         os.makedirs(OUT_PATH + "IMG")
