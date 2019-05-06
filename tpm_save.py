@@ -266,6 +266,10 @@ if __name__ == "__main__":
 
     fig = None
 
+    if not os.path.isdir(WWW):
+        os.makedirs(WWW)
+    WWW += STATION['NAME'].lower()
+
     while True:
 
         # Search for the antenna file
@@ -474,9 +478,6 @@ if __name__ == "__main__":
             os.makedirs(WORK_DIR + DATA + IMG_DIR)
 
         plt.savefig(WORK_DIR + DATA + IMG_DIR + "IMG_" + fname[-28:-11] + ".png")
-        if not os.path.isdir(WWW):
-            os.makedirs(WWW)
-        WWW += STATION['NAME'].lower()
         if not os.path.isdir(WWW):
             os.makedirs(WWW)
 
