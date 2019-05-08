@@ -438,7 +438,7 @@ if __name__ == "__main__":
 
             # Plot Power X
             t_axes[n][2].cla()
-            t_axes[n][2].tick_params(axis='both', which='both', labelsize=10)
+            t_axes[n][2].tick_params(axis='both', which='both', labelsize=6)
             t_axes[n][2].set_xticks(xrange(1,17))
             t_axes[n][2].set_xticklabels(np.array(range(1,17)).astype("str").tolist(), fontsize=4)
             t_axes[n][2].set_yticks([15, 20])
@@ -452,7 +452,7 @@ if __name__ == "__main__":
 
             # Plot Power Y
             t_axes[n][3].cla()
-            t_axes[n][3].tick_params(axis='both', which='both', labelsize=10)
+            t_axes[n][3].tick_params(axis='both', which='both', labelsize=6)
             t_axes[n][3].set_xticks(xrange(1,17))
             t_axes[n][3].set_xticklabels(np.array(range(1,17)).astype("str").tolist(), fontsize=4)
             t_axes[n][3].set_yticks([15, 20])
