@@ -447,7 +447,7 @@ if __name__ == "__main__":
             t_axes[n][2].set_xlim([0, 17])
             t_axes[n][2].set_ylabel("RMS", fontsize=10)
             t_axes[n][2].grid()
-            t_axes[n][2].bar(ind+0.5, adu_rms[0::2], 0.8, color='b')
+            t_axes[n][2].bar(ind+1, adu_rms[0::2], 0.8, color='b')
             t_axes[n][2].set_title("Power Pol X", fontsize=10)
 
             # Plot Power Y
@@ -462,7 +462,7 @@ if __name__ == "__main__":
             t_axes[n][3].set_ylabel("RMS", fontsize=10)
             t_axes[n][3].set_xlabel("Power Pol Y", fontsize=10)
             t_axes[n][3].grid()
-            t_axes[n][3].bar(ind+0.5, adu_rms[1::2], 0.8, color='g')
+            t_axes[n][3].bar(ind+1, adu_rms[1::2], 0.8, color='g')
 
             ax_tile = ax_tile + 1
             t_acq = fname[-28:-9]
