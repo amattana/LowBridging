@@ -414,7 +414,8 @@ if __name__ == "__main__":
 
                     adu_rms += [np.sqrt(np.mean(np.power(data, 2), 0))]
 
-                    axes[ax_ant+(ax_tile*16)].plot(x_axes, singolo, color=col)
+                    axes[ax_ant+(ax_tile*16)].plot(x_axes[5:-5], singolo[5:-5], color=col)
+                axes[ax_ant+(ax_tile*16)].set_xlim(0, 400)
                 axes[ax_ant+(ax_tile*16)].set_ylim(-80, 0)
                 if not ((en == 0) or (en == 8)):
                     axes[ax_ant+(ax_tile*16)].get_yaxis().set_visible(False)
