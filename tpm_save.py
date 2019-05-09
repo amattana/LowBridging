@@ -138,9 +138,9 @@ def dump(job_q, results_q):
         if Tile == None:
             break
         try:
-            print datetime.datetime.utcnow(), "  - Starting process:",'python', 'tpm_get_stream.py', '--station='+Station, "--tile=%d" % (int(Tile)), Debug
+            print datetime.datetime.utcnow(), "  -   Starting process:",'python', 'tpm_get_stream.py', '--station='+Station, "--tile=%d" % (int(Tile)), Debug
             if subprocess.call(['python', 'tpm_get_stream.py', '--station='+Station, "--tile=%d" % (int(Tile)), Debug], stdout=DEVNULL) == 0:
-                print datetime.datetime.utcnow(), "  - Received data from Tile ",  int(Tile)
+                print datetime.datetime.utcnow(), "  -   Received data from Tile ",  int(Tile)
                 results_q.put(Tile)
         except:
             pass
