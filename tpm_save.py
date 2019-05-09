@@ -280,11 +280,13 @@ if __name__ == "__main__":
             keys, cells = read_from_google(GOOGLE_SPREADSHEET_NAME, options.station)
             write_to_local(options.station, cells)
         else:
-            print "LOCAL FILE   MTIME: ", datetime.datetime.utcfromtimestamp(os.path.getmtime("STATIONS/MAP_" + options.station + ".txt"))
-            print "GSPREADSHEET MTIME: ", datetime.datetime.strptime(mtime[:-5], "%Y-%m-%dT%H:%M:%S")
+            #print "LOCAL FILE   MTIME: ", datetime.datetime.utcfromtimestamp(os.path.getmtime("STATIONS/MAP_" + options.station + ".txt"))
+            #print "GSPREADSHEET MTIME: ", datetime.datetime.strptime(mtime[:-5], "%Y-%m-%dT%H:%M:%S")
             if datetime.datetime.utcfromtimestamp(os.path.getmtime("STATIONS/MAP_" + options.station + ".txt")) < \
                     datetime.datetime.strptime(mtime[:-5], "%Y-%m-%dT%H:%M:%S"):
-                print "GSpread modified, updating..."
+                print datetime.datetime.utcnow(), "[GSP] GSpread modified, updating...", \
+                    datetime.datetime.utcfromtimestamp(os.path.getmtime("STATIONS/MAP_" + options.station + ".txt")), \
+                    " -->", datetime.datetime.strptime(mtime[:-5], "%Y-%m-%dT%H:%M:%S")
                 modified = True
                 keys, cells = read_from_google(GOOGLE_SPREADSHEET_NAME, options.station)
                 write_to_local(options.station, cells)
