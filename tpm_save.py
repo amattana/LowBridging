@@ -330,7 +330,7 @@ if __name__ == "__main__":
                     STATION['TILES'][-1]['Antenne'][-1]['East'] = float(antenna_record['East'])
                     tot_antenne = tot_antenne + 1
 
-        print "\nDetected %d Tiles with %d antennas\n"%(len(STATION['TILES']), tot_antenne)
+        #print "\nDetected %d Tiles with %d antennas\n"%(len(STATION['TILES']), tot_antenne)
         #print "Searching for TPMs: ", TPMs
 
         # Starting Acquisition Processes
