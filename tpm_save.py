@@ -64,7 +64,7 @@ def check_gspread_mtime(docname, sheetname):
     # Make sure you use the right name here.
     try:
         sheet = client.open(docname).worksheet(sheetname)
-        #mtime = sheet.updated
+        mtime = sheet.updated
 
     except:
         pass
