@@ -138,9 +138,9 @@ def dump(job_q, results_q):
         if Tile == None:
             break
         try:
-            print "Starting process:",'python', 'tpm_get_stream.py', '--station='+Station, "--tile=%d" % (int(Tile)), Debug
+            print datetime.datetime.utcnow(), "  - Starting process:",'python', 'tpm_get_stream.py', '--station='+Station, "--tile=%d" % (int(Tile)), Debug
             if subprocess.call(['python', 'tpm_get_stream.py', '--station='+Station, "--tile=%d" % (int(Tile)), Debug], stdout=DEVNULL) == 0:
-                print "ok Tile ",  int(Tile)
+                print datetime.datetime.utcnow(), "  - Received data from Tile ",  int(Tile)
                 results_q.put(Tile)
         except:
             pass
@@ -163,7 +163,7 @@ def save_TPMs(STATION):
 		lista_tiles += [tile]
 	lista_tiles = sorted(lista_tiles)
 	t_end = datetime.datetime.utcnow()
-	print t_end, "[RCV] Received data from %d Tiles in %d seconds"%(len(lista_tiles), (t_end-t).seconds)
+	print t_end, "[RCV] Received data from %d Tiles in %d seconds\n"%(len(lista_tiles), (t_end-t).seconds)
 	return lista_tiles
 		
 
@@ -484,7 +484,7 @@ if __name__ == "__main__":
 
         plt.savefig(WWW + "/STATION_" + STATION['NAME'] + ".png")
 
-        time.sleep(5)
+        time.sleep(20)
 
 
 
