@@ -487,7 +487,7 @@ if __name__ == "__main__":
 
         plt.savefig(WWW + "/STATION_" + STATION['NAME'] + ".png")
 
-        time.sleep(20)
+        time.sleep(100)
 
 
 
