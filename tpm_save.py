@@ -84,7 +84,7 @@ def read_from_google(docname, sheetname):
     # Make sure you use the right name here.
     try:
         sheet = client.open(docname).worksheet(sheetname)
-        print "Successfully connected to the google doc!"
+        print datetime.datetime.utcnow(), "[GSP] Successfully connected to the google spreadsheet!"
 
         # Extract and print all of the values
         values = sheet.get_all_values()
@@ -98,6 +98,7 @@ def read_from_google(docname, sheetname):
             record['North'] = float(record['North'].replace(",", "."))
 
             cells += [record]
+        print datetime.datetime.utcnow(), "[GSP] Google Spreadsheet Successfully downloaded!"
     except:
         print "ERROR: Google Spreadsheet Name (or Sheet Name) is not correct! {", docname, sheetname, "}"
     return keys, cells
