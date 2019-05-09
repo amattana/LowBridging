@@ -201,7 +201,7 @@ def saveParallelTPMs(STATION):
     else:
         lista_tiles = sorted(lista_tiles)
         t_end = datetime.datetime.utcnow()
-        print t_end, "[RCV] Received data from %d Tiles in %d seconds"%(len(lista_tiles), (t_end-t).seconds)
+        print t_end, "[RCV] Received data from %d Tiles in %d seconds\n"%(len(lista_tiles), (t_end-t).seconds)
         if not pool_size == len(lista_tiles):
             print t_end, "[ERR] Tiles ok are {",
             for tile in lista_tiles:
