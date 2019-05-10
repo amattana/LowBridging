@@ -146,7 +146,7 @@ if __name__ == "__main__":
     #print ant_list[0] + "/POL-X/*raw"
     obs = sorted(glob.glob(ant_list[0] + "/POL-X/*raw"))
     for i in range(len(obs)):
-        obs[i] = obs[i][22:-4]
+        obs[i] = obs[i][-28:-4]
     print "Found", len(obs), "observation files\n"
 
     plt.ioff()
@@ -191,7 +191,7 @@ if __name__ == "__main__":
                     pass
             #if cnt == 16:
             print obs[x]
-            print img_dir + "/" + tile + "/" + pol + "/" + tile + "_" + pol + "_" + obs[x] + ".png"
+            #print img_dir + "/" + tile + "/" + pol + "/" + tile + "_" + pol + "_" + obs[x] + ".png"
             titolo = "  ".join(obs[x].split("_")) + " UTC   (RBW: " + "%3.1f" % rbw + " KHz)"
             fig.suptitle(titolo, fontsize=16)
             plt.tight_layout(rect=[0, 0.03, 1, 0.95])
