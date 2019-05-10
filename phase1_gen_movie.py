@@ -125,7 +125,7 @@ if __name__ == "__main__":
     tile = "TILE-" + "%02d"%(int(options.tile))
     tile_dir = base_dir + "/" + tile
     if not os.path.isdir(tile_dir):
-        print "ERROR: TILE NUMBER ", base_dir, "\nThe given directory does not exist. Exiting...\n"
+        print "ERROR: TILE NUMBER ", tile_dir, "\nThe given directory does not exist. Exiting...\n"
         exit(0)
 
     img_dir = base_dir[:-4] + "IMG"
@@ -140,8 +140,8 @@ if __name__ == "__main__":
     if len(ant_list) == 0:
         print "ERROR: Missing antenna data"
         exit(0)
-    print tile_dir + "/" + ant_list[0] + "/POL-X/*raw"
-    obs = sorted(glob.glob(tile_dir + "/" + ant_list[0] + "/POL-X/*raw"))
+    print ant_list[0] + "/POL-X/*raw"
+    obs = sorted(glob.glob(ant_list[0] + "/POL-X/*raw"))
     for i in range(len(obs)):
         obs[i] = obs[i][22:-4]
     print "Found", len(obs), "observation files\n"
@@ -152,6 +152,8 @@ if __name__ == "__main__":
     ax = []
     for i in range(16):
         ax += [fig.add_subplot(gs[i])]
+        ant_list[i] = ant_list[i][-7:]
+
     for pol in ["POL-X", "POL-Y"]:
         print "\nGenerating pictures for ", pol
 
