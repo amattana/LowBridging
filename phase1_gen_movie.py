@@ -100,6 +100,7 @@ if __name__ == "__main__":
     rbw = int(closest(resolutions, options.resolution))
     avg = 2 ** rbw
     nsamples = 2 ** 17 / avg
+    asse_x = np.linspace(0, 400, (nsamples/2)+1)
 
     if options.dir == "":
         base_dir = easygui.diropenbox(title="Choose a directory file", default=BASE_DIR)
@@ -178,7 +179,7 @@ if __name__ == "__main__":
                     power_rf = power_adc + 12  # single ended to diff net loose 12 dBm
 
                     ax[i].cla()
-                    ax[i].plot(x, np.array(spettro).astype("float"))
+                    ax[i].plot(asse_x, np.array(spettro).astype("float"))
                     ax[i].set_xlim(0, 400)
                     ax[i].set_ylim(-80, 0)
                     ax[i].set_xlabel('MHz')
@@ -193,7 +194,7 @@ if __name__ == "__main__":
             #print obs[x]
             #print img_dir + "/" + tile + "/" + pol + "/" + tile + "_" + pol + "_" + obs[x] + ".png"
 
-            titolo = "  ".join(obs[x].split("_")) + " UTC   (RBW: " + "%3.1f" % rbw + " KHz)"
+            titolo = "  ".join(obs[x][:-7].split("_")) + " UTC   (RBW: " + "%3.1f" % rbw + " KHz)"
             fig.suptitle(titolo, fontsize=16)
             plt.tight_layout(rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
