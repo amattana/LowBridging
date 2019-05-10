@@ -136,14 +136,15 @@ if __name__ == "__main__":
         os.mkdir(img_dir + "/" + tile + "/POL-Y")
 
     ant_list = sorted(glob.glob(tile_dir + "/ANT*"))
-    print "Found ", len(ant_list), "Antenna Directories"
+    print "\nFound", len(ant_list), "Antenna Directories"
     if len(ant_list) == 0:
         print "ERROR: Missing antenna data"
         exit(0)
-
+    print tile_dir + "/" + ant_list[0] + "/POL-X/*raw"
     obs = sorted(glob.glob(tile_dir + "/" + ant_list[0] + "/POL-X/*raw"))
     for i in range(len(obs)):
         obs[i] = obs[i][22:-4]
+    print "Found", len(obs), "observation files\n"
 
     plt.ioff()
     gs = gridspec.GridSpec(4, 4)
