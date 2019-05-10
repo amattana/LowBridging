@@ -152,11 +152,13 @@ if __name__ == "__main__":
     for i in range(16):
         ax += [fig.add_subplot(gs[i])]
     for pol in ["POL-X", "POL-Y"]:
-        for meas in obs:
+        print "\nGenerating pictures for ", pol
+
+        for x in tqdm(range(len(obs)), desc=pol):
             cnt = 0
             for i, ant in enumerate(ant_list):
                 try:
-                    fname = tile_dir + "/" + ant_list + "/" + pol + "/" + tile + "_" + ant + "_" + pol + "_" + meas + ".raw"
+                    fname = tile_dir + "/" + ant + "/" + pol + "/" + tile + "_" + ant + "_" + pol + "_" + obs[x] + ".raw"
 
                     with open(fname, "r") as f:
                         a = f.read()
@@ -182,10 +184,10 @@ if __name__ == "__main__":
                 except:
                     pass
             if cnt == 16:
-                titolo = "  ".join(meas.split("_")) + " UTC   (RBW: " + "%3.1f" % rbw + " KHz)"
+                titolo = "  ".join(obs[x].split("_")) + " UTC   (RBW: " + "%3.1f" % rbw + " KHz)"
                 fig.suptitle(titolo, fontsize=16)
                 plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-                plt.savefig(img_dir + "/" + tile + "/" + pol + "/" + tile + "_" + pol + "_" + meas + ".png")
+                plt.savefig(img_dir + "/" + tile + "/" + pol + "/" + tile + "_" + pol + "_" + obs[x] + ".png")
 
 
 
