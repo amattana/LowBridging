@@ -18,7 +18,7 @@ __version__ = "1.0"
 __maintainer__ = "Andrea Mattana"
 
 from matplotlib import pyplot as plt
-import os, easygui, glob, struct
+import os, easygui, glob, struct, time
 from optparse import OptionParser
 import numpy as np
 
@@ -198,7 +198,5 @@ if __name__ == "__main__":
             fig.suptitle(titolo, fontsize=16)
             plt.tight_layout(rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
+            time.sleep(1)
             plt.savefig(img_dir + "/" + tile + "/" + pol + "/" + tile + "_" + pol + "_" + obs[x] + ".png")
-
-
-
