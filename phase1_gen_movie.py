@@ -122,7 +122,7 @@ if __name__ == "__main__":
         print "ERROR: MISSING DATA FOLDER", base_dir, "\nThe given directory does not exist. Exiting...\n"
         exit(0)
 
-    tile = "TILE-" + "%02d"%(options.tile)
+    tile = "TILE-" + "%02d"%(int(options.tile))
     tile_dir = base_dir + "/" + tile
     if not os.path.isdir(tile_dir):
         print "ERROR: TILE NUMBER ", base_dir, "\nThe given directory does not exist. Exiting...\n"
