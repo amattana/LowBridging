@@ -131,8 +131,11 @@ if __name__ == "__main__":
     img_dir = base_dir[:-4] + "IMG"
     if not os.path.isdir(img_dir):
         os.mkdir(img_dir)
+    if not os.path.isdir(img_dir + "/" + tile):
         os.mkdir(img_dir + "/" + tile)
+    if not os.path.isdir(img_dir + "/" + tile + "/POL-X"):
         os.mkdir(img_dir + "/" + tile + "/POL-X")
+    if not os.path.isdir(img_dir + "/" + tile + "/POL-Y"):
         os.mkdir(img_dir + "/" + tile + "/POL-Y")
 
     ant_list = sorted(glob.glob(tile_dir + "/ANT*"))
@@ -140,7 +143,7 @@ if __name__ == "__main__":
     if len(ant_list) == 0:
         print "ERROR: Missing antenna data"
         exit(0)
-    print ant_list[0] + "/POL-X/*raw"
+    #print ant_list[0] + "/POL-X/*raw"
     obs = sorted(glob.glob(ant_list[0] + "/POL-X/*raw"))
     for i in range(len(obs)):
         obs[i] = obs[i][22:-4]
@@ -155,7 +158,7 @@ if __name__ == "__main__":
         ant_list[i] = ant_list[i][-7:]
 
     for pol in ["POL-X", "POL-Y"]:
-        print "\nGenerating pictures for ", pol
+        print "\nGenerating pictures for", pol
 
         for x in tqdm(range(len(obs)), desc=pol):
             cnt = 0
