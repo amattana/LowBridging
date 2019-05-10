@@ -189,11 +189,11 @@ if __name__ == "__main__":
                     cnt = cnt + 1
                 except:
                     pass
-            if cnt == 16:
-                titolo = "  ".join(obs[x].split("_")) + " UTC   (RBW: " + "%3.1f" % rbw + " KHz)"
-                fig.suptitle(titolo, fontsize=16)
-                plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-                plt.savefig(img_dir + "/" + tile + "/" + pol + "/" + tile + "_" + pol + "_" + obs[x] + ".png")
+            #if cnt == 16:
+            titolo = "  ".join(obs[x].split("_")) + " UTC   (RBW: " + "%3.1f" % rbw + " KHz)"
+            fig.suptitle(titolo, fontsize=16)
+            plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+            plt.savefig(img_dir + "/" + tile + "/" + pol + "/" + tile + "_" + pol + "_" + obs[x] + ".png")
 
 
 
