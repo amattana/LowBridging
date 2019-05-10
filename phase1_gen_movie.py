@@ -112,7 +112,7 @@ if __name__ == "__main__":
             print "\nThe given directory does not exist. Exiting...\n"
             exit(0)
 
-    base_dir += options.date
+    base_dir += "/" + options.date
     if not os.path.isdir(base_dir):
         print "ERROR: WRONG DATE", base_dir, "\nThe given directory does not exist. Exiting...\n"
         exit(0)
