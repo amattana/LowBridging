@@ -244,7 +244,7 @@ if __name__ == "__main__":
                     power_rf = power_adc + 12  # single ended to diff net loose 12 dBm
 
                     ax[i].cla()
-                    ax[i].plot(asse_x, np.array(spettro).astype("float"))
+                    ax[i].plot(asse_x[3:-3], np.array(spettro).astype("float")[3:-3])
                     ax[i].set_xlim(0, 400)
                     ax[i].set_xticks([50, 100, 150, 200, 250, 300, 350, 400])
                     ax[i].set_xticklabels([50, 100, 150, 200, 250, 300, 350, 400], fontsize=8)#, rotation=45)
