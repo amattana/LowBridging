@@ -139,8 +139,12 @@ if __name__ == "__main__":
         os.mkdir(img_dir + "/" + tile)
     if not os.path.isdir(img_dir + "/" + tile + "/POL-X"):
         os.mkdir(img_dir + "/" + tile + "/POL-X")
+        os.mkdir(img_dir + "/" + tile + "/POL-X/MULTI")
+        os.mkdir(img_dir + "/" + tile + "/POL-X/SINGLE")
     if not os.path.isdir(img_dir + "/" + tile + "/POL-Y"):
         os.mkdir(img_dir + "/" + tile + "/POL-Y")
+        os.mkdir(img_dir + "/" + tile + "/POL-Y/MULTI")
+        os.mkdir(img_dir + "/" + tile + "/POL-Y/SINGLE")
 
     ant_list = sorted(glob.glob(tile_dir + "/ANT*"))
     print "\nFound", len(ant_list), "Antenna Directories"
@@ -306,7 +310,7 @@ if __name__ == "__main__":
                 fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
                 fig.canvas.draw()
                 # time.sleep(1)
-                fig.savefig(img_dir + "/" + tile + "/" + pol + "/" + tile + "_" + pol + "_" + obs[x] + ".png")
+                fig.savefig(img_dir + "/" + tile + "/" + pol + "/MULTI/" + tile + "_" + pol + "_" + obs[x] + ".png")
 
                 title_left2.cla()
                 title_left2.set_axis_off()
@@ -350,4 +354,4 @@ if __name__ == "__main__":
                     ax2.legend(loc=8, ncol=8, borderaxespad=0.5, fontsize=12)#, borderaxespad=0., fontsize='small')
                 fig2.tight_layout()#rect=[0, 0.03, 1, 0.9])
                 fig2.canvas.draw()
-                fig2.savefig(img_dir + "/" + tile + "/" + pol + "/" + tile + "_" + pol + "_" + obs[x] + "_all.png")
+                fig2.savefig(img_dir + "/" + tile + "/" + pol + "/SINGLE/" + tile + "_" + pol + "_" + obs[x] + "_all.png")
