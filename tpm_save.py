@@ -41,8 +41,8 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
 PYSKA_DIR = "/home/mattana/work/SKA-AAVS1/tools/pyska/"
-WORK_DIR = "/data/data_2/2019-LOW-BRIDGING-PHASE1/"
-WWW = "/data/monitoring/phase1/"
+WORK_DIR = "/storage/bridging/phase1/"
+WWW = "/storage/monitoring/phase1/"
 IMG_DIR = "/IMG/"
 GOOGLE_SPREADSHEET_NAME = "BRIDGING"
 
