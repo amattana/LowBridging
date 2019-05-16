@@ -269,7 +269,7 @@ if __name__ == "__main__":
 
     if not os.path.isdir(WWW):
         os.makedirs(WWW)
-    WWW += options.station.lower()
+    WWW += options.station.lower()[:-2]
 
     while True:
 
@@ -295,6 +295,12 @@ if __name__ == "__main__":
                 keys, cells = read_from_local(options.station)
 
         DATA = str(datetime.datetime.utcnow().date())
+        if not os.path.isdir(WORK_DIR + DATA):
+            os.makedirs(WORK_DIR + DATA)
+        if not os.path.isdir(WORK_DIR + DATA):
+            os.makedirs(WORK_DIR + DATA + "/" + options.station)
+
+
 
         resolutions = 2 ** np.array(range(16)) * (800000.0 / 2 ** 17)
         rbw = int(closest(resolutions, options.resolution))
