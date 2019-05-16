@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     board_ip = options.board
 
-    freqs, spettro, rawdata, rms, rfpower = get_raw_meas(tpm_obj(board_ip), debug=options.debug)
+    freqs, spettro, rawdata, rms, rfpower = get_raw_meas(tpm_obj(board_ip), debug=False)
 
     print "\n\nTPM INPUT\t\tPol-X Level\tPol-Y Level\n----------------------------------------------------------"
     for rx in xrange(len(spettro) / 2):
