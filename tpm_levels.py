@@ -47,8 +47,8 @@ if __name__ == "__main__":
 
     freqs, spettro, rawdata, rms, rfpower = get_raw_meas(tpm_obj(board_ip), debug=False)
 
-    print "\n\nTPM INPUT\tPol-X Level\tPol-Y Level"
-    print "\n    #\t   dBm\t   dBm"
+    print "\n\n TPM INPUT\tPol-X Level\tPol-Y Level"
+    print "\n    #\t\t   (dBm)\t   (dBm)"
     print "\n-----------------------------------------------------"
     for rx in xrange(len(spettro) / 2):
         print "\n INPUT %02d\t"%(rx+1),
