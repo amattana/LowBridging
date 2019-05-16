@@ -270,8 +270,8 @@ if __name__ == "__main__":
 
     if not os.path.isdir(WWW):
         os.makedirs(WWW)
-    WWW += options.station.lower()[:-2]
-    WWW_OLD += options.station.lower()[:-2]
+    WWW += options.station.lower()
+    WWW_OLD += options.station.lower()
 
     while True:
 
