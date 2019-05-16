@@ -58,7 +58,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 
 # Some globals
-OUT_PATH = "/storage/bridging/"
+OUT_PATH = "/storage/bridging/phase1/"
 DATA_PATH = "DATA/"
 
 GOOGLE_SPREADSHEET_NAME = "BRIDGING"
