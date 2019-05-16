@@ -43,6 +43,7 @@ import matplotlib.gridspec as gridspec
 PYSKA_DIR = "/home/mattana/work/SKA-AAVS1/tools/pyska/"
 WORK_DIR = "/storage/bridging/phase1/"
 WWW = "/storage/monitoring/phase1/"
+WWW_OLD = "/data/monitoring/phase1/"
 IMG_DIR = "/IMG/"
 GOOGLE_SPREADSHEET_NAME = "BRIDGING"
 
@@ -270,6 +271,7 @@ if __name__ == "__main__":
     if not os.path.isdir(WWW):
         os.makedirs(WWW)
     WWW += options.station.lower()[:-2]
+    WWW_OLD += options.station.lower()[:-2]
 
     while True:
 
@@ -492,6 +494,7 @@ if __name__ == "__main__":
             os.makedirs(WWW)
 
         plt.savefig(WWW + "/STATION_" + STATION['NAME'] + ".png")
+        plt.savefig(WWW_OLD + "/STATION_" + STATION['NAME'] + ".png")
 
         time.sleep(100)
 
