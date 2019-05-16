@@ -159,6 +159,9 @@ if __name__ == "__main__":
     if not os.path.exists(OUT_PATH):
         os.makedirs(OUT_PATH)
 
+    if not os.path.exists(OUT_PATH+"DATA"):
+        os.makedirs(OUT_PATH+"DATA")
+
     ## Creating Directory to store the videos
     if not os.path.exists(OUT_PATH + "IMG"):
         os.makedirs(OUT_PATH + "IMG")
