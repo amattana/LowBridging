@@ -116,6 +116,18 @@ if __name__ == "__main__":
             print "\nThe given directory does not exist. Exiting...\n"
             exit(0)
 
+    # Example of video dir structure
+    # /base_dir/VIDEO/2019-05-15/SKALA-4
+    video_dir = base_dir + "/VIDEO"
+    if not os.path.isdir(video_dir):
+        os.mkdir(video_dir)
+    video_dir += "/" + options.date
+    if not os.path.isdir(video_dir):
+        os.mkdir(video_dir)
+    video_dir += "/" + options.station
+    if not os.path.isdir(video_dir):
+        os.mkdir(video_dir)
+
     base_dir += "/" + options.date
     if not os.path.isdir(base_dir):
         print "ERROR: WRONG DATE", base_dir, "\nThe given directory does not exist. Exiting...\n"
@@ -221,7 +233,7 @@ if __name__ == "__main__":
     #plt.tight_layout()
     fig.canvas.draw()
     time.sleep(1)
-    plt.savefig(img_dir + "/" + tile + "/" + pol + "/" + tile + "_" + pol + "_" + obs[x] + ".png")
+    plt.savefig(img_dir + "/" + tile + "/" + pol + "/MULTI/" + tile + "_" + pol + "_" + obs[x] + ".png")
 
 
     for pol in ["POL-X", "POL-Y"]:
@@ -355,3 +367,10 @@ if __name__ == "__main__":
                 fig2.tight_layout()#rect=[0, 0.03, 1, 0.9])
                 fig2.canvas.draw()
                 fig2.savefig(img_dir + "/" + tile + "/" + pol + "/SINGLE/" + tile + "_" + pol + "_" + obs[x] + "_all.png")
+
+    for pol in ["POL-X", "POL-Y"]:
+        for mode in ["MULTI", "SINGLE"]:
+            os.system("ffmpeg -y -f image2 -i " + img_dir + "/" + tile + "/" + pol + "/" + mode + "/" + tile + "_" +
+                      pol + "_" + options.date + "_%*.png  -vcodec libx264 " + video_dir + "/" + tile + "_" +
+                      pol + "_" + options.date + "_" + mode + ".avi")
+
