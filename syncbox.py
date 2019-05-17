@@ -4,11 +4,11 @@ from valon_synth import Synthesizer as Sync
 from optparse import OptionParser
 import time
 
-OUT_A = 0 # frequency output channel A
-OUT_B = 8 # frequnecy output channel B 
+SYNTH_A = 0  # frequency output channel A
+SYNTH_B = 8  # frequency output channel B
 
-EXTERNAL = 1 # external 10 MHz reference
-INTERNAL = 0 # internal 10 MHz reference
+EXT_REF = 1  # external 10 MHz reference
+INT_REF = 0  # internal 10 MHz reference
 
 if __name__ == "__main__":
     parser = OptionParser()
@@ -32,29 +32,29 @@ if __name__ == "__main__":
 
     try:
         sync = Sync("/dev/ttyUSB0")
-        print "\nSuccesfully connected to the Valon Synthesizer on port /dev/ttyUSB0\n"
+        print "\nSuccessfully connected to the Valon Synthesizer on port /dev/ttyUSB0\n"
     except:
         print "\nCannot connect to the Valon Synthesizer on port /dev/ttyUSB0\n"
         exit(0)
 
     if not options.freq == 0:
-        sync.set_frequency(OUT_A, int(options.freq))
-        sync.set_frequency(OUT_B, int(options.freq))
+        sync.set_frequency(SYNTH_A, int(options.freq))
+        sync.set_frequency(SYNTH_B, int(options.freq))
 
     if options.reference == "external":
-        sync.set_ref_select(EXTERNAL)
+        sync.set_ref_select(EXT_REF)
     else:
-        sync.set_ref_select(INTERNAL)
+        sync.set_ref_select(INT_REF)
 
-    fa = sync.get_frequency(OUT_A)
+    fa = sync.get_frequency(SYNTH_A)
     time.sleep(0.3)
-    fb = sync.get_frequency(OUT_B)
+    fb = sync.get_frequency(SYNTH_B)
     time.sleep(0.3)
     fref = sync.get_ref_select()
     time.sleep(0.3)
-    la = sync.get_rf_level(OUT_A)
+    la = sync.get_rf_level(SYNTH_A)
     time.sleep(0.3)
-    lb = sync.get_rf_level(OUT_B)
+    lb = sync.get_rf_level(SYNTH_B)
     time.sleep(0.3)
 
     print "Channel A Output Frequency:", fa, "MHz with level", la, "dBm"
