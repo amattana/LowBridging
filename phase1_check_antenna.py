@@ -165,9 +165,8 @@ if __name__ == "__main__":
     print "Found", len(obs), "observation files\n"
 
     keys, cells = read_from_local(options.station)
-    ant_pos = [(float(x["East"]), float(x["North"])) for x in cells if x["Deployed"] == "ON"]
-    ant_pos_check = [(float(x["East"]), float(x["North"])) for x in cells if x["Deployed"] == "ON" and "ANT-%03d"%(int(x["Antenna"])) in antenne]
-    print cells[1]
+    ant_pos = [(float(x["East"]), float(x["North"])) for x in cells if x["Deployed"] == "Yes"]
+    ant_pos_check = [(float(x["East"]), float(x["North"])) for x in cells if x["Deployed"] == "Yes" and "ANT-%03d"%(int(x["Antenna"])) in antenne]
     print ant_pos
     print ant_pos_check
     exit(0)
