@@ -150,28 +150,25 @@ if __name__ == "__main__":
     tiles_dir = sorted(glob.glob(base_dir + "/TILE*"))
     ant_dir = []
     for t in tiles_dir:
-        print t
         for x in sorted(glob.glob(t+"/ANT*")):
-            print x
             if x[-7:] in antenne:
                 ant_dir += [x]
-    print ant_dir
-    exit(0)
 
-
-    ant_list = sorted(glob.glob(tile_dir + "/ANT*"))
-    print "\nFound", len(ant_list), "Antenna Directories"
-    if len(ant_list) == 0:
+    print "\nFound", len(ant_dir), "Antenna Directories"
+    if len(ant_dir) == 0:
         print "ERROR: Missing antenna data"
         exit(0)
-    #print ant_list[0] + "/POL-X/*raw"
-    obs = sorted(glob.glob(ant_list[0] + "/POL-X/*raw"))
+
+    obs = sorted(glob.glob(ant_dir[0] + "/POL-X/*raw"))
     for i in range(len(obs)):
         obs[i] = obs[i][-28:-4]
     print "Found", len(obs), "observation files\n"
 
     keys, cells = read_from_local(options.station)
-    ant_pos = [(float(x["East"]), float(x["North"])) for x in cells if x["Tile"] == options.tile]
+    ant_pos = [(float(x["East"]), float(x["North"])) for x in cells if x["Deployed"] == "ON"]
+    ant_pos_check = [(float(x["East"]), float(x["North"])) for x in cells if x["Deployed"] == "ON" and "ANT-%03d"%(int(x["Antenna"])) in antenne]
+    print ant_pos_check
+    exit(0)
 
     plt.ioff()
     gs = gridspec.GridSpec(5, 4)
