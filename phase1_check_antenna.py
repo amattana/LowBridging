@@ -150,7 +150,9 @@ if __name__ == "__main__":
     tiles_dir = sorted(glob.glob(base_dir + "/TILE*"))
     ant_dir = []
     for t in tiles_dir:
+        print t
         for x in sorted(glob.glob(t)):
+            print x
             if x[-7:] in antenne:
                 ant_dir += [x]
     print ant_dir
