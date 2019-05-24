@@ -147,7 +147,7 @@ if __name__ == "__main__":
     if not os.path.isdir(img_dir + "/" + options.antennas.replace(",", "_")):
         os.mkdir(img_dir + "/" + options.antennas.replace(",", "_"))
 
-    tiles_dir = sorted(glob.glob(base_dir + "TILE*"))
+    tiles_dir = sorted(glob.glob(base_dir + "/TILE*"))
     print tiles_dir
     exit(0)
     ant_list = sorted(glob.glob(tile_dir + "/ANT*"))
