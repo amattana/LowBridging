@@ -489,11 +489,13 @@ if __name__ == "__main__":
         if not os.path.isdir(WORK_DIR + DATA + IMG_DIR):
             os.makedirs(WORK_DIR + DATA + IMG_DIR)
 
-        plt.savefig(WORK_DIR + DATA + IMG_DIR + "IMG_" + fname[-28:-11] + ".png")
+        #plt.savefig(WORK_DIR + DATA + IMG_DIR + "IMG_" + fname[-28:-11] + ".png")
         if not os.path.isdir(WWW):
             os.makedirs(WWW)
 
         plt.savefig(WWW + "/STATION_" + STATION['NAME'] + ".png")
+        print datetime.datetime.utcnow(), "[PLT] Saved new www picture\n"
+
         #plt.savefig(WWW_OLD + "/STATION_" + STATION['NAME'] + ".png")
 
         time.sleep(100)
