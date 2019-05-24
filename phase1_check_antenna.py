@@ -148,8 +148,15 @@ if __name__ == "__main__":
         os.mkdir(img_dir + "/" + options.antennas.replace(",", "_"))
 
     tiles_dir = sorted(glob.glob(base_dir + "/TILE*"))
-    print tiles_dir
+    ant_dir = []
+    for t in tiles_dir:
+        for x in sorted(glob.glob(t)):
+            if x[-7:] in antenne:
+                ant_dir += [x]
+    print ant_dir
     exit(0)
+
+
     ant_list = sorted(glob.glob(tile_dir + "/ANT*"))
     print "\nFound", len(ant_list), "Antenna Directories"
     if len(ant_list) == 0:
