@@ -117,10 +117,7 @@ if __name__ == "__main__":
     img_dir = base_dir + "/CHECK"
     if not os.path.isdir(video_dir):
         os.mkdir(video_dir)
-    video_dir += "/" + options.date
-    if not os.path.isdir(video_dir):
-        os.mkdir(video_dir)
-    video_dir += "/" + options.station
+    video_dir += "/CHECK"
     if not os.path.isdir(video_dir):
         os.mkdir(video_dir)
 
@@ -275,10 +272,6 @@ if __name__ == "__main__":
             #print img_dir + "/" + options.date + "_" + options.antennas.replace(",", "_") + "_" + obs[x] + ".png"
             fig.savefig(img_dir + "/" + options.date + "_" + options.antennas.replace(",", "_") + "_" + obs[x] + ".png")
 
-
-    # for pol in ["POL-X", "POL-Y"]:
-    #     for mode in ["MULTI", "SINGLE"]:
-    #         os.system("ffmpeg -y -f image2 -i " + img_dir + "/" + tile + "/" + pol + "/" + mode + "/" + tile + "_" +
-    #                   pol + "_" + options.date + "_%*.png  -vcodec libx264 " + video_dir + "/" + tile + "_" +
-    #                   pol + "_" + options.date + "_" + mode + ".avi")
+    os.system("ffmpeg -y -f image2 -i " + img_dir + "/%*.png  -vcodec libx264 " + video_dir + "/" +
+              options.date + "_" + options.antennas.replace(",", "_") + ".avi")
 
