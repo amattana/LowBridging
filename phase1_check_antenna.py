@@ -263,6 +263,7 @@ if __name__ == "__main__":
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
             # time.sleep(1)
+            print img_dir + "/" + options.date + "_" + options.antennas.replace(",", "_") + "_" + obs[x] + ".png"
             fig.savefig(img_dir + "/" + options.date + "_" + options.antennas.replace(",", "_") + "_" + obs[x] + ".png")
 
 
