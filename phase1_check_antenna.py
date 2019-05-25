@@ -226,7 +226,7 @@ if __name__ == "__main__":
                 print "Something went wrong!"
                 pass
 
-        if cnt == 16:
+        if cnt == len(ant_dir):
             title_left.cla()
             title_left.set_axis_off()
             title_left.plot([0.001, 0.002], color='w')
