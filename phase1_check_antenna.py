@@ -167,84 +167,32 @@ if __name__ == "__main__":
     keys, cells = read_from_local(options.station)
     ant_pos = [(float(x["East"]), float(x["North"])) for x in cells if x["Deployed"] == "Yes"]
     ant_pos_check = [(float(x["East"]), float(x["North"])) for x in cells if x["Deployed"] == "Yes" and "ANT-%03d"%(int(x["Antenna"])) in antenne]
-    print ant_pos
-    print ant_pos_check
-    exit(0)
 
     plt.ioff()
     gs = gridspec.GridSpec(5, 4)
-    gs2 = gridspec.GridSpec(5, 8)
     fig = plt.figure(figsize=(16, 9), facecolor='w')
-    fig2 = plt.figure(figsize=(16, 9), facecolor='w')
 
     ax = []
-    for i in range(16):
+    #ant_list = []
+    for i in range(len(antenne)):
         ax += [fig.add_subplot(gs[i+4])]
-        ant_list[i] = ant_list[i][-7:]
+        #ant_list[i] += [ant_dir[i][-7:]]
     title_left = fig.add_subplot(gs[0])
     title_center = fig.add_subplot(gs[1:2])
     gs3 = gridspec.GridSpecFromSubplotSpec(1, 2, wspace=0.05, hspace=0.5, subplot_spec=gs[0, 3])
     title_right = fig.add_subplot(gs3[1])
 
-    title_left2 = fig2.add_subplot(gs2[0, 0:1])
-    title_center2 = fig2.add_subplot(gs2[0, 2:6])
-    title_right2 = fig2.add_subplot(gs2[0, 7])
-
-    ax2 = fig2.add_subplot(gs2[1:5, :])
-
-
-    # Patching matplotlib tight figures
-    pol = "POL-X"
-    ant = ant_list[0]
-    x = 0
-
-    fname = tile_dir + "/" + ant_list[0] + "/POL-X/" + tile + "_" + ant_list[0] + "_POL-X_" + obs[0] + ".raw"
-    with open(fname, "r") as f:
-        a = f.read()
-    data = struct.unpack(">" + str(len(a)) + "b", a)
-    spettro = calcolaspettro(data, nsamples)
-
-    adu_rms = np.sqrt(np.mean(np.power(data, 2), 0))
-    volt_rms = adu_rms * (1.7 / 256.)  # VppADC9680/2^bits * ADU_RMS
-    power_adc = 10 * np.log10(
-        np.power(volt_rms, 2) / 400.) + 30  # 10*log10(Vrms^2/Rin) in dBWatt, +3 decadi per dBm
-    power_rf = power_adc + 12  # single ended to diff net loose 12 dBm
-
-    ax[i].cla()
-    ax[i].plot(asse_x, np.array(spettro).astype("float"))
-    ax[i].set_xlim(0, 400)
-    ax[i].set_xticks([50, 100, 150, 200, 250, 300, 350, 400])
-    ax[i].set_xticklabels([50, 100, 150, 200, 250, 300, 350, 400], fontsize=8)#, rotation=45)
-    ax[i].set_xlabel("MHz", fontsize=10)
-
-    ax[i].set_ylim(-80, 0)
-    ax[i].set_yticks([0, -20, -40, -60, -80])
-    ax[i].set_yticklabels([0, -20, -40, -60, -80], fontsize=8)
-    ax[i].set_ylabel("dB", fontsize=10)
-
-    ax[i].set_title(ant, fontsize=12)
-    ax[i].grid(True)
-    ax[i].annotate("RF Power:  " + "%3.1f"%(power_rf) + " dBm", (160, -19), fontsize=9, color='b')
-
-    titolo = "  ".join(obs[x][:-7].split("_")) + " UTC   (RBW: " + "%3.1f" % RBW + " KHz)"
-    #fig.suptitle(titolo, fontsize=14)
-    fig.tight_layout()
-    #plt.tight_layout()
-    fig.canvas.draw()
-    time.sleep(1)
-    plt.savefig(img_dir + "/" + tile + "/" + pol + "/MULTI/" + tile + "_" + pol + "_" + obs[x] + ".png")
-
-
-    for pol in ["POL-X", "POL-Y"]:
-        print "\nGenerating pictures for", pol
-
-        for x in tqdm(range(len(obs)), desc=pol):
-            cnt = 0
-            spettri = []
-            legends = []
-            for i, ant in enumerate(ant_list):
-                try:
-                    fname = tile_dir + "/" + ant + "/" + pol + "/" + tile + "_" + ant + "_" + pol + "_" + obs[x] + ".raw"
+    for x in tqdm(range(len(obs))):
+        cnt = 0
+        spettri = []
+        legends = []
+        for i, ant in enumerate(ant_dir):
+            try:
+                for pol in ["POL-X", "POL-Y"]:
+                    fname = glob.glob(ant + "/" + pol + "/*" + obs[x] + "*raw")[0]
+                    print fname
+                    exit(0)
+                    #fname = ant + "/" + pol + "/" + tile + "_" + ant + "_" + pol + "_" + obs[x] + ".raw"
                     with open(fname, "r") as f:
                         a = f.read()
                     data = struct.unpack(">" + str(len(a)) + "b", a)
@@ -280,92 +228,92 @@ if __name__ == "__main__":
                     # plt.tight_layout(rect=[0, 0.03, 1, 0.95])
                     cnt = cnt + 1
 
-                except:
-                    print "Something went wrong!"
-                    pass
+            except:
+                print "Something went wrong!"
+                pass
 
-            if cnt == 16:
-                title_left.cla()
-                title_left.set_axis_off()
-                title_left.plot([0.001, 0.002], color='w')
-                title_left.set_xlim(-20, 20)
-                title_left.set_ylim(-20, 20)
-                title_left.annotate(options.station, (-15, 8), fontsize=32, color='blue')
-                title_left.annotate(tile, (-5, -10), fontsize=28, color='green')
+        if cnt == 16:
+            title_left.cla()
+            title_left.set_axis_off()
+            title_left.plot([0.001, 0.002], color='w')
+            title_left.set_xlim(-20, 20)
+            title_left.set_ylim(-20, 20)
+            title_left.annotate(options.station, (-15, 8), fontsize=32, color='blue')
+            title_left.annotate(tile, (-5, -10), fontsize=28, color='green')
 
-                title_center.cla()
-                title_center.set_axis_off()
-                title_center.plot([0.001, 0.002], color='w')
-                title_center.set_xlim(-20, 20)
-                title_center.set_ylim(-20, 20)
-                titolo = "  ".join(obs[x][:-7-4].split("_")) + ":" + obs[x][-7-4:-7-2] + ":" + obs[x][-7-2:-7] + "  UTC"
-                subtitolo = "(RBW: " + "%3.1f" % RBW + " KHz)"
-                title_center.annotate(titolo, (-2, 5), fontsize=20, color='black')
-                title_center.annotate(pol, (18, -8), fontsize=16, color='red')
+            title_center.cla()
+            title_center.set_axis_off()
+            title_center.plot([0.001, 0.002], color='w')
+            title_center.set_xlim(-20, 20)
+            title_center.set_ylim(-20, 20)
+            titolo = "  ".join(obs[x][:-7-4].split("_")) + ":" + obs[x][-7-4:-7-2] + ":" + obs[x][-7-2:-7] + "  UTC"
+            subtitolo = "(RBW: " + "%3.1f" % RBW + " KHz)"
+            title_center.annotate(titolo, (-2, 5), fontsize=20, color='black')
+            title_center.annotate(pol, (18, -8), fontsize=16, color='red')
 
-                title_right.cla()
-                title_right.set_axis_off()
-                title_right.plot([0.001, 0.002], color='w')
-                title_right.set_xlim(-25.5, 25.5)
-                title_right.set_ylim(-25.5, 25.5)
-                circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
-                title_right.add_artist(circle1)
-                for c in ant_pos:
-                    title_right.plot(c[0], c[1], marker='+', markersize=4,
-                        linestyle='None', color='k')
-                title_right.annotate("E", (21, -1), fontsize=10, color='black')
-                title_right.annotate("W", (-25.1, -1), fontsize=10, color='black')
-                title_right.annotate("N", (-1, 21), fontsize=10, color='black')
-                title_right.annotate("S", (-1, -24.6), fontsize=10, color='black')
+            title_right.cla()
+            title_right.set_axis_off()
+            title_right.plot([0.001, 0.002], color='w')
+            title_right.set_xlim(-25.5, 25.5)
+            title_right.set_ylim(-25.5, 25.5)
+            circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
+            title_right.add_artist(circle1)
+            for c in ant_pos:
+                title_right.plot(c[0], c[1], marker='+', markersize=4,
+                    linestyle='None', color='k')
+            title_right.annotate("E", (21, -1), fontsize=10, color='black')
+            title_right.annotate("W", (-25.1, -1), fontsize=10, color='black')
+            title_right.annotate("N", (-1, 21), fontsize=10, color='black')
+            title_right.annotate("S", (-1, -24.6), fontsize=10, color='black')
 
-                fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
-                fig.canvas.draw()
-                # time.sleep(1)
-                fig.savefig(img_dir + "/" + tile + "/" + pol + "/MULTI/" + tile + "_" + pol + "_" + obs[x] + ".png")
+            fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
+            fig.canvas.draw()
+            # time.sleep(1)
+            fig.savefig(img_dir + "/" + tile + "/" + pol + "/MULTI/" + tile + "_" + pol + "_" + obs[x] + ".png")
 
-                title_left2.cla()
-                title_left2.set_axis_off()
-                title_left2.plot([0.001, 0.002], color='w')
-                title_left2.set_xlim(-20, 20)
-                title_left2.set_ylim(-20, 20)
-                title_left2.annotate(options.station, (-15, 8), fontsize=32, color='blue')
-                title_left2.annotate(tile, (10, -8), fontsize=28, color='green')
+            title_left2.cla()
+            title_left2.set_axis_off()
+            title_left2.plot([0.001, 0.002], color='w')
+            title_left2.set_xlim(-20, 20)
+            title_left2.set_ylim(-20, 20)
+            title_left2.annotate(options.station, (-15, 8), fontsize=32, color='blue')
+            title_left2.annotate(tile, (10, -8), fontsize=28, color='green')
 
-                title_center2.cla()
-                title_center2.set_axis_off()
-                title_center2.plot([0.001, 0.002], color='w')
-                title_center2.set_xlim(-20, 20)
-                title_center2.set_ylim(-20, 20)
-                title_center2.annotate(titolo, (-11, 3), fontsize=22, color='black')
-                title_center2.annotate(pol, (-2, -13), fontsize=16, color='red')
+            title_center2.cla()
+            title_center2.set_axis_off()
+            title_center2.plot([0.001, 0.002], color='w')
+            title_center2.set_xlim(-20, 20)
+            title_center2.set_ylim(-20, 20)
+            title_center2.annotate(titolo, (-11, 3), fontsize=22, color='black')
+            title_center2.annotate(pol, (-2, -13), fontsize=16, color='red')
 
-                title_right2.cla()
-                title_right2.set_axis_off()
-                title_right2.plot([0.001, 0.002], color='wheat')
-                title_right2.set_xlim(-25.5, 25.5)
-                title_right2.set_ylim(-25.5, 25.5)
-                circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
-                title_right2.add_artist(circle1)
-                for c in ant_pos:
-                    title_right2.plot(c[0], c[1], marker='+', markersize=4,
-                        linestyle='None', color='k')
-                title_right2.annotate("E", (21, -1), fontsize=10, color='black')
-                title_right2.annotate("W", (-25.1, -1), fontsize=10, color='black')
-                title_right2.annotate("N", (-1, 21), fontsize=10, color='black')
-                title_right2.annotate("S", (-1, -24.6), fontsize=10, color='black')
+            title_right2.cla()
+            title_right2.set_axis_off()
+            title_right2.plot([0.001, 0.002], color='wheat')
+            title_right2.set_xlim(-25.5, 25.5)
+            title_right2.set_ylim(-25.5, 25.5)
+            circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
+            title_right2.add_artist(circle1)
+            for c in ant_pos:
+                title_right2.plot(c[0], c[1], marker='+', markersize=4,
+                    linestyle='None', color='k')
+            title_right2.annotate("E", (21, -1), fontsize=10, color='black')
+            title_right2.annotate("W", (-25.1, -1), fontsize=10, color='black')
+            title_right2.annotate("N", (-1, 21), fontsize=10, color='black')
+            title_right2.annotate("S", (-1, -24.6), fontsize=10, color='black')
 
-                ax2.cla()
-                for l, sp in enumerate(spettri):
-                    ax2.plot(asse_x[3:-3], sp[3:-3], label=legends[l])
-                    ax2.set_ylim(-80, 0)
-                    ax2.set_ylabel("dB", fontsize=16)
-                    ax2.set_xlim(0, 400)
-                    ax2.set_xlabel("MHz", fontsize=16)
-                    ax2.grid(True)
-                    ax2.legend(loc=8, ncol=8, borderaxespad=0.5, fontsize=12)#, borderaxespad=0., fontsize='small')
-                fig2.tight_layout()#rect=[0, 0.03, 1, 0.9])
-                fig2.canvas.draw()
-                fig2.savefig(img_dir + "/" + tile + "/" + pol + "/SINGLE/" + tile + "_" + pol + "_" + obs[x] + "_all.png")
+            ax2.cla()
+            for l, sp in enumerate(spettri):
+                ax2.plot(asse_x[3:-3], sp[3:-3], label=legends[l])
+                ax2.set_ylim(-80, 0)
+                ax2.set_ylabel("dB", fontsize=16)
+                ax2.set_xlim(0, 400)
+                ax2.set_xlabel("MHz", fontsize=16)
+                ax2.grid(True)
+                ax2.legend(loc=8, ncol=8, borderaxespad=0.5, fontsize=12)#, borderaxespad=0., fontsize='small')
+            fig2.tight_layout()#rect=[0, 0.03, 1, 0.9])
+            fig2.canvas.draw()
+            fig2.savefig(img_dir + "/" + tile + "/" + pol + "/SINGLE/" + tile + "_" + pol + "_" + obs[x] + "_all.png")
 
     for pol in ["POL-X", "POL-Y"]:
         for mode in ["MULTI", "SINGLE"]:
