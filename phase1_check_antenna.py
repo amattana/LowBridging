@@ -192,8 +192,6 @@ if __name__ == "__main__":
                 ax[i].cla()
                 for z, (pol, col) in enumerate([("POL-X", "b"), ("POL-Y", "g")]):
                     fname = glob.glob(ant + "/" + pol + "/*" + obs[x] + "*raw")[0]
-                    print fname
-                    #fname = ant + "/" + pol + "/" + tile + "_" + ant + "_" + pol + "_" + obs[x] + ".raw"
                     with open(fname, "r") as f:
                         a = f.read()
                     data = struct.unpack(">" + str(len(a)) + "b", a)
