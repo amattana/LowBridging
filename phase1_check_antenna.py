@@ -233,7 +233,7 @@ if __name__ == "__main__":
             title_left.set_xlim(-20, 20)
             title_left.set_ylim(-20, 20)
             title_left.annotate(options.station, (-15, 8), fontsize=32, color='blue')
-            title_left.annotate(tile, (-5, -10), fontsize=28, color='green')
+            #title_left.annotate(tile, (-5, -10), fontsize=28, color='green')
 
             title_center.cla()
             title_center.set_axis_off()
@@ -243,7 +243,6 @@ if __name__ == "__main__":
             titolo = "  ".join(obs[x][:-7-4].split("_")) + ":" + obs[x][-7-4:-7-2] + ":" + obs[x][-7-2:-7] + "  UTC"
             subtitolo = "(RBW: " + "%3.1f" % RBW + " KHz)"
             title_center.annotate(titolo, (-2, 5), fontsize=20, color='black')
-            title_center.annotate(pol, (18, -8), fontsize=16, color='red')
 
             title_right.cla()
             title_right.set_axis_off()
@@ -255,6 +254,10 @@ if __name__ == "__main__":
             for c in ant_pos:
                 title_right.plot(c[0], c[1], marker='+', markersize=4,
                     linestyle='None', color='k')
+            for c in ant_pos_check:
+                title_right.plot(c[0], c[1], marker='+', markersize=4,
+                    linestyle='None', color='r')
+
             title_right.annotate("E", (21, -1), fontsize=10, color='black')
             title_right.annotate("W", (-25.1, -1), fontsize=10, color='black')
             title_right.annotate("N", (-1, 21), fontsize=10, color='black')
