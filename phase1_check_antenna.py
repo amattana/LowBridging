@@ -172,7 +172,7 @@ if __name__ == "__main__":
     ant_pos = [(float(x["East"]), float(x["North"])) for x in cells if x["Deployed"] == "Yes"]
     ant_pos_check = [(float(x["East"]), float(x["North"])) for x in cells if x["Deployed"] == "Yes" and "ANT-%03d"%(int(x["Antenna"])) in antenne]
 
-    rcol = np.ceil(np.sqrt(len(antenne)))
+    rcol = int(np.ceil(np.sqrt(len(antenne))))
 
     plt.ioff()
     gs = gridspec.GridSpec(5, 4)
