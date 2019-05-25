@@ -172,14 +172,17 @@ if __name__ == "__main__":
     ant_pos = [(float(x["East"]), float(x["North"])) for x in cells if x["Deployed"] == "Yes"]
     ant_pos_check = [(float(x["East"]), float(x["North"])) for x in cells if x["Deployed"] == "Yes" and "ANT-%03d"%(int(x["Antenna"])) in antenne]
 
+    rcol = np.ceil(np.sqrt(len(antenne)))
+
     plt.ioff()
     gs = gridspec.GridSpec(5, 4)
     fig = plt.figure(figsize=(16, 9), facecolor='w')
+    gs2 = gridspec.GridSpecFromSubplotSpec(rcol, rcol, wspace=0.05, hspace=0.5, subplot_spec=gs[1:4, 0:3])
 
     ax = []
     #ant_list = []
     for i in range(len(antenne)):
-        ax += [fig.add_subplot(gs[i+4])]
+        ax += [fig.add_subplot(gs2[i])]
         #ant_list[i] += [ant_dir[i][-7:]]
     title_left = fig.add_subplot(gs[0])
     title_center = fig.add_subplot(gs[1:2])
@@ -219,7 +222,7 @@ if __name__ == "__main__":
                     ax[i].set_yticklabels([0, -20, -40, -60, -80], fontsize=8)
                     ax[i].set_ylabel("dB", fontsize=10)
 
-                    ax[i].set_title(ant, fontsize=12)
+                    ax[i].set_title(antenne[i], fontsize=12)
                     ax[i].grid(True)
                     ax[i].annotate("RF Power:  " + "%3.1f"%(power_rf) + " dBm", (160, -19-20*z), fontsize=9, color=col)
 
