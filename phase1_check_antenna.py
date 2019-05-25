@@ -144,8 +144,9 @@ if __name__ == "__main__":
     img_dir = base_dir[:-4] + "CHECK"
     if not os.path.isdir(img_dir):
         os.mkdir(img_dir)
-    if not os.path.isdir(img_dir + "/" + options.antennas.replace(",", "_")):
-        os.mkdir(img_dir + "/" + options.antennas.replace(",", "_"))
+    img_dir = img_dir + "/" + options.antennas.replace(",", "_")
+    if not os.path.isdir(img_dir):
+        os.mkdir(img_dir)
 
     tiles_dir = sorted(glob.glob(base_dir + "/TILE*"))
     ant_dir = []
@@ -188,10 +189,9 @@ if __name__ == "__main__":
         legends = []
         for i, ant in enumerate(ant_dir):
             try:
-                for pol in ["POL-X", "POL-Y"]:
+                ax[i].cla()
+                for z, pol, col in enumerate([("POL-X", "b"), ("POL-Y","g")]):
                     fname = glob.glob(ant + "/" + pol + "/*" + obs[x] + "*raw")[0]
-                    print fname
-                    exit(0)
                     #fname = ant + "/" + pol + "/" + tile + "_" + ant + "_" + pol + "_" + obs[x] + ".raw"
                     with open(fname, "r") as f:
                         a = f.read()
@@ -206,26 +206,21 @@ if __name__ == "__main__":
                         np.power(volt_rms, 2) / 400.) + 30  # 10*log10(Vrms^2/Rin) in dBWatt, +3 decadi per dBm
                     power_rf = power_adc + 12  # single ended to diff net loose 12 dBm
 
-                    ax[i].cla()
-                    ax[i].plot(asse_x[3:-3], np.array(spettro).astype("float")[3:-3])
+                    ax[i].plot(asse_x[3:-3], np.array(spettro).astype("float")[3:-3], color=col)
                     ax[i].set_xlim(0, 400)
                     ax[i].set_xticks([50, 100, 150, 200, 250, 300, 350, 400])
                     ax[i].set_xticklabels([50, 100, 150, 200, 250, 300, 350, 400], fontsize=8)#, rotation=45)
-                    if i >= 12:
-                        ax[i].set_xlabel("MHz", fontsize=10)
+                    ax[i].set_xlabel("MHz", fontsize=10)
 
                     ax[i].set_ylim(-80, 0)
                     ax[i].set_yticks([0, -20, -40, -60, -80])
                     ax[i].set_yticklabels([0, -20, -40, -60, -80], fontsize=8)
-                    if i % 4 == 0:
-                        ax[i].set_ylabel("dB", fontsize=10)
+                    ax[i].set_ylabel("dB", fontsize=10)
 
                     ax[i].set_title(ant, fontsize=12)
                     ax[i].grid(True)
-                    ax[i].annotate("RF Power:  " + "%3.1f"%(power_rf) + " dBm", (160, -19), fontsize=9, color='b')
+                    ax[i].annotate("RF Power:  " + "%3.1f"%(power_rf) + " dBm", (160, -19-20*z), fontsize=9, color=col)
 
-                    # fig.suptitle(titolo, fontsize=14)
-                    # plt.tight_layout(rect=[0, 0.03, 1, 0.95])
                     cnt = cnt + 1
 
             except:
@@ -269,55 +264,12 @@ if __name__ == "__main__":
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
             # time.sleep(1)
-            fig.savefig(img_dir + "/" + tile + "/" + pol + "/MULTI/" + tile + "_" + pol + "_" + obs[x] + ".png")
+            fig.savefig(img_dir + "/" + options.date + "_" + options.antennas.replace(",", "_") + "_" + obs[x] + ".png")
 
-            title_left2.cla()
-            title_left2.set_axis_off()
-            title_left2.plot([0.001, 0.002], color='w')
-            title_left2.set_xlim(-20, 20)
-            title_left2.set_ylim(-20, 20)
-            title_left2.annotate(options.station, (-15, 8), fontsize=32, color='blue')
-            title_left2.annotate(tile, (10, -8), fontsize=28, color='green')
 
-            title_center2.cla()
-            title_center2.set_axis_off()
-            title_center2.plot([0.001, 0.002], color='w')
-            title_center2.set_xlim(-20, 20)
-            title_center2.set_ylim(-20, 20)
-            title_center2.annotate(titolo, (-11, 3), fontsize=22, color='black')
-            title_center2.annotate(pol, (-2, -13), fontsize=16, color='red')
-
-            title_right2.cla()
-            title_right2.set_axis_off()
-            title_right2.plot([0.001, 0.002], color='wheat')
-            title_right2.set_xlim(-25.5, 25.5)
-            title_right2.set_ylim(-25.5, 25.5)
-            circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
-            title_right2.add_artist(circle1)
-            for c in ant_pos:
-                title_right2.plot(c[0], c[1], marker='+', markersize=4,
-                    linestyle='None', color='k')
-            title_right2.annotate("E", (21, -1), fontsize=10, color='black')
-            title_right2.annotate("W", (-25.1, -1), fontsize=10, color='black')
-            title_right2.annotate("N", (-1, 21), fontsize=10, color='black')
-            title_right2.annotate("S", (-1, -24.6), fontsize=10, color='black')
-
-            ax2.cla()
-            for l, sp in enumerate(spettri):
-                ax2.plot(asse_x[3:-3], sp[3:-3], label=legends[l])
-                ax2.set_ylim(-80, 0)
-                ax2.set_ylabel("dB", fontsize=16)
-                ax2.set_xlim(0, 400)
-                ax2.set_xlabel("MHz", fontsize=16)
-                ax2.grid(True)
-                ax2.legend(loc=8, ncol=8, borderaxespad=0.5, fontsize=12)#, borderaxespad=0., fontsize='small')
-            fig2.tight_layout()#rect=[0, 0.03, 1, 0.9])
-            fig2.canvas.draw()
-            fig2.savefig(img_dir + "/" + tile + "/" + pol + "/SINGLE/" + tile + "_" + pol + "_" + obs[x] + "_all.png")
-
-    for pol in ["POL-X", "POL-Y"]:
-        for mode in ["MULTI", "SINGLE"]:
-            os.system("ffmpeg -y -f image2 -i " + img_dir + "/" + tile + "/" + pol + "/" + mode + "/" + tile + "_" +
-                      pol + "_" + options.date + "_%*.png  -vcodec libx264 " + video_dir + "/" + tile + "_" +
-                      pol + "_" + options.date + "_" + mode + ".avi")
+    # for pol in ["POL-X", "POL-Y"]:
+    #     for mode in ["MULTI", "SINGLE"]:
+    #         os.system("ffmpeg -y -f image2 -i " + img_dir + "/" + tile + "/" + pol + "/" + mode + "/" + tile + "_" +
+    #                   pol + "_" + options.date + "_%*.png  -vcodec libx264 " + video_dir + "/" + tile + "_" +
+    #                   pol + "_" + options.date + "_" + mode + ".avi")
 
