@@ -114,6 +114,7 @@ if __name__ == "__main__":
     # Example of video dir structure
     # /base_dir/VIDEO/2019-05-15/SKALA-4
     video_dir = base_dir + "/VIDEO"
+    img_dir = base_dir + "/CHECK"
     if not os.path.isdir(video_dir):
         os.mkdir(video_dir)
     video_dir += "/" + options.date
@@ -141,7 +142,9 @@ if __name__ == "__main__":
     for a in options.antennas.split(","):
         antenne += ["ANT-%03d"%(int(a))]
 
-    img_dir = base_dir[:-4] + "CHECK"
+    if not os.path.isdir(img_dir):
+        os.mkdir(img_dir)
+    img_dir = img_dir + "/" + options.date
     if not os.path.isdir(img_dir):
         os.mkdir(img_dir)
     img_dir = img_dir + "/" + options.antennas.replace(",", "_")
