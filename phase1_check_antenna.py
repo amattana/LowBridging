@@ -190,8 +190,8 @@ if __name__ == "__main__":
         for i, ant in enumerate(ant_dir):
             try:
                 ax[i].cla()
-                for z, pol, col in enumerate([("POL-X", "b"), ("POL-Y","g")]):
-                    fname = glob.glob(ant + "/" + pol + "/*" + obs[x] + "*raw")
+                for z, (pol, col) in enumerate([("POL-X", "b"), ("POL-Y", "g")]):
+                    fname = glob.glob(ant + "/" + pol + "/*" + obs[x] + "*raw")[0]
                     print fname
                     #fname = ant + "/" + pol + "/" + tile + "_" + ant + "_" + pol + "_" + obs[x] + ".raw"
                     with open(fname, "r") as f:
