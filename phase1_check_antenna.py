@@ -263,7 +263,7 @@ if __name__ == "__main__":
             title_right.annotate("N", (-1, 21), fontsize=10, color='black')
             title_right.annotate("S", (-1, -24.6), fontsize=10, color='black')
 
-            fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
+            #fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
             # time.sleep(1)
             print img_dir + "/" + options.date + "_" + options.antennas.replace(",", "_") + "_" + obs[x] + ".png"
