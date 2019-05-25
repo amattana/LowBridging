@@ -177,7 +177,7 @@ if __name__ == "__main__":
     plt.ioff()
     gs = gridspec.GridSpec(5, 4)
     fig = plt.figure(figsize=(16, 9), facecolor='w')
-    gs2 = gridspec.GridSpecFromSubplotSpec(rcol, rcol, wspace=0.05, hspace=0.5, subplot_spec=gs[1:4, 0:3])
+    gs2 = gridspec.GridSpecFromSubplotSpec(rcol, rcol, wspace=0.05, hspace=0.5, subplot_spec=gs[1:5, 0:4])
 
     ax = []
     #ant_list = []
@@ -224,7 +224,7 @@ if __name__ == "__main__":
 
                     ax[i].set_title(antenne[i], fontsize=12)
                     ax[i].grid(True)
-                    ax[i].annotate("RF Power:  " + "%3.1f"%(power_rf) + " dBm", (160, -19-20*z), fontsize=9, color=col)
+                    ax[i].annotate("RF Power:  " + "%3.1f"%(power_rf) + " dBm", (160, -9-10*z), fontsize=10, color=col)
 
                     cnt = cnt + 1
 
@@ -272,7 +272,7 @@ if __name__ == "__main__":
             #fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
             # time.sleep(1)
-            print img_dir + "/" + options.date + "_" + options.antennas.replace(",", "_") + "_" + obs[x] + ".png"
+            #print img_dir + "/" + options.date + "_" + options.antennas.replace(",", "_") + "_" + obs[x] + ".png"
             fig.savefig(img_dir + "/" + options.date + "_" + options.antennas.replace(",", "_") + "_" + obs[x] + ".png")
 
 
