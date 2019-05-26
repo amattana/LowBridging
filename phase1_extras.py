@@ -228,7 +228,6 @@ if __name__ == "__main__":
                     ax_spectra[i].set_yticklabels([0, -20, -40, -60, -80], fontsize=8)
                     ax_spectra[i].set_ylabel("dB", fontsize=10)
 
-                    ax_spectra[i].set_title(ant, fontsize=12)
                     ax_spectra[i].grid(True)
                     #ax_spectra[i].annotate("RF Power:  " + "%3.1f"%(power_rf) + " dBm", (160, -19), fontsize=9, color='b')
 
@@ -254,7 +253,7 @@ if __name__ == "__main__":
             ax_geo_map.cla()
             ax_geo_map.set_axis_off()
             ax_geo_map.plot([0.001, 0.002], color='w')
-            ax_geo_map.set_xlim(-25.5, 25.5)
+            ax_geo_map.set_xlim(-30, 34)
             ax_geo_map.set_ylim(-25.5, 25.5)
             circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
             ax_geo_map.add_artist(circle1)
