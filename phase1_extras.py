@@ -177,6 +177,8 @@ if __name__ == "__main__":
         ant_list[i] = ant_list[i][-7:]
     ax_title = fig.add_subplot(gs[0, 0])
     ax_geo_map = fig.add_subplot(gs[1:3, 0])
+
+    potenza_rf = []
     ax_total_power = fig.add_subplot(gs[3:5, 0])
 
     ax_airplane = []
@@ -190,6 +192,7 @@ if __name__ == "__main__":
     ax_rms = []
     ax_rms += [fig.add_subplot(gs[2, 1])]
     ax_rms += [fig.add_subplot(gs[2, 2])]
+    ind = np.arange(16)
 
     ax_spectra = []
     ax_spectra += [fig.add_subplot(gs[3:5, 1])]
@@ -199,9 +202,11 @@ if __name__ == "__main__":
         cnt = 0
         spettri = []
         legends = []
+        prf = []
         try:
             for i, (pol, col) in enumerate([("POL-X", "b"), ("POL-Y", "g")]):
                 ax_spectra[i].cla()
+                rms = []
                 for z, ant in enumerate(ant_list):
                     fname = tile_dir + "/" + ant + "/" + pol + "/" + tile + "_" + ant + "_" + pol + "_" + obs[x] + ".raw"
                     with open(fname, "r") as f:
@@ -212,28 +217,43 @@ if __name__ == "__main__":
                     legends += [ant]
 
                     adu_rms = np.sqrt(np.mean(np.power(data, 2), 0))
+                    rms += [adu_rms]
                     volt_rms = adu_rms * (1.7 / 256.)  # VppADC9680/2^bits * ADU_RMS
                     power_adc = 10 * np.log10(
                         np.power(volt_rms, 2) / 400.) + 30  # 10*log10(Vrms^2/Rin) in dBWatt, +3 decadi per dBm
                     power_rf = power_adc + 12  # single ended to diff net loose 12 dBm
+                    prf += [power_rf]
 
                     ax_spectra[i].plot(asse_x[3:-3], np.array(spettro).astype("float")[3:-3])
-                    ax_spectra[i].set_xlim(0, 400)
-                    ax_spectra[i].set_xticks([50, 100, 150, 200, 250, 300, 350, 400])
-                    ax_spectra[i].set_xticklabels([50, 100, 150, 200, 250, 300, 350, 400], fontsize=8)#, rotation=45)
-                    ax_spectra[i].set_xlabel("MHz", fontsize=10)
-
-                    ax_spectra[i].set_ylim(-80, 0)
-                    ax_spectra[i].set_yticks([0, -20, -40, -60, -80])
-                    ax_spectra[i].set_yticklabels([0, -20, -40, -60, -80], fontsize=8)
-                    ax_spectra[i].set_ylabel("dB", fontsize=10)
-
                     ax_spectra[i].grid(True)
                     #ax_spectra[i].annotate("RF Power:  " + "%3.1f"%(power_rf) + " dBm", (160, -19), fontsize=9, color='b')
 
                     # fig.suptitle(titolo, fontsize=14)
                     # plt.tight_layout(rect=[0, 0.03, 1, 0.95])
                     cnt = cnt + 1
+                ax_spectra[i].set_xlim(0, 400)
+                ax_spectra[i].set_xticks([50, 100, 150, 200, 250, 300, 350, 400])
+                ax_spectra[i].set_xticklabels([50, 100, 150, 200, 250, 300, 350, 400], fontsize=8)#, rotation=45)
+                ax_spectra[i].set_xlabel("MHz", fontsize=10)
+
+                ax_spectra[i].set_ylim(-80, 0)
+                ax_spectra[i].set_yticks([0, -20, -40, -60, -80])
+                ax_spectra[i].set_yticklabels([0, -20, -40, -60, -80], fontsize=8)
+                ax_spectra[i].set_ylabel("dB", fontsize=10)
+                ax_spectra[i].set_title(pol)
+
+                ax_rms[i].cla()
+                ax_rms[i].tick_params(axis='both', which='both', labelsize=6)
+                ax_rms[i].set_xticks(xrange(1,17))
+                ax_rms[i].set_xticklabels(np.array(range(1,17)).astype("str").tolist(), fontsize=4)
+                ax_rms[i].set_yticks([15, 20])
+                ax_rms[i].set_yticklabels(["15", "20"], fontsize=7)
+                ax_rms[i].set_ylim([0, 40])
+                ax_rms[i].set_xlim([0, 17])
+                ax_rms[i].set_ylabel("RMS", fontsize=10)
+                ax_rms[i].grid()
+                ax_rms[i].bar(ind+0.65, rms, 0.8, color=col)
+                ax_rms[i].set_title("ADC RMS Pol X", fontsize=10)
 
         except:
             print "Something went wrong!"
@@ -245,25 +265,31 @@ if __name__ == "__main__":
             ax_title.plot([0.001, 0.002], color='w')
             ax_title.set_xlim(-20, 20)
             ax_title.set_ylim(-20, 20)
-            ax_title.annotate(options.station, (-15, 8), fontsize=32, color='blue')
-            ax_title.annotate(tile, (-5, -10), fontsize=28, color='green')
+            ax_title.annotate(options.station, (-15, 10), fontsize=32, color='blue')
+            ax_title.annotate(tile, (-5, -8), fontsize=28, color='green')
             titolo = "  ".join(obs[x][:-7-4].split("_")) + ":" + obs[x][-7-4:-7-2] + ":" + obs[x][-7-2:-7] + "  UTC"
-            ax_title.annotate(titolo, (-2, -18), fontsize=10, color='black')
+            ax_title.annotate(titolo, (-16, -20), fontsize=16, color='black')
 
             ax_geo_map.cla()
             ax_geo_map.set_axis_off()
             ax_geo_map.plot([0.001, 0.002], color='w')
-            ax_geo_map.set_xlim(-30, 34)
+            ax_geo_map.set_xlim(-30, 40)
             ax_geo_map.set_ylim(-25.5, 25.5)
             circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
             ax_geo_map.add_artist(circle1)
             for c in ant_pos:
-                ax_geo_map.plot(c[0], c[1], marker='+', markersize=4,
+                ax_geo_map.plot(c[0], c[1], marker='+', markersize=6,
                     linestyle='None', color='k')
-            ax_geo_map.annotate("E", (21, -1), fontsize=10, color='black')
+            ax_geo_map.annotate("E", (23, -1), fontsize=10, color='black')
             ax_geo_map.annotate("W", (-25.1, -1), fontsize=10, color='black')
             ax_geo_map.annotate("N", (-1, 21), fontsize=10, color='black')
             ax_geo_map.annotate("S", (-1, -24.6), fontsize=10, color='black')
+
+            potenza_rf += prf
+            ax_total_power.cla()
+            for j in range(32):
+                serie = potenza_rf[j::32]
+                ax_total_power.plot(range(len(serie)), serie)
 
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
