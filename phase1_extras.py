@@ -269,6 +269,6 @@ if __name__ == "__main__":
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
             # time.sleep(1)
-            print img_dir + "/" + tile + "_" + obs[x] + ".png"
+            #print img_dir + "/" + tile + "_" + obs[x] + ".png"
             fig.savefig(img_dir + "/" + tile + "_" + obs[x] + ".png")
 
