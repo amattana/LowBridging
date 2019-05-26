@@ -290,6 +290,8 @@ if __name__ == "__main__":
             for j in range(32):
                 serie = potenza_rf[j::32]
                 ax_total_power.plot(range(len(serie)), serie)
+            ax_total_power.set_xlim(0,len(obs))
+            ax_total_power.set_ylim(-30,15)
 
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
