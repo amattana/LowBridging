@@ -215,6 +215,7 @@ if __name__ == "__main__":
                 ax_spectra[i].cla()
                 for z, ant in enumerate(ant_list):
                     fname = tile_dir + "/" + ant + "/" + pol + "/" + tile + "_" + ant + "_" + pol + "_" + obs[x] + ".raw"
+                    print fname
                     with open(fname, "r") as f:
                         a = f.read()
                     data = struct.unpack(">" + str(len(a)) + "b", a)
