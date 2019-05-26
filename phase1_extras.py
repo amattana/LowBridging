@@ -126,7 +126,9 @@ if __name__ == "__main__":
     if not os.path.isdir(video_dir):
         os.mkdir(video_dir)
 
-    base_dir += "/" + options.date
+    if not base_dir[-1] == "/":
+        base_dir += "/"
+    base_dir += options.date
     if not os.path.isdir(base_dir):
         print "ERROR: WRONG DATE", base_dir, "\nThe given directory does not exist. Exiting...\n"
         exit(0)
@@ -145,23 +147,10 @@ if __name__ == "__main__":
     img_dir = base_dir[:-4] + "IMG"
     if not os.path.isdir(img_dir):
         os.mkdir(img_dir)
-    if not os.path.isdir(img_dir + "/" + tile):
-        os.mkdir(img_dir + "/" + tile)
-    if not os.path.isdir(img_dir + "/" + tile + "/POL-X"):
-        os.mkdir(img_dir + "/" + tile + "/POL-X")
-        os.mkdir(img_dir + "/" + tile + "/POL-X/MULTI")
-        os.mkdir(img_dir + "/" + tile + "/POL-X/SINGLE")
-    if not os.path.isdir(img_dir + "/" + tile + "/POL-Y"):
-        os.mkdir(img_dir + "/" + tile + "/POL-Y")
-        os.mkdir(img_dir + "/" + tile + "/POL-Y/MULTI")
-        os.mkdir(img_dir + "/" + tile + "/POL-Y/SINGLE")
-
+    img_dir += "/EXTRA"
     if not os.path.isdir(img_dir):
         os.mkdir(img_dir)
-    img_dir = img_dir + "/" + options.date
-    if not os.path.isdir(img_dir):
-        os.mkdir(img_dir)
-    img_dir = img_dir + "/" + tile
+    img_dir += "/" + tile
     if not os.path.isdir(img_dir):
         os.mkdir(img_dir)
 
@@ -184,8 +173,8 @@ if __name__ == "__main__":
     fig = plt.figure(figsize=(16, 9), facecolor='w')
 
     # ax = []
-    # for i in range(16):
-    #     ant_list[i] = ant_list[i][-7:]
+    for i in range(16):
+        ant_list[i] = ant_list[i][-7:]
     ax_title = fig.add_subplot(gs[0, 0])
     ax_geo_map = fig.add_subplot(gs[1:2, 0])
     ax_total_power = fig.add_subplot(gs[3:4, 0])
@@ -215,7 +204,6 @@ if __name__ == "__main__":
                 ax_spectra[i].cla()
                 for z, ant in enumerate(ant_list):
                     fname = tile_dir + "/" + ant + "/" + pol + "/" + tile + "_" + ant + "_" + pol + "_" + obs[x] + ".raw"
-                    print fname
                     with open(fname, "r") as f:
                         a = f.read()
                     data = struct.unpack(">" + str(len(a)) + "b", a)
@@ -281,5 +269,6 @@ if __name__ == "__main__":
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
             # time.sleep(1)
+            print img_dir + "/" + tile + "_" + obs[x] + ".png"
             fig.savefig(img_dir + "/" + tile + "_" + obs[x] + ".png")
 
