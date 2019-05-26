@@ -176,8 +176,8 @@ if __name__ == "__main__":
     for i in range(16):
         ant_list[i] = ant_list[i][-7:]
     ax_title = fig.add_subplot(gs[0, 0])
-    ax_geo_map = fig.add_subplot(gs[1:2, 0])
-    ax_total_power = fig.add_subplot(gs[3:4, 0])
+    ax_geo_map = fig.add_subplot(gs[1:3, 0])
+    ax_total_power = fig.add_subplot(gs[3:5, 0])
 
     ax_airplane = []
     ax_airplane += [fig.add_subplot(gs[0, 1])]
@@ -192,8 +192,8 @@ if __name__ == "__main__":
     ax_rms += [fig.add_subplot(gs[2, 2])]
 
     ax_spectra = []
-    ax_spectra += [fig.add_subplot(gs[3:4, 1])]
-    ax_spectra += [fig.add_subplot(gs[3:4, 2])]
+    ax_spectra += [fig.add_subplot(gs[3:5, 1])]
+    ax_spectra += [fig.add_subplot(gs[3:5, 2])]
 
     for x in tqdm(range(len(obs))):
         cnt = 0
