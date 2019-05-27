@@ -57,6 +57,82 @@ def closest(serie, num):
     return serie.tolist().index(min(serie.tolist(), key=lambda z: abs(z - num)))
 
 
+def dB2Linear(valueIndB):
+    """
+    Convert input from dB to linear scale.
+    Parameters
+    ----------
+    valueIndB : float | np.ndarray
+        Value in dB
+    Returns
+    -------
+    valueInLinear : float | np.ndarray
+        Value in Linear scale.
+    Examples
+    --------
+    #>>> dB2Linear(30)
+    1000.0
+    """
+    return pow(10, valueIndB / 10.0)
+
+
+def linear2dB(valueInLinear):
+    """
+    Convert input from linear to dB scale.
+    Parameters
+    ----------
+    valueInLinear : float | np.ndarray
+        Value in Linear scale.
+    Returns
+    -------
+    valueIndB : float | np.ndarray
+        Value in dB scale.
+    Examples
+    --------
+    #>>> linear2dB(1000)
+    30.0
+    """
+    return 10.0 * np.log10(valueInLinear)
+
+
+def dBm2Linear(valueIndBm):
+    """
+    Convert input from dBm to linear scale.
+    Parameters
+    ----------
+    valueIndBm : float | np.ndarray
+        Value in dBm.
+    Returns
+    -------
+    valueInLinear : float | np.ndarray
+        Value in linear scale.
+    Examples
+    --------
+    #>>> dBm2Linear(60)
+    1000.0
+    """
+    return dB2Linear(valueIndBm) / 1000.
+
+
+def linear2dBm(valueInLinear):
+    """
+    Convert input from linear to dBm scale.
+    Parameters
+    ----------
+    valueInLinear : float | np.ndarray
+        Value in Linear scale
+    Returns
+    -------
+    valueIndBm : float | np.ndarray
+        Value in dBm.
+    Examples
+    --------
+    #>>> linear2dBm(1000)
+    60.0
+    """
+    return linear2dB(valueInLinear * 1000.)
+
+
 if __name__ == "__main__":
     parser = OptionParser()
 
@@ -164,6 +240,14 @@ if __name__ == "__main__":
     for i in range(len(obs)):
         obs[i] = obs[i][-28:-4]
     print "Found", len(obs), "observation files\n"
+    x_tick = []
+    step = 0
+    for z in range(len(obs)):
+        if int(obs[z][11:13]) == step:
+            #print str(orari[z])
+            x_tick += [z]
+            step = step + 3
+    x_tick += [len(obs)]
 
     keys, cells = read_from_local(options.station)
     ant_pos = [(float(x["East"]), float(x["North"])) for x in cells if x["Tile"] == options.tile]
@@ -181,10 +265,12 @@ if __name__ == "__main__":
     potenza_rf = []
     ax_total_power = fig.add_subplot(gs[3:5, 0])
 
+    potenza_airplane = []
     ax_airplane = []
     ax_airplane += [fig.add_subplot(gs[0, 1])]
     ax_airplane += [fig.add_subplot(gs[0, 2])]
 
+    potenza_orbcomm = []
     ax_orbcomm = []
     ax_orbcomm += [fig.add_subplot(gs[1, 1])]
     ax_orbcomm += [fig.add_subplot(gs[1, 2])]
@@ -203,6 +289,8 @@ if __name__ == "__main__":
         spettri = []
         legends = []
         prf = []
+        porbcomm = []
+        pairplane = []
         try:
             for i, (pol, col) in enumerate([("POL-X", "b"), ("POL-Y", "g")]):
                 ax_spectra[i].cla()
@@ -226,10 +314,15 @@ if __name__ == "__main__":
 
                     ax_spectra[i].plot(asse_x[3:-3], np.array(spettro).astype("float")[3:-3])
                     ax_spectra[i].grid(True)
-                    #ax_spectra[i].annotate("RF Power:  " + "%3.1f"%(power_rf) + " dBm", (160, -19), fontsize=9, color='b')
 
-                    # fig.suptitle(titolo, fontsize=14)
-                    # plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+                    centro = closest(asse_x, 138)
+                    integra = linear2dBm(np.sum(dBm2Linear(spettro[centro - 10:centro + 10])))
+                    porbcomm.append(integra)
+
+                    centro = closest(asse_x, 125)
+                    integra = linear2dBm(np.sum(dBm2Linear(spettro[centro - 10:centro + 10])))
+                    pairplane.append(integra)
+
                     cnt = cnt + 1
                 ax_spectra[i].set_xlim(0, 400)
                 ax_spectra[i].set_xticks([50, 100, 150, 200, 250, 300, 350, 400])
@@ -289,9 +382,42 @@ if __name__ == "__main__":
             ax_total_power.cla()
             for j in range(32):
                 serie = potenza_rf[j::32]
-                ax_total_power.plot(range(len(serie)), serie)
-            ax_total_power.set_xlim(0,len(obs))
-            ax_total_power.set_ylim(-30,15)
+                if j < 16:
+                    ax_total_power.plot(range(len(serie)), serie, color='b')
+                else:
+                    ax_total_power.plot(range(len(serie)), serie, color='g')
+            ax_total_power.set_xlim(0, len(obs))
+            ax_total_power.set_xlabel("Hours", fontsize=10)
+            ax_total_power.set_ylim(-15, 15)
+            ax_total_power.set_ylabel("dBm", fontsize=10)
+            ax_total_power.set_xticks(x_tick)
+            ax_total_power.set_xticklabels(np.array(range(0, 3 * 9, 3)).astype("str").tolist())
+
+            potenza_orbcomm += [max(porbcomm[:16])]
+            potenza_orbcomm += [max(porbcomm[16:])]
+            for i, (pol, c) in enumerate([("POL-X", 'b'), ("POL-Y", 'g')]):
+                ax_orbcomm[i].cla()
+                ax_orbcomm[i].plot(range(len(potenza_orbcomm)/2), potenza_orbcomm[i::2], color=c)
+                ax_orbcomm[i].set_xlim(0, len(obs))
+                ax_orbcomm[i].set_xlabel("Hours", fontsize=10)
+                ax_orbcomm[i].set_ylim(-30, 0)
+                ax_orbcomm[i].set_ylabel("dB", fontsize=10)
+                ax_orbcomm[i].set_xticks(x_tick)
+                ax_orbcomm[i].set_xticklabels(np.array(range(0, 3 * 9, 3)).astype("str").tolist())
+                ax_orbcomm[i].set_title("ORBCOMM received power "+pol, fontsize=10)
+
+            potenza_airplane += [max(pairplane[:16])]
+            potenza_airplane += [max(pairplane[16:])]
+            for i, (pol, c) in enumerate([("POL-X",'b'), ("POL-Y",'g')]):
+                ax_airplane[i].cla()
+                ax_airplane[i].plot(range(len(potenza_airplane)/2), potenza_airplane[i::2], color=c)
+                ax_airplane[i].set_xlim(0, len(obs))
+                ax_airplane[i].set_xlabel("Hours", fontsize=10)
+                ax_airplane[i].set_ylim(-30, 0)
+                ax_airplane[i].set_ylabel("dB", fontsize=10)
+                ax_airplane[i].set_xticks(x_tick)
+                ax_airplane[i].set_xticklabels(np.array(range(0, 3 * 9, 3)).astype("str").tolist())
+                ax_airplane[i].set_title("Airplanes received power "+pol, fontsize=10)
 
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
