@@ -233,6 +233,8 @@ def plotting_thread(directory, cadence):
         # ...... Create plot
         logging.info("Time to plot")
 
+        f_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(int(timestamps[0][0])), "%Y%m%d_%H%M%S")
+        t_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(int(timestamps[0][0])), "%Y-%m-%d %H:%M:%S UTC")
 
         for tile in range(nof_tiles):
             porbcomm = []
@@ -257,10 +259,19 @@ def plotting_thread(directory, cadence):
                 ax_spectra[pol].set_ylabel("dB", fontsize=10)
                 ax_spectra[pol].set_title(pols + " Spectra", fontsize=12)
 
+            ax_title.cla()
+            ax_title.set_axis_off()
+            ax_title.plot([0.001, 0.002], color='w')
+            ax_title.set_xlim(-20, 20)
+            ax_title.set_ylim(-20, 20)
+            ax_title.annotate(station_name, (-15, 10), fontsize=32, color='blue')
+            ax_title.annotate("TILE-%02d_"%(tile+1), (-5, -8), fontsize=28, color='green')
+            ax_title.annotate(t_timestamp, (-16, -20), fontsize=16, color='black')
+
+
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
-            fname = img_dir + station_name + "/TILE-%02d_"%(tile+1) + \
-                    datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(int(timestamps[0][0])), "%Y%m%d_%H%M%S") + ".svg"
+            fname = img_dir + station_name + "/TILE-%02d_"%(tile+1) + f_timestamp + ".svg"
             fig.savefig(fname)
 
 
