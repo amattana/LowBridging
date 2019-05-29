@@ -259,7 +259,7 @@ def plotting_thread(directory, cadence):
 
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
-            fname = img_dir + station_name + "/TILE-%02d_"%(tile+1) + datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(int(timestamps[0][0][0])), "%Y%m%d_%H%M%D") + ".svg"
+            fname = img_dir + station_name + "/TILE-%02d_"%(tile+1) + datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(int(timestamps[0][0])), "%Y%m%d_%H%M%D") + ".svg"
             fig.savefig(fname)
 
 
