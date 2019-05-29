@@ -216,9 +216,9 @@ def plotting_thread(directory, cadence):
 
         # ...... Create plot
         logging.info("Time to plot")
-        logging.info("Len tile_data", len(tile_data))
-        logging.info("Len tile_data[0]", len(tile_data[0]))
-        logging.info("Len tile_acq_timestamp", len(tile_acq_timestamp))
+        print "Len tile_data", len(tile_data)
+        print "Len tile_data[0]", len(tile_data[0])
+        print "Len tile_acq_timestamp", len(tile_acq_timestamp)
 
 
 def daq_thread(interface, port, nof_tiles, directory):
