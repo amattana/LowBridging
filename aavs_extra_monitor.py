@@ -147,7 +147,7 @@ def plotting_thread(directory, cadence):
     :param cadence: Sleeps between plot generations """
     global stop_plotting
 
-    logging.info("Starting plotting threads")
+    logging.info("Starting plotting threads for station " + station.configuration['station']['name'])
 
     # Store number of tiles
     nof_tiles = len(station.configuration['tiles'])
@@ -159,7 +159,7 @@ def plotting_thread(directory, cadence):
 
     # Grab antenna base numbers and positions
     base, x, y = get_antenna_positions(station.configuration['station']['name'])
-    print station.configuration['station']['name']
+
 
     # Instantiate a file manager
     file_manager = ChannelFormatFileManager(root_path=opts.directory, daq_mode=FileDAQModes.Integrated)
