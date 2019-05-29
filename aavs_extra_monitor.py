@@ -208,6 +208,7 @@ def plotting_thread(directory, cadence):
         for i in range(nof_tiles):
             # Grab tile data
             data, timestamps = file_manager.read_data(tile_id=i, n_samples=1, sample_offset=-1)
+            print np.array(data).shape
             tile_data += [data]
             tile_acq_timestamp += [timestamps]
 
@@ -216,9 +217,11 @@ def plotting_thread(directory, cadence):
 
         # ...... Create plot
         logging.info("Time to plot")
+
         print "Len tile_data", len(tile_data)
         print "Len tile_data[0]", len(tile_data[0])
         print "Len tile_acq_timestamp", len(tile_acq_timestamp)
+        print np.array(tile_data).shape
 
 
 def daq_thread(interface, port, nof_tiles, directory):
