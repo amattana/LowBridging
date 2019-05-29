@@ -203,6 +203,8 @@ def plotting_thread(directory, cadence):
 
     asse_x = np.linspace(0, 400, 512)
 
+    all_data = np.zeros((512, nof_tiles * 16, 2, 1))
+
     while not stop_plotting:
 
         # Wait for a while
@@ -213,13 +215,16 @@ def plotting_thread(directory, cadence):
 
         # Read latest spectra
         tile_rms = []
-        tile_data = []
         tile_acq_timestamp = []
+
+
         for i in range(nof_tiles):
             # Grab tile data
             data, timestamps = file_manager.read_data(tile_id=i, n_samples=1, sample_offset=-1)
-            tile_data += [data]
-            tile_acq_timestamp += [timestamps]
+
+            all_data[:, i * 16 : (i + 1) * 16, :, :] = data
+
+            tile_acq_timestamp += [timestamps]ù
 
             # Grab antenna RMS
             tile_rms.extend(aavs_station.tiles[i].get_adc_rms())
@@ -235,14 +240,8 @@ def plotting_thread(directory, cadence):
             for pol, (pols, col) in enumerate([("POL-X", "b"), ("POL-Y", "g")]):
                 ax_spectra[pol].cla()
                 for rx in range(16):
-
-                    print len(tile_data[tile][:][rx][pol][0])
-                    print len(tile_data[tile][:][rx][pol])
-                    print np.array(tile_data).shape
-                    print np.array(tile_data[tile]).shape
-                    print np.array(tile_data[tile][:][rx]).shape
-                    print np.array(tile_data[tile][:][rx][0]).shape
-                    ax_spectra[pol].plot(asse_x[3:-3], np.array(tile_data[tile][:][rx][pol][0]).astype("float")[3:-3])
+                    print len(all_data[:,  tile * 16 : (tile + 1) * 16, rx, 0])
+                    ax_spectra[pol].plot(asse_x, np.array(all_data[:,  tile * 16 : (tile + 1) * 16, rx, 0]).astype("float")[3:-3])
                     ax_spectra[pol].grid(True)
 
                 ax_spectra[pol].set_xlim(0, 400)
