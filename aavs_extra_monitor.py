@@ -234,19 +234,19 @@ def plotting_thread(directory, cadence):
             for pol, (pols, col) in enumerate([("POL-X", "b"), ("POL-Y", "g")]):
                 ax_spectra[i].cla()
                 for rx in range(16):
-                    ax_spectra[i].plot(asse_x[3:-3], np.array(tile_data[tile][:][rx][pol]).astype("float")[3:-3])
-                    ax_spectra[i].grid(True)
+                    ax_spectra[pol].plot(asse_x[3:-3], np.array(tile_data[tile][:][rx][pol]).astype("float")[3:-3])
+                    ax_spectra[pol].grid(True)
 
-                ax_spectra[i].set_xlim(0, 400)
-                ax_spectra[i].set_xticks([50, 100, 150, 200, 250, 300, 350, 400])
-                ax_spectra[i].set_xticklabels([50, 100, 150, 200, 250, 300, 350, 400], fontsize=8)#, rotation=45)
-                ax_spectra[i].set_xlabel("MHz", fontsize=10)
+                ax_spectra[pol].set_xlim(0, 400)
+                ax_spectra[pol].set_xticks([50, 100, 150, 200, 250, 300, 350, 400])
+                ax_spectra[pol].set_xticklabels([50, 100, 150, 200, 250, 300, 350, 400], fontsize=8)#, rotation=45)
+                ax_spectra[pol].set_xlabel("MHz", fontsize=10)
 
-                ax_spectra[i].set_ylim(-80, 0)
-                ax_spectra[i].set_yticks([0, -20, -40, -60, -80])
-                ax_spectra[i].set_yticklabels([0, -20, -40, -60, -80], fontsize=8)
-                ax_spectra[i].set_ylabel("dB", fontsize=10)
-                ax_spectra[i].set_title(pols + " Spectra", fontsize=12)
+                ax_spectra[pol].set_ylim(-80, 0)
+                ax_spectra[pol].set_yticks([0, -20, -40, -60, -80])
+                ax_spectra[pol].set_yticklabels([0, -20, -40, -60, -80], fontsize=8)
+                ax_spectra[pol].set_ylabel("dB", fontsize=10)
+                ax_spectra[pol].set_title(pols + " Spectra", fontsize=12)
 
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
