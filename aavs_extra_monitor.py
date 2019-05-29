@@ -227,6 +227,7 @@ def plotting_thread(directory, cadence):
         # ...... Create plot
         logging.info("Time to plot")
 
+
         for tile in range(nof_tiles):
             porbcomm = []
             pairplane = []
@@ -234,6 +235,13 @@ def plotting_thread(directory, cadence):
             for pol, (pols, col) in enumerate([("POL-X", "b"), ("POL-Y", "g")]):
                 ax_spectra[pol].cla()
                 for rx in range(16):
+
+                    print len(tile_data[tile][:][rx][pol][0])
+                    print len(tile_data[tile][:][rx][pol])
+                    print np.array(tile_data).shape
+                    print np.array(tile_data[tile]).shape
+                    print np.array(tile_data[tile][:][rx]).shape
+                    print np.array(tile_data[tile][:][rx][0]).shape
                     ax_spectra[pol].plot(asse_x[3:-3], np.array(tile_data[tile][:][rx][pol][0]).astype("float")[3:-3])
                     ax_spectra[pol].grid(True)
 
