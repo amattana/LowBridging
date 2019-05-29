@@ -9,10 +9,11 @@ from pyaavs import station
 from time import sleep
 import logging
 import signal
+import os
 
 # Global flag to stop the scrpts
 stop_plotting = False
-img_dir = "/storage/monitoring/phase1"
+img_dir = "/storage/monitoring/phase1/"
 
 
 def calcSpectra(vett):
@@ -147,7 +148,13 @@ def plotting_thread(directory, cadence):
     :param cadence: Sleeps between plot generations """
     global stop_plotting
 
-    logging.info("Starting plotting threads for station " + station.configuration['station']['name'])
+    station_name = station.configuration['station']['name']
+
+    logging.info("Starting plotting threads for station " + station_name)
+
+    if not os.path.isdir(img_dir+station_name):
+        os.mkdir(img_dir+station_name)
+
 
     # Store number of tiles
     nof_tiles = len(station.configuration['tiles'])
@@ -158,7 +165,8 @@ def plotting_thread(directory, cadence):
     _connect_station(aavs_station)
 
     # Grab antenna base numbers and positions
-    base, x, y = get_antenna_positions(station.configuration['station']['name'])
+    base, x, y = get_antenna_positions(station_name)
+
 
 
     # Instantiate a file manager
@@ -242,9 +250,7 @@ def plotting_thread(directory, cadence):
 
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
-            fig.savefig(img_dir + "/" + str(tile) + ".svg")
-
-
+            fig.savefig(img_dir + station_name + "/" + str(tile) + ".svg")
 
 
 def daq_thread(interface, port, nof_tiles, directory):
