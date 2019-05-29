@@ -287,6 +287,7 @@ def plotting_thread(directory, cadence):
             fig.canvas.draw()
             fname = img_dir + station_name + "/TILE-%02d_"%(tile+1) + f_timestamp + ".svg"
             fig.savefig(fname)
+        logging.info("Generated plots for timestamp "+t_timestamp)
 
 
 def daq_thread(interface, port, nof_tiles, directory):
