@@ -10,6 +10,7 @@ from time import sleep
 import logging
 import signal
 import os
+import datetime
 
 # Global flag to stop the scrpts
 stop_plotting = False
@@ -258,11 +259,8 @@ def plotting_thread(directory, cadence):
 
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
-            print tile_acq_timestamp
-            print tile_acq_timestamp[0]
-            print tile_acq_timestamp[0][0]
-            print img_dir + station_name + "/TILE-%02d_"%(tile+1) + tile_acq_timestamp[0][0] + ".svg"
-            fig.savefig(img_dir + station_name + "/TILE-%02d_"%(tile+1) + tile_acq_timestamp[0][0] + ".svg")
+            fname = img_dir + station_name + "/TILE-%02d_"%(tile+1) + datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(int(timestamps[0][0][0])), "%Y%m%d_%H%M%D") + ".svg"
+            fig.savefig(fname)
 
 
 def daq_thread(interface, port, nof_tiles, directory):
