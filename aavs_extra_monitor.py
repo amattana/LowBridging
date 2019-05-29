@@ -2,6 +2,8 @@ from pydaq.persisters import ChannelFormatFileManager, FileDAQModes
 from aavs_calibration.common import get_antenna_positions
 from pydaq import daq_receiver as receiver
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+
 from threading import Thread
 from pyaavs import station
 from time import sleep
@@ -10,6 +12,110 @@ import signal
 
 # Global flag to stop the scrpts
 stop_plotting = False
+
+
+def calcSpectra(vett):
+    window = np.hanning(len(vett))
+    spettro = np.fft.rfft(vett * window)
+    N = len(spettro)
+    acf = 2  # amplitude correction factor
+    spettro[:] = abs((acf * spettro) / N)
+    # print len(vett), len(spettro), len(np.real(spettro))
+    return (np.real(spettro))
+
+
+def calcolaspettro(dati, nsamples=131072):
+    n = nsamples  # split and average number, from 128k to 16 of 8k # aavs1 federico
+    sp = [dati[x:x + n] for x in xrange(0, len(dati), n)]
+    mediato = np.zeros(len(calcSpectra(sp[0])))
+    for k in sp:
+        singolo = calcSpectra(k)
+        mediato[:] += singolo
+    # singoli[:] /= 16 # originale
+    mediato[:] /= (2 ** 17 / nsamples)  # federico
+    with np.errstate(divide='ignore', invalid='ignore'):
+        mediato[:] = 20 * np.log10(mediato / 127.0)
+    return mediato
+
+
+def closest(serie, num):
+    return serie.tolist().index(min(serie.tolist(), key=lambda z: abs(z - num)))
+
+
+def dB2Linear(valueIndB):
+    """
+    Convert input from dB to linear scale.
+    Parameters
+    ----------
+    valueIndB : float | np.ndarray
+        Value in dB
+    Returns
+    -------
+    valueInLinear : float | np.ndarray
+        Value in Linear scale.
+    Examples
+    --------
+    #>>> dB2Linear(30)
+    1000.0
+    """
+    return pow(10, valueIndB / 10.0)
+
+
+def linear2dB(valueInLinear):
+    """
+    Convert input from linear to dB scale.
+    Parameters
+    ----------
+    valueInLinear : float | np.ndarray
+        Value in Linear scale.
+    Returns
+    -------
+    valueIndB : float | np.ndarray
+        Value in dB scale.
+    Examples
+    --------
+    #>>> linear2dB(1000)
+    30.0
+    """
+    return 10.0 * np.log10(valueInLinear)
+
+
+def dBm2Linear(valueIndBm):
+    """
+    Convert input from dBm to linear scale.
+    Parameters
+    ----------
+    valueIndBm : float | np.ndarray
+        Value in dBm.
+    Returns
+    -------
+    valueInLinear : float | np.ndarray
+        Value in linear scale.
+    Examples
+    --------
+    #>>> dBm2Linear(60)
+    1000.0
+    """
+    return dB2Linear(valueIndBm) / 1000.
+
+
+def linear2dBm(valueInLinear):
+    """
+    Convert input from linear to dBm scale.
+    Parameters
+    ----------
+    valueInLinear : float | np.ndarray
+        Value in Linear scale
+    Returns
+    -------
+    valueIndBm : float | np.ndarray
+        Value in dBm.
+    Examples
+    --------
+    #>>> linear2dBm(1000)
+    60.0
+    """
+    return linear2dB(valueInLinear * 1000.)
 
 
 def _signal_handler(signum, frame):
@@ -56,6 +162,37 @@ def plotting_thread(directory, cadence):
     # Instantiate a file manager
     file_manager = ChannelFormatFileManager(root_path=opts.directory, daq_mode=FileDAQModes.Integrated)
 
+    plt.ioff()
+    gs = gridspec.GridSpec(5, 3)
+    fig = plt.figure(figsize=(16, 9), facecolor='w')
+
+    ax_title = fig.add_subplot(gs[0, 0])
+    ax_geo_map = fig.add_subplot(gs[1:3, 0])
+
+    potenza_rf = []
+    ax_total_power = fig.add_subplot(gs[3:5, 0])
+
+    potenza_airplane = []
+    ax_airplane = []
+    ax_airplane += [fig.add_subplot(gs[0, 1])]
+    ax_airplane += [fig.add_subplot(gs[0, 2])]
+
+    potenza_orbcomm = []
+    ax_orbcomm = []
+    ax_orbcomm += [fig.add_subplot(gs[1, 1])]
+    ax_orbcomm += [fig.add_subplot(gs[1, 2])]
+
+    ax_rms = []
+    ax_rms += [fig.add_subplot(gs[2, 1])]
+    ax_rms += [fig.add_subplot(gs[2, 2])]
+    ind = np.arange(16)
+
+    ax_spectra = []
+    ax_spectra += [fig.add_subplot(gs[3:5, 1])]
+    ax_spectra += [fig.add_subplot(gs[3:5, 2])]
+
+
+
     while not stop_plotting:
 
         # Wait for a while
@@ -66,15 +203,22 @@ def plotting_thread(directory, cadence):
 
         # Read latest spectra
         tile_rms = []
+        tile_data = []
+        tile_acq_timestamp = []
         for i in range(nof_tiles):
             # Grab tile data
             data, timestamps = file_manager.read_data(tile_id=i, n_samples=1, sample_offset=-1)
+            tile_data += [data]
+            tile_acq_timestamp += [timestamps]
 
             # Grab antenna RMS
             tile_rms.extend(aavs_station.tiles[i].get_adc_rms())
 
         # ...... Create plot
         logging.info("Time to plot")
+        logging.info("Len tile_data", len(tile_data))
+        logging.info("Len tile_data[0]", len(tile_data[0]))
+        logging.info("Len tile_acq_timestamp", len(tile_acq_timestamp))
 
 
 def daq_thread(interface, port, nof_tiles, directory):
