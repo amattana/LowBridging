@@ -240,11 +240,11 @@ def plotting_thread(directory, cadence):
 
             for pol, (pols, col) in enumerate([("POL-X", "b"), ("POL-Y", "g")]):
                 ax_spectra[pol].cla()
-                for rx in range(16):
+                #for rx in range(16):
 
-                    #print len(np.array(all_data[:,  tile * 16 : (tile + 1) * 16, rx, 0]).astype("float"))
+                with np.errstate(divide='ignore', invalid='ignore'):
                     ax_spectra[pol].plot(asse_x, 10*np.log10(np.array(all_data[:,  tile * 16 : (tile + 1) * 16, pol, 0])))
-                    ax_spectra[pol].grid(True)
+                ax_spectra[pol].grid(True)
 
                 ax_spectra[pol].set_xlim(0, 400)
                 ax_spectra[pol].set_xticks([50, 100, 150, 200, 250, 300, 350, 400])
@@ -252,14 +252,14 @@ def plotting_thread(directory, cadence):
                 ax_spectra[pol].set_xlabel("MHz", fontsize=10)
 
                 ax_spectra[pol].set_ylim(0, 50)
-                #ax_spectra[pol].set_yticks([0, -20, -40, -60, -80])
-                #ax_spectra[pol].set_yticklabels([0, -20, -40, -60, -80], fontsize=8)
+                ax_spectra[pol].set_yticks(np.arange(6)*10)
+                ax_spectra[pol].set_yticklabels(np.arange(6)*10, fontsize=8)
                 ax_spectra[pol].set_ylabel("dB", fontsize=10)
                 ax_spectra[pol].set_title(pols + " Spectra", fontsize=12)
 
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
-            fig.savefig(img_dir + station_name + "/" + str(tile+1) + ".svg")
+            fig.savefig(img_dir + station_name + "/" + str(tile+1) + timestamps[0] + ".svg")
 
 
 def daq_thread(interface, port, nof_tiles, directory):
