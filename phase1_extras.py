@@ -284,6 +284,7 @@ if __name__ == "__main__":
     ax_spectra += [fig.add_subplot(gs[3:5, 1])]
     ax_spectra += [fig.add_subplot(gs[3:5, 2])]
 
+    obs = [obs[0]] + obs
     for x in tqdm(range(len(obs))):
         cnt = 0
         spettri = []
@@ -333,7 +334,7 @@ if __name__ == "__main__":
                 ax_spectra[i].set_yticks([0, -20, -40, -60, -80])
                 ax_spectra[i].set_yticklabels([0, -20, -40, -60, -80], fontsize=8)
                 ax_spectra[i].set_ylabel("dB", fontsize=10)
-                ax_spectra[i].set_title(pol)
+                ax_spectra[i].set_title(pol + " Spectra", fontsize=12)
 
                 ax_rms[i].cla()
                 ax_rms[i].tick_params(axis='both', which='both', labelsize=6)
@@ -392,6 +393,7 @@ if __name__ == "__main__":
             ax_total_power.set_ylabel("dBm", fontsize=10)
             ax_total_power.set_xticks(x_tick)
             ax_total_power.set_xticklabels(np.array(range(0, 3 * 9, 3)).astype("str").tolist())
+            ax_total_power.grid()
 
             potenza_orbcomm += [max(porbcomm[:16])]
             potenza_orbcomm += [max(porbcomm[16:])]
@@ -404,7 +406,10 @@ if __name__ == "__main__":
                 ax_orbcomm[i].set_ylabel("dB", fontsize=10)
                 ax_orbcomm[i].set_xticks(x_tick)
                 ax_orbcomm[i].set_xticklabels(np.array(range(0, 3 * 9, 3)).astype("str").tolist())
-                ax_orbcomm[i].set_title("ORBCOMM received power "+pol, fontsize=10)
+                ax_orbcomm[i].set_yticks(np.arange(-30, 5, 5))
+                ax_orbcomm[i].set_yticklabels(np.arange(-30, 5, 5).astype("str").tolist(), fontsize=10)
+                ax_orbcomm[i].set_title("(133-143 MHz) ORBCOMM received power "+pol, fontsize=10)
+                ax_orbcomm[i].grid()
 
             potenza_airplane += [max(pairplane[:16])]
             potenza_airplane += [max(pairplane[16:])]
@@ -417,7 +422,10 @@ if __name__ == "__main__":
                 ax_airplane[i].set_ylabel("dB", fontsize=10)
                 ax_airplane[i].set_xticks(x_tick)
                 ax_airplane[i].set_xticklabels(np.array(range(0, 3 * 9, 3)).astype("str").tolist())
-                ax_airplane[i].set_title("Airplanes received power "+pol, fontsize=10)
+                ax_airplane[i].set_yticks(np.arange(-30, 5, 5))
+                ax_airplane[i].set_yticklabels(np.arange(-30, 5, 5).astype("str").tolist(), fontsize=10)
+                ax_airplane[i].set_title("(120-130 MHz) Airplanes received power "+pol, fontsize=10)
+                ax_airplane[i].grid()
 
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
@@ -425,3 +433,5 @@ if __name__ == "__main__":
             #print img_dir + "/" + tile + "_" + obs[x] + ".png"
             fig.savefig(img_dir + "/" + tile + "_" + obs[x] + ".png")
 
+    os.system("ffmpeg -y -f image2 -i " + img_dir + "/%*.png  -vcodec libx264 " + video_dir + "/" +
+              options.date + "_" + tile + ".avi")
