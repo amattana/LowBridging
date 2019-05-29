@@ -234,7 +234,7 @@ def plotting_thread(directory, cadence):
             for pol, (pols, col) in enumerate([("POL-X", "b"), ("POL-Y", "g")]):
                 ax_spectra[pol].cla()
                 for rx in range(16):
-                    ax_spectra[pol].plot(asse_x[3:-3], np.array(tile_data[tile][:][rx][pol]).astype("float")[3:-3])
+                    ax_spectra[pol].plot(asse_x[3:-3], np.array(tile_data[tile][:][rx][pol][0]).astype("float")[3:-3])
                     ax_spectra[pol].grid(True)
 
                 ax_spectra[pol].set_xlim(0, 400)
