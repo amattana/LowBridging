@@ -200,7 +200,6 @@ def plotting_thread(directory, cadence):
     ax_spectra = []
     ax_spectra += [fig.add_subplot(gs[3:5, 1])]
     ax_spectra += [fig.add_subplot(gs[3:5, 2])]
-    print len(ax_spectra)
 
     asse_x = np.linspace(0, 400, 512)
 
@@ -260,6 +259,8 @@ def plotting_thread(directory, cadence):
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
             print tile_acq_timestamp
+            print tile_acq_timestamp[0]
+            print tile_acq_timestamp[0][0]
             print img_dir + station_name + "/TILE-%02d_"%(tile+1) + tile_acq_timestamp[0][0] + ".svg"
             fig.savefig(img_dir + station_name + "/TILE-%02d_"%(tile+1) + tile_acq_timestamp[0][0] + ".svg")
 
