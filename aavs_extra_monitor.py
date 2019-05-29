@@ -12,6 +12,7 @@ import signal
 
 # Global flag to stop the scrpts
 stop_plotting = False
+img_dir = "/storage/monitoring/phase1"
 
 
 def calcSpectra(vett):
@@ -158,6 +159,7 @@ def plotting_thread(directory, cadence):
 
     # Grab antenna base numbers and positions
     base, x, y = get_antenna_positions(station.configuration['station']['name'])
+    print station.configuration['station']['name']
 
     # Instantiate a file manager
     file_manager = ChannelFormatFileManager(root_path=opts.directory, daq_mode=FileDAQModes.Integrated)
@@ -191,7 +193,7 @@ def plotting_thread(directory, cadence):
     ax_spectra += [fig.add_subplot(gs[3:5, 1])]
     ax_spectra += [fig.add_subplot(gs[3:5, 2])]
 
-
+    asse_x = np.linspace(0, 400, 512)
 
     while not stop_plotting:
 
@@ -208,7 +210,6 @@ def plotting_thread(directory, cadence):
         for i in range(nof_tiles):
             # Grab tile data
             data, timestamps = file_manager.read_data(tile_id=i, n_samples=1, sample_offset=-1)
-            print np.array(data).shape
             tile_data += [data]
             tile_acq_timestamp += [timestamps]
 
@@ -218,10 +219,32 @@ def plotting_thread(directory, cadence):
         # ...... Create plot
         logging.info("Time to plot")
 
-        print "Len tile_data", len(tile_data)
-        print "Len tile_data[0]", len(tile_data[0])
-        print "Len tile_acq_timestamp", len(tile_acq_timestamp)
-        print np.array(tile_data).shape
+        for tile in range(nof_tiles):
+            porbcomm = []
+            pairplane = []
+
+            for pol, (pols, col) in enumerate([("POL-X", "b"), ("POL-Y", "g")]):
+                ax_spectra[i].cla()
+                for rx in range(16):
+                    ax_spectra[i].plot(asse_x[3:-3], np.array(tile_data[tile][:][rx][pol]).astype("float")[3:-3])
+                    ax_spectra[i].grid(True)
+
+                ax_spectra[i].set_xlim(0, 400)
+                ax_spectra[i].set_xticks([50, 100, 150, 200, 250, 300, 350, 400])
+                ax_spectra[i].set_xticklabels([50, 100, 150, 200, 250, 300, 350, 400], fontsize=8)#, rotation=45)
+                ax_spectra[i].set_xlabel("MHz", fontsize=10)
+
+                ax_spectra[i].set_ylim(-80, 0)
+                ax_spectra[i].set_yticks([0, -20, -40, -60, -80])
+                ax_spectra[i].set_yticklabels([0, -20, -40, -60, -80], fontsize=8)
+                ax_spectra[i].set_ylabel("dB", fontsize=10)
+                ax_spectra[i].set_title(pols + " Spectra", fontsize=12)
+
+            fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
+            fig.canvas.draw()
+            fig.savefig(img_dir + "/" + str(tile) + ".svg")
+
+
 
 
 def daq_thread(interface, port, nof_tiles, directory):
