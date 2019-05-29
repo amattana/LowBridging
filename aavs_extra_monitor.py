@@ -3,7 +3,7 @@ from aavs_calibration.common import get_antenna_positions
 from pydaq import daq_receiver as receiver
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-
+import numpy as np
 from threading import Thread
 from pyaavs import station
 from time import sleep
