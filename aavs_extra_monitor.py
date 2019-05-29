@@ -265,9 +265,23 @@ def plotting_thread(directory, cadence):
             ax_title.set_xlim(-20, 20)
             ax_title.set_ylim(-20, 20)
             ax_title.annotate(station_name, (-15, 10), fontsize=32, color='blue')
-            ax_title.annotate("TILE-%02d_"%(tile+1), (-5, -8), fontsize=28, color='green')
+            ax_title.annotate("TILE-%02d"%(tile+1), (-5, -8), fontsize=28, color='green')
             ax_title.annotate(t_timestamp, (-16, -20), fontsize=16, color='black')
 
+            ax_geo_map.cla()
+            ax_geo_map.set_axis_off()
+            ax_geo_map.plot([0.001, 0.002], color='w')
+            ax_geo_map.set_xlim(-30, 40)
+            ax_geo_map.set_ylim(-25.5, 25.5)
+            circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
+            ax_geo_map.add_artist(circle1)
+            for c in range(16):
+                ax_geo_map.plot(x[c+(tile*16)], y[c+(tile*16)], marker='+', markersize=6,
+                    linestyle='None', color='k')
+            ax_geo_map.annotate("E", (23, -1), fontsize=10, color='black')
+            ax_geo_map.annotate("W", (-25.1, -1), fontsize=10, color='black')
+            ax_geo_map.annotate("N", (-1, 21), fontsize=10, color='black')
+            ax_geo_map.annotate("S", (-1, -24.6), fontsize=10, color='black')
 
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
