@@ -168,8 +168,6 @@ def plotting_thread(directory, cadence):
     # Grab antenna base numbers and positions
     base, x, y = get_antenna_positions(station_name)
 
-
-
     # Instantiate a file manager
     file_manager = ChannelFormatFileManager(root_path=opts.directory, daq_mode=FileDAQModes.Integrated)
 
@@ -259,6 +257,19 @@ def plotting_thread(directory, cadence):
                 ax_spectra[pol].set_ylabel("dB", fontsize=10)
                 ax_spectra[pol].set_title(pols + " Spectra", fontsize=12)
 
+                ax_rms[pol].cla()
+                ax_rms[pol].tick_params(axis='both', which='both', labelsize=6)
+                ax_rms[pol].set_xticks(xrange(1,17))
+                ax_rms[pol].set_xticklabels(np.array(range(1,17)).astype("str").tolist(), fontsize=4)
+                ax_rms[pol].set_yticks([15, 20])
+                ax_rms[pol].set_yticklabels(["15", "20"], fontsize=7)
+                ax_rms[pol].set_ylim([0, 40])
+                ax_rms[pol].set_xlim([0, 17])
+                ax_rms[pol].set_ylabel("RMS", fontsize=10)
+                ax_rms[pol].grid()
+                ax_rms[pol].bar(ind+0.65, tile_rms[tile*16:(tile+1)*16], 0.8, color=col)
+                ax_rms[pol].set_title("ADC RMS "+pols, fontsize=10)
+
             ax_title.cla()
             ax_title.set_axis_off()
             ax_title.plot([0.001, 0.002], color='w')
@@ -276,12 +287,12 @@ def plotting_thread(directory, cadence):
             circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
             ax_geo_map.add_artist(circle1)
             for c in range(16):
-                ax_geo_map.plot(x[c+(tile*16)], y[c+(tile*16)], marker='+', markersize=6,
+                ax_geo_map.plot(x[c+(tile*16)], y[c+(tile*16)], marker='+', markersize=7,
                     linestyle='None', color='k')
-            ax_geo_map.annotate("E", (23, -1), fontsize=10, color='black')
-            ax_geo_map.annotate("W", (-25.1, -1), fontsize=10, color='black')
-            ax_geo_map.annotate("N", (-1, 21), fontsize=10, color='black')
-            ax_geo_map.annotate("S", (-1, -24.6), fontsize=10, color='black')
+            ax_geo_map.annotate("E", (23, -1), fontsize=12, color='black')
+            ax_geo_map.annotate("W", (-25.1, -1), fontsize=12, color='black')
+            ax_geo_map.annotate("N", (-1, 21), fontsize=12, color='black')
+            ax_geo_map.annotate("S", (-1, -24.6), fontsize=12, color='black')
 
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
