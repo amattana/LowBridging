@@ -224,7 +224,7 @@ def plotting_thread(directory, cadence):
 
             all_data[:, i * 16 : (i + 1) * 16, :, :] = data
 
-            tile_acq_timestamp += [timestamps]ù
+            tile_acq_timestamp += [timestamps]
 
             # Grab antenna RMS
             tile_rms.extend(aavs_station.tiles[i].get_adc_rms())
