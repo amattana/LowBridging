@@ -200,6 +200,7 @@ def plotting_thread(directory, cadence):
     ax_spectra = []
     ax_spectra += [fig.add_subplot(gs[3:5, 1])]
     ax_spectra += [fig.add_subplot(gs[3:5, 2])]
+    print len(ax_spectra)
 
     asse_x = np.linspace(0, 400, 512)
 
@@ -240,8 +241,8 @@ def plotting_thread(directory, cadence):
             for pol, (pols, col) in enumerate([("POL-X", "b"), ("POL-Y", "g")]):
                 ax_spectra[pol].cla()
                 for rx in range(16):
-                    print len(np.array(all_data[:,  tile * 16 : (tile + 1) * 16, rx, 0]).astype("float"))
-                    ax_spectra[pol].plot(asse_x, np.array(all_data[:,  tile * 16 : (tile + 1) * 16, rx, 0]).astype("float"))
+                    #print len(np.array(all_data[:,  tile * 16 : (tile + 1) * 16, rx, 0]).astype("float"))
+                    ax_spectra[pol].plot(asse_x, np.array(all_data[:,  tile * 16 : (tile + 1) * 16, pol, 0]).astype("float"))
                     ax_spectra[pol].grid(True)
 
                 ax_spectra[pol].set_xlim(0, 400)
