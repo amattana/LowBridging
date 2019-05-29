@@ -259,7 +259,7 @@ def plotting_thread(directory, cadence):
 
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
-            fig.savefig(img_dir + station_name + "/" + str(tile) + ".svg")
+            fig.savefig(img_dir + station_name + "/" + str(tile+1) + ".svg")
 
 
 def daq_thread(interface, port, nof_tiles, directory):
