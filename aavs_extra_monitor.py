@@ -234,6 +234,11 @@ def plotting_thread(directory, cadence):
         f_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(int(timestamps[0][0])), "%Y%m%d_%H%M%S")
         t_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(int(timestamps[0][0])), "%Y-%m-%d %H:%M:%S UTC")
 
+        if not os.path.isdir(img_dir+station_name+"/"+t_timestamp[:11]):
+            os.mkdir(img_dir+station_name+"/"+t_timestamp[:11])
+
+
+
         for tile in range(nof_tiles):
             porbcomm = []
             pairplane = []
@@ -296,7 +301,7 @@ def plotting_thread(directory, cadence):
 
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
-            fname = img_dir + station_name + "/TILE-%02d_"%(tile+1) + f_timestamp + ".svg"
+            fname = img_dir + station_name +"/"+t_timestamp[:11] + "/TILE-%02d_"%(tile+1) + f_timestamp + ".svg"
             fig.savefig(fname)
         logging.info("Generated plots for timestamp "+t_timestamp)
 
