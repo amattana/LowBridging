@@ -1,5 +1,5 @@
 from pydaq.persisters import ChannelFormatFileManager, FileDAQModes
-from aavs_calibration.common import get_antenna_positions
+from aavs_calibration.common import get_antenna_positions, get_antenna_tile_names
 from pydaq import daq_receiver as receiver
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
@@ -11,6 +11,7 @@ import logging
 import signal
 import os
 import datetime
+
 
 # Global flag to stop the scrpts
 stop_plotting = False
@@ -162,7 +163,6 @@ def plotting_thread(directory, cadence):
     if not os.path.isdir(img_dir+station_name):
         os.mkdir(img_dir+station_name)
 
-
     # Store number of tiles
     nof_tiles = len(station.configuration['tiles'])
 
@@ -173,6 +173,7 @@ def plotting_thread(directory, cadence):
 
     # Grab antenna base numbers and positions
     base, x, y = get_antenna_positions(station_name)
+    tile_names = get_antenna_tile_names(station_name)
 
     # Instantiate a file manager
     file_manager = ChannelFormatFileManager(root_path=opts.directory, daq_mode=FileDAQModes.Integrated)
@@ -325,7 +326,7 @@ def plotting_thread(directory, cadence):
             ax_title.set_xlim(-20, 20)
             ax_title.set_ylim(-20, 20)
             ax_title.annotate(station_name, (-15, 10), fontsize=32, color='blue')
-            ax_title.annotate(tile_name[tile], (-5, -8), fontsize=28, color='green')
+            ax_title.annotate(tile_names[tile * 16], (-5, -8), fontsize=28, color='green')
             ax_title.annotate(t_timestamp, (-16, -20), fontsize=16, color='black')
 
             ax_geo_map.cla()
