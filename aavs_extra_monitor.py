@@ -280,7 +280,7 @@ def plotting_thread(directory, cadence):
                 ax_spectra[pol].set_xticklabels([50, 100, 150, 200, 250, 300, 350, 400], fontsize=8)#, rotation=45)
                 ax_spectra[pol].set_xlabel("MHz", fontsize=10)
 
-                #ax_spectra[pol].set_ylim(0, 50)
+                ax_spectra[pol].set_ylim(-80, 0)
                 #ax_spectra[pol].set_yticks(np.arange(6)*10)
                 #ax_spectra[pol].set_yticklabels(np.arange(6)*10, fontsize=8)
                 ax_spectra[pol].set_ylabel("dB", fontsize=10)
