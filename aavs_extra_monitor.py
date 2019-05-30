@@ -296,7 +296,7 @@ def plotting_thread(directory, cadence):
                 ax_rms[pol].set_xlim([0, 17])
                 ax_rms[pol].set_ylabel("RMS", fontsize=10)
                 ax_rms[pol].grid()
-                ax_rms[pol].bar(ind+0.65, tile_rms[tile*16:(tile+1)*16], 0.8, color=col)
+                ax_rms[pol].bar(ind+0.65, tile_rms[tile*32+16*pol:(tile+1)*32+16*pol], 0.8, color=col)
                 ax_rms[pol].set_title("ADC RMS "+pols, fontsize=10)
 
                 for k in range(16):
@@ -305,7 +305,7 @@ def plotting_thread(directory, cadence):
             potenza_rf += prf
             ax_total_power.cla()
             for j in range(32):
-                serie = potenza_rf[(tile*16) + j::nof_tiles*32]
+                serie = potenza_rf[(tile*32) + j::nof_tiles*32]
                 if j < 16:
                     ax_total_power.plot(asse_x_secs, serie, color='b')
                 else:
