@@ -311,7 +311,7 @@ def plotting_thread(directory, cadence):
             ax_total_power.set_xlabel("Hours", fontsize=10)
             ax_total_power.set_ylim(-15, 15)
             ax_total_power.set_ylabel("dBm", fontsize=10)
-            ax_total_power.set_xticks(x_tick)
+            ax_total_power.set_xticks(np.arange(0,  86400+60*60*3, 60*60*3))
             ax_total_power.set_xticklabels(np.array(range(0, 3 * 9, 3)).astype("str").tolist())
             ax_total_power.grid()
 
