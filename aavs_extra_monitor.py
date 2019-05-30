@@ -180,6 +180,7 @@ def plotting_thread(directory, cadence):
 
     potenza_rf = []
     prf = []
+    asse_x_secs = []
     ax_total_power = fig.add_subplot(gs[3:5, 0])
 
     potenza_airplane = []
@@ -237,13 +238,23 @@ def plotting_thread(directory, cadence):
         if not current_day == timestamp_day:
             current_day = timestamp_day
             tile_acq_timestamp = [int(timestamps[0][0])]
+            asse_x_secs = [(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]) -
+                             datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]).replace(hour=0,
+                                                                                                minute=0,
+                                                                                                second=0,
+                                                                                                microsecond=0)).seconds]
             if not os.path.isdir(img_dir + station_name + "/" + current_day):
                 os.mkdir(img_dir + station_name + "/" + current_day)
         else:
             tile_acq_timestamp += [int(timestamps[0][0])]
+            asse_x_secs += [(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]) -
+                             datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]).replace(hour=0,
+                                                                                                minute=0,
+                                                                                                second=0,
+                                                                                                microsecond=0)).seconds]
 
-        f_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(int(tile_acq_timestamp[-1])), "%Y%m%d_%H%M%S")
-        t_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(int(tile_acq_timestamp[-1])), "%Y-%m-%d %H:%M:%S UTC")
+        f_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]), "%Y%m%d_%H%M%S")
+        t_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]), "%Y-%m-%d %H:%M:%S UTC")
 
         for tile in range(nof_tiles):
             porbcomm = []
@@ -283,7 +294,22 @@ def plotting_thread(directory, cadence):
                 ax_rms[pol].set_title("ADC RMS "+pols, fontsize=10)
 
                 prf += [linear2dB(np.sum(dB2Linear(spectrum))/1000000.)]
-                print prf[-1]
+
+            potenza_rf += prf
+            ax_total_power.cla()
+            for j in range(32):
+                serie = potenza_rf[j::32]
+                if j < 16:
+                    ax_total_power.plot(asse_x_secs, serie, color='b')
+                else:
+                    ax_total_power.plot(asse_x_secs, serie, color='g')
+            ax_total_power.set_xlim(0, 86400)
+            ax_total_power.set_xlabel("Hours", fontsize=10)
+            ax_total_power.set_ylim(-15, 15)
+            ax_total_power.set_ylabel("dBm", fontsize=10)
+            ax_total_power.set_xticks(x_tick)
+            ax_total_power.set_xticklabels(np.array(range(0, 3 * 9, 3)).astype("str").tolist())
+            ax_total_power.grid()
 
             ax_title.cla()
             ax_title.set_axis_off()
