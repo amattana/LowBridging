@@ -296,6 +296,8 @@ def plotting_thread(directory, cadence):
                 prf += [linear2dB(np.sum(dB2Linear(spectrum))/1000000.)]
 
             potenza_rf += prf
+            print potenza_rf
+            print asse_x_secs, potenza_rf[j::32]
             ax_total_power.cla()
             for j in range(32):
                 serie = potenza_rf[j::32]
