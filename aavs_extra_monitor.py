@@ -296,7 +296,7 @@ def plotting_thread(directory, cadence):
                 ax_rms[pol].set_xlim([0, 17])
                 ax_rms[pol].set_ylabel("RMS", fontsize=10)
                 ax_rms[pol].grid()
-                ax_rms[pol].bar(ind+0.65, tile_rms[tile*32+16*pol:(tile+1)*32+16*pol], 0.8, color=col)
+                ax_rms[pol].bar(ind+0.65, tile_rms[(tile*32)+(16*pol):(tile*32)+(16*pol)+16], 0.8, color=col)
                 ax_rms[pol].set_title("ADC RMS "+pols, fontsize=10)
 
                 for k in range(16):
