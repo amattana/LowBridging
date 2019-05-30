@@ -179,6 +179,7 @@ def plotting_thread(directory, cadence):
     ax_geo_map = fig.add_subplot(gs[1:3, 0])
 
     potenza_rf = []
+    prf = []
     ax_total_power = fig.add_subplot(gs[3:5, 0])
 
     potenza_airplane = []
@@ -203,6 +204,9 @@ def plotting_thread(directory, cadence):
     asse_x = np.linspace(0, 400, 512)
 
     all_data = np.zeros((512, nof_tiles * 16, 2, 1))
+    tile_acq_timestamp = []
+
+    current_day = "2019-05-01"
 
     while not stop_plotting:
 
@@ -214,7 +218,7 @@ def plotting_thread(directory, cadence):
 
         # Read latest spectra
         tile_rms = []
-        tile_acq_timestamp = []
+        prf = []
 
 
         for i in range(nof_tiles):
@@ -223,22 +227,23 @@ def plotting_thread(directory, cadence):
 
             all_data[:, i * 16 : (i + 1) * 16, :, :] = data
 
-            tile_acq_timestamp += [timestamps[0][0]]
-
             # Grab antenna RMS
             tile_rms.extend(aavs_station.tiles[i].get_adc_rms())
 
         # ...... Create plot
         logging.info("Time to plot")
-        print tile_acq_timestamp
 
-        f_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(int(timestamps[0][0])), "%Y%m%d_%H%M%S")
-        t_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(int(timestamps[0][0])), "%Y-%m-%d %H:%M:%S UTC")
+        timestamp_day = datetime.datetime.utcfromtimestamp(datetime.datetime.utcfromtimestamp(timestamps[0][0]), "%Y-%m-%d")
+        if not current_day == timestamp_day:
+            current_day = timestamp_day
+            tile_acq_timestamp = [int(timestamps[0][0])]
+            if not os.path.isdir(img_dir+station_name+"/"+current_day):
+                os.mkdir(img_dir+station_name+"/"+current_day)
+        else:
+            tile_acq_timestamp += [int(timestamps[0][0])]
 
-        if not os.path.isdir(img_dir+station_name+"/"+t_timestamp[:10]):
-            os.mkdir(img_dir+station_name+"/"+t_timestamp[:10])
-
-
+        f_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(int(tile_acq_timestamp[-1])), "%Y%m%d_%H%M%S")
+        t_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(int(tile_acq_timestamp[-1])), "%Y-%m-%d %H:%M:%S UTC")
 
         for tile in range(nof_tiles):
             porbcomm = []
@@ -246,10 +251,11 @@ def plotting_thread(directory, cadence):
 
             for pol, (pols, col) in enumerate([("POL-X", "b"), ("POL-Y", "g")]):
                 ax_spectra[pol].cla()
-                #for rx in range(16):
 
                 with np.errstate(divide='ignore', invalid='ignore'):
-                    ax_spectra[pol].plot(asse_x, 10*np.log10(np.array(all_data[:,  tile * 16 : (tile + 1) * 16, pol, 0])))
+                    spectrum = 10*np.log10(np.array(all_data[:,  tile * 16 : (tile + 1) * 16, pol, 0]))
+
+                ax_spectra[pol].plot(asse_x, spectrum)
                 ax_spectra[pol].grid(True)
 
                 ax_spectra[pol].set_xlim(0, 400)
@@ -275,6 +281,9 @@ def plotting_thread(directory, cadence):
                 ax_rms[pol].grid()
                 ax_rms[pol].bar(ind+0.65, tile_rms[tile*16:(tile+1)*16], 0.8, color=col)
                 ax_rms[pol].set_title("ADC RMS "+pols, fontsize=10)
+
+                prf = linear2dB(np.sum(dB2Linear(spectrum)))
+                print prf
 
             ax_title.cla()
             ax_title.set_axis_off()
@@ -302,7 +311,7 @@ def plotting_thread(directory, cadence):
 
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
-            fname = img_dir + station_name +"/"+t_timestamp[:10] + "/TILE-%02d_"%(tile+1) + f_timestamp + ".svg"
+            fname = img_dir + station_name + "/" + current_day + "/TILE-%02d_"%(tile+1) + f_timestamp + ".svg"
             fig.savefig(fname)
         logging.info("Generated plots for timestamp "+t_timestamp)
 
