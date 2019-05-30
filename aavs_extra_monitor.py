@@ -151,6 +151,12 @@ def plotting_thread(directory, cadence):
 
     station_name = station.configuration['station']['name']
 
+    tile_name = []
+    for i in range(16):
+        tile_name += ["TILE-%02d"%(i+1)]
+    if not station_name == "AAVS1":
+        tile_name = ["TILE-07", "TILE-11", "TILE-16"]
+
     logging.info("Starting plotting threads for station " + station_name)
 
     if not os.path.isdir(img_dir+station_name):
@@ -319,7 +325,7 @@ def plotting_thread(directory, cadence):
             ax_title.set_xlim(-20, 20)
             ax_title.set_ylim(-20, 20)
             ax_title.annotate(station_name, (-15, 10), fontsize=32, color='blue')
-            ax_title.annotate("TILE-%02d"%(tile+1), (-5, -8), fontsize=28, color='green')
+            ax_title.annotate(tile_name[tile], (-5, -8), fontsize=28, color='green')
             ax_title.annotate(t_timestamp, (-16, -20), fontsize=16, color='black')
 
             ax_geo_map.cla()
