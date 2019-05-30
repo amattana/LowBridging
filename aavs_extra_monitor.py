@@ -296,10 +296,7 @@ def plotting_thread(directory, cadence):
                 for k in range(16):
                     prf += [linear2dB(np.sum(dB2Linear(spectrum[:, k]))/1000000.)]
 
-            potenza_rf += prf
-            print prf
-            print potenza_rf
-            print asse_x_secs, potenza_rf[0::32]
+            potenza_rf += [prf]
             ax_total_power.cla()
             for j in range(32):
                 serie = potenza_rf[j::32]
@@ -311,7 +308,7 @@ def plotting_thread(directory, cadence):
             ax_total_power.set_xlabel("Hours", fontsize=10)
             ax_total_power.set_ylim(-15, 15)
             ax_total_power.set_ylabel("dBm", fontsize=10)
-            ax_total_power.set_xticks(np.arange(0,  86400+60*60*3, 60*60*3))
+            ax_total_power.set_xticks(np.arange(0,  3 * 9 * 60 * 60))
             ax_total_power.set_xticklabels(np.array(range(0, 3 * 9, 3)).astype("str").tolist())
             ax_total_power.grid()
 
