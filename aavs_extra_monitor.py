@@ -270,7 +270,7 @@ def plotting_thread(directory, cadence):
                 ax_spectra[pol].cla()
 
                 with np.errstate(divide='ignore', invalid='ignore'):
-                    spectrum = 10*np.log10(np.array(all_data[:,  tile * 16 : (tile + 1) * 16, pol, 0]))
+                    spectrum = 10*np.log10(np.array(all_data[:,  tile * 16 : (tile + 1) * 16, pol, 0])/1000000.)
 
                 ax_spectra[pol].plot(asse_x, spectrum)
                 ax_spectra[pol].grid(True)
