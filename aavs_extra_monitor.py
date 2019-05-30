@@ -304,16 +304,15 @@ def plotting_thread(directory, cadence):
                     ax_total_power.plot(asse_x_secs, serie, color='b')
                 else:
                     ax_total_power.plot(asse_x_secs, serie, color='g')
-            print "Deb1"
             ax_total_power.set_xlim(0, 86400)
             ax_total_power.set_xlabel("Hours", fontsize=10)
             ax_total_power.set_ylim(-15, 15)
             ax_total_power.set_ylabel("dBm", fontsize=10)
             ax_total_power.set_xticks(np.arange(0,  3 * 9 * 60 * 60, 3 * 60 * 60))
             ax_total_power.set_xticklabels(np.array(range(0, 3 * 9, 3)).astype("str").tolist())
+            ax_total_power.set_title("Total Power")
             ax_total_power.grid()
 
-            print "Deb2"
             ax_title.cla()
             ax_title.set_axis_off()
             ax_title.plot([0.001, 0.002], color='w')
@@ -323,7 +322,6 @@ def plotting_thread(directory, cadence):
             ax_title.annotate("TILE-%02d"%(tile+1), (-5, -8), fontsize=28, color='green')
             ax_title.annotate(t_timestamp, (-16, -20), fontsize=16, color='black')
 
-            print "Deb3"
             ax_geo_map.cla()
             ax_geo_map.set_axis_off()
             ax_geo_map.plot([0.001, 0.002], color='w')
@@ -339,9 +337,7 @@ def plotting_thread(directory, cadence):
             ax_geo_map.annotate("N", (-1, 21), fontsize=12, color='black')
             ax_geo_map.annotate("S", (-1, -24.6), fontsize=12, color='black')
 
-            print "Deb4"
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
-            print "Drawing"
             fig.canvas.draw()
             fname = img_dir + station_name + "/" + current_day + "/TILE-%02d_"%(tile+1) + f_timestamp + ".png"
             print "Saving ", fname
