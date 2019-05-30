@@ -219,8 +219,6 @@ def plotting_thread(directory, cadence):
 
         # Read latest spectra
         tile_rms = []
-        prf = []
-
 
         for i in range(nof_tiles):
             # Grab tile data
@@ -259,6 +257,8 @@ def plotting_thread(directory, cadence):
         for tile in range(nof_tiles):
             porbcomm = []
             pairplane = []
+
+            prf = []
 
             for pol, (pols, col) in enumerate([("POL-X", "b"), ("POL-Y", "g")]):
                 ax_spectra[pol].cla()
@@ -300,7 +300,6 @@ def plotting_thread(directory, cadence):
             ax_total_power.cla()
             for j in range(32):
                 serie = potenza_rf[j::32]
-                print asse_x_secs, serie, j
                 if j < 16:
                     ax_total_power.plot(asse_x_secs, serie, color='b')
                 else:
