@@ -299,7 +299,7 @@ def plotting_thread(directory, cadence):
             potenza_rf += prf
             ax_total_power.cla()
             for j in range(32):
-                serie = potenza_rf[(tile*16) + j::16*32]
+                serie = potenza_rf[(tile*16) + j::nof_tiles*32]
                 if j < 16:
                     ax_total_power.plot(asse_x_secs, serie, color='b')
                 else:
@@ -340,7 +340,6 @@ def plotting_thread(directory, cadence):
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
             fname = img_dir + station_name + "/" + current_day + "/TILE-%02d_"%(tile+1) + f_timestamp + ".png"
-            print "Saving ", fname
             fig.savefig(fname)
         logging.info("Generated plots for timestamp "+t_timestamp)
 
