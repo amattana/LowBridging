@@ -345,7 +345,7 @@ def plotting_thread(directory, cadence):
 
             fig.tight_layout()#rect=[0, 0.03, 1, 0.95])
             fig.canvas.draw()
-            fname = img_dir + station_name + "/" + current_day + "/" + tile_name[tile] + "_"%(tile+1) + f_timestamp + ".png"
+            fname = img_dir + station_name + "/" + current_day + "/" + tile_name[tile] + "_" + f_timestamp + ".png"
             fig.savefig(fname)
         logging.info("Generated plots for timestamp "+t_timestamp)
 
