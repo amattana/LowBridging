@@ -294,13 +294,14 @@ def plotting_thread(directory, cadence):
                 ax_rms[pol].set_title("ADC RMS "+pols, fontsize=10)
 
                 for k in range(16):
+                    print "Computing RF power...", pols, k, len(spectrum[:, k])
                     prf += [linear2dB(np.sum(dB2Linear(spectrum[:, k]))/1000000.)]
 
             potenza_rf += prf
             ax_total_power.cla()
             for j in range(32):
                 serie = potenza_rf[j::32]
-                print "Plotting ",j,asse_x_secs, serie
+                print "Plotting ", j, asse_x_secs, serie
                 if j < 16:
                     ax_total_power.plot(asse_x_secs, serie, color='b')
                 else:
