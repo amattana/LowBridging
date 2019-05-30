@@ -233,12 +233,12 @@ def plotting_thread(directory, cadence):
         # ...... Create plot
         logging.info("Time to plot")
 
-        timestamp_day = datetime.datetime.utcfromtimestamp(timestamps[0][0], "%Y-%m-%d")
+        timestamp_day = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(timestamps[0][0]), "%Y-%m-%d")
         if not current_day == timestamp_day:
             current_day = timestamp_day
             tile_acq_timestamp = [int(timestamps[0][0])]
-            if not os.path.isdir(img_dir+station_name+"/"+current_day):
-                os.mkdir(img_dir+station_name+"/"+current_day)
+            if not os.path.isdir(img_dir + station_name + "/" + current_day):
+                os.mkdir(img_dir + station_name + "/" + current_day)
         else:
             tile_acq_timestamp += [int(timestamps[0][0])]
 
