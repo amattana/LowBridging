@@ -236,7 +236,7 @@ def plotting_thread(directory, cadence):
             tile_rms.extend(aavs_station.tiles[i].get_adc_rms())
 
         # ...... Create plot
-        logging.info("Time to plot")
+        #logging.info("Time to plot")
 
         timestamp_day = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(timestamps[0][0]), "%Y-%m-%d")
         if not current_day == timestamp_day:
