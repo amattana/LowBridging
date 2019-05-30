@@ -300,7 +300,7 @@ def plotting_thread(directory, cadence):
                 ax_rms[pol].set_title("ADC RMS "+pols, fontsize=10)
 
                 for k in range(16):
-                    prf += [linear2dB(np.sum(dB2Linear(spectrum[:, k]))/1000000.)]
+                    prf += [linear2dB(np.sum(dB2Linear(spectrum[:, k]))/1000000.)+12]
 
             potenza_rf += prf
             ax_total_power.cla()
