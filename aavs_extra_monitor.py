@@ -300,6 +300,7 @@ def plotting_thread(directory, cadence):
             ax_total_power.cla()
             for j in range(32):
                 serie = potenza_rf[j::32]
+                print, potenza_rf, asse_x_secs, serie, j
                 if j < 16:
                     ax_total_power.plot(asse_x_secs, serie, color='b')
                 else:
