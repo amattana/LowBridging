@@ -293,7 +293,7 @@ def plotting_thread(directory, cadence):
                 ax_rms[pol].bar(ind+0.65, tile_rms[tile*16:(tile+1)*16], 0.8, color=col)
                 ax_rms[pol].set_title("ADC RMS "+pols, fontsize=10)
 
-                print spectrum
+                print len(spectrum), len(spectrum[0])
                 prf += [linear2dB(np.sum(dB2Linear(spectrum))/1000000.)]
 
             potenza_rf += prf
