@@ -243,6 +243,7 @@ def plotting_thread(directory, cadence):
         if not current_day == timestamp_day:
             current_day = timestamp_day
             tile_acq_timestamp = [int(timestamps[0][0])]
+            potenza_rf = []
             asse_x_secs = [(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]) -
                              datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]).replace(hour=0,
                                                                                                 minute=0,
@@ -271,7 +272,7 @@ def plotting_thread(directory, cadence):
                 ax_spectra[pol].cla()
 
                 with np.errstate(divide='ignore', invalid='ignore'):
-                    spectrum = 10*np.log10(np.array(all_data[:,  tile * 16 : (tile + 1) * 16, pol, 0])/1000000.)
+                    spectrum = 10*np.log10(np.array(all_data[:,  tile * 16 : (tile + 1) * 16, pol, 0]))
 
                 ax_spectra[pol].plot(asse_x, spectrum)
                 ax_spectra[pol].grid(True)
