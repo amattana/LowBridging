@@ -212,6 +212,7 @@ def plotting_thread(directory, cadence):
         for r in range(2):
             for c in range(8):
                 axes += [plt.subplot(gs[(r, c + 9)])]
+    print nof_tiles, len(axes)
 
     all_data = np.zeros((512, nof_tiles * 16, 2, 1))
     tile_acq_timestamp = []
@@ -299,7 +300,6 @@ def plotting_thread(directory, cadence):
             t_axes[n][3].set_ylim(-20, 20)
             t_axes[n][3].set_title("Power Pol Y", fontsize=10)
 
-            adu_rms = []
             for en, ant in enumerate(ants):
                 axes[en + (n * 16)].cla()
                 for pol, (poldir, col) in enumerate([("/POL-X/", "b"), ("/POL-Y/", "g")]):
