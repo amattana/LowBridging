@@ -189,6 +189,7 @@ def plotting_thread(directory, cadence):
         ants += ["ANT-%03d" % int(base[j])]
 
     tile_names = get_antenna_tile_names(station_name)
+    tile_names = list(dict.fromkeys(tile_names))
     for z in range(len(tile_names)):
         tile_names[z] = tile_names[z].replace("TPM", "Tile")
 
