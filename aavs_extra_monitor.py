@@ -182,6 +182,9 @@ def plotting_thread(directory, cadence):
     for j in range(16*nof_tiles):
         ants += ["ANT-%03d" % int(base[j])]
 
+    print ants
+    print base
+
     tile_names = get_antenna_tile_names(station_name)
     print len(tile_names)
     tile_names = list(dict.fromkeys(tile_names))
