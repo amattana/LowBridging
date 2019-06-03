@@ -303,7 +303,7 @@ def plotting_thread(directory, cadence):
 
                     axes[en + (n * 16)].plot(asse_x[2:-2], singolo[2:-2], color=col)
                 axes[en + (n * 16)].set_xlim(0, 400)
-                axes[en + (n * 16)].set_ylim(-80, 0)
+                axes[en + (n * 16)].set_ylim(0, 50)
                 if not ((en == 0) or (en == 8)):
                     axes[en + (n * 16)].get_yaxis().set_visible(False)
                 else:
