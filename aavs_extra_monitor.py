@@ -173,7 +173,7 @@ def plotting_thread(directory, cadence):
         station_dir = "skala-4/"
         station_file = "STATION_SKALA-4.png"
     elif station_name == "EDA2":
-        station_dir = "eda2/"
+        station_dir = "eda-2/"
         station_file = "STATION_EDA-2.png"
 
     # Grab antenna base numbers and positions
