@@ -182,13 +182,9 @@ def plotting_thread(directory, cadence):
     for j in range(16*nof_tiles):
         ants += ["ANT-%03d" % int(base[j])]
 
-    print ants
-    print base
 
     tile_names = get_antenna_tile_names(station_name)
-    print len(tile_names)
     tile_names = list(dict.fromkeys(tile_names))
-    print len(tile_names)
     for z in range(len(tile_names)):
         tile_names[z] = tile_names[z].replace("TPM", "Tile")
 
@@ -299,8 +295,7 @@ def plotting_thread(directory, cadence):
             t_axes[n][3].set_ylim(-20, 20)
             t_axes[n][3].set_title("Power Pol Y", fontsize=10)
 
-            for en, ant in enumerate(ants):
-                print en + (n * 16)
+            for en in range(16):
                 axes[en + (n * 16)].cla()
                 for pol, (poldir, col) in enumerate([("/POL-X/", "b"), ("/POL-Y/", "g")]):
 
@@ -322,7 +317,7 @@ def plotting_thread(directory, cadence):
                 else:
                     axes[en + (n * 16)].set_xticks([100, 200, 300, 400])
                     axes[en + (n * 16)].set_xticklabels(["", "", "", ""], fontsize=1)
-                axes[en + (n * 16)].set_title(ant, fontsize=10)
+                axes[en + (n * 16)].set_title(ants[en + (n * 16)], fontsize=10)
 
                 # Draw antenna positions
                 t_axes[n][1].plot(float(x[en + (n * 16)]), float(y[en + (n * 16)]), marker='+', markersize=4,
