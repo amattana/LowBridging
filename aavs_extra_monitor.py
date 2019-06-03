@@ -186,7 +186,7 @@ def plotting_thread(directory, cadence):
     base, x, y = get_antenna_positions(station_name)
     ants = []
     for j in range(16*nof_tiles):
-        ants += ["ANT-%03d" % int(base)]
+        ants += ["ANT-%03d" % int(base[j])]
 
     tile_names = get_antenna_tile_names(station_name)
     for z in range(len(tile_names)):
@@ -362,7 +362,7 @@ def plotting_thread(directory, cadence):
         fig.tight_layout()
         fig.canvas.draw()
 
-        fname = img_dir + station_name + station_file
+        fname = img_dir + station_dir + station_file
         fig.savefig(fname)
         logging.info("Generated plots for timestamp " + t_timestamp)
 
