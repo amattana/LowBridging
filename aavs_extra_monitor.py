@@ -307,8 +307,8 @@ def plotting_thread(directory, cadence):
                 if not ((en == 0) or (en == 8)):
                     axes[en + (n * 16)].get_yaxis().set_visible(False)
                 else:
-                    axes[en + (n * 16)].set_yticks([0, -20, -40, -60, -80])
-                    axes[en + (n * 16)].set_yticklabels([0, -20, -40, -60, -80], fontsize=8)
+                    axes[en + (n * 16)].set_yticks([0, 10, 20, 30, 40, 50])
+                    axes[en + (n * 16)].set_yticklabels([0, 10, 20, 30, 40, 50], fontsize=8)
                     axes[en + (n * 16)].set_ylabel("dB", fontsize=10)
                 if (en > 7):
                     axes[en + (n * 16)].set_xticks([100, 200, 300, 400])
