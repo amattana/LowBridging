@@ -233,6 +233,8 @@ def plotting_thread(directory, cadence):
 
             # Grab antenna RMS
             tile_rms.extend(aavs_station.tiles[i].get_adc_rms())
+            print len(tile_rms)
+        print tile_rms
 
         # ...... Create plot
         #logging.info("Time to plot")
