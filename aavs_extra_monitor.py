@@ -334,7 +334,7 @@ def plotting_thread(directory, cadence):
             t_axes[n][2].set_xlim([0, 16])
             t_axes[n][2].set_ylabel("RMS", fontsize=10)
             t_axes[n][2].grid()
-            t_axes[n][2].bar(ind + 0.5, tile_rms[n * 16: (n+1) * 16], 0.8, color='b')
+            t_axes[n][2].bar(ind + 0.5, tile_rms[n * 32: (n+1) * 32], 0.8, color='b')
             t_axes[n][2].set_title("Power Pol X", fontsize=10)
 
             # Plot Power Y
@@ -349,7 +349,7 @@ def plotting_thread(directory, cadence):
             t_axes[n][3].set_ylabel("RMS", fontsize=10)
             t_axes[n][3].set_xlabel("Power Pol Y", fontsize=10)
             t_axes[n][3].grid()
-            t_axes[n][3].bar(ind + 0.5, tile_rms[n * 16 + 16: (n+1) * 16 + 16], 0.8, color='g')
+            t_axes[n][3].bar(ind + 0.5, tile_rms[n * 32 + 16: (n+1) * 32 + 16], 0.8, color='g')
 
             t_axes[n][0].annotate("Acquisition Time (UTC)", (-17.7, -6), fontsize=12, color='black')
             t_axes[n][0].annotate(t_timestamp, (-17.8, -12), fontsize=12, color='black')
