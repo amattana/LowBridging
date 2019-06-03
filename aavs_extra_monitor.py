@@ -154,12 +154,6 @@ def plotting_thread(directory, cadence):
 
     station_name = station.configuration['station']['name']
 
-    tile_name = []
-    for i in range(16):
-        tile_name += ["TILE-%02d"%(i+1)]
-    if not station_name == "AAVS1":
-        tile_name = ["TILE-07", "TILE-11", "TILE-16"]
-
     logging.info("Starting plotting threads for station " + station_name)
 
     if not os.path.isdir(img_dir+station_name):
@@ -189,7 +183,9 @@ def plotting_thread(directory, cadence):
         ants += ["ANT-%03d" % int(base[j])]
 
     tile_names = get_antenna_tile_names(station_name)
+    print len(tile_names)
     tile_names = list(dict.fromkeys(tile_names))
+    print len(tile_names)
     for z in range(len(tile_names)):
         tile_names[z] = tile_names[z].replace("TPM", "Tile")
 
@@ -266,7 +262,7 @@ def plotting_thread(directory, cadence):
         t_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]), "%Y-%m-%d %H:%M:%S UTC")
 
         ind = np.arange(16)
-        for n, tile in enumerate(tile_names):
+        for n in range(nof_tiles):
 
             # print n, len(STATION['TILES'])
             t_axes[n][0].cla()
@@ -274,7 +270,7 @@ def plotting_thread(directory, cadence):
             t_axes[n][0].plot([0.001, 0.002], color='w')
             t_axes[n][0].set_xlim(-20, 20)
             t_axes[n][0].set_ylim(-20, 20)
-            t_axes[n][0].annotate(tile, (-11, 5), fontsize=26, color='black')
+            t_axes[n][0].annotate(tile_names[n], (-11, 5), fontsize=26, color='black')
 
             t_axes[n][1].cla()
             t_axes[n][1].set_axis_off()
