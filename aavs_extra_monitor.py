@@ -185,7 +185,7 @@ def plotting_thread(directory, cadence):
     tile_names = []
     tiles = get_antenna_tile_names(station_name)
     for i in tiles:
-        if not i in tile_names:
+        if not i.replace("TPM", "Tile") in tile_names:
             tile_names += [i.replace("TPM", "Tile")]
 
     # Instantiate a file manager
