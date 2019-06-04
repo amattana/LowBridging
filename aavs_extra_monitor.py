@@ -182,11 +182,11 @@ def plotting_thread(directory, cadence):
     for j in range(16*nof_tiles):
         ants += ["ANT-%03d" % int(base[j])]
 
-
-    tile_names = get_antenna_tile_names(station_name)
-    tile_names = sorted(list(dict.fromkeys(tile_names)))
-    for z in range(len(tile_names)):
-        tile_names[z] = tile_names[z].replace("TPM", "Tile")
+    tile_names = []
+    tiles = get_antenna_tile_names(station_name)
+    for i in tiles:
+        if not i in tile_names:
+            tile_names += [i.replace("TPM", "Tile")]
 
     # Instantiate a file manager
     file_manager = ChannelFormatFileManager(root_path=opts.directory, daq_mode=FileDAQModes.Integrated)
