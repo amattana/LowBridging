@@ -49,14 +49,18 @@ if __name__ == "__main__":
     if os.path.exists(conf_file):
         with open(conf_file, 'r') as f:
             c = yaml.load(f)
+        lmc_ip = c['network']['lmc']['lmc_ip']
+        lmc_port = c['network']['lmc']['lmc_port']
     else:
         print "\nERROR: Configuration file not found!", conf_file
-        exit(0)
+        print "Trying with default lmc conf [10.0.10.200, 5000]"
+        lmc_ip = "10.0.10.200"
+        lmc_port = 5000
     #print c
     print "Connecting to board "+options.ip+"..."
 
     try:
-        tile = Tile(ip=options.ip, port=10000, lmc_ip=c['network']['lmc']['lmc_ip'], lmc_port=c['network']['lmc']['lmc_port'])
+        tile = Tile(ip=options.ip, port=10000, lmc_ip=lmc_ip, lmc_port=lmc_port)
         tile.connect()
 
         print "Connection successfully!\n"
