@@ -19,7 +19,7 @@ import yaml
 
 from optparse import OptionParser
 
-conf_file = "/opt/aavs/config/aavs1.5.yaml"
+conf_file = "/opt/aavs/config/aavs1.5.yml"
 
 
 if __name__ == "__main__":
@@ -42,7 +42,7 @@ if __name__ == "__main__":
         with open(conf_file, 'r') as f:
             c = yaml.load(f)
 
-    print c
+    #print c
     print "Connecting to board "+options.ip+"..."
 
     try:
