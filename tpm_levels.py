@@ -13,46 +13,51 @@ __license__ = "GPL"
 __version__ = "1.0"
 __maintainer__ = "Andrea Mattana"
 
-import sys
-
-sys.path.append("../SKA-AAVS1/tools")
-sys.path.append("../SKA-AAVS1/tools/board")
-sys.path.append("../SKA-AAVS1/tools/pyska")
-sys.path.append("../SKA-AAVS1/tools/rf_jig")
-sys.path.append("../SKA-AAVS1/tools/config")
-sys.path.append("../SKA-AAVS1/tools/repo_utils")
-from tpm_utils import *
-from bsp.tpm import *
-
-DEVNULL = open(os.devnull, 'w')
-
-from gui_utils import *
-from rf_jig import *
-from rfjig_bsp import *
-from ip_scan import *
+from pyaavs.tile import Tile
+import os
+import yaml
 
 from optparse import OptionParser
+
+conf_file = "/opt/aavs/config/aavs1.5.yaml"
 
 
 if __name__ == "__main__":
     parser = OptionParser()
-    parser.add_option("--board",
-                      dest="board",
+    parser.add_option("--ip",
+                      dest="ip",
                       default="",
                       help="The board IP")
 
+    parser.add_option("--conf",
+                      dest="conf",
+                      default="",
+                      help="A station configuration file to get LMC network infos")
+
     (options, args) = parser.parse_args()
 
-    board_ip = options.board
+    board_ip = options.ip
 
-    freqs, spettro, rawdata, rms, rfpower = get_raw_meas(tpm_obj(board_ip), debug=False)
+    if os.path.exists(conf_file):
+        with open(conf_file, 'r') as f:
+            c = yaml.load(f)
 
-    print "\n\n TPM INPUT\tPol-X Level\tPol-Y Level"
-    print "\n    #\t\t   (dBm)\t   (dBm)"
-    print "\n-----------------------------------------------------"
-    for rx in xrange(len(spettro) / 2):
-        print "\n INPUT %02d\t"%(rx+1),
-        for p, pol in enumerate(["X", "Y"]):
-            print "   %3.1f\t\t"%(rfpower[(rx*2)+p]),
-    print "\n\n"
+    try:
+        tile = Tile(ip=options.ip, port=10000, lmc_ip=c['network']['lmc']['lmc_ip'], lmc_port=c['network']['lmc']['lmc_port'])
+        tile.connect()
 
+        adu_rms = tile.get_adc_rms()
+        print adu_rms
+        exit(0)
+
+        print "\n\n TPM INPUT\tPol-X Level\tPol-Y Level"
+        print "\n    #\t\t   (dBm)\t   (dBm)"
+        print "\n-----------------------------------------------------"
+        for rx in xrange(len(spettro) / 2):
+            print "\n INPUT %02d\t"%(rx+1),
+            for p, pol in enumerate(["X", "Y"]):
+                print "   %3.1f\t\t"%(rfpower[(rx*2)+p]),
+        print "\n\n"
+
+    except:
+        print "\n\nExiting with errors\n"
