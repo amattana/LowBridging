@@ -68,14 +68,14 @@ if __name__ == "__main__":
             print "\n    #\t\t (dBm)\t\t (dBm)"
             print "\n-----------------------------------------------------"
         else:
-            print "\n\n TPM INPUT\tPol-X Level\t\tPol-Y Level"
-            print "\n    #\t\t (dBm)\tRMS\t (dBm)\tRMS"
+            print "\n\n TPM INPUT\tPol-X Level\tPol-Y Level"
+            print "\n    #\t\t  (dBm)\tRMS\t (dBm)\tRMS"
             print "\n-----------------------------------------------------"
 
         for rx in xrange(len(power_adc) / 2):
             print "\n INPUT %02d"%(rx+1),
             for p, pol in enumerate(["X", "Y"]):
-                print "\t%3.1f"%(power_rf[(rx*2)+p]),
+                print "\t  %3.1f"%(power_rf[(rx*2)+p]),
                 if options.rms:
                     print "\t%3.1f" % (adu_rms[(rx * 2) + p]),
                 else:
