@@ -53,8 +53,8 @@ if __name__ == "__main__":
         lmc_port = c['network']['lmc']['lmc_port']
     else:
         print "\nERROR: Configuration file not found!", conf_file
-        print "Trying with default lmc conf [10.0.10.200, 4660]"
-        lmc_ip = "10.0.10.200"
+        print "Trying with default lmc conf [10.0.0.100, 4660]"
+        lmc_ip = "10.0.0.100"
         lmc_port = 4660
     #print c
     print "Connecting to board "+options.ip+"..."
