@@ -42,9 +42,14 @@ if __name__ == "__main__":
         with open(conf_file, 'r') as f:
             c = yaml.load(f)
 
+    print c
+    print "Connecting to board "+options.ip+"..."
+
     try:
         tile = Tile(ip=options.ip, port=10000, lmc_ip=c['network']['lmc']['lmc_ip'], lmc_port=c['network']['lmc']['lmc_port'])
         tile.connect()
+
+        print "Connection succesfully!\n"
 
         adu_rms = tile.get_adc_rms()
         print adu_rms
