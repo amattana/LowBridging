@@ -49,9 +49,11 @@ if __name__ == "__main__":
         tile = Tile(ip=options.ip, port=10000, lmc_ip=c['network']['lmc']['lmc_ip'], lmc_port=c['network']['lmc']['lmc_port'])
         tile.connect()
 
-        print "Connection succesfully!\n"
+        print "Connection successfully!\n"
 
         adu_rms = tile.get_adc_rms()
+
+        print len(adu_rms)
         print adu_rms
         exit(0)
 
