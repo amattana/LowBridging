@@ -16,6 +16,7 @@ __maintainer__ = "Andrea Mattana"
 from pyaavs.tile import Tile
 import os
 import yaml
+import numpy as np
 
 from optparse import OptionParser
 
@@ -51,16 +52,16 @@ if __name__ == "__main__":
 
         print "Connection successfully!\n"
 
-        adu_rms = tile.get_adc_rms()
-
-        print len(adu_rms)
-        print adu_rms
-        exit(0)
+        adu_rms = np.array(tile.get_adc_rms())
+        volt_rms = adu_rms * (1.7 / 256.)  # VppADC9680/2^bits * ADU_RMS
+        power_adc = 10 * np.log10(
+            np.power(volt_rms, 2) / 400.) + 30  # 10*log10(Vrms^2/Rin) in dBWatt, +3 decadi per dBm
+        power_rf = power_adc + 12  # single ended to diff net loose 12 dBm
 
         print "\n\n TPM INPUT\tPol-X Level\tPol-Y Level"
         print "\n    #\t\t   (dBm)\t   (dBm)"
         print "\n-----------------------------------------------------"
-        for rx in xrange(len(spettro) / 2):
+        for rx in xrange(len(power_adc) / 2):
             print "\n INPUT %02d\t"%(rx+1),
             for p, pol in enumerate(["X", "Y"]):
                 print "   %3.1f\t\t"%(rfpower[(rx*2)+p]),
