@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     parser.add_option("--conf",
                       dest="conf",
-                      default="",
+                      default="/def/conf/file",
                       help="A station configuration file to get LMC network infos")
 
     parser.add_option("--rms", action="store_true",
