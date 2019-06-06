@@ -78,6 +78,8 @@ if __name__ == "__main__":
                 print "\t%3.1f"%(power_rf[(rx*2)+p]),
                 if options.rms:
                     print "\t%3.1f" % (adu_rms[(rx * 2) + p]),
+                else:
+                    print "\t",
         print "\n\n"
 
     except:
