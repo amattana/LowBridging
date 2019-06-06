@@ -64,7 +64,7 @@ if __name__ == "__main__":
         for rx in xrange(len(power_adc) / 2):
             print "\n INPUT %02d\t"%(rx+1),
             for p, pol in enumerate(["X", "Y"]):
-                print "   %3.1f\t\t"%(rfpower[(rx*2)+p]),
+                print "   %3.1f\t\t"%(power_rf[(rx*2)+p]),
         print "\n\n"
 
     except:
