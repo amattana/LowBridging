@@ -35,6 +35,11 @@ if __name__ == "__main__":
                       default="",
                       help="A station configuration file to get LMC network infos")
 
+    parser.add_option("--rms", action="store_true",
+                      dest="rms",
+                      default=False,
+                      help="Display also RMS values")
+
     (options, args) = parser.parse_args()
 
     board_ip = options.ip
@@ -58,13 +63,21 @@ if __name__ == "__main__":
             np.power(volt_rms, 2) / 400.) + 30  # 10*log10(Vrms^2/Rin) in dBWatt, +3 decadi per dBm
         power_rf = power_adc + 12  # single ended to diff net loose 12 dBm
 
-        print "\n\n TPM INPUT\tPol-X Level\tPol-Y Level"
-        print "\n    #\t\t   (dBm)\t   (dBm)"
-        print "\n-----------------------------------------------------"
+        if not options.rms:
+            print "\n\n TPM INPUT\tPol-X Level\tPol-Y Level"
+            print "\n    #\t\t (dBm)\t (dBm)"
+            print "\n-----------------------------------------------------"
+        else:
+            print "\n\n TPM INPUT\tPol-X Level\t\t\tPol-Y Level"
+            print "\n    #\t\t (dBm)\tRMS\t (dBm)\tRMS"
+            print "\n-----------------------------------------------------"
+
         for rx in xrange(len(power_adc) / 2):
             print "\n INPUT %02d\t"%(rx+1),
             for p, pol in enumerate(["X", "Y"]):
-                print "   %3.1f\t\t"%(power_rf[(rx*2)+p]),
+                print " %3.1f\t"%(power_rf[(rx*2)+p]),
+                if options.rms:
+                    print "%3.1f\t" % (adu_rms[(rx * 2) + p]),
         print "\n\n"
 
     except:
