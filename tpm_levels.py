@@ -44,10 +44,14 @@ if __name__ == "__main__":
 
     board_ip = options.ip
 
+    if not os.path.exists(conf_file):
+        conf_file = options.conf
     if os.path.exists(conf_file):
         with open(conf_file, 'r') as f:
             c = yaml.load(f)
-
+    else:
+        print "\nERROR: Configuration file not found!", conf_file
+        exit(0)
     #print c
     print "Connecting to board "+options.ip+"..."
 
