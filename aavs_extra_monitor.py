@@ -17,7 +17,7 @@ import datetime
 stop_plotting = False
 img_dir = "/storage/monitoring/phase1/"
 FIG_W = 14
-TILE_H = 2.5
+TILE_H = 3.2
 
 
 def calcSpectra(vett):
@@ -195,8 +195,8 @@ def plotting_thread(directory, cadence):
     asse_x = np.linspace(0, 400, 512)
 
     # gridspec inside gridspec
-    outer_grid = gridspec.GridSpec(nof_tiles, 1, hspace=0.8, left=0.02, right=0.98, bottom=0.1, top=0.95)
-    fig = plt.figure(figsize=(FIG_W, TILE_H * nof_tiles + 0.8 * nof_tiles), facecolor='w')
+    outer_grid = gridspec.GridSpec(nof_tiles, 1, hspace=0.8, left=0.02, right=0.98, bottom=0.04, top=0.98)
+    fig = plt.figure(figsize=(FIG_W, TILE_H * nof_tiles), facecolor='w')
     t_axes = []
     axes = []
     for i in range(nof_tiles):
