@@ -161,6 +161,7 @@ def plotting_thread(directory, cadence):
 
     # Store number of tiles
     nof_tiles = len(station.configuration['tiles'])
+    #print nof_tiles
 
     # Create station instance
     aavs_station = station.Station(station.configuration)
