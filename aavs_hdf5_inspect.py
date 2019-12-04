@@ -240,11 +240,14 @@ if __name__ == "__main__":
                       default="/storage/monitoring/integrated_data",
                       help="Directory where plots will be generated (default: /storage/monitoring/integrated_data)")
 
+    parser.add_option("--tile", action="store", dest="tile",
+                      default=16, help="Tile number [1-16]")
+
     (opts, args) = parser.parse_args(argv[1:])
 
     # Instantiate a file manager
     file_manager = ChannelFormatFileManager(root_path=opts.directory, daq_mode=FileDAQModes.Integrated)
-    dic = file_manager.get_metadata(tile_id=0)
+    dic = file_manager.get_metadata(tile_id=int(opts.tile)-1)
     print "\nKEY\t\tValue\n---------------------------------------------------"
     for k in sorted(dic.keys()):
         print k, "\t", dic[k]
