@@ -88,26 +88,30 @@ if __name__ == "__main__":
     # Store number of tiles
     nof_tiles = len(station.configuration['tiles'])
 
-    # Create station instance
-    aavs_station = station.Station(station.configuration)
-    aavs_station.connect()
-    _connect_station(aavs_station)
-
-    pdu_list = getPDUinfo(PDU_FILE)
-    pdu_handler = []
-    for i in range(nof_tiles):
-        tile_pdu, tile_port = [(k[1], int(k[2])) for k in pdu_list if k[0]==aavs_station.tiles[i].get_ip()][0]
-        pdu_handler += [(PDU(tile_pdu), tile_port)]
-
     while True:
         try:
-            logging.info("\n\nReading current and temperatures...")
+            # Create station instance
+            aavs_station = station.Station(station.configuration)
+            aavs_station.connect()
+            _connect_station(aavs_station)
+
+            pdu_list = getPDUinfo(PDU_FILE)
+            pdu_handler = []
             for i in range(nof_tiles):
-                logging.info("Tile %02d\tIP: %s\tCurrent: %3.1f\tBoard: %3.1f\tFPGA-0: %3.1f\tFPGA-1: %3.1f" % (
-                    i + 1, aavs_station.tiles[i].get_ip(), pdu_handler[i][0].port_info(pdu_handler[i][1],'current'),
-                    aavs_station.tiles[i].get_temperature(), aavs_station.tiles[i].get_fpga0_temperature(),
-                    aavs_station.tiles[i].get_fpga1_temperature()))
-            time.sleep(opts.interval)
-        except KeyboardInterrupt:
-            logging.info("Terminated by the user.")
-            break
+                tile_pdu, tile_port = [(k[1], int(k[2])) for k in pdu_list if k[0]==aavs_station.tiles[i].get_ip()][0]
+                pdu_handler += [(PDU(tile_pdu), tile_port)]
+
+            while True:
+                try:
+                    logging.info("\n\nReading current and temperatures...")
+                    for i in range(nof_tiles):
+                        logging.info("Tile %02d\tIP: %s\tCurrent: %3.1f\tBoard: %3.1f\tFPGA-0: %3.1f\tFPGA-1: %3.1f" % (
+                            i + 1, aavs_station.tiles[i].get_ip(), pdu_handler[i][0].port_info(pdu_handler[i][1],'current'),
+                            aavs_station.tiles[i].get_temperature(), aavs_station.tiles[i].get_fpga0_temperature(),
+                            aavs_station.tiles[i].get_fpga1_temperature()))
+                    time.sleep(opts.interval)
+                except KeyboardInterrupt:
+                    logging.info("Terminated by the user.")
+                    break
+        except:
+            logging.error("Station communication failed, trying to re-instantiate the station...")
