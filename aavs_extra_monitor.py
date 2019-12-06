@@ -362,7 +362,7 @@ def plotting_thread(directory, cadence):
 
             fname = img_dir + station_dir + station_file
             fig.savefig(fname)
-            logging.info("Generated plots for timestamp " + t_timestamp)
+            logging.info("Generated plots for timestamp " + t_timestamp + " on " + fname)
         except:
             logging.warning("Something went wrong plotting timestamp " + t_timestamp + " ...skipping...")
             logging.warning("Tile RMS len: "+str(len(tile_rms)))
