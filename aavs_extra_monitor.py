@@ -170,7 +170,7 @@ def plotting_thread(directory, cadence):
 
     station_dir = ""
     station_file = ""
-    if station_name == "AAVS1.5":
+    if station_name == "AAVS2":
         station_dir = "skala-4/"
         station_file = "STATION_SKALA-4.png"
     elif station_name == "EDA2":
