@@ -114,4 +114,5 @@ if __name__ == "__main__":
                     logging.info("Terminated by the user.")
                     break
         except:
-            logging.error("Station communication failed, trying to re-instantiate the station...")
+            logging.error("Station communication failed, trying to re-instantiate the station...retry in 15 seconds...")
+            time.sleep(15)
