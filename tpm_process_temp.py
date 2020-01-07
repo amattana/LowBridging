@@ -41,11 +41,19 @@ if __name__ == "__main__":
                       dest="subrack", default=0,
                       help="Plot TPMs of the given subrack")
 
+    parser.add_option("--date", action="store",
+                      dest="date", default="",
+                      help="Select a specific date")
+
     (options, args) = parser.parse_args()
 
-    file = easygui.fileopenbox(msg='Please select the source files', default="auxiliary_data/*txt")
+    file = easygui.fileopenbox(msg='Please select the source files', default="/storage/monitoring/auxiliary_data/*txt")
     with open(file, "r") as f:
         data = f.readlines()
+
+    nodate = False
+    if options.date == "":
+        nodate = True
 
     plt.ioff()
     gs = gridspec.GridSpec(7, 2, hspace=5, wspace=0.3, left=0.09, right=0.96, top=0.9, bottom=0.09)
@@ -75,7 +83,7 @@ if __name__ == "__main__":
             for k in data:
                 if "Board:" in k:
                         c = 0
-                        if k.split()[6] in tiles[i]:
+                        if k.split()[6] in tiles[i] and ((nodate) or (k.split()[0] == options.date)):
                             data_current += [float(k.split()[10])]
                             data_board += [float(k.split()[12])]
                             data_fpga0 += [float(k.split()[14])]
