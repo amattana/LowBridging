@@ -34,7 +34,7 @@ def _connect_station(aavs_station):
                 continue
 
 
-def totimestamp(dt, epoch=datetime.datetime(1970, 1, 8)):
+def totimestamp(dt, epoch=datetime.datetime(1970, 1, 1, 8, 0, 0)):
     h = int(int(dt[9:]) / 3600)
     m = int((int(dt[9:]) % 3600) / 60)
     s = int((int(dt[9:]) % 3600) % 60)
