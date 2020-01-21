@@ -79,7 +79,7 @@ if __name__ == "__main__":
     lista = sorted(glob.glob(DATA_PATH + station_name.lower() + "/channel_integ_%d_*hdf5"%(int(opts.tile)-1)))
     for l in lista:
         print l[-21:-7],
-        dic = file_manager.get_metadata(timestamp=totimestamp(l[-21:-7]), tile_id=(opts.tile-1)
+        dic = file_manager.get_metadata(timestamp=totimestamp(l[-21:-7]), tile_id=(opts.tile-1))
         if not dic:
             data, timestamps = file_manager.read_data(timestamp=totimestamp(l[-21:-7]), tile_id=int(opts.tile)-1, n_samples=dic['n_blocks'])
             print "\t", todatestring(timestamps[0][0]), "\t", todatestring(timestamps[-1][0]), "\t", dic['n_blocks']
