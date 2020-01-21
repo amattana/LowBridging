@@ -75,11 +75,11 @@ if __name__ == "__main__":
     print "Station Name: ", station_name
     print "Checking directory: ", opts.directory+station_name
     file_manager = ChannelFormatFileManager(root_path=opts.directory+station_name, daq_mode=FileDAQModes.Integrated)
-
-    lista = glob.glob(DATA_PATH + station_name.lower() + "/channel_integ_%d_*hdf5"%(int(opts.tile)-1))
+    #file_manager = ChannelFormatFileManager(root_path="/storage/monitoring/integrated_data/aavs2", daq_mode=FileDAQModes.Integrated)
+    lista = sorted(glob.glob(DATA_PATH + station_name.lower() + "/channel_integ_%d_*hdf5"%(int(opts.tile)-1)))
     for l in lista:
         print l[-21:-7],
-        dic = file_manager.get_metadata(timestamp=totimestamp(l[-21:-7]), tile_id=int(opts.tile)-1)
+        dic = file_manager.get_metadata(timestamp=totimestamp(l[-21:-7]), tile_id=(opts.tile-1)
         if not dic == None:
             data, timestamps = file_manager.read_data(timestamp=totimestamp(l[-21:-7]), tile_id=int(opts.tile)-1, n_samples=dic['n_blocks'])
             print "\t", todatestring(timestamps[0][0]), "\t", todatestring(timestamps[-1][0]), "\t", dic['n_blocks']
