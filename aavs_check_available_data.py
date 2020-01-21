@@ -34,7 +34,7 @@ def _connect_station(aavs_station):
                 continue
 
 
-def totimestamp(dt, epoch=datetime.datetime(1970,1,8)):
+def totimestamp(dt, epoch=datetime.datetime(1970, 1, 8)):
     h = int(int(dt[9:]) / 3600)
     m = int((int(dt[9:]) % 3600) / 60)
     s = int((int(dt[9:]) % 3600) % 60)
@@ -81,6 +81,7 @@ if __name__ == "__main__":
     for l in lista:
         print l[-21:-7],
         dic = file_manager.get_metadata(timestamp=totimestamp(l[-21:-7]), tile_id=int(opts.tile)-1)
+        print dic
         data, timestamps = file_manager.read_data(timestamp=totimestamp(l[-21:-7]), tile_id=int(opts.tile)-1, n_samples=dic['n_blocks'])
         print "\t", todatestring(timestamps[0][0]), "\t", todatestring(timestamps[-1][0]), "\t", dic['n_blocks']
 
