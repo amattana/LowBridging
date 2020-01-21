@@ -56,7 +56,7 @@ if __name__ == "__main__":
                       default="/opt/aavs/config/aavs2.yml",
                       help="Station configuration files to use, comma-separated (default: AAVS1)")
     parser.add_option("--directory", action="store", dest="directory",
-                      default="/storage/monitoring/integrated_data",
+                      default="/storage/monitoring/integrated_data/",
                       help="Directory where plots will be generated (default: /storage/monitoring/integrated_data)")
     parser.add_option("--tile", action="store", dest="tile", type=int,
                       default=1, help="Tile Number")
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     station_name = station.configuration['station']['name']
     print "Station Name: ", station_name
     print "Checking directory: ", opts.directory
-    file_manager = ChannelFormatFileManager(root_path=opts.directory, daq_mode=FileDAQModes.Integrated)
+    file_manager = ChannelFormatFileManager(root_path=opts.directory+station_name, daq_mode=FileDAQModes.Integrated)
 
     lista = glob.glob(DATA_PATH + station_name.lower() + "/channel_integ_%d_*hdf5"%(int(opts.tile)-1))
     for l in lista:
