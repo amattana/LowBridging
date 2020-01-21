@@ -12,10 +12,6 @@ import datetime
 from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
 from aavs_calibration.common import get_antenna_positions, get_antenna_tile_names
 
-# Global flag to stop the scrpts
-FIG_W = 14
-TILE_H = 3.2
-DATA_PATH = "/storage/monitoring/integrated_data/"
 
 def _connect_station(aavs_station):
     """ Return a connected station """
@@ -73,10 +69,10 @@ if __name__ == "__main__":
     station.load_configuration_file(opts.config)
     station_name = station.configuration['station']['name']
     print "Station Name: ", station_name
-    print "Checking directory: ", opts.directory+station_name
-    file_manager = ChannelFormatFileManager(root_path=opts.directory+station_name, daq_mode=FileDAQModes.Integrated)
+    print "Checking directory: ", opts.directory+station_name.lower()
+    file_manager = ChannelFormatFileManager(root_path=opts.directory+station_name.lower(), daq_mode=FileDAQModes.Integrated)
     #file_manager = ChannelFormatFileManager(root_path="/storage/monitoring/integrated_data/aavs2", daq_mode=FileDAQModes.Integrated)
-    lista = sorted(glob.glob(DATA_PATH + station_name.lower() + "/channel_integ_%d_*hdf5"%(int(opts.tile)-1)))
+    lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5"%(int(opts.tile)-1)))
     for l in lista:
         print l[-21:-7],
         dic = file_manager.get_metadata(timestamp=totimestamp(l[-21:-7]), tile_id=(opts.tile-1))
