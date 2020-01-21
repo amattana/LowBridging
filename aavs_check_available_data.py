@@ -68,8 +68,8 @@ if __name__ == "__main__":
     # Load configuration file
     station.load_configuration_file(opts.config)
     station_name = station.configuration['station']['name']
-    print "Station Name: ", station_name
-    print "Checking directory: ", opts.directory+station_name.lower()
+    print "\nStation Name: ", station_name
+    print "Checking directory: ", opts.directory+station_name.lower() + "\n"
     file_manager = ChannelFormatFileManager(root_path=opts.directory+station_name.lower(), daq_mode=FileDAQModes.Integrated)
     #file_manager = ChannelFormatFileManager(root_path="/storage/monitoring/integrated_data/aavs2", daq_mode=FileDAQModes.Integrated)
     lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5"%(int(opts.tile)-1)))
@@ -81,5 +81,7 @@ if __name__ == "__main__":
             print "\t", todatestring(timestamps[0][0]), "\t", todatestring(timestamps[-1][0]), "\t", dic['n_blocks']
         else:
             print " no metadata available"
+    print
+
 
 
