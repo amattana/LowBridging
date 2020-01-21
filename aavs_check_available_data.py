@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     parser = OptionParser(usage="usage: %monitor_bandpasses [options]")
     parser.add_option("--config", action="store", dest="config",
-                      default="/opt/aavs/config/aavs1_full_station.yml",
+                      default="/opt/aavs/config/aavs2.yml",
                       help="Station configuration files to use, comma-separated (default: AAVS1)")
     parser.add_option("--directory", action="store", dest="directory",
                       default="/storage/monitoring/integrated_data",
@@ -69,20 +69,21 @@ if __name__ == "__main__":
 
     (opts, args) = parser.parse_args(argv[1:])
 
-    plt.ioff()
-    nplot = 16
-    ind = np.arange(nplot)
     # Load configuration file
     station.load_configuration_file(opts.config)
     station_name = station.configuration['station']['name']
+    print "Station Name: ", station_name
+    print "Checking directory: ", opts.directory
     file_manager = ChannelFormatFileManager(root_path=opts.directory, daq_mode=FileDAQModes.Integrated)
 
     lista = glob.glob(DATA_PATH + station_name.lower() + "/channel_integ_%d_*hdf5"%(int(opts.tile)-1))
     for l in lista:
         print l[-21:-7],
         dic = file_manager.get_metadata(timestamp=totimestamp(l[-21:-7]), tile_id=int(opts.tile)-1)
-        print dic
-        data, timestamps = file_manager.read_data(timestamp=totimestamp(l[-21:-7]), tile_id=int(opts.tile)-1, n_samples=dic['n_blocks'])
-        print "\t", todatestring(timestamps[0][0]), "\t", todatestring(timestamps[-1][0]), "\t", dic['n_blocks']
+        if not dic==[]:
+            data, timestamps = file_manager.read_data(timestamp=totimestamp(l[-21:-7]), tile_id=int(opts.tile)-1, n_samples=dic['n_blocks'])
+            print  "\t", todatestring(timestamps[0][0]), "\t", todatestring(timestamps[-1][0]), "\t", dic['n_blocks']
+        else:
+            print " no metadata available"
 
 
