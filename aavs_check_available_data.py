@@ -56,7 +56,7 @@ if __name__ == "__main__":
                       default="/opt/aavs/config/aavs2.yml",
                       help="Station configuration files to use, comma-separated (default: AAVS1)")
     parser.add_option("--directory", action="store", dest="directory",
-                      default="/storage/monitoring/integrated_data",
+                      default="/storage/monitoring/integrated_data/",
                       help="Directory where plots will be generated (default: /storage/monitoring/integrated_data)")
     parser.add_option("--tile", action="store", dest="tile", type=int,
                       default=1, help="Tile Number")
