@@ -73,7 +73,7 @@ if __name__ == "__main__":
     station.load_configuration_file(opts.config)
     station_name = station.configuration['station']['name']
     print "Station Name: ", station_name
-    print "Checking directory: ", opts.directory
+    print "Checking directory: ", opts.directory+station_name
     file_manager = ChannelFormatFileManager(root_path=opts.directory+station_name, daq_mode=FileDAQModes.Integrated)
 
     lista = glob.glob(DATA_PATH + station_name.lower() + "/channel_integ_%d_*hdf5"%(int(opts.tile)-1))
