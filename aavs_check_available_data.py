@@ -30,13 +30,13 @@ def _connect_station(aavs_station):
                 continue
 
 
-def totimestamp(dt, epoch=datetime.datetime(1970, 1, 1, 8, 0, 0)):
-    h = int(int(dt[9:]) / 3600)
-    m = int((int(dt[9:]) % 3600) / 60)
-    s = int((int(dt[9:]) % 3600) % 60)
-    a = datetime.datetime(int(dt[0:4]), int(dt[4:6]), int(dt[6:8]), h, m, s)
-    td = a - epoch
-    return (td.microseconds + (td.seconds + td.days * 86400) * 10**6) / 10**6
+# def totimestamp(dt, epoch=datetime.datetime(1970, 1, 1, 8, 0, 0)):
+#     h = int(int(dt[9:]) / 3600)
+#     m = int((int(dt[9:]) % 3600) / 60)
+#     s = int((int(dt[9:]) % 3600) % 60)
+#     a = datetime.datetime(int(dt[0:4]), int(dt[4:6]), int(dt[6:8]), h, m, s)
+#     td = a - epoch
+#     return (td.microseconds + (td.seconds + td.days * 86400) * 10**6) / 10**6
 
 
 def totstamp(date_time_string):
@@ -75,11 +75,15 @@ if __name__ == "__main__":
 
     (opts, args) = parser.parse_args(argv[1:])
 
+    t_date = None
+    t_start = None
+    t_stop = None
+
     if opts.date:
         try:
             t_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
-            t_start = totimestamp(datetime.datetime.strftime(t_date, "%Y%m%d_00000"))
-            t_stop = totimestamp(datetime.datetime.strftime(t_date, "%Y%m%d_00000")) + (60 * 60 *24)
+            t_start = totstamp(datetime.datetime.strftime(t_date, "%Y%m%d_00000"))
+            t_stop = totstamp(datetime.datetime.strftime(t_date, "%Y%m%d_00000")) + (60 * 60 *24)
         except:
             print "Bad date format detected (must be YYYY-MM-DD)"
     else:
@@ -94,8 +98,7 @@ if __name__ == "__main__":
             except:
                 print "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)"
 
-    print t_date, t_start, t_stop
-    exit()
+    # print t_date, t_start, t_stop
 
     # Load configuration file
     station.load_configuration_file(opts.config)
@@ -108,7 +111,8 @@ if __name__ == "__main__":
     for l in lista:
         dic = file_manager.get_metadata(timestamp=totstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         if dic:
-            data, timestamps = file_manager.read_data(timestamp=totstamp(l[-21:-7]), tile_id=int(opts.tile)-1, n_samples=dic['n_blocks'])
+            data, timestamps = file_manager.read_data(timestamp=totstamp(l[-21:-7]), tile_id=int(opts.tile)-1,
+                                                      n_samples=dic['n_blocks'], start_ts=t_start, )
             print l[-21:-7], "\t", todatestring(timestamps[0][0]), "\t", todatestring(timestamps[-1][0]), "\t", dic['n_blocks']
         else:
             print " no metadata available"
