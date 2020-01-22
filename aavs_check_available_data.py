@@ -6,7 +6,7 @@ if not 'matplotlib.backends' in sys.modules:
 import matplotlib.pyplot as plt
 import numpy as np
 from pyaavs import station
-from time import sleep
+import time
 import glob
 import datetime
 from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
@@ -30,13 +30,21 @@ def _connect_station(aavs_station):
                 continue
 
 
-def totimestamp(dt, epoch=datetime.datetime(1970, 1, 1, 8, 0, 0)):
-    h = int(int(dt[9:]) / 3600)
-    m = int((int(dt[9:]) % 3600) / 60)
-    s = int((int(dt[9:]) % 3600) % 60)
-    a = datetime.datetime(int(dt[0:4]), int(dt[4:6]), int(dt[6:8]), h, m, s)
-    td = a - epoch
-    return (td.microseconds + (td.seconds + td.days * 86400) * 10**6) / 10**6
+# def totimestamp(dt, epoch=datetime.datetime(1970, 1, 1, 8, 0, 0)):
+#     h = int(int(dt[9:]) / 3600)
+#     m = int((int(dt[9:]) % 3600) / 60)
+#     s = int((int(dt[9:]) % 3600) % 60)
+#     a = datetime.datetime(int(dt[0:4]), int(dt[4:6]), int(dt[6:8]), h, m, s)
+#     td = a - epoch
+#     return (td.microseconds + (td.seconds + td.days * 86400) * 10**6) / 10**6
+
+
+def totstamp(date_time_string):
+    time_parts = date_time_string.split('_')
+    d = datetime.datetime.strptime(time_parts[0], "%Y%m%d")  # "%d/%m/%Y %H:%M:%S"
+    timestamp = time.mktime(d.timetuple())
+    timestamp += int(time_parts[1])
+    return timestamp
 
 
 def todatestring(tstamp):
@@ -62,8 +70,32 @@ if __name__ == "__main__":
                       default="", help="Start time for filter (YYYY-mm-DD_HH:MM:SS)")
     parser.add_option("--stop", action="store", dest="stop",
                       default="", help="Stop time for filter (YYYY-mm-DD_HH:MM:SS)")
+    parser.add_option("--date", action="store", dest="date",
+                      default="", help="Stop time for filter (YYYY-mm-DD_HH:MM:SS)")
 
     (opts, args) = parser.parse_args(argv[1:])
+
+    if opts.date:
+        try:
+            t_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
+            t_start = totstamp(datetime.datetime.strftime(t_date, "%Y%m%d_00000"))
+            t_stop = totstamp(datetime.datetime.strftime(t_date, "%Y%m%d_00000")) + (60 * 60 *24)
+        except:
+            print "Bad date format detected (must be YYYY-MM-DD)"
+    else:
+        if opts.start:
+            try:
+                t_start = datetime.datetime.strptime(opts.start, "%Y-%m-%d_%H:%M:%S")
+            except:
+                print "Bad t_start time format detected (must be YYYY-MM-DD_HH:MM:SS)"
+        if opts.stop:
+            try:
+                t_stop = datetime.datetime.strptime(opts.stop, "%Y-%m-%d_%H:%M:%S")
+            except:
+                print "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)"
+
+    print t_date, t_start, t_stop
+
 
     # Load configuration file
     station.load_configuration_file(opts.config)
@@ -74,11 +106,10 @@ if __name__ == "__main__":
     #file_manager = ChannelFormatFileManager(root_path="/storage/monitoring/integrated_data/aavs2", daq_mode=FileDAQModes.Integrated)
     lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5"%(int(opts.tile)-1)))
     for l in lista:
-        print l[-21:-7],
-        dic = file_manager.get_metadata(timestamp=totimestamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
+        dic = file_manager.get_metadata(timestamp=totstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         if dic:
-            data, timestamps = file_manager.read_data(timestamp=totimestamp(l[-21:-7]), tile_id=int(opts.tile)-1, n_samples=dic['n_blocks'])
-            print "\t", todatestring(timestamps[0][0]), "\t", todatestring(timestamps[-1][0]), "\t", dic['n_blocks']
+            data, timestamps = file_manager.read_data(timestamp=totstamp(l[-21:-7]), tile_id=int(opts.tile)-1, n_samples=dic['n_blocks'])
+            print l[-21:-7], "\t", todatestring(timestamps[0][0]), "\t", todatestring(timestamps[-1][0]), "\t", dic['n_blocks']
         else:
             print " no metadata available"
     print
