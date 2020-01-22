@@ -135,7 +135,7 @@ if __name__ == "__main__":
                     cnt = cnt + 1
                     t_cnt = t_cnt + 1
             print l[-21:-7], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
-                ts_to_datestring(timestamps[-1][0]), "\t", cnt, len(data)
+                ts_to_datestring(timestamps[-1][0]), "\t", cnt
         else:
             print l[-21:-7], ": no metadata available"
     print "\nFound %d measurements\n" % t_cnt
