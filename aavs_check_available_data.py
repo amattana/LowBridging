@@ -30,16 +30,11 @@ def _connect_station(aavs_station):
                 continue
 
 
-# def totimestamp(dt, epoch=datetime.datetime(1970, 1, 1, 8, 0, 0)):
-#     h = int(int(dt[9:]) / 3600)
-#     m = int((int(dt[9:]) % 3600) / 60)
-#     s = int((int(dt[9:]) % 3600) % 60)
-#     a = datetime.datetime(int(dt[0:4]), int(dt[4:6]), int(dt[6:8]), h, m, s)
-#     td = a - epoch
-#     return (td.microseconds + (td.seconds + td.days * 86400) * 10**6) / 10**6
+def dt_to_timestamp(d):
+    return time.mktime(d.timetuple())
 
 
-def totstamp(date_time_string):
+def fname_to_tstamp(date_time_string):
     time_parts = date_time_string.split('_')
     d = datetime.datetime.strptime(time_parts[0], "%Y%m%d")  # "%d/%m/%Y %H:%M:%S"
     timestamp = time.mktime(d.timetuple())
@@ -47,8 +42,28 @@ def totstamp(date_time_string):
     return timestamp
 
 
-def todatestring(tstamp):
+def ts_to_datestring(tstamp):
     return datetime.datetime.strftime(datetime.datetime.fromtimestamp(tstamp), "%Y-%m-%d %H:%M:%S")
+
+
+def tstamp_to_fname(timestamp=None):
+    """
+    Returns a string date/time from a UNIX timestamp.
+    :param timestamp: A UNIX timestamp.
+    :return: A date/time string of the form yyyymmdd_secs
+    """
+    if timestamp is None:
+        timestamp = 0
+
+    datetime_object = datetime.datetime.fromtimestamp(timestamp)
+    hours = datetime_object.hour
+    minutes = datetime_object.minute
+    seconds = datetime_object.second
+    full_seconds = seconds + (minutes * 60) + (hours * 60 * 60)
+    full_seconds_formatted = format(full_seconds, '05')
+    base_date_string = datetime.datetime.fromtimestamp(timestamp).strftime('%Y%m%d')
+    full_date_string = base_date_string + '_' + str(full_seconds_formatted)
+    return str(full_date_string)
 
 
 if __name__ == "__main__":
@@ -83,21 +98,19 @@ if __name__ == "__main__":
     if opts.date:
         try:
             t_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
-            t_start = totstamp(datetime.datetime.strftime(t_date, "%Y%m%d_00000"))
-            t_stop = totstamp(datetime.datetime.strftime(t_date, "%Y%m%d_00000")) + (60 * 60 * 24)
+            t_start = dt_to_timestamp(t_date)
+            t_stop = dt_to_timestamp(t_date) + (60 * 60 * 24)
         except:
             print "Bad date format detected (must be YYYY-MM-DD)"
     else:
         if opts.start:
             try:
-                t_start = totstamp(datetime.datetime.strftime(datetime.datetime.strptime(opts.start,
-                                                                    "%Y-%m-%d_%H:%M:%S"), "%Y%m%d_00000"))
+                t_start = dt_to_timestamp(datetime.datetime.strptime(opts.start, "%Y-%m-%d_%H:%M:%S"))
             except:
                 print "Bad t_start time format detected (must be YYYY-MM-DD_HH:MM:SS)"
         if opts.stop:
             try:
-                t_stop = totstamp(datetime.datetime.strftime(datetime.datetime.strptime(opts.stop,
-                                                                    "%Y-%m-%d_%H:%M:%S"), "%Y%m%d_00000"))
+                t_stop = dt_to_timestamp(datetime.datetime.strptime(opts.stop, "%Y-%m-%d_%H:%M:%S"))
             except:
                 print "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)"
 
@@ -112,9 +125,9 @@ if __name__ == "__main__":
     #file_manager = ChannelFormatFileManager(root_path="/storage/monitoring/integrated_data/aavs2", daq_mode=FileDAQModes.Integrated)
     lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5"%(int(opts.tile)-1)))
     for l in lista:
-        dic = file_manager.get_metadata(timestamp=totstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
+        dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         if dic:
-            data, timestamps = file_manager.read_data(timestamp=totstamp(l[-21:-7]), tile_id=int(opts.tile)-1,
+            data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=int(opts.tile)-1,
                                                       n_samples=dic['n_blocks'])
             cnt = 0
             for i, t in enumerate(timestamps):
@@ -122,7 +135,7 @@ if __name__ == "__main__":
                     cnt = cnt + 1
                     t_cnt = t_cnt + 1
                     #print l[-21:-7], t[0], todatestring(t[0]), cnt
-            print l[-21:-7], "\t", todatestring(timestamps[0][0]), "\t", todatestring(timestamps[-1][0]), "\t", cnt
+            print l[-21:-7], "\t", ts_to_datestring(timestamps[0][0]), "\t", ts_to_datestring(timestamps[-1][0]), "\t", cnt
         else:
             print l[-21:-7], ": no metadata available"
 
