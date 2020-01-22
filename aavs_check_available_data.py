@@ -121,9 +121,9 @@ if __name__ == "__main__":
     station_name = station.configuration['station']['name']
     print "\nStation Name: ", station_name
     print "Checking directory: ", opts.directory+station_name.lower() + "\n"
-    file_manager = ChannelFormatFileManager(root_path=opts.directory+station_name.lower(), daq_mode=FileDAQModes.Integrated)
-    #file_manager = ChannelFormatFileManager(root_path="/storage/monitoring/integrated_data/aavs2", daq_mode=FileDAQModes.Integrated)
-    lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5"%(int(opts.tile)-1)))
+    file_manager = ChannelFormatFileManager(root_path=opts.directory+station_name.lower(),
+                                            daq_mode=FileDAQModes.Integrated)
+    lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (int(opts.tile)-1)))
     for l in lista:
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         if dic:
@@ -134,11 +134,10 @@ if __name__ == "__main__":
                 if t_start <= t[0] <= t_stop:
                     cnt = cnt + 1
                     t_cnt = t_cnt + 1
-                    #print l[-21:-7], t[0], todatestring(t[0]), cnt
-            print l[-21:-7], "\t", ts_to_datestring(timestamps[0][0]), "\t", ts_to_datestring(timestamps[-1][0]), "\t", cnt
+            print l[-21:-7], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
+                ts_to_datestring(timestamps[-1][0]), "\t", cnt, len(data)
         else:
             print l[-21:-7], ": no metadata available"
-
     print "\nFound %d measurements\n" % t_cnt
 
 
