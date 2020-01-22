@@ -48,7 +48,7 @@ def totstamp(date_time_string):
 
 
 def todatestring(tstamp):
-    return datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(tstamp), "%Y-%m-%d %H:%M:%S")
+    return datetime.datetime.strftime(datetime.datetime.fromtimestamp(tstamp), "%Y-%m-%d %H:%M:%S")
 
 
 if __name__ == "__main__":
@@ -71,19 +71,20 @@ if __name__ == "__main__":
     parser.add_option("--stop", action="store", dest="stop",
                       default="", help="Stop time for filter (YYYY-mm-DD_HH:MM:SS)")
     parser.add_option("--date", action="store", dest="date",
-                      default="", help="Stop time for filter (YYYY-mm-DD_HH:MM:SS)")
+                      default="", help="Stop time for filter (YYYY-mm-DD)")
 
     (opts, args) = parser.parse_args(argv[1:])
 
     t_date = None
     t_start = None
     t_stop = None
+    cnt = 0
 
     if opts.date:
         try:
             t_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
             t_start = totstamp(datetime.datetime.strftime(t_date, "%Y%m%d_00000"))
-            t_stop = totstamp(datetime.datetime.strftime(t_date, "%Y%m%d_00000")) + (60 * 60 *24)
+            t_stop = totstamp(datetime.datetime.strftime(t_date, "%Y%m%d_00000")) + (60 * 60 * 24)
         except:
             print "Bad date format detected (must be YYYY-MM-DD)"
     else:
@@ -112,10 +113,14 @@ if __name__ == "__main__":
         dic = file_manager.get_metadata(timestamp=totstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         if dic:
             data, timestamps = file_manager.read_data(timestamp=totstamp(l[-21:-7]), tile_id=int(opts.tile)-1,
-                                                      n_samples=dic['n_blocks'], start_ts=t_start, )
-            print l[-21:-7], "\t", todatestring(timestamps[0][0]), "\t", todatestring(timestamps[-1][0]), "\t", dic['n_blocks']
+                                                      n_samples=dic['n_blocks'])
+            for i, t in enumerate(timestamps):
+                if t_start <= t[0] <= t_stop:
+                    cnt = cnt + 1
+                    print l[-21:-7], t[0], todatestring(t[0]), cnt
+            #print l[-21:-7], "\t", todatestring(timestamps[0][0]), "\t", todatestring(timestamps[-1][0]), "\t", dic['n_blocks']
         else:
-            print " no metadata available"
+            print l[-21:-7], ": no metadata available"
     print
 
 
