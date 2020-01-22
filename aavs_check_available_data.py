@@ -30,13 +30,13 @@ def _connect_station(aavs_station):
                 continue
 
 
-# def totimestamp(dt, epoch=datetime.datetime(1970, 1, 1, 8, 0, 0)):
-#     h = int(int(dt[9:]) / 3600)
-#     m = int((int(dt[9:]) % 3600) / 60)
-#     s = int((int(dt[9:]) % 3600) % 60)
-#     a = datetime.datetime(int(dt[0:4]), int(dt[4:6]), int(dt[6:8]), h, m, s)
-#     td = a - epoch
-#     return (td.microseconds + (td.seconds + td.days * 86400) * 10**6) / 10**6
+def totimestamp(dt, epoch=datetime.datetime(1970, 1, 1, 8, 0, 0)):
+    h = int(int(dt[9:]) / 3600)
+    m = int((int(dt[9:]) % 3600) / 60)
+    s = int((int(dt[9:]) % 3600) % 60)
+    a = datetime.datetime(int(dt[0:4]), int(dt[4:6]), int(dt[6:8]), h, m, s)
+    td = a - epoch
+    return (td.microseconds + (td.seconds + td.days * 86400) * 10**6) / 10**6
 
 
 def totstamp(date_time_string):
@@ -78,8 +78,8 @@ if __name__ == "__main__":
     if opts.date:
         try:
             t_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
-            t_start = totstamp(datetime.datetime.strftime(t_date, "%Y%m%d_00000"))
-            t_stop = totstamp(datetime.datetime.strftime(t_date, "%Y%m%d_00000")) + (60 * 60 *24)
+            t_start = totimestamp(datetime.datetime.strftime(t_date, "%Y%m%d_00000"))
+            t_stop = totimestamp(datetime.datetime.strftime(t_date, "%Y%m%d_00000")) + (60 * 60 *24)
         except:
             print "Bad date format detected (must be YYYY-MM-DD)"
     else:
@@ -95,7 +95,7 @@ if __name__ == "__main__":
                 print "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)"
 
     print t_date, t_start, t_stop
-
+    exit()
 
     # Load configuration file
     station.load_configuration_file(opts.config)
