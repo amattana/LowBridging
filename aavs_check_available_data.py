@@ -101,7 +101,7 @@ if __name__ == "__main__":
             except:
                 print "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)"
 
-    # print t_date, t_start, t_stop
+    print t_date, t_start, t_stop
 
     # Load configuration file
     station.load_configuration_file(opts.config)
