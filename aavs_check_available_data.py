@@ -78,7 +78,7 @@ if __name__ == "__main__":
     t_date = None
     t_start = None
     t_stop = None
-    cnt = 0
+    t_cnt = 0
 
     if opts.date:
         try:
@@ -114,14 +114,17 @@ if __name__ == "__main__":
         if dic:
             data, timestamps = file_manager.read_data(timestamp=totstamp(l[-21:-7]), tile_id=int(opts.tile)-1,
                                                       n_samples=dic['n_blocks'])
+            cnt = 0
             for i, t in enumerate(timestamps):
                 if t_start <= t[0] <= t_stop:
                     cnt = cnt + 1
-                    print l[-21:-7], t[0], todatestring(t[0]), cnt
-            #print l[-21:-7], "\t", todatestring(timestamps[0][0]), "\t", todatestring(timestamps[-1][0]), "\t", dic['n_blocks']
+                    t_cnt = t_cnt + 1
+                    #print l[-21:-7], t[0], todatestring(t[0]), cnt
+            print l[-21:-7], "\t", todatestring(timestamps[0][0]), "\t", todatestring(timestamps[-1][0]), "\t", cnt
         else:
             print l[-21:-7], ": no metadata available"
-    print
+
+    print "\nFound %d measurements\n" % t_cnt
 
 
 
