@@ -90,12 +90,12 @@ if __name__ == "__main__":
     else:
         if opts.start:
             try:
-                t_start = datetime.datetime.strptime(opts.start, "%Y-%m-%d_%H:%M:%S")
+                t_start = totstamp(datetime.datetime.strptime(opts.start, "%Y-%m-%d_%H:%M:%S"))
             except:
                 print "Bad t_start time format detected (must be YYYY-MM-DD_HH:MM:SS)"
         if opts.stop:
             try:
-                t_stop = datetime.datetime.strptime(opts.stop, "%Y-%m-%d_%H:%M:%S")
+                t_stop = totstamp(datetime.datetime.strptime(opts.stop, "%Y-%m-%d_%H:%M:%S"))
             except:
                 print "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)"
 
