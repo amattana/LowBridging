@@ -219,6 +219,7 @@ if __name__ == "__main__":
             cnt = 0
             if not t_start >= timestamps[-1]:
                 if not t_stop <= timestamps[0]:
+                    print
                     for i, t in enumerate(timestamps):
                         if t_start <= t[0] <= t_stop:
                             cnt = cnt + 1
@@ -248,6 +249,8 @@ if __name__ == "__main__":
                             orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
 
                             plt.savefig(PIC_PATH + "/TILE-%02d_" % opts.tile + orario + ".png")
+                            sys.stdout.write("\rWriting " + PIC_PATH + "/TILE-%02d_" % opts.tile + orario + ".png")
+                            sys.stdout.flush()
 
             print l[-21:-7], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
                 ts_to_datestring(timestamps[-1][0]), "\t", cnt
