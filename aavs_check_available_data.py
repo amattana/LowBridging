@@ -70,7 +70,7 @@ if __name__ == "__main__":
     from optparse import OptionParser
     from sys import argv, stdout
 
-    parser = OptionParser(usage="usage: %monitor_bandpasses [options]")
+    parser = OptionParser(usage="usage: %aavs_check_available_data [options]")
     parser.add_option("--config", action="store", dest="config",
                       default="/opt/aavs/config/aavs2.yml",
                       help="Station configuration files to use, comma-separated (default: AAVS1)")
@@ -114,7 +114,7 @@ if __name__ == "__main__":
             except:
                 print "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)"
 
-    print t_date, t_start, t_stop
+    #print t_date, t_start, t_stop
 
     # Load configuration file
     station.load_configuration_file(opts.config)
@@ -130,10 +130,12 @@ if __name__ == "__main__":
             data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=int(opts.tile)-1,
                                                       n_samples=dic['n_blocks'])
             cnt = 0
-            for i, t in enumerate(timestamps):
-                if t_start <= t[0] <= t_stop:
-                    cnt = cnt + 1
-                    t_cnt = t_cnt + 1
+            if not t_start >= timestamps[-1]:
+                if not t_stop <= timestamps[0]:
+                    for i, t in enumerate(timestamps):
+                        if t_start <= t[0] <= t_stop:
+                            cnt = cnt + 1
+                            t_cnt = t_cnt + 1
             print l[-21:-7], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
                 ts_to_datestring(timestamps[-1][0]), "\t", cnt
         else:
