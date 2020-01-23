@@ -236,7 +236,7 @@ if __name__ == "__main__":
                                 ax[ant].plot(assex[2:-1], spettro[2:-1], scaley=True, color='g')
                                 ax[ant].set_ylim(0, 50)
                                 ax[ant].set_xlim(0, 400)
-                                ax[ant].set_title("IN " + str(ant + 1), fontsize=8)
+                                ax[ant].set_title(ants[ant + 16 * (int(opts.tile) - 1)], fontsize=8)
 
                             ax_top_tile.cla()
                             ax_top_tile.set_axis_off()
