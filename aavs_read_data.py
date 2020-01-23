@@ -1,5 +1,5 @@
 from pydaq.persisters import ChannelFormatFileManager, FileDAQModes
-import sys, os
+import sys, os, glob
 import matplotlib
 if not 'matplotlib.backends' in sys.modules:
     matplotlib.use('agg') # not to use X11from pydaq.persisters import ChannelFormatFileManager, FileDAQModes
