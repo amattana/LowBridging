@@ -15,6 +15,7 @@ from aavs_calibration.common import get_antenna_positions, get_antenna_tile_name
 FIG_W = 14
 TILE_H = 3.2
 PIC_PATH = "/storage/monitoring/pictures"
+TEXT_PATH = "/storage/monitoring/text_data"
 
 def _connect_station(aavs_station):
     """ Return a connected station """
@@ -89,6 +90,8 @@ if __name__ == "__main__":
                       default="", help="Stop time for filter (YYYY-mm-DD_HH:MM:SS)")
     parser.add_option("--date", action="store", dest="date",
                       default="", help="Stop time for filter (YYYY-mm-DD)")
+    parser.add_option("--save", action="store_true", dest="save",
+                      default=False, help="Save single antenna measurements in text files")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -211,6 +214,13 @@ if __name__ == "__main__":
     if not os.path.exists(PIC_PATH):
         os.makedirs(PIC_PATH)
 
+    if opts.save:
+        if not os.path.exists(TEXT_PATH):
+            os.makedirs(TEXT_PATH)
+        TEXT_PATH = TEXT_PATH + "/TILE-%02d" % int(opts.tile)
+        if not os.path.exists(TEXT_PATH):
+            os.makedirs(TEXT_PATH)
+
     for l in lista:
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         if dic:
@@ -226,13 +236,24 @@ if __name__ == "__main__":
                             t_cnt = t_cnt + 1
 
                             # Generate picture
+                            orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
                             for ant in range(nplot):
                                 ax[ant].cla()
                                 with np.errstate(divide='ignore'):
                                     spettro = 10 * np.log10(data[:, ant, 0, i])
+                                if opts.save:
+                                    with open(TEXT_PATH + "/TILE-%02d_" % opts.tile +
+                                              ants[ant + 16 * (int(opts.tile) - 1)] + "_POL-X_" + orario + ".txt") as f:
+                                        for s in spettro:
+                                            f.write("%f\n" % s)
                                 ax[ant].plot(assex[2:-1], spettro[2:-1], scaley=True, color='b')
                                 with np.errstate(divide='ignore'):
                                     spettro = 10 * np.log10(data[:, ant, 1, i])
+                                if opts.save:
+                                    with open(TEXT_PATH + "/TILE-%02d_" % opts.tile +
+                                              ants[ant + 16 * (int(opts.tile) - 1)] + "_POL-Y_" + orario + ".txt") as f:
+                                        for s in spettro:
+                                            f.write("%f\n" % s)
                                 ax[ant].plot(assex[2:-1], spettro[2:-1], scaley=True, color='g')
                                 ax[ant].set_ylim(0, 50)
                                 ax[ant].set_xlim(0, 400)
