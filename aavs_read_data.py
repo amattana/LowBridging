@@ -131,7 +131,7 @@ if __name__ == "__main__":
 
     #data = file_manager.read_data(tile_id=int(opts.tile)-1, n_samples=dic['n_blocks'])
 
-    assex = np.linspace(0, 400, len(data[0][:, 0, 0, -1]))
+    assex = np.linspace(0, 400, 512)
 
     outer_grid = GridSpec(4, 4, hspace=0.4, wspace=0.4, left=0.04, right=0.98, bottom=0.04, top=0.96)
     gs = GridSpecFromSubplotSpec(int(np.ceil(np.sqrt(16))), int(np.ceil(np.sqrt(16))), wspace=0.4, hspace=0.6,
