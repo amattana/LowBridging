@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pyaavs import station
 from time import sleep
-import datetime
+import datetime, time
 from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
 from aavs_calibration.common import get_antenna_positions, get_antenna_tile_names
 
