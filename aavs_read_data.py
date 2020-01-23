@@ -1,5 +1,5 @@
 from pydaq.persisters import ChannelFormatFileManager, FileDAQModes
-import sys
+import sys, os
 import matplotlib
 if not 'matplotlib.backends' in sys.modules:
     matplotlib.use('agg') # not to use X11from pydaq.persisters import ChannelFormatFileManager, FileDAQModes
@@ -14,7 +14,7 @@ from aavs_calibration.common import get_antenna_positions, get_antenna_tile_name
 # Global flag to stop the scrpts
 FIG_W = 14
 TILE_H = 3.2
-
+PIC_PATH = "/storage/monitoring/pictures"
 
 def _connect_station(aavs_station):
     """ Return a connected station """
@@ -205,6 +205,12 @@ if __name__ == "__main__":
         ax_top_map.plot(float(x[en + (int(opts.tile - 1) * 16)]), float(y[en + (int(opts.tile - 1) * 16)]),
                         marker='+', markersize=4, linestyle='None', color='k')
 
+    if not os.path.exists(PIC_PATH):
+        os.makedirs(PIC_PATH)
+    PIC_PATH = PIC_PATH + "/TILE-%02d" % int(opts.tile)
+    if not os.path.exists(PIC_PATH):
+        os.makedirs(PIC_PATH)
+
     for l in lista:
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         if dic:
@@ -241,8 +247,7 @@ if __name__ == "__main__":
                             ax_top_tile.annotate(orario, (-18, -12), fontsize=12, color='black')
                             orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
 
-                            plt.savefig("/storage/monitoring/pictures/TILE-%02d" % opts.tile +
-                                        "/TILE-%02d_" % opts.tile + orario + ".png")
+                            plt.savefig(PIC_PATH + "/TILE-%02d_" % opts.tile + orario + ".png")
 
             print l[-21:-7], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
                 ts_to_datestring(timestamps[-1][0]), "\t", cnt
