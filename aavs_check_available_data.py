@@ -132,6 +132,7 @@ if __name__ == "__main__":
             cnt = 0
             if not t_start >= timestamps[-1]:
                 if not t_stop <= timestamps[0]:
+                    print "loop"
                     for i, t in enumerate(timestamps):
                         if t_start <= t[0] <= t_stop:
                             cnt = cnt + 1
