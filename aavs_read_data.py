@@ -107,21 +107,21 @@ if __name__ == "__main__":
             t_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
             t_start = dt_to_timestamp(t_date)
             t_stop = dt_to_timestamp(t_date) + (60 * 60 * 24)
-            print "Start Time:" + ts_to_datestring(t_start)
-            print "Stop Time:" + ts_to_datestring(t_stop)
+            print "Start Time:  " + ts_to_datestring(t_start)
+            print "Stop  Time:  " + ts_to_datestring(t_stop)
         except:
             print "Bad date format detected (must be YYYY-MM-DD)"
     else:
         if opts.start:
             try:
                 t_start = dt_to_timestamp(datetime.datetime.strptime(opts.start, "%Y-%m-%d_%H:%M:%S"))
-                print "Start Time:" + ts_to_datestring(t_start)
+                print "Start Time:  " + ts_to_datestring(t_start)
             except:
                 print "Bad t_start time format detected (must be YYYY-MM-DD_HH:MM:SS)"
         if opts.stop:
             try:
                 t_stop = dt_to_timestamp(datetime.datetime.strptime(opts.stop, "%Y-%m-%d_%H:%M:%S"))
-                print "Stop Time:" + ts_to_datestring(t_stop)
+                print "Stop  Time:  " + ts_to_datestring(t_stop)
             except:
                 print "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)"
 
@@ -278,7 +278,7 @@ if __name__ == "__main__":
                             plt.savefig(PIC_PATH + "/TILE-%02d_" % opts.tile + orario + ".png")
                             sys.stdout.write("\rWriting " + PIC_PATH + "/TILE-%02d_" % opts.tile + orario + ".png")
                             sys.stdout.flush()
-
+                    print
             print l[-21:-7], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
                 ts_to_datestring(timestamps[-1][0]), "\t", cnt
         else:
