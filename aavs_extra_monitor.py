@@ -371,8 +371,9 @@ def plotting_thread(directory, cadence):
 
         else:
             # Lock file present
+            logging.info("Found lock file")
             fig2 = plt.figure(figsize=(FIG_W, 500), facecolor='w')
-            ax = plt.subplot()
+            ax = plt.subplot(1, 1, 1)
             ax.cla()
             ax.set_axis_off()
             ax.plot([0.001, 0.002], color='w')
@@ -384,7 +385,7 @@ def plotting_thread(directory, cadence):
                 ax.annotate(m, (-17, 20 - (5 * r)), fontsize=26, color='r')
             fname = img_dir + station_dir + station_file
             fig2.savefig(fname)
-            logging.info("Found lock file with msg: " + text[0])
+            logging.info("Lock message: " + text[0])
             fig2.close()
 
 def daq_thread(interface, port, nof_tiles, directory):
