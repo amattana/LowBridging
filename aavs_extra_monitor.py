@@ -442,6 +442,7 @@ if __name__ == "__main__":
     (opts, args) = parser.parse_args(argv[1:])
 
     # Set logging
+    logging.Formatter.converter = time.gmtime
     log = logging.getLogger('')
     log.setLevel(logging.INFO)
     line_format = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
