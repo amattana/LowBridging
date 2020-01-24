@@ -362,7 +362,7 @@ def plotting_thread(directory, cadence):
                 t_axes[n][0].annotate("Acquisition Time (UTC)", (-17.7, -6), fontsize=12, color='black')
                 t_axes[n][0].annotate(t_timestamp, (-17.8, -12), fontsize=12, color='black')
 
-            fig.tight_layout()
+            #fig.tight_layout()
             fig.canvas.draw()
 
             fname = img_dir + station_dir + station_file
