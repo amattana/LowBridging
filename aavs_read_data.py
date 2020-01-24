@@ -105,8 +105,8 @@ if __name__ == "__main__":
             t_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
             t_start = dt_to_timestamp(t_date)
             t_stop = dt_to_timestamp(t_date) + (60 * 60 * 24)
-            print "Start Time:" ts_to_datestring(t_start)
-            print "Stop Time:" ts_to_datestring(t_stop)
+            print "Start Time:" + ts_to_datestring(t_start)
+            print "Stop Time:" + ts_to_datestring(t_stop)
         except:
             print "Bad date format detected (must be YYYY-MM-DD)"
     else:
