@@ -373,7 +373,9 @@ def plotting_thread(directory, cadence):
             # Lock file present
             logging.info("Found lock file")
             fig2 = plt.figure(figsize=(FIG_W, 500), facecolor='w')
+            logging.info("Gen fig")
             ax = plt.subplot(1, 1, 1)
+            logging.info("Gen axis")
             ax.cla()
             ax.set_axis_off()
             ax.plot([0.001, 0.002], color='w')
