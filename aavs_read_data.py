@@ -100,6 +100,8 @@ if __name__ == "__main__":
     t_stop = None
     t_cnt = 0
 
+    print
+
     if opts.date:
         try:
             t_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
