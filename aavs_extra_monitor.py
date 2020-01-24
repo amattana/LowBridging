@@ -2,9 +2,9 @@ from pydaq.persisters import ChannelFormatFileManager, FileDAQModes
 from aavs_calibration.common import get_antenna_positions, get_antenna_tile_names
 from pydaq import daq_receiver as receiver
 import sys
-import matplotlib
-if 'matplotlib.backends' not in sys.modules:
-    matplotlib.use('agg') # not to use X11
+# import matplotlib
+# if 'matplotlib.backends' not in sys.modules:
+#     matplotlib.use('agg') # not to use X11
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import numpy as np
