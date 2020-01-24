@@ -14,7 +14,7 @@ from time import sleep
 import logging
 import signal
 import os
-import datetime
+import datetime, time
 
 
 # Global flag to stop the scrpts
