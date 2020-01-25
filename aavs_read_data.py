@@ -16,6 +16,7 @@ FIG_W = 14
 TILE_H = 3.2
 PIC_PATH = "/storage/monitoring/pictures"
 TEXT_PATH = "/storage/monitoring/text_data"
+ERASE_LINE = '\x1b[2K'
 
 def _connect_station(aavs_station):
     """ Return a connected station """
@@ -297,6 +298,8 @@ if __name__ == "__main__":
                 sys.stdout.write(msg)
                 sys.stdout.flush()
 
-        print "\rTILE-%02d - written %d files" % (tile, t_cnt)
+        msg = "\rTILE-%02d - written %d files   " % (tile, t_cnt)
+        sys.stdout.write(ERASE_LINE + msg)
+        sys.stdout.flush()
 
 
