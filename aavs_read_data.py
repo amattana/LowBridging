@@ -98,7 +98,6 @@ if __name__ == "__main__":
     t_date = None
     t_start = None
     t_stop = None
-    t_cnt = 0
     assex = np.linspace(0, 400, 512)
 
     print
@@ -147,6 +146,7 @@ if __name__ == "__main__":
 
     for tile in tiles:
 
+        t_cnt = 0
         lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile-1)))
 
         outer_grid = GridSpec(4, 4, hspace=0.4, wspace=0.4, left=0.04, right=0.98, bottom=0.04, top=0.96)
@@ -279,16 +279,16 @@ if __name__ == "__main__":
                                 orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
 
                                 plt.savefig(PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + orario + ".png")
-                                msg = "\r[%d/%d] TILE-%02d    " % (y+1, len(lista), tile) + "  --> Writing " + PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + orario + ".png"
+                                msg = "\r[%d/%d] TILE-%02d   " % (y+1, len(lista), tile) + "--> Writing " + PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + orario + ".png"
                                 sys.stdout.write(msg)
                                 sys.stdout.flush()
-                msg = "\r[%d/%d] TILE-%02d   " % (y+1, len(lista), tile) + l[-21:-7] + "   " + \
+                msg = "\r[%d/%d] TILE-%02d  " % (y+1, len(lista), tile) + l[-21:-7] + "   " + \
                       ts_to_datestring(timestamps[0][0]) + "   " + ts_to_datestring(timestamps[-1][0]) + \
                       "                                            "
                 sys.stdout.write(msg)
                 sys.stdout.flush()
             else:
                 print l[-21:-7], ": no metadata available"
-        print
+        print "TILE-%02d   written %d files" % (tile, t_cnt)
 
 
