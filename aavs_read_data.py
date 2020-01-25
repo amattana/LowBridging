@@ -232,6 +232,9 @@ if __name__ == "__main__":
                 os.makedirs(TEXT_PATH + "/TILE-%02d" % tile)
 
         for y, l in enumerate(lista):
+            msg = "\r[%d/%d] TILE-%02d   File: %s" % (y+1, len(lista), tile, l.split("/")[-1])
+            sys.stdout.write(msg)
+            sys.stdout.flush()
             dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile-1))
             if dic:
                 data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
