@@ -289,7 +289,6 @@ if __name__ == "__main__":
                       ts_to_datestring(timestamps[0][0]) + "   " + ts_to_datestring(timestamps[-1][0])
                 sys.stdout.write(ERASE_LINE + msg)
                 sys.stdout.flush()
-                time.sleep(0.2)
             else:
                 msg = "\r[%d/%d] TILE-%02d   File: %s" % (y+1, len(lista), tile, l.split("/")[-1]) + \
                       "   " + ": no metadata available"
