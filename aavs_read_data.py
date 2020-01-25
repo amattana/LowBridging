@@ -157,7 +157,6 @@ if __name__ == "__main__":
         ants = []
         for j in base:
             ants += ["ANT-%03d" % int(j)]
-        print
         ax = []
         fig = plt.figure(figsize=(11, 7), facecolor='w')
         ax_top_map = fig.add_subplot(outer_grid[1])
@@ -242,7 +241,6 @@ if __name__ == "__main__":
                 cnt = 0
                 if not t_start >= timestamps[-1]:
                     if not t_stop <= timestamps[0]:
-                        print
                         for i, t in enumerate(timestamps):
                             if t_start <= t[0] <= t_stop:
                                 cnt = cnt + 1
@@ -283,11 +281,15 @@ if __name__ == "__main__":
                                 orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
 
                                 plt.savefig(PIC_PATH + "/TILE-%02d_" % tile + orario + ".png")
-                                sys.stdout.write("\rWriting " + PIC_PATH + "/TILE-%02d_" % tile + orario + ".png")
+                                msg = "\rWriting " + PIC_PATH + "/TILE-%02d_" % tile + orario + ".png"
+                                sys.stdout.write(msg)
                                 sys.stdout.flush()
-                        print "\n"
-                print "[%d/%d] TILE-%02d\t" % (y+1, len(lista), tile), l[-21:-7], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
-                    ts_to_datestring(timestamps[-1][0]), "\t", cnt
+                msg = "\r[%d/%d] TILE-%02d\t" % (y+1, len(lista), tile) + l[-21:-7] + "\t" + \
+                      ts_to_datestring(timestamps[0][0]) + "\t" + ts_to_datestring(timestamps[-1][0])+ "\t" + cnt
+                sys.stdout.write(msg)
+                sys.stdout.flush()
             else:
                 print l[-21:-7], ": no metadata available"
+        print
+
 
