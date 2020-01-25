@@ -282,10 +282,11 @@ if __name__ == "__main__":
                                 orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
 
                                 plt.savefig(PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + orario + ".png")
-                                msg = "\r[%d/%d] TILE-%02d   " % (y+1, len(lista), tile) + "--> Writing " + PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + orario + ".png"
+                                msg = "\r[%d/%d] TILE-%02d   File: %s" % (y+1, len(lista), tile, l.split("/")[-1]) + \
+                                      "--> Writing " + "TILE-%02d_" % tile + orario + ".png"
                                 sys.stdout.write(msg)
                                 sys.stdout.flush()
-                msg = "\r[%d/%d] TILE-%02d  " % (y+1, len(lista), tile) + l[-21:-7] + "   " + \
+                msg = "\r[%d/%d] TILE-%02d   File: %s" % (y+1, len(lista), tile, l.split("/")[-1]) + "   " + \
                       ts_to_datestring(timestamps[0][0]) + "   " + ts_to_datestring(timestamps[-1][0]) + \
                       "                                            "
                 sys.stdout.write(msg)
