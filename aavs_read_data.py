@@ -234,7 +234,7 @@ if __name__ == "__main__":
             if not os.path.exists(TEXT_PATH):
                 os.makedirs(TEXT_PATH)
 
-        for l in lista:
+        for y, l in enumerate(lista):
             dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile-1))
             if dic:
                 data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
@@ -286,7 +286,7 @@ if __name__ == "__main__":
                                 sys.stdout.write("\rWriting " + PIC_PATH + "/TILE-%02d_" % tile + orario + ".png")
                                 sys.stdout.flush()
                         print
-                print l[-21:-7], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
+                print "[%d/%d] TILE-%02d\t" % (y, len(lista), tile), l[-21:-7], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
                     ts_to_datestring(timestamps[-1][0]), "\t", cnt
             else:
                 print l[-21:-7], ": no metadata available"
