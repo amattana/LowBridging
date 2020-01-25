@@ -289,6 +289,6 @@ if __name__ == "__main__":
                 sys.stdout.flush()
             else:
                 print l[-21:-7], ": no metadata available"
-        print "TILE-%02d   written %d files" % (tile, t_cnt)
+        print "\rTILE-%02d - written %d files" % (tile, t_cnt)
 
 
