@@ -235,7 +235,6 @@ if __name__ == "__main__":
         for y, l in enumerate(lista):
             #print "\n", l.split("\t")[-1], l[-21:-7], (tile - 1)
             dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile-1))
-            time.sleep(0.2)
             if dic:
                 data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
                                                           n_samples=dic['n_blocks'])
@@ -291,8 +290,13 @@ if __name__ == "__main__":
                       "                        "
                 sys.stdout.write(msg)
                 sys.stdout.flush()
+                time.sleep(0.2)
             else:
-                print l[-21:-7], ": no metadata available"
+                msg = "\r[%d/%d] TILE-%02d   File: %s" % (y+1, len(lista), tile, l.split("/")[-1]) + \
+                      "   " + ": no metadata available"
+                sys.stdout.write(msg)
+                sys.stdout.flush()
+
         print "\rTILE-%02d - written %d files" % (tile, t_cnt)
 
 
