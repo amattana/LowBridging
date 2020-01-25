@@ -283,7 +283,7 @@ if __name__ == "__main__":
                                 sys.stdout.write(msg)
                                 sys.stdout.flush()
                 msg = "\r[%d/%d] TILE-%02d\t" % (y+1, len(lista), tile) + l[-21:-7] + "\t" + \
-                      ts_to_datestring(timestamps[0][0]) + "\t" + ts_to_datestring(timestamps[-1][0])+ "\t" + cnt
+                      ts_to_datestring(timestamps[0][0]) + "\t" + ts_to_datestring(timestamps[-1][0]) + "\t" + str(cnt)
                 sys.stdout.write(msg)
                 sys.stdout.flush()
             else:
