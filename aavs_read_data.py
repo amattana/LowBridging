@@ -222,16 +222,14 @@ if __name__ == "__main__":
 
         if not os.path.exists(PIC_PATH):
             os.makedirs(PIC_PATH)
-        PIC_PATH = PIC_PATH + "/TILE-%02d" % tile
-        if not os.path.exists(PIC_PATH):
-            os.makedirs(PIC_PATH)
+        if not os.path.exists(PIC_PATH + "/TILE-%02d" % tile):
+            os.makedirs(PIC_PATH + "/TILE-%02d" % tile)
 
         if opts.save:
             if not os.path.exists(TEXT_PATH):
                 os.makedirs(TEXT_PATH)
-            TEXT_PATH = TEXT_PATH + "/TILE-%02d" % tile
-            if not os.path.exists(TEXT_PATH):
-                os.makedirs(TEXT_PATH)
+            if not os.path.exists(TEXT_PATH + "/TILE-%02d" % tile):
+                os.makedirs(TEXT_PATH + "/TILE-%02d" % tile)
 
         for y, l in enumerate(lista):
             dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile-1))
@@ -280,8 +278,8 @@ if __name__ == "__main__":
                                 ax_top_tile.annotate(orario, (-18, -12), fontsize=12, color='black')
                                 orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
 
-                                plt.savefig(PIC_PATH + "/TILE-%02d_" % tile + orario + ".png")
-                                msg = "\rWriting " + PIC_PATH + "/TILE-%02d_" % tile + orario + ".png"
+                                plt.savefig(PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + orario + ".png")
+                                msg = "\rWriting " + PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + orario + ".png"
                                 sys.stdout.write(msg)
                                 sys.stdout.flush()
                 msg = "\r[%d/%d] TILE-%02d\t" % (y+1, len(lista), tile) + l[-21:-7] + "\t" + \
