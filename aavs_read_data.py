@@ -285,8 +285,8 @@ if __name__ == "__main__":
                                 plt.savefig(PIC_PATH + "/TILE-%02d_" % tile + orario + ".png")
                                 sys.stdout.write("\rWriting " + PIC_PATH + "/TILE-%02d_" % tile + orario + ".png")
                                 sys.stdout.flush()
-                        print
-                print "[%d/%d] TILE-%02d\t" % (y, len(lista), tile), l[-21:-7], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
+                        print "\n"
+                print "[%d/%d] TILE-%02d\t" % (y+1, len(lista), tile), l[-21:-7], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
                     ts_to_datestring(timestamps[-1][0]), "\t", cnt
             else:
                 print l[-21:-7], ": no metadata available"
