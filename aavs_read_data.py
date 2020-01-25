@@ -295,7 +295,7 @@ if __name__ == "__main__":
                 sys.stdout.write(msg)
                 sys.stdout.flush()
 
-        msg = "\rTILE-%02d - written %d files   " % (tile, t_cnt)
+        msg = "\rTILE-%02d - written %d files   \n" % (tile, t_cnt)
         sys.stdout.write(ERASE_LINE)
         sys.stdout.flush()
         sys.stdout.write(msg)
