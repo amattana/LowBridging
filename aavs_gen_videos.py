@@ -36,7 +36,7 @@ if __name__ == "__main__":
         except:
             print "Bad date format detected (must be YYYY-MM-DD)"
 
-    s_date = datetime.datetime.strftime(t_date, "%Y%m%d")
+    s_date = datetime.datetime.strftime(t_date, "%Y-%m-%d")
 
     # else:
     #     if opts.start:
