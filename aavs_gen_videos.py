@@ -82,6 +82,10 @@ if __name__ == "__main__":
         os.mkdir(VIDEO_PATH + "/" + station_name.lower() + "/" + s_date)
 
     for tile in tiles:
+        print "\nExecuting:\n\n"
+        print "ffmpeg -y -f image2 -i " + PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + s_date + \
+              "_\%*.png -vcodec libx264 " + VIDEO_PATH + "/" + station_name.lower() + "/" + s_date + "/" + \
+              s_date + "_TILE-%02d" % tile + ".avi\n\n"
         os.system("ffmpeg -y -f image2 -i " + PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + s_date +
-                  "_%*.png -vcodec libx264 " + VIDEO_PATH + "/" + station_name.lower() + "/" + s_date + "/" +
+                  "_\%*.png -vcodec libx264 " + VIDEO_PATH + "/" + station_name.lower() + "/" + s_date + "/" +
                   s_date + "_TILE-%02d" % tile + ".avi")
