@@ -234,6 +234,7 @@ if __name__ == "__main__":
             x_lines += [xl]
             yl, = ax[i].plot(range(100), color='w')
             y_lines += [yl]
+        print len(x_lines), len(y_lines)
 
         ax_top_tile.cla()
         ax_top_tile.set_axis_off()
