@@ -151,6 +151,13 @@ if __name__ == "__main__":
     for j in base:
         ants += ["ANT-%03d" % int(j)]
 
+    fig = plt.figure(figsize=(11, 7), facecolor='w')
+    ax_top_map = fig.add_subplot(outer_grid[1])
+    ax_top_tile = fig.add_subplot(outer_grid[0])
+    ax = []
+    for i in xrange(nplot):
+        ax += [fig.add_subplot(gs[i])]
+
     for tile in tiles:
 
         t_cnt = 0
@@ -160,9 +167,6 @@ if __name__ == "__main__":
         gs = GridSpecFromSubplotSpec(int(np.ceil(np.sqrt(16))), int(np.ceil(np.sqrt(16))), wspace=0.4, hspace=0.6,
                                      subplot_spec=outer_grid[1:, :])
 
-        ax = []
-        fig = plt.figure(figsize=(11, 7), facecolor='w')
-        ax_top_map = fig.add_subplot(outer_grid[1])
         ax_top_map.set_axis_off()
         ax_top_map.plot([0.001, 0.002], color='wheat')
         ax_top_map.set_xlim(-25, 25)
@@ -179,7 +183,6 @@ if __name__ == "__main__":
             ax_top_map.plot(float(x[en + ((tile - 1) * 16)]), float(y[en + ((tile - 1) * 16)]),
                             marker='+', markersize=4, linestyle='None', color='k')
 
-        ax_top_tile = fig.add_subplot(outer_grid[0])
         ax_top_tile.plot([0.001, 0.002], color='w')
         ax_top_tile.set_xlim(-20, 20)
         ax_top_tile.set_ylim(-20, 20)
@@ -219,7 +222,6 @@ if __name__ == "__main__":
         x_lines = []
         y_lines = []
         for i in xrange(nplot):
-            ax += [fig.add_subplot(gs[i])]
             ax[i].tick_params(axis='both', which='both', labelsize=8)
             ax[i].set_ylim([0, 50])
             ax[i].set_xlim([0, 400])
