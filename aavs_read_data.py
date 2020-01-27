@@ -147,7 +147,7 @@ if __name__ == "__main__":
                                             daq_mode=FileDAQModes.Integrated)
 
     base, x, y = get_antenna_positions(station_name)
-    print len(base), len(x), len(y)
+    #print len(base), len(x), len(y)
     ants = []
     for j in base:
         ants += ["ANT-%03d" % int(j)]
@@ -300,7 +300,7 @@ if __name__ == "__main__":
                                 #plt.show()
                                 plt.savefig(PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + orario + ".png")
                                 msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), tile, l.split("/")[-1]) + \
-                                      "--> Writing " + "TILE-%02d_" % tile + orario + ".png"
+                                      " --> Writing " + "TILE-%02d_" % tile + orario + ".png"
                                 sys.stdout.write(ERASE_LINE + msg)
                                 sys.stdout.flush()
                 msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), tile, l.split("/")[-1]) + "   " + \
