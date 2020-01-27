@@ -180,6 +180,7 @@ if __name__ == "__main__":
 
         # Draw antenna positions
         for en in range(nplot):
+            print en, float(x[en + ((tile - 1) * 16)]), float(y[en + ((tile - 1) * 16)]
             ax_top_map.plot(float(x[en + ((tile - 1) * 16)]), float(y[en + ((tile - 1) * 16)]),
                             marker='+', markersize=4, linestyle='None', color='k')
 
