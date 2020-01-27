@@ -147,6 +147,7 @@ if __name__ == "__main__":
                                             daq_mode=FileDAQModes.Integrated)
 
     base, x, y = get_antenna_positions(station_name)
+    print len(base), len(x), len(y)
     ants = []
     for j in base:
         ants += ["ANT-%03d" % int(j)]
@@ -180,7 +181,7 @@ if __name__ == "__main__":
 
         # Draw antenna positions
         for en in range(nplot):
-            print en, float(x[en + ((tile - 1) * 16)]), float(y[en + ((tile - 1) * 16)])
+            print en, en + ((tile - 1) * 16), float(x[en + ((tile - 1) * 16)]), float(y[en + ((tile - 1) * 16)])
             ax_top_map.plot(float(x[en + ((tile - 1) * 16)]), float(y[en + ((tile - 1) * 16)]), marker='+', markersize=4, linestyle='None', color='k')
 
         ax_top_tile.plot([0.001, 0.002], color='w')
