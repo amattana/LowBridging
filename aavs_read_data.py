@@ -146,6 +146,11 @@ if __name__ == "__main__":
     file_manager = ChannelFormatFileManager(root_path=opts.directory+station_name.lower(),
                                             daq_mode=FileDAQModes.Integrated)
 
+    base, x, y = get_antenna_positions(station_name)
+    ants = []
+    for j in base:
+        ants += ["ANT-%03d" % int(j)]
+
     for tile in tiles:
 
         t_cnt = 0
@@ -155,10 +160,6 @@ if __name__ == "__main__":
         gs = GridSpecFromSubplotSpec(int(np.ceil(np.sqrt(16))), int(np.ceil(np.sqrt(16))), wspace=0.4, hspace=0.6,
                                      subplot_spec=outer_grid[1:, :])
 
-        base, x, y = get_antenna_positions(station_name)
-        ants = []
-        for j in base:
-            ants += ["ANT-%03d" % int(j)]
         ax = []
         fig = plt.figure(figsize=(11, 7), facecolor='w')
         ax_top_map = fig.add_subplot(outer_grid[1])
@@ -210,12 +211,27 @@ if __name__ == "__main__":
         # ax_top_y.set_title("Pol Y", fontsize=10)
         #
         #print self.nplot,math.sqrt(self.nplot)
+        x_lines = []
+        y_lines = []
         for i in xrange(nplot):
             ax += [fig.add_subplot(gs[i])]
             ax[i].tick_params(axis='both', which='both', labelsize=8)
-            ax[i].set_ylim([-80, -20])
+            ax[i].set_ylim([0, 50])
             ax[i].set_xlim([0, 400])
-            ax[i].set_title("IN " + str(i + 1), fontsize=8)
+            #ax[i].set_title("IN " + str(i + 1), fontsize=8) # scrivere nomi delle antenne al posto di questa
+            ax[i].set_title(ants[i + 16 * (tile - 1)], fontsize=8)
+            l, = ax[i].plot(range(100), color='w')
+            x_lines += [l]
+            c, = ax[i].plot(range(100), color='w')
+            y_lines += [c]
+
+        ax_top_tile.cla()
+        ax_top_tile.set_axis_off()
+        ax_top_tile.plot([0.001, 0.002], color='w')
+        ax_top_tile.set_xlim(-20, 20)
+        ax_top_tile.set_ylim(-20, 20)
+        ax_top_tile.annotate("TILE %02d" % tile, (-12, 6), fontsize=24, color='black')
+        tstamp_picture = ax_top_tile.annotate(" ", (-18, -12), fontsize=12, color='black')
 
         # Draw antenna positions
         for en in range(nplot):
@@ -257,7 +273,9 @@ if __name__ == "__main__":
                                                   ants[ant + 16 * (tile - 1)] + "_POL-X_" + orario + ".txt") as f:
                                             for s in spettro:
                                                 f.write("%f\n" % s)
-                                    ax[ant].plot(assex[2:-1], spettro[2:-1], scaley=True, color='b')
+                                    x_lines[ant + 16 * (tile - 1)].set_ydata(spettro)
+                                    x_lines[ant + 16 * (tile - 1)].set_color('b')
+                                    #ax[ant].plot(assex[2:-1], spettro[2:-1], scaley=True, color='b')
                                     with np.errstate(divide='ignore'):
                                         spettro = 10 * np.log10(data[:, ant, 1, i])
                                     if opts.save:
@@ -265,19 +283,14 @@ if __name__ == "__main__":
                                                   ants[ant + 16 * (tile - 1)] + "_POL-Y_" + orario + ".txt") as f:
                                             for s in spettro:
                                                 f.write("%f\n" % s)
-                                    ax[ant].plot(assex[2:-1], spettro[2:-1], scaley=True, color='g')
-                                    ax[ant].set_ylim(0, 50)
-                                    ax[ant].set_xlim(0, 400)
-                                    ax[ant].set_title(ants[ant + 16 * (tile - 1)], fontsize=8)
+                                    y_lines[ant + 16 * (tile - 1)].set_ydata(spettro)
+                                    y_lines[ant + 16 * (tile - 1)].set_color('g')
+                                    #ax[ant].plot(assex[2:-1], spettro[2:-1], scaley=True, color='g')
+                                    #ax[ant].set_ylim(0, 50)
+                                    #ax[ant].set_xlim(0, 400)
+                                    #ax[ant].set_title(ants[ant + 16 * (tile - 1)], fontsize=8)
 
-                                ax_top_tile.cla()
-                                ax_top_tile.set_axis_off()
-                                ax_top_tile.plot([0.001, 0.002], color='w')
-                                ax_top_tile.set_xlim(-20, 20)
-                                ax_top_tile.set_ylim(-20, 20)
-                                ax_top_tile.annotate("TILE %02d" % tile, (-12, 6), fontsize=24, color='black')
-                                orario = ts_to_datestring(t[0])
-                                ax_top_tile.annotate(orario, (-18, -12), fontsize=12, color='black')
+                                tstamp_picture.set_text(ts_to_datestring(t[0]))
                                 orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
 
                                 plt.savefig(PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + orario + ".png")
@@ -296,9 +309,8 @@ if __name__ == "__main__":
                 sys.stdout.flush()
 
         msg = "\rTILE-%02d - written %d files   \n" % (tile, t_cnt)
-        sys.stdout.write(ERASE_LINE)
+        sys.stdout.write(ERASE_LINE + msg)
         sys.stdout.flush()
-        sys.stdout.write(msg)
-        sys.stdout.flush()
+
 
 
