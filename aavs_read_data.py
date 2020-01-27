@@ -174,6 +174,11 @@ if __name__ == "__main__":
         ax_top_map.annotate("N", (-1, 21), fontsize=10, color='black')
         ax_top_map.annotate("S", (-1, -24), fontsize=10, color='black')
 
+        # Draw antenna positions
+        for en in range(nplot):
+            ax_top_map.plot(float(x[en + ((tile - 1) * 16)]), float(y[en + ((tile - 1) * 16)]),
+                            marker='+', markersize=4, linestyle='None', color='k')
+
         ax_top_tile = fig.add_subplot(outer_grid[0])
         ax_top_tile.plot([0.001, 0.002], color='w')
         ax_top_tile.set_xlim(-20, 20)
@@ -233,11 +238,6 @@ if __name__ == "__main__":
         ax_top_tile.annotate("TILE %02d" % tile, (-12, 6), fontsize=24, color='black')
         tstamp_picture = ax_top_tile.annotate(" ", (-18, -12), fontsize=12, color='black')
 
-        # Draw antenna positions
-        for en in range(nplot):
-            ax_top_map.plot(float(x[en + ((tile - 1) * 16)]), float(y[en + ((tile - 1) * 16)]),
-                            marker='+', markersize=4, linestyle='None', color='k')
-
         if not os.path.exists(PIC_PATH):
             os.makedirs(PIC_PATH)
         if not os.path.exists(PIC_PATH + "/TILE-%02d" % tile):
@@ -265,7 +265,7 @@ if __name__ == "__main__":
                                 # Generate picture
                                 orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
                                 for ant in range(nplot):
-                                    ax[ant].cla()
+                                    #ax[ant].cla()
                                     with np.errstate(divide='ignore'):
                                         spettro = 10 * np.log10(data[:, ant, 0, i])
                                     if opts.save:
