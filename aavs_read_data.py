@@ -225,10 +225,10 @@ if __name__ == "__main__":
             ax[i].set_xlim([0, 400])
             #ax[i].set_title("IN " + str(i + 1), fontsize=8) # scrivere nomi delle antenne al posto di questa
             ax[i].set_title(ants[i + 16 * (tile - 1)], fontsize=8)
-            l, = ax[i].plot(range(100), color='w')
-            x_lines += [l]
-            c, = ax[i].plot(range(100), color='w')
-            y_lines += [c]
+            xl, = ax[i].plot(range(100), color='w')
+            x_lines += [xl]
+            yl, = ax[i].plot(range(100), color='w')
+            y_lines += [yl]
 
         ax_top_tile.cla()
         ax_top_tile.set_axis_off()
@@ -273,8 +273,8 @@ if __name__ == "__main__":
                                                   ants[ant + 16 * (tile - 1)] + "_POL-X_" + orario + ".txt") as f:
                                             for s in spettro:
                                                 f.write("%f\n" % s)
-                                    x_lines[ant + 16 * (tile - 1)].set_ydata(spettro)
-                                    x_lines[ant + 16 * (tile - 1)].set_color('b')
+                                    x_lines[ant].set_ydata(spettro)
+                                    x_lines[ant].set_color('b')
                                     #ax[ant].plot(assex[2:-1], spettro[2:-1], scaley=True, color='b')
                                     with np.errstate(divide='ignore'):
                                         spettro = 10 * np.log10(data[:, ant, 1, i])
@@ -283,8 +283,8 @@ if __name__ == "__main__":
                                                   ants[ant + 16 * (tile - 1)] + "_POL-Y_" + orario + ".txt") as f:
                                             for s in spettro:
                                                 f.write("%f\n" % s)
-                                    y_lines[ant + 16 * (tile - 1)].set_ydata(spettro)
-                                    y_lines[ant + 16 * (tile - 1)].set_color('g')
+                                    y_lines[ant].set_ydata(spettro)
+                                    y_lines[ant].set_color('g')
                                     #ax[ant].plot(assex[2:-1], spettro[2:-1], scaley=True, color='g')
                                     #ax[ant].set_ylim(0, 50)
                                     #ax[ant].set_xlim(0, 400)
@@ -293,9 +293,11 @@ if __name__ == "__main__":
                                 tstamp_picture.set_text(ts_to_datestring(t[0]))
                                 orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
 
-                                plt.draw()
-                                plt.show()
-                                #plt.savefig(PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + orario + ".png")
+
+
+                                #plt.draw()
+                                #plt.show()
+                                plt.savefig(PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + orario + ".png")
                                 msg = "\r[%d/%d] TILE-%02d   File: %s" % (y+1, len(lista), tile, l.split("/")[-1]) + \
                                       "--> Writing " + "TILE-%02d_" % tile + orario + ".png"
                                 sys.stdout.write(ERASE_LINE + msg)
