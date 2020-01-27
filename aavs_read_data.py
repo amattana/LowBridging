@@ -234,7 +234,7 @@ if __name__ == "__main__":
             x_lines += [xl]
             yl, = ax[i].plot(range(512), range(512), color='w')
             y_lines += [yl]
-        print x_lines[0]
+        #print x_lines[0]
 
         ax_top_tile.cla()
         ax_top_tile.set_axis_off()
