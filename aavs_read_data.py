@@ -278,8 +278,8 @@ if __name__ == "__main__":
                                                   ants[ant + 16 * (tile - 1)] + "_POL-X_" + orario + ".txt") as f:
                                             for s in spettro:
                                                 f.write("%f\n" % s)
-                                    #x_lines[ant].set_ydata(spettro)
-                                    #x_lines[ant].set_color('b')
+                                    x_lines[ant].set_ydata(spettro)
+                                    x_lines[ant].set_color('b')
                                     #ax[ant].plot(assex[2:-1], spettro[2:-1], scaley=True, color='b')
                                     with np.errstate(divide='ignore'):
                                         spettro = 10 * np.log10(data[:, ant, 1, i])
@@ -288,8 +288,8 @@ if __name__ == "__main__":
                                                   ants[ant + 16 * (tile - 1)] + "_POL-Y_" + orario + ".txt") as f:
                                             for s in spettro:
                                                 f.write("%f\n" % s)
-                                    #y_lines[ant].set_ydata(spettro)
-                                    #y_lines[ant].set_color('g')
+                                    y_lines[ant].set_ydata(spettro)
+                                    y_lines[ant].set_color('g')
                                     #ax[ant].plot(assex[2:-1], spettro[2:-1], scaley=True, color='g')
                                     #ax[ant].set_ylim(0, 50)
                                     #ax[ant].set_xlim(0, 400)
