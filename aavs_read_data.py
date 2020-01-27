@@ -293,7 +293,9 @@ if __name__ == "__main__":
                                 tstamp_picture.set_text(ts_to_datestring(t[0]))
                                 orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
 
-                                plt.savefig(PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + orario + ".png")
+                                plt.draw()
+                                plt.show()
+                                #plt.savefig(PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + orario + ".png")
                                 msg = "\r[%d/%d] TILE-%02d   File: %s" % (y+1, len(lista), tile, l.split("/")[-1]) + \
                                       "--> Writing " + "TILE-%02d_" % tile + orario + ".png"
                                 sys.stdout.write(ERASE_LINE + msg)
