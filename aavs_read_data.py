@@ -181,7 +181,7 @@ if __name__ == "__main__":
 
         # Draw antenna positions
         for en in range(nplot):
-            print en, en + ((tile - 1) * 16), float(x[en + ((tile - 1) * 16)]), float(y[en + ((tile - 1) * 16)])
+            #print en, en + ((tile - 1) * 16), float(x[en + ((tile - 1) * 16)]), float(y[en + ((tile - 1) * 16)])
             ax_top_map.plot(float(x[en + ((tile - 1) * 16)]), float(y[en + ((tile - 1) * 16)]), marker='+', markersize=4, linestyle='None', color='k')
 
         ax_top_tile.plot([0.001, 0.002], color='w')
@@ -252,7 +252,7 @@ if __name__ == "__main__":
             if not os.path.exists(TEXT_PATH + "/TILE-%02d" % tile):
                 os.makedirs(TEXT_PATH + "/TILE-%02d" % tile)
 
-        for y, l in enumerate(lista):
+        for cnt_l, l in enumerate(lista):
             dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile-1))
             if dic:
                 data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
@@ -299,16 +299,16 @@ if __name__ == "__main__":
                                 #plt.draw()
                                 #plt.show()
                                 plt.savefig(PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + orario + ".png")
-                                msg = "\r[%d/%d] TILE-%02d   File: %s" % (y+1, len(lista), tile, l.split("/")[-1]) + \
+                                msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), tile, l.split("/")[-1]) + \
                                       "--> Writing " + "TILE-%02d_" % tile + orario + ".png"
                                 sys.stdout.write(ERASE_LINE + msg)
                                 sys.stdout.flush()
-                msg = "\r[%d/%d] TILE-%02d   File: %s" % (y+1, len(lista), tile, l.split("/")[-1]) + "   " + \
+                msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), tile, l.split("/")[-1]) + "   " + \
                       ts_to_datestring(timestamps[0][0]) + "   " + ts_to_datestring(timestamps[-1][0])
                 sys.stdout.write(ERASE_LINE + msg)
                 sys.stdout.flush()
             else:
-                msg = "\r[%d/%d] TILE-%02d   File: %s" % (y+1, len(lista), tile, l.split("/")[-1]) + \
+                msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), tile, l.split("/")[-1]) + \
                       "   " + ": no metadata available"
                 sys.stdout.write(msg)
                 sys.stdout.flush()
