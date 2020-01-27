@@ -1,8 +1,8 @@
 from pydaq.persisters import ChannelFormatFileManager, FileDAQModes
 import sys, os, glob
-import matplotlib
-if not 'matplotlib.backends' in sys.modules:
-    matplotlib.use('agg') # not to use X11from pydaq.persisters import ChannelFormatFileManager, FileDAQModes
+#import matplotlib
+#if not 'matplotlib.backends' in sys.modules:
+#    matplotlib.use('agg') # not to use X11from pydaq.persisters import ChannelFormatFileManager, FileDAQModes
 import matplotlib.pyplot as plt
 import numpy as np
 from pyaavs import station
@@ -292,8 +292,6 @@ if __name__ == "__main__":
 
                                 tstamp_picture.set_text(ts_to_datestring(t[0]))
                                 orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
-
-
 
                                 #plt.draw()
                                 #plt.show()
