@@ -225,6 +225,7 @@ if __name__ == "__main__":
         x_lines = []
         y_lines = []
         for i in xrange(nplot):
+            ax[i].cla()
             ax[i].tick_params(axis='both', which='both', labelsize=8)
             ax[i].set_ylim([0, 50])
             ax[i].set_xlim([0, 400])
