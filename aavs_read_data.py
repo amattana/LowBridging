@@ -272,6 +272,7 @@ if __name__ == "__main__":
                                 orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
                                 for ant in range(nplot):
                                     #ax[ant].cla()
+                                    print ant
                                     with np.errstate(divide='ignore'):
                                         spettro = 10 * np.log10(data[:, ant, 0, i])
                                     if opts.save:
