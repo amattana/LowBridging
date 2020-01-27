@@ -151,6 +151,10 @@ if __name__ == "__main__":
     for j in base:
         ants += ["ANT-%03d" % int(j)]
 
+    outer_grid = GridSpec(4, 4, hspace=0.4, wspace=0.4, left=0.04, right=0.98, bottom=0.04, top=0.96)
+    gs = GridSpecFromSubplotSpec(int(np.ceil(np.sqrt(16))), int(np.ceil(np.sqrt(16))), wspace=0.4, hspace=0.6,
+                                 subplot_spec=outer_grid[1:, :])
+
     fig = plt.figure(figsize=(11, 7), facecolor='w')
     ax_top_map = fig.add_subplot(outer_grid[1])
     ax_top_tile = fig.add_subplot(outer_grid[0])
@@ -162,10 +166,6 @@ if __name__ == "__main__":
 
         t_cnt = 0
         lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile-1)))
-
-        outer_grid = GridSpec(4, 4, hspace=0.4, wspace=0.4, left=0.04, right=0.98, bottom=0.04, top=0.96)
-        gs = GridSpecFromSubplotSpec(int(np.ceil(np.sqrt(16))), int(np.ceil(np.sqrt(16))), wspace=0.4, hspace=0.6,
-                                     subplot_spec=outer_grid[1:, :])
 
         ax_top_map.set_axis_off()
         ax_top_map.plot([0.001, 0.002], color='wheat')
