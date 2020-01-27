@@ -294,7 +294,7 @@ if __name__ == "__main__":
                                     #ax[ant].set_ylim(0, 50)
                                     #ax[ant].set_xlim(0, 400)
                                     #ax[ant].set_title(ants[ant + 16 * (tile - 1)], fontsize=8)
-                                plt.draw()
+                                #plt.draw()
 
                                 tstamp_picture.set_text(ts_to_datestring(t[0]))
                                 orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
