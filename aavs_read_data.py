@@ -168,6 +168,7 @@ if __name__ == "__main__":
         t_cnt = 0
         lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile-1)))
 
+        ax_top_map.cla()
         ax_top_map.set_axis_off()
         ax_top_map.plot([0.001, 0.002], color='wheat')
         ax_top_map.set_xlim(-25, 25)
@@ -184,6 +185,7 @@ if __name__ == "__main__":
             #print en, en + ((tile - 1) * 16), float(x[en + ((tile - 1) * 16)]), float(y[en + ((tile - 1) * 16)])
             ax_top_map.plot(float(x[en + ((tile - 1) * 16)]), float(y[en + ((tile - 1) * 16)]), marker='+', markersize=4, linestyle='None', color='k')
 
+        ax_top_tile.cla()
         ax_top_tile.plot([0.001, 0.002], color='w')
         ax_top_tile.set_xlim(-20, 20)
         ax_top_tile.set_ylim(-20, 20)
@@ -292,6 +294,7 @@ if __name__ == "__main__":
                                     #ax[ant].set_ylim(0, 50)
                                     #ax[ant].set_xlim(0, 400)
                                     #ax[ant].set_title(ants[ant + 16 * (tile - 1)], fontsize=8)
+                                plt.draw()
 
                                 tstamp_picture.set_text(ts_to_datestring(t[0]))
                                 orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
