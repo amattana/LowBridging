@@ -228,7 +228,11 @@ if __name__ == "__main__":
             ax[i].cla()
             ax[i].tick_params(axis='both', which='both', labelsize=8)
             ax[i].set_ylim([0, 50])
-            ax[i].set_xlim([0, 400])
+            ax[i].set_xlim([0, 512])
+            ax[i].set_xticks([0, 128, 256, 384, 512])
+            ax[i].set_xticklabels([0, 100, 200, 300, 400], fontsize=8)
+            ax[i].set_xlabel("MHz", fontsize=10)
+
             #ax[i].set_title("IN " + str(i + 1), fontsize=8) # scrivere nomi delle antenne al posto di questa
             ax[i].set_title(ants[i + 16 * (tile - 1)], fontsize=8)
             xl, = ax[i].plot(range(512), range(512), color='b')
