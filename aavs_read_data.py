@@ -132,8 +132,10 @@ if __name__ == "__main__":
 
     if "all" in opts.tile.lower():
         tiles = [i+1 for i in range(16)]
+        tile_names = [str(i+1) for i in range(16)]
     else:
         tiles = [int(i) for i in opts.tile.split(",")]
+        tile_names = [str(i) for i in opts.tile.split(",")]
 
     # Load configuration file
     station.load_configuration_file(opts.config)
@@ -142,6 +144,7 @@ if __name__ == "__main__":
     if station_name == "AAVS1.5":
         if "all" in opts.tile.lower():
             tiles = [1, 2, 3]
+            tile_names = ["7", "11", "16"]
 
     print "\nStation Name: ", station_name
     print "Checking directory: ", opts.directory+station_name.lower() + "\n"
@@ -167,7 +170,7 @@ if __name__ == "__main__":
     for i in xrange(nplot):
         ax += [fig.add_subplot(gs[i])]
 
-    for tile in tiles:
+    for en_tile, tile in enumerate(tiles):
 
         t_cnt = 0
         lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile-1)))
@@ -250,19 +253,19 @@ if __name__ == "__main__":
         ax_top_tile.plot([0.001, 0.002], color='w')
         ax_top_tile.set_xlim(-20, 20)
         ax_top_tile.set_ylim(-20, 20)
-        ax_top_tile.annotate("TILE %02d" % tile, (-12, 6), fontsize=24, color='black')
+        ax_top_tile.annotate("TILE %02d" % int(tile_names[en_tile]), (-12, 6), fontsize=24, color='black')
         tstamp_picture = ax_top_tile.annotate(" ", (-18, -12), fontsize=12, color='black')
 
         if not os.path.exists(PIC_PATH):
             os.makedirs(PIC_PATH)
-        if not os.path.exists(PIC_PATH + "/TILE-%02d" % tile):
-            os.makedirs(PIC_PATH + "/TILE-%02d" % tile)
+        if not os.path.exists(PIC_PATH + "/TILE-%02d" % int(tile_names[en_tile])):
+            os.makedirs(PIC_PATH + "/TILE-%02d" % int(tile_names[en_tile]))
 
         if opts.save:
             if not os.path.exists(TEXT_PATH):
                 os.makedirs(TEXT_PATH)
-            if not os.path.exists(TEXT_PATH + "/TILE-%02d" % tile):
-                os.makedirs(TEXT_PATH + "/TILE-%02d" % tile)
+            if not os.path.exists(TEXT_PATH + "/TILE-%02d" % int(tile_names[en_tile])):
+                os.makedirs(TEXT_PATH + "/TILE-%02d" % int(tile_names[en_tile]))
 
         for cnt_l, l in enumerate(lista):
             dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile-1))
@@ -311,22 +314,22 @@ if __name__ == "__main__":
 
                                 #plt.draw()
                                 #plt.show()
-                                plt.savefig(PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + orario + ".png")
-                                msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), tile, l.split("/")[-1]) + \
-                                      " --> Writing " + "TILE-%02d_" % tile + orario + ".png"
+                                plt.savefig(PIC_PATH + "/TILE-%02d/TILE-%02d_" % (int(tile_names[en_tile]), int(tile_names[en_tile])) + orario + ".png")
+                                msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), int(tile_names[en_tile]), l.split("/")[-1]) + \
+                                      " --> Writing " + "TILE-%02d_" % int(tile_names[en_tile]) + orario + ".png"
                                 sys.stdout.write(ERASE_LINE + msg)
                                 sys.stdout.flush()
-                msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), tile, l.split("/")[-1]) + "   " + \
+                msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), int(tile_names[en_tile]), l.split("/")[-1]) + "   " + \
                       ts_to_datestring(timestamps[0][0]) + "   " + ts_to_datestring(timestamps[-1][0])
                 sys.stdout.write(ERASE_LINE + msg)
                 sys.stdout.flush()
             else:
-                msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), tile, l.split("/")[-1]) + \
+                msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), int(tile_names[en_tile]), l.split("/")[-1]) + \
                       "   " + ": no metadata available"
                 sys.stdout.write(msg)
                 sys.stdout.flush()
 
-        msg = "\rTILE-%02d - written %d files   \n" % (tile, t_cnt)
+        msg = "\rTILE-%02d - written %d files   \n" % (int(tile_names[en_tile]), t_cnt)
         sys.stdout.write(ERASE_LINE + msg)
         sys.stdout.flush()
 
