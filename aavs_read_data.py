@@ -307,7 +307,8 @@ if __name__ == "__main__":
                                     with np.errstate(divide='ignore'):
                                         spettro = 10 * np.log10(data[:, ant, 1, i])
                                     if opts.save:
-                                        with open(TEXT_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_" % tile +
+                                        with open(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d" %
+                                                  int(tile_names[en_tile]) + "/TILE-%02d_" % int(tile_names[en_tile]) +
                                                   ants[ant + 16 * (tile - 1)] + "_POL-Y_" + orario + ".txt") as f:
                                             for s in spettro:
                                                 f.write("%f\n" % s)
