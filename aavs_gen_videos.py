@@ -54,16 +54,23 @@ if __name__ == "__main__":
 
     if "all" in opts.tile.lower():
         tiles = [i+1 for i in range(16)]
+        tile_names = [str(i+1) for i in range(16)]
     else:
         tiles = [int(i) for i in opts.tile.split(",")]
+        tile_names = [str(i) for i in opts.tile.split(",")]
 
     # Load configuration file
     station.load_configuration_file(opts.config)
     station_name = station.configuration['station']['name']
 
+    if station_name == "AAVS1.5":
+        if "all" in opts.tile.lower():
+            tiles = [1, 2, 3]
+            tile_names = ["7", "11", "16"]
+
     print "\nStation Name: ", station_name
     print "Checking directory: ", opts.directory+station_name.lower() + "\n"
-    print "Tiles to be processed: ", tiles, "\n"
+    print "Tiles to be processed: ", tile_names, "\n"
 
     if not os.path.exists(PIC_PATH):
         print "Generating pictures directory"
@@ -73,19 +80,21 @@ if __name__ == "__main__":
         print "Generating videos directory"
         os.mkdir(VIDEO_PATH)
 
-    if not os.path.exists(VIDEO_PATH + "/" + station_name.lower()):
+    if not os.path.exists(VIDEO_PATH + "/" + station_name):
         print "Generating stations video directory"
-        os.mkdir(VIDEO_PATH + "/" + station_name.lower())
+        os.mkdir(VIDEO_PATH + "/" + station_name)
 
-    if not os.path.exists(VIDEO_PATH + "/" + station_name.lower() + "/" + s_date):
+    if not os.path.exists(VIDEO_PATH + "/" + station_name + "/" + s_date):
         print "Generating stations video directory"
-        os.mkdir(VIDEO_PATH + "/" + station_name.lower() + "/" + s_date)
+        os.mkdir(VIDEO_PATH + "/" + station_name + "/" + s_date)
 
-    for tile in tiles:
+    for en_tile, tile in enumerate(tiles):
         print "\nExecuting:\n\n"
-        print "ffmpeg -y -f image2 -i " + PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + s_date + \
-              "_%*.png -vcodec libx264 " + VIDEO_PATH + "/" + station_name.lower() + "/" + s_date + "/" + \
+        print "ffmpeg -y -f image2 -i " + PIC_PATH + "/" + station_name + "/" + s_date.replace("-", "") + \
+              "/TILE-%02d/TILE-%02d_" % (int(tile_names[en_tile]), int(tile_names[en_tile])) + s_date + \
+              "_%*.png -vcodec libx264 " + VIDEO_PATH + "/" + station_name + "/" + s_date + "/" + \
               s_date + "_TILE-%02d" % tile + ".avi\n\n"
-        os.system("ffmpeg -y -f image2 -i " + PIC_PATH + "/TILE-%02d/TILE-%02d_" % (tile, tile) + s_date +
-                  "_%*.png -vcodec libx264 " + VIDEO_PATH + "/" + station_name.lower() + "/" + s_date + "/" +
+        os.system("ffmpeg -y -f image2 -i " + PIC_PATH + "/" + station_name + "/" + s_date.replace("-", "") +
+                  "/TILE-%02d/TILE-%02d_" % (int(tile_names[en_tile]), int(tile_names[en_tile])) + s_date +
+                  "_%*.png -vcodec libx264 " + VIDEO_PATH + "/" + station_name + "/" + s_date + "/" +
                   s_date + "_TILE-%02d" % tile + ".avi")
