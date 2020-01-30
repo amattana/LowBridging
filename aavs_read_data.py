@@ -300,7 +300,7 @@ if __name__ == "__main__":
                                         with open(TEXT_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d" %
                                                   int(tile_names[en_tile]) + "/TILE-%02d_" % int(tile_names[en_tile]) +
                                                   ants[ant + 16 * (tile - 1)] + "_POL-X_" + orario + ".txt", "w") as f:
-                                            for s in spettro:
+                                            for s in data[:, ant, 0, i]:
                                                 f.write("%f\n" % s)
                                     x_lines[ant].set_ydata(spettro)
                                     #x_lines[ant].set_color('b')
@@ -311,7 +311,7 @@ if __name__ == "__main__":
                                         with open(TEXT_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d" %
                                                   int(tile_names[en_tile]) + "/TILE-%02d_" % int(tile_names[en_tile]) +
                                                   ants[ant + 16 * (tile - 1)] + "_POL-Y_" + orario + ".txt", "w") as f:
-                                            for s in spettro:
+                                            for s in data[:, ant, 1, i]:
                                                 f.write("%f\n" % s)
                                     y_lines[ant].set_ydata(spettro)
                                     #y_lines[ant].set_color('g')
