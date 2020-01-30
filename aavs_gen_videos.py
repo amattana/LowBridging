@@ -7,9 +7,9 @@ VIDEO_PATH = "/storage/monitoring/videos"
 
 if __name__ == "__main__":
     from optparse import OptionParser
-    from sys import argv, stdout
+    from sys import argv
 
-    parser = OptionParser(usage="usage: %aavs_read_data [options]")
+    parser = OptionParser(usage="usage: %aavs_gen_videos [options]")
     parser.add_option("--config", action="store", dest="config",
                       default="/opt/aavs/config/aavs2.yml",
                       help="Station configuration files to use, comma-separated (default: AAVS1)")
@@ -18,10 +18,6 @@ if __name__ == "__main__":
                       help="Directory where plots will be generated (default: /storage/monitoring/integrated_data)")
     parser.add_option("--tile", action="store", dest="tile", type=str,
                       default="1", help="Tile Number")
-    parser.add_option("--start", action="store", dest="start",
-                      default="", help="Start time for filter (YYYY-mm-DD_HH:MM:SS)")
-    parser.add_option("--stop", action="store", dest="stop",
-                      default="", help="Stop time for filter (YYYY-mm-DD_HH:MM:SS)")
     parser.add_option("--date", action="store", dest="date",
                       default="", help="Stop time for filter (YYYY-mm-DD)")
     (opts, args) = parser.parse_args(argv[1:])
@@ -37,20 +33,6 @@ if __name__ == "__main__":
             print "Bad date format detected (must be YYYY-MM-DD)"
 
     s_date = datetime.datetime.strftime(t_date, "%Y-%m-%d")
-
-    # else:
-    #     if opts.start:
-    #         try:
-    #             t_start = dt_to_timestamp(datetime.datetime.strptime(opts.start, "%Y-%m-%d_%H:%M:%S"))
-    #             print "Start Time:  " + ts_to_datestring(t_start)
-    #         except:
-    #             print "Bad t_start time format detected (must be YYYY-MM-DD_HH:MM:SS)"
-    #     if opts.stop:
-    #         try:
-    #             t_stop = dt_to_timestamp(datetime.datetime.strptime(opts.stop, "%Y-%m-%d_%H:%M:%S"))
-    #             print "Stop  Time:  " + ts_to_datestring(t_stop)
-    #         except:
-    #             print "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)"
 
     if "all" in opts.tile.lower():
         tiles = [i+1 for i in range(16)]
