@@ -75,8 +75,8 @@ if __name__ == "__main__":
         print "ffmpeg -y -f image2 -i " + PIC_PATH + "/" + station_name + "/" + s_date.replace("-", "") + \
               "/TILE-%02d/TILE-%02d_" % (int(tile_names[en_tile]), int(tile_names[en_tile])) + s_date + \
               "_%*.png -vcodec libx264 " + VIDEO_PATH + "/" + station_name + "/" + s_date + "/" + \
-              s_date + "_" + station_name + "_TILE-%02d" % int(tile_names[en_tile])) + ".avi\n\n"
+              s_date + "_" + station_name + "_TILE-%02d" % int(tile_names[en_tile]) + ".avi\n\n"
         os.system("ffmpeg -y -f image2 -i " + PIC_PATH + "/" + station_name + "/" + s_date.replace("-", "") +
                   "/TILE-%02d/TILE-%02d_" % (int(tile_names[en_tile]), int(tile_names[en_tile])) + s_date +
                   "_%*.png -vcodec libx264 " + VIDEO_PATH + "/" + station_name + "/" + s_date + "/" +
-                  s_date + "_" + station_name + "_TILE-%02d" % int(tile_names[en_tile])) + ".avi")
+                  s_date + "_" + station_name + "_TILE-%02d" % int(tile_names[en_tile]) + ".avi")
