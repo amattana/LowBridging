@@ -139,6 +139,10 @@ if __name__ == "__main__":
     station.load_configuration_file(opts.config)
     station_name = station.configuration['station']['name']
 
+    if station_name == "AAVS1.5":
+        if "all" in opts.tile.lower():
+            tiles = [1, 2, 3]
+
     print "\nStation Name: ", station_name
     print "Checking directory: ", opts.directory+station_name.lower() + "\n"
     print "Looking for tiles: ", tiles, "\n"
