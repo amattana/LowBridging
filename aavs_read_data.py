@@ -126,6 +126,8 @@ if __name__ == "__main__":
             except:
                 print "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)"
 
+    date_path = tstamp_to_fname(t_start)[:-6]
+
     plt.ioff()
     nplot = 16
     ind = np.arange(nplot)
@@ -258,14 +260,18 @@ if __name__ == "__main__":
 
         if not os.path.exists(PIC_PATH):
             os.makedirs(PIC_PATH)
-        if not os.path.exists(PIC_PATH + "/TILE-%02d" % int(tile_names[en_tile])):
-            os.makedirs(PIC_PATH + "/TILE-%02d" % int(tile_names[en_tile]))
+        if not os.path.exists(PIC_PATH + "/" + date_path):
+            os.makedirs(PIC_PATH + "/" + date_path)
+        if not os.path.exists(PIC_PATH + "/" + date_path + "/TILE-%02d" % int(tile_names[en_tile])):
+            os.makedirs(PIC_PATH + "/" + date_path + "/TILE-%02d" % int(tile_names[en_tile]))
 
         if opts.save:
             if not os.path.exists(TEXT_PATH):
                 os.makedirs(TEXT_PATH)
-            if not os.path.exists(TEXT_PATH + "/TILE-%02d" % int(tile_names[en_tile])):
-                os.makedirs(TEXT_PATH + "/TILE-%02d" % int(tile_names[en_tile]))
+            if not os.path.exists(TEXT_PATH + "/" + date_path):
+                os.makedirs(TEXT_PATH + "/" + date_path)
+            if not os.path.exists(TEXT_PATH + "/" + date_path + "/TILE-%02d" % int(tile_names[en_tile])):
+                os.makedirs(TEXT_PATH + "/" + date_path + "/TILE-%02d" % int(tile_names[en_tile]))
 
         for cnt_l, l in enumerate(lista):
             dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile-1))
@@ -297,7 +303,7 @@ if __name__ == "__main__":
                                     with np.errstate(divide='ignore'):
                                         spettro = 10 * np.log10(data[:, ant, 1, i])
                                     if opts.save:
-                                        with open(TEXT_PATH + "/TILE-%02d_" % tile +
+                                        with open(TEXT_PATH + "/" + date_path + "/TILE-%02d_" % tile +
                                                   ants[ant + 16 * (tile - 1)] + "_POL-Y_" + orario + ".txt") as f:
                                             for s in spettro:
                                                 f.write("%f\n" % s)
@@ -314,7 +320,7 @@ if __name__ == "__main__":
 
                                 #plt.draw()
                                 #plt.show()
-                                plt.savefig(PIC_PATH + "/TILE-%02d/TILE-%02d_" % (int(tile_names[en_tile]), int(tile_names[en_tile])) + orario + ".png")
+                                plt.savefig(PIC_PATH + "/" + date_path + "/TILE-%02d/TILE-%02d_" % (int(tile_names[en_tile]), int(tile_names[en_tile])) + orario + ".png")
                                 msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), int(tile_names[en_tile]), l.split("/")[-1]) + \
                                       " --> Writing " + "TILE-%02d_" % int(tile_names[en_tile]) + orario + ".png"
                                 sys.stdout.write(ERASE_LINE + msg)
@@ -329,7 +335,8 @@ if __name__ == "__main__":
                 sys.stdout.write(msg)
                 sys.stdout.flush()
 
-        msg = "\rTILE-%02d - written %d files   \n" % (int(tile_names[en_tile]), t_cnt)
+        msg = "\rTILE-%02d - written %d files in %s\n" % (int(tile_names[en_tile]), t_cnt, PIC_PATH + "/" +
+                                                          date_path + "/TILE-%02d" % (int(tile_names[en_tile])))
         sys.stdout.write(ERASE_LINE + msg)
         sys.stdout.flush()
 
