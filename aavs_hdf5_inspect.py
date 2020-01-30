@@ -136,6 +136,7 @@ if __name__ == "__main__":
                                 cnt = cnt + 1
                                 t_cnt = t_cnt + 1
 
+                                orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
                                 msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), tile, l.split("/")[-1]) + \
                                       " --> Writing " + "TILE-%02d_" % tile + orario + ".png"
                                 sys.stdout.write(ERASE_LINE + msg)
