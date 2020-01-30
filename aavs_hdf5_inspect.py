@@ -4,10 +4,16 @@ from pyaavs import station
 import time
 import datetime
 import glob
+import sys
+
 
 # Global flag to stop the scrpts
 stop_plotting = False
 img_dir = "/storage/monitoring/phase1/"
+
+
+def dt_to_timestamp(d):
+    return time.mktime(d.timetuple())
 
 
 def fname_to_tstamp(date_time_string):
@@ -16,6 +22,10 @@ def fname_to_tstamp(date_time_string):
     timestamp = time.mktime(d.timetuple())
     timestamp += int(time_parts[1])
     return timestamp
+
+
+def ts_to_datestring(tstamp, formato="%Y-%m-%d %H:%M:%S"):
+    return datetime.datetime.strftime(datetime.datetime.fromtimestamp(tstamp), formato)
 
 
 if __name__ == "__main__":
