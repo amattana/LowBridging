@@ -10,6 +10,7 @@ import sys
 # Global flag to stop the scrpts
 stop_plotting = False
 img_dir = "/storage/monitoring/phase1/"
+ERASE_LINE = '\x1b[2K'
 
 
 def dt_to_timestamp(d):
