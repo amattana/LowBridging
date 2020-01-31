@@ -26,7 +26,7 @@ def fname_to_tstamp(date_time_string):
 
 
 def ts_to_datestring(tstamp, formato="%Y-%m-%d %H:%M:%S"):
-    return datetime.datetime.strftime(datetime.datetime.fromtimestamp(tstamp), formato)
+    return datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(tstamp), formato)
 
 
 if __name__ == "__main__":
