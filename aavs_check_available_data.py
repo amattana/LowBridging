@@ -43,7 +43,7 @@ def fname_to_tstamp(date_time_string):
 
 
 def ts_to_datestring(tstamp):
-    return datetime.datetime.strftime(datetime.datetime.fromtimestamp(tstamp), "%Y-%m-%d %H:%M:%S")
+    return datetime.datetime.strftime(datetime.datetime.utctimestamp(tstamp), "%Y-%m-%d %H:%M:%S")
 
 
 def tstamp_to_fname(timestamp=None):
