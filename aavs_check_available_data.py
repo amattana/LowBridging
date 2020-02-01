@@ -126,7 +126,7 @@ if __name__ == "__main__":
     for l in lista:
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         if dic:
-            data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=int(opts.tile)-1,
+            data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]) - 60 *60 *8, tile_id=int(opts.tile)-1,
                                                       n_samples=dic['n_blocks'])
             if not t_start and not t_stop:
                 print l[-21:-7], "\t", timestamps[0][0], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
