@@ -5,28 +5,13 @@ import time
 import datetime
 import glob
 import sys
+from aavs_utils import dt_to_timestamp, ts_to_datestring, fname_to_tstamp
 
 
 # Global flag to stop the scrpts
 stop_plotting = False
 img_dir = "/storage/monitoring/phase1/"
 ERASE_LINE = '\x1b[2K'
-
-
-def dt_to_timestamp(d):
-    return time.mktime(d.timetuple())
-
-
-def fname_to_tstamp(date_time_string):
-    time_parts = date_time_string.split('_')
-    d = datetime.datetime.strptime(time_parts[0], "%Y%m%d")  # "%d/%m/%Y %H:%M:%S"
-    timestamp = time.mktime(d.timetuple())
-    timestamp += int(time_parts[1])
-    return timestamp
-
-
-def ts_to_datestring(tstamp, formato="%Y-%m-%d %H:%M:%S"):
-    return datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(tstamp), formato)
 
 
 if __name__ == "__main__":
