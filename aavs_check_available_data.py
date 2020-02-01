@@ -129,7 +129,7 @@ if __name__ == "__main__":
             data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=int(opts.tile)-1,
                                                       n_samples=dic['n_blocks'])
             if not t_start and not t_stop:
-                print l[-21:-7], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
+                print l[-21:-7], "\t", timestamps[0][0], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
                     ts_to_datestring(timestamps[-1][0]), "\t", dic['n_blocks']
             else:
                 cnt = 0
@@ -139,7 +139,7 @@ if __name__ == "__main__":
                             if t_start <= t[0] <= t_stop:
                                 cnt = cnt + 1
                                 t_cnt = t_cnt + 1
-                print l[-21:-7], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
+                print l[-21:-7], "\t", timestamps[0][0], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
                     ts_to_datestring(timestamps[-1][0]), "\t", cnt
         else:
             print l[-21:-7], ": no metadata available"
