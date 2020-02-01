@@ -142,7 +142,8 @@ if __name__ == "__main__":
                 print l[-21:-7], "\t", timestamps[0][0], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
                     ts_to_datestring(timestamps[-1][0]), "\t", cnt
         else:
-            print l[-21:-7], fname_to_tstamp(l[-21:-7]), ": no metadata available"
+            print l[-21:-7], "\t", fname_to_tstamp(l[-21:-7]), "\t", \
+                ts_to_datestring(fname_to_tstamp(l[-21:-7])), "\t", ": no metadata available"
     print "\nFound %d measurements\n" % t_cnt
 
 
