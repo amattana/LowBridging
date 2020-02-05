@@ -50,6 +50,8 @@ if __name__ == "__main__":
                       help="Directory where plots will be generated (default: /storage/monitoring/integrated_data)")
     parser.add_option("--tile", action="store", dest="tile", type=str,
                       default="1", help="Tile Number")
+    parser.add_option("--input", action="store", dest="input", type=int,
+                      default=1, help="Tile Input Number")
     parser.add_option("--skip", action="store", dest="skip", type=int,
                       default=-1, help="Skip N blocks")
     parser.add_option("--start", action="store", dest="start",
@@ -96,8 +98,13 @@ if __name__ == "__main__":
     date_path = tstamp_to_fname(t_start)[:-6]
 
     plt.ioff()
-    nplot = 16
+    if not opts.input:
+        nplot = 16
+    else:
+        nplot = 1
+
     ind = np.arange(nplot)
+    remap = [0, 1, 2, 3, 8, 9, 10, 11, 15, 14, 13, 12, 7, 6, 5, 4]
 
     if "all" in opts.tile.lower():
         tiles = [i+1 for i in range(16)]
@@ -128,8 +135,15 @@ if __name__ == "__main__":
     for j in base:
         ants += ["ANT-%03d" % int(j)]
 
+    antenne = []
+    if nplot == 16:
+        antenne = range(16)
+    else:
+        antenne = [remap[opts.input - 1]]
+    print "Antennas: ", (np.array(antenne) + 1).tolist()
+
     outer_grid = GridSpec(4, 4, hspace=0.4, wspace=0.4, left=0.04, right=0.98, bottom=0.04, top=0.96)
-    gs = GridSpecFromSubplotSpec(int(np.ceil(np.sqrt(16))), int(np.ceil(np.sqrt(16))), wspace=0.4, hspace=0.6,
+    gs = GridSpecFromSubplotSpec(int(np.ceil(np.sqrt(nplot))), int(np.ceil(np.sqrt(nplot))), wspace=0.4, hspace=0.6,
                                  subplot_spec=outer_grid[1:, :])
 
     fig = plt.figure(figsize=(11, 7), facecolor='w')
@@ -200,7 +214,13 @@ if __name__ == "__main__":
         #print self.nplot,math.sqrt(self.nplot)
         x_lines = []
         y_lines = []
-        for i in xrange(nplot):
+        antenne = []
+        if nplot == 16:
+            antenne = range(16)
+        else:
+            antenne = [remap[opts.input - 1]]
+
+        for i, sb_in in enumerate(antenne):
             ax[i].cla()
             ax[i].tick_params(axis='both', which='both', labelsize=8)
             ax[i].set_ylim([0, 50])
@@ -210,7 +230,7 @@ if __name__ == "__main__":
             #ax[i].set_xlabel("MHz", fontsize=10)
 
             #ax[i].set_title("IN " + str(i + 1), fontsize=8) # scrivere nomi delle antenne al posto di questa
-            ax[i].set_title(ants[i + 16 * (tile - 1)], fontsize=8)
+            ax[i].set_title(ants[sb_in + 16 * (tile - 1)], fontsize=8)
             xl, = ax[i].plot(range(512), range(512), color='b')
             x_lines += [xl]
             yl, = ax[i].plot(range(512), range(512), color='g')
@@ -259,26 +279,26 @@ if __name__ == "__main__":
 
                                 # Generate picture
                                 orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
-                                for ant in range(nplot):
+                                for ant, sb_in in enumerate(antenne):
                                     #ax[ant].cla()
                                     with np.errstate(divide='ignore'):
-                                        spettro = 10 * np.log10(data[:, ant, 0, i])
+                                        spettro = 10 * np.log10(data[:, sb_in, 0, i])
                                     if opts.save:
                                         with open(TEXT_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d" %
                                                   int(tile_names[en_tile]) + "/TILE-%02d_" % int(tile_names[en_tile]) +
-                                                  ants[ant + 16 * (tile - 1)] + "_POL-X_" + orario + ".txt", "w") as f:
-                                            for s in data[:, ant, 0, i]:
+                                                  ants[sb_in + 16 * (tile - 1)] + "_POL-X_" + orario + ".txt", "w") as f:
+                                            for s in data[:, sb_in, 0, i]:
                                                 f.write("%d\n" % s)
                                     x_lines[ant].set_ydata(spettro)
                                     #x_lines[ant].set_color('b')
                                     #ax[ant].plot(assex[2:-1], spettro[2:-1], scaley=True, color='b')
                                     with np.errstate(divide='ignore'):
-                                        spettro = 10 * np.log10(data[:, ant, 1, i])
+                                        spettro = 10 * np.log10(data[:, sb_in, 1, i])
                                     if opts.save:
                                         with open(TEXT_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d" %
                                                   int(tile_names[en_tile]) + "/TILE-%02d_" % int(tile_names[en_tile]) +
-                                                  ants[ant + 16 * (tile - 1)] + "_POL-Y_" + orario + ".txt", "w") as f:
-                                            for s in data[:, ant, 1, i]:
+                                                  ants[sb_in + 16 * (tile - 1)] + "_POL-Y_" + orario + ".txt", "w") as f:
+                                            for s in data[:, sb_in, 1, i]:
                                                 f.write("%d\n" % s)
                                     y_lines[ant].set_ydata(spettro)
                                     #y_lines[ant].set_color('g')
