@@ -66,6 +66,7 @@ if __name__ == "__main__":
     ant = opts.antenna - 1
     tile = opts.tile - 1
 
+    remap = [0,1,2,3,15,14,13,12,4,5,6,7,11,10,9,8]
     #ind = np.arange(nplot)
 
     # Load configuration file
@@ -116,12 +117,12 @@ if __name__ == "__main__":
         # Generate picture
         orario = ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d    %H:%M:%S  UTC")
         with np.errstate(divide='ignore'):
-            spettro = 10 * np.log10(all_data[:, ant + tile * 16, 0, 0])
+            spettro = 10 * np.log10(all_data[:, remap[ant] + tile * 16, 0, 0])
         xl.set_ydata(spettro)
         with np.errstate(divide='ignore'):
-            spettro = 10 * np.log10(all_data[:, ant + tile * 16, 1, 0])
+            spettro = 10 * np.log10(all_data[:, remap[ant] + tile * 16, 1, 0])
         yl.set_ydata(spettro)
-        title.set_text(ants[ant + tile * 16] + "     " + orario)
+        title.set_text(ants[remap[ant] + tile * 16] + "     " + orario)
         fig.canvas.draw()
         fig.canvas.flush_events()
 
