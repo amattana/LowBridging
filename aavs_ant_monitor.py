@@ -72,15 +72,16 @@ if __name__ == "__main__":
     station.load_configuration_file(opts.config)
     station_name = station.configuration['station']['name']
 
+    # Store number of tiles
+    nof_tiles = len(station.configuration['tiles'])
+
     print "\nStation Name: ", station_name
+    print "\nNumber of Tiles: ", nof_tiles
     print "Checking directory: ", opts.directory+station_name.lower() + "\n"
     print "Looking for tiles/antenna: ", opts.tile, "/", opts.antenna, "\n"
 
     file_manager = ChannelFormatFileManager(root_path=opts.directory+station_name.lower(),
                                             daq_mode=FileDAQModes.Integrated)
-
-    # Store number of tiles
-    nof_tiles = len(station.configuration['tiles'])
 
     base, x, y = get_antenna_positions(station_name)
     ants = []
@@ -113,10 +114,10 @@ if __name__ == "__main__":
         # Generate picture
         orario = ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d %H:%M:%S")
         with np.errstate(divide='ignore'):
-            spettro = 10 * np.log10(all_data[:, ant, 0, tile])
+            spettro = 10 * np.log10(all_data[:, ant + tile * 16, 0, 0])
         xl.set_ydata(spettro)
         with np.errstate(divide='ignore'):
-            spettro = 10 * np.log10(all_data[:, ant, 1, tile])
+            spettro = 10 * np.log10(all_data[:, ant + tile * 16, 1, 0])
         yl.set_ydata(spettro)
         title.set_text(ants[ant + tile * 16] + "  " + orario)
         fig.canvas.draw()
