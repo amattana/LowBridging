@@ -48,9 +48,9 @@ if __name__ == "__main__":
     parser.add_option("--directory", action="store", dest="directory",
                       default="/storage/monitoring/integrated_data/",
                       help="Directory where plots will be generated (default: /storage/monitoring/integrated_data)")
-    parser.add_option("--tile", action="store", dest="tile", type=str,
+    parser.add_option("--tile", action="store", dest="tile", type=int,
                       default="1", help="Tile Number")
-    parser.add_option("--antenna", action="store", dest="antenna", type=str,
+    parser.add_option("--antenna", action="store", dest="antenna", type=int,
                       default="1", help="TPM/SmartBox Input number")
 
     (opts, args) = parser.parse_args(argv[1:])
