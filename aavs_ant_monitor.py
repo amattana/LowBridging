@@ -66,7 +66,9 @@ if __name__ == "__main__":
     ant = opts.antenna - 1
     tile = opts.tile - 1
 
-    remap = [0,1,2,3,15,14,13,12,4,5,6,7,11,10,9,8]
+    #remap = [0,1,2,3,15,14,13,12,4,5,6,7,11,10,9,8]
+    remap = [0, 1, 2, 3, 8, 9, 10, 11, 15, 14, 13, 12, 7, 6, 5, 4]
+
     #ind = np.arange(nplot)
 
     # Load configuration file
@@ -95,13 +97,13 @@ if __name__ == "__main__":
 
     xl, = ax.plot(range(512), range(512), color='b')
     yl, = ax.plot(range(512), range(512), color='g')
-    ax.tick_params(axis='both', which='both', labelsize=8)
+    ax.tick_params(axis='both', which='both', labelsize=12)
     ax.set_ylim(0, 50)
     ax.set_xlim(0, 512)
     ax.set_xticks([0, 128, 256, 384, 512])
-    ax.set_xticklabels([0, 100, 200, 300, 400], fontsize=14)
-    ax.set_xlabel("MHz")
-    ax.set_ylabel("dB")
+    ax.set_xticklabels([0, 100, 200, 300, 400])
+    ax.set_xlabel("MHz", fontsize=12)
+    ax.set_ylabel("dB", fontsize=12)
     title = ax.set_title("Warming up...")
 
     while True:
