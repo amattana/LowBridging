@@ -114,7 +114,7 @@ if __name__ == "__main__":
             all_data[:, i * 16 : (i + 1) * 16, :, :] = data
 
         # Generate picture
-        orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
+        orario = ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d_%H%M%S")
         with np.errstate(divide='ignore'):
             spettro = 10 * np.log10(all_data[:, ant, 0, tile])
         xl.set_ydata(spettro)
