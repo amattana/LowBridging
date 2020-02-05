@@ -129,6 +129,7 @@ if __name__ == "__main__":
             spettro = 10 * np.log10(all_data[:, ant, 1, tile])
         yl.set_ydata(spettro)
         title.set_text(orario)
+        fig.canvas.draw()
 
 
 
