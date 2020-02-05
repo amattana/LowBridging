@@ -96,7 +96,7 @@ if __name__ == "__main__":
         ants += ["ANT-%03d" % int(j)]
 
     fig = plt.figure(figsize=(11, 7), facecolor='w')
-    ax = fig.add_subplot()
+    ax = fig.add_subplot(1,1,1)
     all_data = np.zeros((512, nof_tiles * 16, 2, 1))
 
     xl, = ax.plot(range(512), range(512), color='b')
