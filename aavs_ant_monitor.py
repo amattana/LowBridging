@@ -108,7 +108,7 @@ if __name__ == "__main__":
     ax.set_xticklabels([0, 100, 200, 300, 400], fontsize=8)
     title = ax.set_title("Warming up...")
     fig.canvas.draw()
-    plt.show()
+    fig.canvas.flush_events()
 
     while True:
 
@@ -130,6 +130,7 @@ if __name__ == "__main__":
         yl.set_ydata(spettro)
         title.set_text(orario)
         fig.canvas.draw()
+        fig.canvas.flush_events()
 
 
 
