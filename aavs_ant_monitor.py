@@ -98,7 +98,9 @@ if __name__ == "__main__":
     ax.set_ylim(0, 50)
     ax.set_xlim(0, 512)
     ax.set_xticks([0, 128, 256, 384, 512])
-    ax.set_xticklabels([0, 100, 200, 300, 400], fontsize=8)
+    ax.set_xticklabels([0, 100, 200, 300, 400], fontsize=14)
+    ax.set_xlabel("MHz")
+    ax.set_ylabel("dB")
     title = ax.set_title("Warming up...")
 
     while True:
@@ -112,14 +114,14 @@ if __name__ == "__main__":
             all_data[:, i * 16 : (i + 1) * 16, :, :] = data
 
         # Generate picture
-        orario = ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d %H:%M:%S")
+        orario = ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d    %H:%M:%S  UTC")
         with np.errstate(divide='ignore'):
             spettro = 10 * np.log10(all_data[:, ant + tile * 16, 0, 0])
         xl.set_ydata(spettro)
         with np.errstate(divide='ignore'):
             spettro = 10 * np.log10(all_data[:, ant + tile * 16, 1, 0])
         yl.set_ydata(spettro)
-        title.set_text(ants[ant + tile * 16] + "  " + orario)
+        title.set_text(ants[ant + tile * 16] + "     " + orario)
         fig.canvas.draw()
         fig.canvas.flush_events()
 
