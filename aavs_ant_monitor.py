@@ -81,7 +81,7 @@ if __name__ == "__main__":
     print "\nStation Name: ", station_name
     print "\nNumber of Tiles: ", nof_tiles
     print "Checking directory: ", opts.directory+station_name.lower() + "\n"
-    print "Looking for tiles/antenna: ", opts.tile, "/", opts.antenna, "\n"
+    print "Looking for tiles/antenna: ", opts.tile, "/", opts.input, "\n"
 
     file_manager = ChannelFormatFileManager(root_path=opts.directory+station_name.lower(),
                                             daq_mode=FileDAQModes.Integrated)
