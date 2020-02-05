@@ -107,6 +107,8 @@ if __name__ == "__main__":
     ax.set_xticks([0, 128, 256, 384, 512])
     ax.set_xticklabels([0, 100, 200, 300, 400], fontsize=8)
     title = ax.set_title("Warming up...")
+    plt.draw()
+    plt.show()
 
     while True:
 
@@ -129,8 +131,6 @@ if __name__ == "__main__":
         title.set_text(orario)
 
 
-        plt.draw()
-        plt.show()
 
 
 
