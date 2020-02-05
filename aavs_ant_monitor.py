@@ -123,6 +123,10 @@ if __name__ == "__main__":
         yl.set_ydata(spettro)
         title.set_text(orario)
 
+        plt.draw()
+        plt.show()
+
+
 
 
 
