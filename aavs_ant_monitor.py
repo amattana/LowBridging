@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
     #date_path = tstamp_to_fname(t_start)[:-6]
 
-    plt.ioff()
+    plt.ion()
     nplot = 1
     ant = 0
     tile = 0
@@ -101,6 +101,11 @@ if __name__ == "__main__":
 
     xl, = ax.plot(range(512), range(512), color='b')
     yl, = ax.plot(range(512), range(512), color='g')
+    ax.tick_params(axis='both', which='both', labelsize=8)
+    ax.set_ylim(0, 50)
+    ax.set_xlim(0, 512)
+    ax.set_xticks([0, 128, 256, 384, 512])
+    ax.set_xticklabels([0, 100, 200, 300, 400], fontsize=8)
     title = ax.set_title("Warming up...")
 
     while True:
@@ -114,7 +119,7 @@ if __name__ == "__main__":
             all_data[:, i * 16 : (i + 1) * 16, :, :] = data
 
         # Generate picture
-        orario = ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d_%H%M%S")
+        orario = ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d %H:%M:%S")
         with np.errstate(divide='ignore'):
             spettro = 10 * np.log10(all_data[:, ant, 0, tile])
         xl.set_ydata(spettro)
@@ -122,6 +127,7 @@ if __name__ == "__main__":
             spettro = 10 * np.log10(all_data[:, ant, 1, tile])
         yl.set_ydata(spettro)
         title.set_text(orario)
+
 
         plt.draw()
         plt.show()
