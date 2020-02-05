@@ -308,8 +308,8 @@ def plotting_thread(directory, cadence):
                     for pol, (poldir, col) in enumerate([("/POL-X/", "b"), ("/POL-Y/", "g")]):
 
                         singolo = all_data[:, (n * 16) + en: (n * 16) + en + 1, pol, 0]
-
-                        axes[en + (n * 16)].plot(asse_x[2:-2], 10*np.log10(singolo)[2:-2], color=col)
+                        with np.errstate(divide='ignore'):
+                            axes[en + (n * 16)].plot(asse_x[2:-2], 10*np.log10(singolo)[2:-2], color=col)
                     axes[en + (n * 16)].set_xlim(0, 400)
                     axes[en + (n * 16)].set_ylim(0, 50)
                     if not ((en == 0) or (en == 8)):
