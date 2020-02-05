@@ -50,16 +50,8 @@ if __name__ == "__main__":
                       help="Directory where plots will be generated (default: /storage/monitoring/integrated_data)")
     parser.add_option("--tile", action="store", dest="tile", type=str,
                       default="1", help="Tile Number")
-    parser.add_option("--skip", action="store", dest="skip", type=int,
-                      default=-1, help="Skip N blocks")
-    parser.add_option("--start", action="store", dest="start",
-                      default="", help="Start time for filter (YYYY-mm-DD_HH:MM:SS)")
-    parser.add_option("--stop", action="store", dest="stop",
-                      default="", help="Stop time for filter (YYYY-mm-DD_HH:MM:SS)")
-    parser.add_option("--date", action="store", dest="date",
-                      default="", help="Stop time for filter (YYYY-mm-DD)")
-    parser.add_option("--save", action="store_true", dest="save",
-                      default=False, help="Save single antenna measurements in text files")
+    parser.add_option("--antenna", action="store", dest="tile", type=str,
+                      default="1", help="Tile Number")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -71,8 +63,8 @@ if __name__ == "__main__":
 
     plt.ion()
     nplot = 1
-    ant = 0
-    tile = 0
+    ant = opts.antenna - 1
+    tile = opts.tile - 1
 
     #ind = np.arange(nplot)
 
@@ -126,7 +118,7 @@ if __name__ == "__main__":
         with np.errstate(divide='ignore'):
             spettro = 10 * np.log10(all_data[:, ant, 1, tile])
         yl.set_ydata(spettro)
-        title.set_text(orario)
+        title.set_text(ants[ant + tile * 16] + "  " + orario)
         fig.canvas.draw()
         fig.canvas.flush_events()
 
