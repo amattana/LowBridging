@@ -67,10 +67,13 @@ if __name__ == "__main__":
 
     print
 
-    date_path = tstamp_to_fname(t_start)[:-6]
+    #date_path = tstamp_to_fname(t_start)[:-6]
 
     plt.ioff()
     nplot = 1
+    ant = 0
+    tile = 0
+
     #ind = np.arange(nplot)
 
     # Load configuration file
@@ -79,7 +82,7 @@ if __name__ == "__main__":
 
     print "\nStation Name: ", station_name
     print "Checking directory: ", opts.directory+station_name.lower() + "\n"
-    print "Looking for tiles/antenna: ", tile, antenna, "\n"
+    print "Looking for tiles/antenna: ", tile, ant, "\n"
 
     file_manager = ChannelFormatFileManager(root_path=opts.directory+station_name.lower(),
                                             daq_mode=FileDAQModes.Integrated)
@@ -99,9 +102,6 @@ if __name__ == "__main__":
     xl, = ax.plot(range(512), range(512), color='b')
     yl, = ax.plot(range(512), range(512), color='g')
     title = ax.set_title("Warming up...")
-
-    ant = 0
-    tile = 0
 
     while True:
 
