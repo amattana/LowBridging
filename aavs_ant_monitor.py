@@ -50,8 +50,8 @@ if __name__ == "__main__":
                       help="Directory where plots will be generated (default: /storage/monitoring/integrated_data)")
     parser.add_option("--tile", action="store", dest="tile", type=int,
                       default="1", help="Tile Number")
-    parser.add_option("--antenna", action="store", dest="antenna", type=int,
-                      default="1", help="TPM/SmartBox Input number")
+    parser.add_option("--input", action="store", dest="input", type=int,
+                      default="1", help="Tile Input number")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     plt.ion()
     nplot = 1
-    ant = opts.antenna - 1
+    ant = opts.input - 1
     tile = opts.tile - 1
 
     #remap = [0,1,2,3,15,14,13,12,4,5,6,7,11,10,9,8]
