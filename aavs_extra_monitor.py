@@ -333,8 +333,8 @@ def plotting_thread(directory, cadence):
                                                                                         linestyle='None', color='k')
 
                 # Plot Power X
-                x_power = tile_rms[n * 32: (n + 1) * 32: 2]
-                x_power = [x_power[remap[i]] for i in range(len(x_power))]
+                x_rms = tile_rms[n * 32: (n + 1) * 32: 2]
+                #x_power = [x_rms[remap[i]] for i in range(len(x_rms))]
                 t_axes[n][2].cla()
                 t_axes[n][2].tick_params(axis='both', which='both', labelsize=6)
                 t_axes[n][2].set_xticks(xrange(1, 17))
@@ -345,12 +345,12 @@ def plotting_thread(directory, cadence):
                 t_axes[n][2].set_xlim([0, 16])
                 t_axes[n][2].set_ylabel("RMS", fontsize=10)
                 t_axes[n][2].grid()
-                t_axes[n][2].bar(ind + 0.5, x_power, 0.8, color='b')
+                t_axes[n][2].bar(ind + 0.5, x_rms, 0.8, color='b')
                 t_axes[n][2].set_title("Power Pol X", fontsize=10)
 
                 # Plot Power Y
-                y_power = tile_rms[n * 32 + 1: (n+1) * 32: 2]
-                y_power = [y_power[remap[i]] for i in range(len(y_power))]
+                y_rms = tile_rms[n * 32 + 1: (n+1) * 32: 2]
+                #y_power = [y_rms[remap[i]] for i in range(len(y_rms))]
                 t_axes[n][3].cla()
                 t_axes[n][3].tick_params(axis='both', which='both', labelsize=6)
                 t_axes[n][3].set_xticks(xrange(1, 17))
@@ -362,7 +362,7 @@ def plotting_thread(directory, cadence):
                 t_axes[n][3].set_ylabel("RMS", fontsize=10)
                 t_axes[n][3].set_xlabel("Power Pol Y", fontsize=10)
                 t_axes[n][3].grid()
-                t_axes[n][3].bar(ind + 0.5, y_power, 0.8, color='g')
+                t_axes[n][3].bar(ind + 0.5, y_rms, 0.8, color='g')
 
                 t_axes[n][0].annotate("Acquisition Time (UTC)", (-17.7, -6), fontsize=12, color='black')
                 t_axes[n][0].annotate(t_timestamp, (-17.8, -12), fontsize=12, color='black')
