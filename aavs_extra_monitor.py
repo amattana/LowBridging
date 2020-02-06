@@ -160,6 +160,7 @@ def plotting_thread(directory, cadence):
 
     logging.info("Starting plotting threads for station " + station_name)
 
+    remap = [0, 1, 2, 3, 8, 9, 10, 11, 15, 14, 13, 12, 7, 6, 5, 4]
     if not os.path.isdir(img_dir+station_name):
         os.mkdir(img_dir+station_name)
 
@@ -303,11 +304,11 @@ def plotting_thread(directory, cadence):
                 t_axes[n][3].set_ylim(-20, 20)
                 t_axes[n][3].set_title("Power Pol Y", fontsize=10)
 
-                for en in range(16):
+                for en, rant in remap:
                     axes[en + (n * 16)].cla()
                     for pol, (poldir, col) in enumerate([("/POL-X/", "b"), ("/POL-Y/", "g")]):
 
-                        singolo = all_data[:, (n * 16) + en: (n * 16) + en + 1, pol, 0]
+                        singolo = all_data[:, (n * 16) + rant: (n * 16) + rant + 1, pol, 0]
                         with np.errstate(divide='ignore'):
                             axes[en + (n * 16)].plot(asse_x[2:-2], 10*np.log10(singolo)[2:-2], color=col)
                     axes[en + (n * 16)].set_xlim(0, 400)
@@ -325,13 +326,15 @@ def plotting_thread(directory, cadence):
                     else:
                         axes[en + (n * 16)].set_xticks([100, 200, 300, 400])
                         axes[en + (n * 16)].set_xticklabels(["", "", "", ""], fontsize=1)
-                    axes[en + (n * 16)].set_title(ants[en + (n * 16)], fontsize=10)
+                    axes[en + (n * 16)].set_title(ants[rant + (n * 16)], fontsize=10)
 
                     # Draw antenna positions
                     t_axes[n][1].plot(float(x[en + (n * 16)]), float(y[en + (n * 16)]), marker='+', markersize=4,
                                                                                         linestyle='None', color='k')
 
                 # Plot Power X
+                x_power = tile_rms[n * 32: (n + 1) * 32: 2]
+                x_power = [x_power[remap[i]] for i in range(len(x_power))]
                 t_axes[n][2].cla()
                 t_axes[n][2].tick_params(axis='both', which='both', labelsize=6)
                 t_axes[n][2].set_xticks(xrange(1, 17))
@@ -342,10 +345,12 @@ def plotting_thread(directory, cadence):
                 t_axes[n][2].set_xlim([0, 16])
                 t_axes[n][2].set_ylabel("RMS", fontsize=10)
                 t_axes[n][2].grid()
-                t_axes[n][2].bar(ind + 0.5, tile_rms[n * 32: (n + 1) * 32: 2], 0.8, color='b')
+                t_axes[n][2].bar(ind + 0.5, x_power, 0.8, color='b')
                 t_axes[n][2].set_title("Power Pol X", fontsize=10)
 
                 # Plot Power Y
+                y_power = tile_rms[n * 32 + 1: (n+1) * 32: 2]
+                y_power = [y_power[remap[i]] for i in range(len(y_power))]
                 t_axes[n][3].cla()
                 t_axes[n][3].tick_params(axis='both', which='both', labelsize=6)
                 t_axes[n][3].set_xticks(xrange(1, 17))
@@ -357,7 +362,7 @@ def plotting_thread(directory, cadence):
                 t_axes[n][3].set_ylabel("RMS", fontsize=10)
                 t_axes[n][3].set_xlabel("Power Pol Y", fontsize=10)
                 t_axes[n][3].grid()
-                t_axes[n][3].bar(ind + 0.5, tile_rms[n * 32 + 1: (n+1) * 32: 2], 0.8, color='g')
+                t_axes[n][3].bar(ind + 0.5, y_power, 0.8, color='g')
 
                 t_axes[n][0].annotate("Acquisition Time (UTC)", (-17.7, -6), fontsize=12, color='black')
                 t_axes[n][0].annotate(t_timestamp, (-17.8, -12), fontsize=12, color='black')
