@@ -172,6 +172,8 @@ def plotting_thread(directory, cadence):
     aavs_station.connect()
     _connect_station(aavs_station)
 
+    sleep(15)
+
     station_dir = ""
     station_file = ""
     if station_name == "AAVS2":
