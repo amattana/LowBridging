@@ -447,7 +447,7 @@ if __name__ == "__main__":
     daq.start()
 
     # Start plotting thread
-    plotter = Thread(target=plotting_thread, args=(opts.directory, 30))
+    plotter = Thread(target=plotting_thread, args=(opts.directory, 0))
     plotter.start()
 
     # Wait for exit or termination
