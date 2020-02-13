@@ -356,14 +356,15 @@ def plotting_thread(directory, cadence):
                 for r in range(2):
                     for c in range(8):
                         ant_index = (16*i) + (8*r) + c
-                        singolo = all_data[:, ant_index: ant_index + 1, 0, 0]
+                        remapped_ant = (16*i) + remap[(8*r) + c]
+                        singolo = all_data[:, remapped_ant: remapped_ant + 1, 0, 0]
                         with np.errstate(divide='ignore'):
                             x_lines[16 * i + remap[(8*r) + c]].set_ydata(10*np.log10(singolo))
-                        singolo = all_data[:, ant_index: ant_index + 1, 1, 0]
+                        singolo = all_data[:, remapped_ant: remapped_ant + 1, 1, 0]
                         with np.errstate(divide='ignore'):
                             y_lines[16 * i + remap[(8*r) + c]].set_ydata(10*np.log10(singolo))
-                        x_bar[i][remap[(8*r) + c]].set_height(tile_rms[((16*i) + (8*r) + c) * 2])
-                        y_bar[i][remap[(8*r) + c]].set_height(tile_rms[((16*i) + (8*r) + c) * 2 + 1])
+                        x_bar[i][remap[(8*r) + c]].set_height(tile_rms[remapped_ant * 2])
+                        y_bar[i][remap[(8*r) + c]].set_height(tile_rms[remapped_ant * 2 + 1])
 
             fig.canvas.draw()
 
