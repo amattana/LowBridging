@@ -224,6 +224,7 @@ def plotting_thread(directory, cadence):
         t_axes[i][0].set_xlim(-20, 20)
         t_axes[i][0].set_ylim(-20, 20)
         t_axes[i][0].annotate(tile_names[i], (-11, 5), fontsize=26, color='black')
+        t_axes[i][0].annotate("Acquisition Time (UTC)", (-17.7, -6), fontsize=12, color='black')
         tl = t_axes[i][0].annotate("--- UTC", (-17.8, -12), fontsize=12, color='black')
         tstamp_label += [tl]
 
