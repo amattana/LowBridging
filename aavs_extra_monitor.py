@@ -172,7 +172,7 @@ def plotting_thread(directory, cadence):
     aavs_station.connect()
     _connect_station(aavs_station)
 
-    sleep(15)
+    sleep(16)
 
     station_dir = ""
     station_file = ""
@@ -365,8 +365,8 @@ def plotting_thread(directory, cadence):
                         singolo = all_data[:, remapped_ant: remapped_ant + 1, 1, 0]
                         with np.errstate(divide='ignore'):
                             y_lines[ant_index].set_ydata(10*np.log10(singolo))
-                        x_bar[i][remap[(8*r) + c]].set_height(tile_rms[remapped_ant * 2])
-                        y_bar[i][remap[(8*r) + c]].set_height(tile_rms[remapped_ant * 2 + 1])
+                        x_bar[i][(8*r) + c].set_height(tile_rms[remapped_ant * 2])
+                        y_bar[i][(8*r) + c].set_height(tile_rms[remapped_ant * 2 + 1])
 
             fig.canvas.draw()
 
