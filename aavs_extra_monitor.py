@@ -290,7 +290,7 @@ def plotting_thread(directory, cadence):
                 else:
                     axes[ant_index].set_xticks([100, 200, 300, 400])
                     axes[ant_index].set_xticklabels(["", "", "", ""], fontsize=1)
-                axes[(16*i) + remap[(8*r) + c]].set_title(ants[ant_index], fontsize=10)
+                axes[ant_index].set_title(ants[(16*i) + remap[(8*r) + c]], fontsize=10)
 
                 xl, = axes[ant_index].plot(asse_x, range(512), color='b')
                 x_lines += [xl]
