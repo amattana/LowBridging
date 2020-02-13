@@ -166,7 +166,6 @@ def plotting_thread(directory, cadence):
 
     # Store number of tiles
     nof_tiles = len(station.configuration['tiles'])
-    #print nof_tiles
 
     # Create station instance
     aavs_station = station.Station(station.configuration)
@@ -205,15 +204,101 @@ def plotting_thread(directory, cadence):
     fig = plt.figure(figsize=(FIG_W, TILE_H * nof_tiles), facecolor='w')
     t_axes = []
     axes = []
+
+    tstamp_label = []
+    x_lines = []
+    y_lines = []
+    ind = np.arange(16)
+    x_bar = []
+    y_bar = []
+
     for i in range(nof_tiles):
         # print tile_active[i]
         gs = gridspec.GridSpecFromSubplotSpec(2, 17, wspace=0.05, hspace=0.5, subplot_spec=outer_grid[i])
         t_axes += [
             [plt.subplot(gs[0:2, 0:3]), plt.subplot(gs[0:2, 3:5]), plt.subplot(gs[0, 6:8]), plt.subplot(gs[1, 6:8])]]
 
+        t_axes[i][0].cla()
+        t_axes[i][0].set_axis_off()
+        t_axes[i][0].plot([0.001, 0.002], color='w')
+        t_axes[i][0].set_xlim(-20, 20)
+        t_axes[i][0].set_ylim(-20, 20)
+        t_axes[i][0].annotate(tile_names[i], (-11, 5), fontsize=26, color='black')
+        tl = t_axes[i][0].annotate("--- UTC", (-17.8, -12), fontsize=12, color='black')
+        tstamp_label += [tl]
+
+        t_axes[i][1].cla()
+        t_axes[i][1].set_axis_off()
+        t_axes[i][1].plot([0.001, 0.002], color='wheat')
+        t_axes[i][1].set_xlim(-25, 25)
+        t_axes[i][1].set_ylim(-25, 25)
+        circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
+        t_axes[i][1].add_artist(circle1)
+        t_axes[i][1].annotate("E", (21, -1), fontsize=10, color='black')
+        t_axes[i][1].annotate("W", (-25, -1), fontsize=10, color='black')
+        t_axes[i][1].annotate("N", (-1, 21), fontsize=10, color='black')
+        t_axes[i][1].annotate("S", (-1, -24), fontsize=10, color='black')
+
+        t_axes[i][2].cla()
+        t_axes[i][2].plot([0.001, 0.002], color='w')
+        t_axes[i][2].tick_params(axis='both', which='both', labelsize=6)
+        t_axes[i][2].set_xticks(xrange(1, 17))
+        t_axes[i][2].set_xticklabels(np.array(range(1, 17)).astype("str").tolist(), fontsize=4)
+        t_axes[i][2].set_yticks([15, 20])
+        t_axes[i][2].set_yticklabels(["15", "20"], fontsize=7)
+        t_axes[i][2].set_ylim([0, 40])
+        t_axes[i][2].set_xlim([0, 16])
+        t_axes[i][2].set_ylabel("RMS", fontsize=10)
+        t_axes[i][2].grid()
+        t_axes[i][2].set_title("Power Pol X", fontsize=10)
+        xb = t_axes[i][2].bar(ind + 0.5, ind, 0.8, color='b')
+        x_bar += [xb]
+
+        t_axes[i][3].cla()
+        t_axes[i][3].plot([0.001, 0.002], color='w')
+        t_axes[i][3].tick_params(axis='both', which='both', labelsize=6)
+        t_axes[i][3].set_xticks(xrange(1, 17))
+        t_axes[i][3].set_xticklabels(np.array(range(1, 17)).astype("str").tolist(), fontsize=4)
+        t_axes[i][3].set_yticks([15, 20])
+        t_axes[i][3].set_yticklabels(["15", "20"], fontsize=7)
+        t_axes[i][3].set_ylim([0, 40])
+        t_axes[i][3].set_xlim([0, 16])
+        t_axes[i][3].set_ylabel("RMS", fontsize=10)
+        t_axes[i][3].set_xlabel("Power Pol Y", fontsize=10)
+        t_axes[i][3].grid()
+        yb = t_axes[i][3].bar(ind + 0.5, ind, 0.8, color='g')
+        y_bar += [yb]
+
         for r in range(2):
             for c in range(8):
+                ant_index = (16*i) + (2*r) + c
                 axes += [plt.subplot(gs[(r, c + 9)])]
+                axes[ant_index].cla()
+                axes[ant_index].set_xlim(0, 400)
+                axes[ant_index].set_ylim(0, 50)
+                if c:
+                    axes[ant_index].get_yaxis().set_visible(False)
+                else:
+                    axes[ant_index].set_yticks([0, 10, 20, 30, 40, 50])
+                    axes[ant_index].set_yticklabels([0, 10, 20, 30, 40, 50], fontsize=8)
+                    axes[ant_index].set_ylabel("dB", fontsize=10)
+                if r:
+                    axes[ant_index].set_xticks([100, 200, 300, 400])
+                    axes[ant_index].set_xticklabels([100, 200, 300, 400], fontsize=8, rotation=45)
+                    axes[ant_index].set_xlabel("MHz", fontsize=10)
+                else:
+                    axes[ant_index].set_xticks([100, 200, 300, 400])
+                    axes[ant_index].set_xticklabels(["", "", "", ""], fontsize=1)
+                axes[ant_index].set_title(ants[ant_index], fontsize=10)
+
+                xl, = axes[ant_index].plot(asse_x, range(512), color='b')
+                x_lines += [xl]
+                yl, = axes[ant_index].plot(asse_x, range(512), color='g')
+                y_lines += [yl]
+
+                # Draw antenna positions
+                t_axes[i][1].plot(float(x[ant_index]), float(y[ant_index]), marker='+', markersize=4,
+                                  linestyle='None', color='k')
 
     all_data = np.zeros((512, nof_tiles * 16, 2, 1))
     tile_acq_timestamp = []
@@ -241,133 +326,42 @@ def plotting_thread(directory, cadence):
             # Grab antenna RMS
             tile_rms.extend(aavs_station.tiles[i].get_adc_rms())
 
-        # ...... Create plot
-        #logging.info("Time to plot")
-
-        asse_x_secs = []
+        #asse_x_secs = []
         timestamp_day = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(timestamps[0][0]), "%Y-%m-%d")
         if not current_day == timestamp_day:
             current_day = timestamp_day
             tile_acq_timestamp = [int(timestamps[0][0])]
-            asse_x_secs = [(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]) -
-                             datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]).replace(hour=0,
-                                                                                                minute=0,
-                                                                                                second=0,
-                                                                                                microsecond=0)).seconds]
+            # asse_x_secs = [(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]) -
+            #                  datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]).replace(hour=0,
+            #                                                                                     minute=0,
+            #                                                                                     second=0,
+            #                                                                                     microsecond=0)).seconds]
             if not os.path.isdir(img_dir + station_name + "/" + current_day):
                 os.mkdir(img_dir + station_name + "/" + current_day)
         else:
             tile_acq_timestamp += [int(timestamps[0][0])]
-            asse_x_secs += [(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]) -
-                             datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]).replace(hour=0,
-                                                                                                minute=0,
-                                                                                                second=0,
-                                                                                                microsecond=0)).seconds]
+            # asse_x_secs += [(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]) -
+            #                  datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]).replace(hour=0,
+            #                                                                                     minute=0,
+            #                                                                                     second=0,
+            #                                                                                     microsecond=0)).seconds]
 
-        #f_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]), "%Y%m%d_%H%M%S")
         t_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]), "%Y-%m-%d %H:%M:%S UTC")
 
         try:
 
-            ind = np.arange(16)
-            for n in range(nof_tiles):
-
-                # print n, len(STATION['TILES'])
-                t_axes[n][0].cla()
-                t_axes[n][0].set_axis_off()
-                t_axes[n][0].plot([0.001, 0.002], color='w')
-                t_axes[n][0].set_xlim(-20, 20)
-                t_axes[n][0].set_ylim(-20, 20)
-                t_axes[n][0].annotate(tile_names[n], (-11, 5), fontsize=26, color='black')
-
-                t_axes[n][1].cla()
-                t_axes[n][1].set_axis_off()
-                t_axes[n][1].plot([0.001, 0.002], color='wheat')
-                t_axes[n][1].set_xlim(-25, 25)
-                t_axes[n][1].set_ylim(-25, 25)
-                circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
-                t_axes[n][1].add_artist(circle1)
-                t_axes[n][1].annotate("E", (21, -1), fontsize=10, color='black')
-                t_axes[n][1].annotate("W", (-25, -1), fontsize=10, color='black')
-                t_axes[n][1].annotate("N", (-1, 21), fontsize=10, color='black')
-                t_axes[n][1].annotate("S", (-1, -24), fontsize=10, color='black')
-
-                t_axes[n][2].cla()
-                t_axes[n][2].plot([0.001, 0.002], color='w')
-                t_axes[n][2].set_xlim(-20, 20)
-                t_axes[n][2].set_ylim(-20, 20)
-                t_axes[n][2].set_title("Power Pol X", fontsize=10)
-
-                t_axes[n][3].cla()
-                t_axes[n][3].plot([0.001, 0.002], color='w')
-                t_axes[n][3].set_xlim(-20, 20)
-                t_axes[n][3].set_ylim(-20, 20)
-                t_axes[n][3].set_title("Power Pol Y", fontsize=10)
-
-                for en, rant in enumerate(remap):
-                    axes[en + (n * 16)].cla()
-                    for pol, (poldir, col) in enumerate([("/POL-X/", "b"), ("/POL-Y/", "g")]):
-
-                        singolo = all_data[:, (n * 16) + rant: (n * 16) + rant + 1, pol, 0]
+            for i in range(nof_tiles):
+                tstamp_label[i].set_text(t_timestamp)
+                for r in range(2):
+                    for c in range(8):
+                        ant_index = (16*i) + (2*r) + c
+                        singolo = all_data[:, ant_index: ant_index + 1, 0, 0]
                         with np.errstate(divide='ignore'):
-                            axes[en + (n * 16)].plot(asse_x[2:-2], 10*np.log10(singolo)[2:-2], color=col)
-                    axes[en + (n * 16)].set_xlim(0, 400)
-                    axes[en + (n * 16)].set_ylim(0, 50)
-                    if not ((en == 0) or (en == 8)):
-                        axes[en + (n * 16)].get_yaxis().set_visible(False)
-                    else:
-                        axes[en + (n * 16)].set_yticks([0, 10, 20, 30, 40, 50])
-                        axes[en + (n * 16)].set_yticklabels([0, 10, 20, 30, 40, 50], fontsize=8)
-                        axes[en + (n * 16)].set_ylabel("dB", fontsize=10)
-                    if (en > 7):
-                        axes[en + (n * 16)].set_xticks([100, 200, 300, 400])
-                        axes[en + (n * 16)].set_xticklabels([100, 200, 300, 400], fontsize=8, rotation=45)
-                        axes[en + (n * 16)].set_xlabel("MHz", fontsize=10)
-                    else:
-                        axes[en + (n * 16)].set_xticks([100, 200, 300, 400])
-                        axes[en + (n * 16)].set_xticklabels(["", "", "", ""], fontsize=1)
-                    axes[en + (n * 16)].set_title(ants[rant + (n * 16)], fontsize=10)
+                            x_lines[ant_index].set_ydata(10*np.log10(singolo))
+                        singolo = all_data[:, ant_index: ant_index + 1, 1, 0]
+                        with np.errstate(divide='ignore'):
+                            y_lines[ant_index].set_ydata(10*np.log10(singolo))
 
-                    # Draw antenna positions
-                    t_axes[n][1].plot(float(x[en + (n * 16)]), float(y[en + (n * 16)]), marker='+', markersize=4,
-                                                                                        linestyle='None', color='k')
-
-                # Plot Power X
-                x_rms = tile_rms[n * 32: (n + 1) * 32: 2]
-                x_power = [x_rms[remap[i]] for i in range(len(x_rms))]
-                t_axes[n][2].cla()
-                t_axes[n][2].tick_params(axis='both', which='both', labelsize=6)
-                t_axes[n][2].set_xticks(xrange(1, 17))
-                t_axes[n][2].set_xticklabels(np.array(range(1, 17)).astype("str").tolist(), fontsize=4)
-                t_axes[n][2].set_yticks([15, 20])
-                t_axes[n][2].set_yticklabels(["15", "20"], fontsize=7)
-                t_axes[n][2].set_ylim([0, 40])
-                t_axes[n][2].set_xlim([0, 16])
-                t_axes[n][2].set_ylabel("RMS", fontsize=10)
-                t_axes[n][2].grid()
-                t_axes[n][2].bar(ind + 0.5, x_power, 0.8, color='b')
-                t_axes[n][2].set_title("Power Pol X", fontsize=10)
-
-                # Plot Power Y
-                y_rms = tile_rms[n * 32 + 1: (n+1) * 32: 2]
-                y_power = [y_rms[remap[i]] for i in range(len(y_rms))]
-                t_axes[n][3].cla()
-                t_axes[n][3].tick_params(axis='both', which='both', labelsize=6)
-                t_axes[n][3].set_xticks(xrange(1, 17))
-                t_axes[n][3].set_xticklabels(np.array(range(1, 17)).astype("str").tolist(), fontsize=4)
-                t_axes[n][3].set_yticks([15, 20])
-                t_axes[n][3].set_yticklabels(["15", "20"], fontsize=7)
-                t_axes[n][3].set_ylim([0, 40])
-                t_axes[n][3].set_xlim([0, 16])
-                t_axes[n][3].set_ylabel("RMS", fontsize=10)
-                t_axes[n][3].set_xlabel("Power Pol Y", fontsize=10)
-                t_axes[n][3].grid()
-                t_axes[n][3].bar(ind + 0.5, y_power, 0.8, color='g')
-
-                t_axes[n][0].annotate("Acquisition Time (UTC)", (-17.7, -6), fontsize=12, color='black')
-                t_axes[n][0].annotate(t_timestamp, (-17.8, -12), fontsize=12, color='black')
-
-            #fig.tight_layout()
             fig.canvas.draw()
 
             fname = img_dir + station_dir + station_file
@@ -378,26 +372,6 @@ def plotting_thread(directory, cadence):
             logging.warning("Tile RMS len: "+str(len(tile_rms)))
             pass
 
-        # else:
-        #     # Lock file present
-        #     logging.info("Found lock file")
-        #     fig2 = plt.figure(figsize=(FIG_W, 500), facecolor='w')
-        #     logging.info("Gen fig")
-        #     ax = plt.subplot(1, 1, 1)
-        #     logging.info("Gen axis")
-        #     ax.cla()
-        #     ax.set_axis_off()
-        #     ax.plot([0.001, 0.002], color='w')
-        #     ax.set_xlim(-20, 20)
-        #     ax.set_ylim(-20, 20)
-        #     with open(LOCK_FILE) as f:
-        #         text = f.readlines()
-        #     for r, m in enumerate(text):
-        #         ax.annotate(m, (-17, 20 - (5 * r)), fontsize=26, color='r')
-        #     fname = img_dir + station_dir + station_file
-        #     fig2.savefig(fname)
-        #     logging.info("Lock message: " + text[0])
-        #     fig2.close()
 
 def daq_thread(interface, port, nof_tiles, directory):
     """ Start the DAQ instance for this station
