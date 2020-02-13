@@ -272,7 +272,7 @@ def plotting_thread(directory, cadence):
 
         for r in range(2):
             for c in range(8):
-                ant_index = (16*i) + (2*r) + c
+                ant_index = (16*i) + (8*r) + c
                 axes += [plt.subplot(gs[(r, c + 9)])]
                 axes[ant_index].cla()
                 axes[ant_index].set_xlim(0, 400)
@@ -355,7 +355,7 @@ def plotting_thread(directory, cadence):
                 tstamp_label[i].set_text(t_timestamp)
                 for r in range(2):
                     for c in range(8):
-                        ant_index = (16*i) + (2*r) + c
+                        ant_index = (16*i) + (8*r) + c
                         singolo = all_data[:, ant_index: ant_index + 1, 0, 0]
                         with np.errstate(divide='ignore'):
                             x_lines[ant_index].set_ydata(10*np.log10(singolo))
