@@ -359,10 +359,10 @@ def plotting_thread(directory, cadence):
                         remapped_ant = (16*i) + remap[(8*r) + c]
                         singolo = all_data[:, remapped_ant: remapped_ant + 1, 0, 0]
                         with np.errstate(divide='ignore'):
-                            x_lines[16 * i + remap[(8*r) + c]].set_ydata(10*np.log10(singolo))
+                            x_lines[ant_index].set_ydata(10*np.log10(singolo))
                         singolo = all_data[:, remapped_ant: remapped_ant + 1, 1, 0]
                         with np.errstate(divide='ignore'):
-                            y_lines[16 * i + remap[(8*r) + c]].set_ydata(10*np.log10(singolo))
+                            y_lines[ant_index].set_ydata(10*np.log10(singolo))
                         x_bar[i][remap[(8*r) + c]].set_height(tile_rms[remapped_ant * 2])
                         y_bar[i][remap[(8*r) + c]].set_height(tile_rms[remapped_ant * 2 + 1])
 
