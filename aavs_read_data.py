@@ -373,7 +373,7 @@ if __name__ == "__main__":
                 PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name))):
             os.makedirs(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name)))
 
-        grid = GridSpec(13, 8, hspace=2.5, wspace=1, left=0.08, right=0.98, bottom=0.1, top=0.9)
+        grid = GridSpec(15, 8, hspace=3, wspace=1.5, left=0.08, right=0.98, bottom=0.2, top=0.5)
         fig = plt.figure(figsize=(11, 7), facecolor='w')
 
         ax_top_map = fig.add_subplot(grid[0:3, 7])
@@ -381,7 +381,7 @@ if __name__ == "__main__":
         ax_top_map.plot([0.001, 0.002], color='wheat')
         ax_top_map.set_xlim(-25, 25)
         ax_top_map.set_ylim(-25, 25)
-        circle1 = plt.Circle((0, 0), 40, color='wheat', linewidth=2.5)  # , fill=False)
+        circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
         ax_top_map.add_artist(circle1)
         ax_top_map.annotate("E", (21, -1), fontsize=10, color='black')
         ax_top_map.annotate("W", (-25, -1), fontsize=10, color='black')
@@ -393,10 +393,10 @@ if __name__ == "__main__":
         ax_top_tile.plot([0.001, 0.002], color='w')
         ax_top_tile.set_xlim(-20, 20)
         ax_top_tile.set_ylim(-20, 20)
-        title = ax_top_tile.annotate("TILE: "+str(tile) + "    Antenna: " + str(skala_name), (-20, 6), fontsize=22, color='black')
+        title = ax_top_tile.annotate("TILE: "+str(tile) + "    Antenna: " + str(skala_name), (-20, 0), fontsize=22, color='black')
         ax_top_tile.set_axis_off()
 
-        ax_xpol = fig.add_subplot(grid[3:8, :])
+        ax_xpol = fig.add_subplot(grid[3:9, :])
         ax_xpol.tick_params(axis='both', which='both', labelsize=10)
         ax_xpol.set_ylim(0, 50)
         ax_xpol.set_xlim(0, 512)
@@ -407,7 +407,7 @@ if __name__ == "__main__":
         ax_xpol.grid()
         xl, = ax_xpol.plot(range(512), range(512), color='b')
 
-        ax_ypol = fig.add_subplot(grid[8:, :])
+        ax_ypol = fig.add_subplot(grid[9:, :])
         ax_ypol.tick_params(axis='both', which='both', labelsize=10)
         ax_ypol.set_ylim(0, 50)
         ax_ypol.set_xlim(0, 512)
