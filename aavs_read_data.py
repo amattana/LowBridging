@@ -373,10 +373,10 @@ if __name__ == "__main__":
                 PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name))):
             os.makedirs(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name)))
 
-        grid = GridSpec(9, 8, hspace=0.4, wspace=0.4, left=0.04, right=0.98, bottom=0.04, top=0.96)
+        grid = GridSpec(9, 8, hspace=0.8, wspace=0.6, left=0.08, right=0.92, bottom=0.1, top=0.9)
         fig = plt.figure(figsize=(11, 7), facecolor='w')
 
-        ax_top_map = fig.add_subplot(grid[0, 3:4])
+        ax_top_map = fig.add_subplot(grid[0, 2:3])
         ax_top_map.set_axis_off()
         ax_top_map.plot([0.001, 0.002], color='wheat')
         ax_top_map.set_xlim(-25, 25)
@@ -388,7 +388,7 @@ if __name__ == "__main__":
         ax_top_map.annotate("N", (-1, 21), fontsize=10, color='black')
         ax_top_map.annotate("S", (-1, -24), fontsize=10, color='black')
 
-        ax_top_tile = fig.add_subplot(grid[0, 5:7])
+        ax_top_tile = fig.add_subplot(grid[0, 4:7])
         ax_top_tile.cla()
         ax_top_tile.plot([0.001, 0.002], color='w')
         ax_top_tile.set_xlim(-20, 20)
@@ -401,6 +401,7 @@ if __name__ == "__main__":
         ax_xpol.set_ylim(0, 50)
         ax_xpol.set_xlim(0, 512)
         ax_xpol.set_xlabel("MHz")
+        ax_xpol.set_ylabel("dB")
         ax_xpol.set_xticks([x*64 for x in range(9)])
         ax_xpol.set_xticklabels([x*50 for x in range(9)], fontsize=12)
         ax_xpol.grid()
@@ -411,6 +412,7 @@ if __name__ == "__main__":
         ax_ypol.set_ylim(0, 50)
         ax_ypol.set_xlim(0, 512)
         ax_ypol.set_xlabel("MHz")
+        ax_ypol.set_ylabel("dB")
         ax_ypol.set_xticks([x*64 for x in range(9)])
         ax_ypol.set_xticklabels([x*50 for x in range(9)], fontsize=128)
         ax_ypol.grid()
