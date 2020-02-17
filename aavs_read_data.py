@@ -373,10 +373,10 @@ if __name__ == "__main__":
                 PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name))):
             os.makedirs(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name)))
 
-        grid = GridSpec(9, 8, hspace=0.8, wspace=0.6, left=0.08, right=0.92, bottom=0.1, top=0.9)
+        grid = GridSpec(9, 8, hspace=1.2, wspace=0.6, left=0.08, right=0.92, bottom=0.1, top=0.9)
         fig = plt.figure(figsize=(11, 7), facecolor='w')
 
-        ax_top_map = fig.add_subplot(grid[0, 4:5])
+        ax_top_map = fig.add_subplot(grid[0, 7])
         ax_top_map.set_axis_off()
         ax_top_map.plot([0.001, 0.002], color='wheat')
         ax_top_map.set_xlim(-25, 25)
@@ -393,7 +393,7 @@ if __name__ == "__main__":
         ax_top_tile.plot([0.001, 0.002], color='w')
         ax_top_tile.set_xlim(-20, 20)
         ax_top_tile.set_ylim(-20, 20)
-        title = ax_top_tile.annotate("TILE: "+str(tile) + "    Antenna: " + str(skala_name), (-18, 6), fontsize=24, color='black')
+        title = ax_top_tile.annotate("TILE: "+str(tile) + "    Antenna: " + str(skala_name), (-20, 6), fontsize=22, color='black')
         ax_top_tile.set_axis_off()
 
         ax_xpol = fig.add_subplot(grid[1:5, :])
