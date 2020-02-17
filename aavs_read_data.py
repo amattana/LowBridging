@@ -373,10 +373,10 @@ if __name__ == "__main__":
                 PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name))):
             os.makedirs(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name)))
 
-        grid = GridSpec(9, 4, hspace=0.4, wspace=0.4, left=0.04, right=0.98, bottom=0.04, top=0.96)
+        grid = GridSpec(9, 8, hspace=0.4, wspace=0.4, left=0.04, right=0.98, bottom=0.04, top=0.96)
         fig = plt.figure(figsize=(11, 7), facecolor='w')
 
-        ax_top_map = fig.add_subplot(grid[0, 1])
+        ax_top_map = fig.add_subplot(grid[0, 3:4])
         ax_top_map.set_axis_off()
         ax_top_map.plot([0.001, 0.002], color='wheat')
         ax_top_map.set_xlim(-25, 25)
@@ -388,7 +388,7 @@ if __name__ == "__main__":
         ax_top_map.annotate("N", (-1, 21), fontsize=10, color='black')
         ax_top_map.annotate("S", (-1, -24), fontsize=10, color='black')
 
-        ax_top_tile = fig.add_subplot(grid[0, 2])
+        ax_top_tile = fig.add_subplot(grid[0, 5:7])
         ax_top_tile.cla()
         ax_top_tile.plot([0.001, 0.002], color='w')
         ax_top_tile.set_xlim(-20, 20)
@@ -402,6 +402,7 @@ if __name__ == "__main__":
         ax_xpol.set_xlim(0, 512)
         ax_xpol.set_xticks([0, 128, 256, 384, 512])
         ax_xpol.set_xticklabels(["0", "100", "200", "300", "400"], fontsize=8)
+        ax_xpol.grid()
         xl, = ax_xpol.plot(range(512), range(512), color='b')
 
         ax_ypol = fig.add_subplot(grid[5:, :])
@@ -410,6 +411,7 @@ if __name__ == "__main__":
         ax_ypol.set_xlim(0, 512)
         ax_ypol.set_xticks([0, 128, 256, 384, 512])
         ax_ypol.set_xticklabels(["0", "100", "200", "300", "400"], fontsize=8)
+        ax_ypol.grid()
         yl, = ax_ypol.plot(range(512), range(512), color='g')
 
         lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
