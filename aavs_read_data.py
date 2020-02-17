@@ -454,7 +454,7 @@ if __name__ == "__main__":
                                         spettro = 10 * np.log10(data[:, sb_in, 1, i])
                                     yl.set_ydata(spettro)
                                 time_label.set_text(ts_to_datestring(t[0]))
-                                plt.savefig(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d" %
+                                plt.savefig(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d_" %
                                             (int(tile), int(skala_name), int(tile), int(skala_name)) + orario + ".png")
                                 msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l + 1, len(lista), int(tile),
                                                                           l.split("/")[-1]) + \
