@@ -357,8 +357,9 @@ if __name__ == "__main__":
 
     elif plot_mode == 1:
 
+        tile = tiles[0]
         if not opts.antenna:
-            skala_name = find_ant_by_tile(tiles[0], antenne[0])
+            skala_name = find_ant_by_tile(tile, antenne[0])
         else:
             skala_name = opts.antenna
 
@@ -369,8 +370,8 @@ if __name__ == "__main__":
         if not os.path.exists(PIC_PATH + "/" + station_name + "/" + date_path):
             os.makedirs(PIC_PATH + "/" + station_name + "/" + date_path)
         if not os.path.exists(
-                PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tiles[0]), int(skala_name))):
-            os.makedirs(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tiles[0]), int(skala_name)))
+                PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name))):
+            os.makedirs(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name)))
 
         grid = GridSpec(9, 4, hspace=0.4, wspace=0.4, left=0.04, right=0.98, bottom=0.04, top=0.96)
         fig = plt.figure(figsize=(11, 7), facecolor='w')
@@ -392,7 +393,7 @@ if __name__ == "__main__":
         ax_top_tile.plot([0.001, 0.002], color='w')
         ax_top_tile.set_xlim(-20, 20)
         ax_top_tile.set_ylim(-20, 20)
-        title = ax_top_tile.annotate("TILE "+str(tiles[0]) + "   " + skala_name, (-12, 6), fontsize=24, color='black')
+        title = ax_top_tile.annotate("TILE: "+str(tile) + "    Antenna:" + str(skala_name), (-12, 6), fontsize=24, color='black')
         ax_top_tile.set_axis_off()
 
         ax_xpol = fig.add_subplot(grid[1:5, :])
@@ -411,7 +412,7 @@ if __name__ == "__main__":
         ax_ypol.set_xticklabels(["0", "100", "200", "300", "400"], fontsize=8)
         yl, = ax_ypol.plot(range(512), range(512), color='g')
 
-        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tiles[0] - 1)))
+        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
         t_cnt = 0
         for cnt_l, l in enumerate(lista):
             dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile - 1))
@@ -436,7 +437,19 @@ if __name__ == "__main__":
                                         spettro = 10 * np.log10(data[:, sb_in, 1, i])
                                     yl.set_ydata(spettro)
                                 plt.savefig(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d" %
-                                            (int(tiles[0]), int(skala_name), int(tiles[0]), int(skala_name)) + orario + ".png")
+                                            (int(tile), int(skala_name), int(tile), int(skala_name)) + orario + ".png")
+                                msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l + 1, len(lista), int(tile),
+                                                                          l.split("/")[-1]) + \
+                                      " --> Writing " + "TILE-%02d_" % int(tile) + orario + ".png"
+                                sys.stdout.write(ERASE_LINE + msg)
+                                sys.stdout.flush()
+                msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), int(tile_names[en_tile]),
+                    l.split("/")[-1]) + "   " + ts_to_datestring(timestamps[0][0]) + "   " + \
+                    ts_to_datestring(timestamps[-1][0])
+                sys.stdout.write(ERASE_LINE + msg)
+                sys.stdout.flush()
+
+
 
 
 
