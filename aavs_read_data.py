@@ -61,6 +61,8 @@ if __name__ == "__main__":
                       default="1", help="Tile Number")
     parser.add_option("--input", action="store", dest="input", type=int,
                       default=0, help="Tile Input Number")
+    parser.add_option("--antenna", action="store", dest="antenna", type=int,
+                      default=0, help="Antenna Name")
     parser.add_option("--skip", action="store", dest="skip", type=int,
                       default=-1, help="Skip N blocks")
     parser.add_option("--start", action="store", dest="start",
