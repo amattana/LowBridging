@@ -150,7 +150,7 @@ if __name__ == "__main__":
             antenne = range(16)
         else:
             antenne = [remap[opts.input - 1]]
-    print "Inputs: ", (np.array(antenne) + 1).tolist()
+    print "Inputs: ", (np.array(antenne) + 1).tolist(), "\n"
 
     plot_mode = 0
     if opts.spectrogram:
@@ -373,7 +373,7 @@ if __name__ == "__main__":
                 PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name))):
             os.makedirs(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name)))
 
-        grid = GridSpec(9, 8, hspace=1.2, wspace=0.6, left=0.08, right=0.92, bottom=0.1, top=0.9)
+        grid = GridSpec(9, 8, hspace=1.7, wspace=0.6, left=0.08, right=0.98, bottom=0.1, top=0.9)
         fig = plt.figure(figsize=(11, 7), facecolor='w')
 
         ax_top_map = fig.add_subplot(grid[0, 7])
