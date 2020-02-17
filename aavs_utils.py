@@ -36,6 +36,34 @@ def _connect_station(aavs_station):
                 continue
 
 
+def find_ant_by_name(antenna):
+    with open("aavs_map.txt") as fmap:
+        records = fmap.readlines()
+    for r in records:
+        if int(r.split()[2]) == antenna:
+            return int(r.split()[0]), int(r.split()[1])
+    return 0, 0
+
+
+def find_ant_by_tile(gruppo, inp):
+    with open("aavs_map.txt") as fmap:
+        records = fmap.readlines()
+    for r in records:
+        if int(r.split()[0]) == gruppo and int(r.split()[1]) == inp:
+            return int(r.split()[2])
+    return 0
+
+
+def find_ants_by_tile(gruppo):
+    antenne = []
+    with open("aavs_map.txt") as fmap:
+        records = fmap.readlines()
+    for r in records:
+        if int(r.split()[0]) == gruppo:
+            antenne += [int(r.split()[2])]
+    return antenne
+
+
 def dt_to_timestamp(d):
     return calendar.timegm(d.timetuple())
 

@@ -11,7 +11,7 @@ from time import sleep
 import datetime, time
 from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
 from aavs_calibration.common import get_antenna_positions, get_antenna_tile_names
-from aavs_utils import tstamp_to_fname, dt_to_timestamp, ts_to_datestring, fname_to_tstamp
+from aavs_utils import tstamp_to_fname, dt_to_timestamp, ts_to_datestring, fname_to_tstamp, find_ant_by_name
 
 # Global flag to stop the scrpts
 FIG_W = 14
@@ -19,6 +19,7 @@ TILE_H = 3.2
 PIC_PATH = "/storage/monitoring/pictures"
 TEXT_PATH = "/storage/monitoring/text_data"
 ERASE_LINE = '\x1b[2K'
+
 
 def _connect_station(aavs_station):
     """ Return a connected station """
@@ -35,15 +36,6 @@ def _connect_station(aavs_station):
                 aavs_station.connect()
             except:
                 continue
-
-
-def find_ant_by_name(antenna):
-    with open("aavs_map.txt") as fmap:
-        records = fmap.readlines()
-    for r in records:
-        if int(r.split()[2]) == antenna:
-            return int(r.split()[0]), int(r.split()[1])
-    return 0, 0
 
 
 if __name__ == "__main__":
