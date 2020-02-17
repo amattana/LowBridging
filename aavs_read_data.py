@@ -381,7 +381,7 @@ if __name__ == "__main__":
         ax_top_map.plot([0.001, 0.002], color='wheat')
         ax_top_map.set_xlim(-25, 25)
         ax_top_map.set_ylim(-25, 25)
-        circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
+        circle1 = plt.Circle((0, 0), 40, color='wheat', linewidth=2.5)  # , fill=False)
         ax_top_map.add_artist(circle1)
         ax_top_map.annotate("E", (21, -1), fontsize=10, color='black')
         ax_top_map.annotate("W", (-25, -1), fontsize=10, color='black')
