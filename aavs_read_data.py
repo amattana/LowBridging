@@ -350,7 +350,8 @@ if __name__ == "__main__":
                     sys.stdout.write(msg)
                     sys.stdout.flush()
 
-            msg = "\rTILE-%02d - written %d files in %s\n" % (int(tile_names[en_tile]), t_cnt, PIC_PATH + "/" +
+            msg = "\r" + datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S ") \
+                  + "TILE-%02d - written %d files in %s\n" % (int(tile_names[en_tile]), t_cnt, PIC_PATH + "/" +
                                             station_name + "/" + date_path + "/TILE-%02d" % (int(tile_names[en_tile])))
             sys.stdout.write(ERASE_LINE + msg)
             sys.stdout.flush()
@@ -454,7 +455,7 @@ if __name__ == "__main__":
                     ts_to_datestring(timestamps[-1][0])
                 sys.stdout.write(ERASE_LINE + msg)
                 sys.stdout.flush()
-
+        print "\nWritten", t_cnt, "files.\n"
     print
 
 
