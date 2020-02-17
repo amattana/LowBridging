@@ -397,6 +397,7 @@ if __name__ == "__main__":
         ax_top_label = fig.add_subplot(grid[0:3, 4:6])
         ax_top_label.set_axis_off()
         ax_top_label.set_xlim(-20, 20)
+        ax_top_label.set_ylim(-20, 20)
         time_label = ax_top_label.annotate("timestamp", (-16, 5), fontsize=16, color='black')
 
         ax_top_tile = fig.add_subplot(grid[0:3, 0:4])
