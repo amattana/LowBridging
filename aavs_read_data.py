@@ -377,7 +377,7 @@ if __name__ == "__main__":
         fig = plt.figure(figsize=(11, 7), facecolor='w')
 
         ax_top_map = fig.add_subplot(grid[0, 7])
-        #ax_top_map.set_axis_off()
+        ax_top_map.set_axis_off()
         ax_top_map.plot([0.001, 0.002], color='wheat')
         ax_top_map.set_xlim(-25, 25)
         ax_top_map.set_ylim(-25, 25)
