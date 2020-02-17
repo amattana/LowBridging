@@ -459,7 +459,7 @@ if __name__ == "__main__":
                     ts_to_datestring(timestamps[-1][0])
                 sys.stdout.write(ERASE_LINE + msg)
                 sys.stdout.flush()
-        print "\nWritten", t_cnt, "files.\n"
+        print "\n" + datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S ") + "Written", t_cnt, "files.\n"
     print
 
 
