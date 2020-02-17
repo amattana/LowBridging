@@ -38,7 +38,7 @@ def _connect_station(aavs_station):
 
 
 def find_ant_by_name(antenna):
-    with open("ant_map.txt") as fmap:
+    with open("aavs_map.txt") as fmap:
         records = fmap.readlines()
     for r in records:
         if int(r.split()[2]) == antenna:
