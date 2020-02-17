@@ -389,7 +389,8 @@ if __name__ == "__main__":
         ax_top_map.annotate("W", (-25, -1), fontsize=10, color='black')
         ax_top_map.annotate("N", (-1, 21), fontsize=10, color='black')
         ax_top_map.annotate("S", (-1, -24), fontsize=10, color='black')
-        ax_top_map.plot(find_pos_by_name(skala_name), marker='+', markersize=4,
+        zx, zy = find_pos_by_name(skala_name)
+        ax_top_map.plot(zx, zy, marker='+', markersize=4,
                         linestyle='None', color='k')
 
         ax_top_tile = fig.add_subplot(grid[0:3, 0:4])
