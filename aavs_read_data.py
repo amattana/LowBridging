@@ -359,7 +359,7 @@ if __name__ == "__main__":
 
     elif plot_mode == 1:
         if opts.antenna:
-            print base, find_ant_by_name(base)
+            print opts.antenna, find_ant_by_name(opts.antenna)
         #fig = plt.figure(figsize=(11, 7), facecolor='w')
         #ax = fig.add_subplot()
 
