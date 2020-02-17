@@ -140,11 +140,15 @@ if __name__ == "__main__":
         ants += ["ANT-%03d" % int(j)]
 
     antenne = []
-    if nplot == 16:
-        antenne = range(16)
+    if opts.antenna:
+        antenne = [remap[find_ant_by_name(opts.antenna)[1] - 1]]
+        print "Antenna: ", opts.antenna
     else:
-        antenne = [remap[opts.input - 1]]
-    print "Antennas: ", (np.array(antenne) + 1).tolist()
+        if nplot == 16:
+            antenne = range(16)
+        else:
+            antenne = [remap[opts.input - 1]]
+    print "Inputs: ", (np.array(antenne) + 1).tolist()
 
     plot_mode = 0
     if opts.spectrogram:
