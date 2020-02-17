@@ -151,7 +151,7 @@ if __name__ == "__main__":
             antenne = range(16)
         else:
             antenne = [remap[opts.input - 1]]
-    print "Inputs: ", (np.array(antenne) + 1).tolist(), "\n"
+    print "Tile Inputs: ", (np.array(antenne) + 1).tolist(), "\n"
 
     plot_mode = 0
     if opts.spectrogram:
@@ -386,9 +386,9 @@ if __name__ == "__main__":
         circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
         ax_top_map.add_artist(circle1)
         ax_top_map.annotate("E", (21, -1), fontsize=10, color='black')
-        ax_top_map.annotate("W", (-25, -1), fontsize=10, color='black')
+        ax_top_map.annotate("W", (-25.5, -1), fontsize=10, color='black')
         ax_top_map.annotate("N", (-1, 21), fontsize=10, color='black')
-        ax_top_map.annotate("S", (-1, -24), fontsize=10, color='black')
+        ax_top_map.annotate("S", (-1, -24.9), fontsize=10, color='black')
         zx, zy = find_pos_by_name(skala_name)
         ax_top_map.plot(zx, zy, marker='+', markersize=4,
                         linestyle='None', color='k')
