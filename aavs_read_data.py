@@ -11,7 +11,7 @@ from time import sleep
 import datetime, time
 from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
 from aavs_calibration.common import get_antenna_positions, get_antenna_tile_names
-from aavs_utils import tstamp_to_fname, dt_to_timestamp, ts_to_datestring, fname_to_tstamp, find_ant_by_name
+from aavs_utils import tstamp_to_fname, dt_to_timestamp, ts_to_datestring, fname_to_tstamp, find_ant_by_name, find_ant_by_tile
 
 # Global flag to stop the scrpts
 FIG_W = 14
@@ -117,6 +117,8 @@ if __name__ == "__main__":
     else:
         tiles = [int(i) for i in opts.tile.split(",")]
         tile_names = [str(i) for i in opts.tile.split(",")]
+    if opts.antenna:
+        tiles = [find_ant_by_name(opts.antenna)[0]]
 
     # Load configuration file
     station.load_configuration_file(opts.config)
@@ -354,10 +356,90 @@ if __name__ == "__main__":
             sys.stdout.flush()
 
     elif plot_mode == 1:
-        if opts.antenna:
-            print opts.antenna, find_ant_by_name(opts.antenna)
-        #fig = plt.figure(figsize=(11, 7), facecolor='w')
-        #ax = fig.add_subplot()
+
+        if not opts.antenna:
+            skala_name = find_ant_by_tile(tiles[0], antenne[0])
+        else:
+            skala_name = opts.antenna
+
+        if not os.path.exists(PIC_PATH):
+            os.makedirs(PIC_PATH)
+        if not os.path.exists(PIC_PATH + "/" + station_name):
+            os.makedirs(PIC_PATH + "/" + station_name)
+        if not os.path.exists(PIC_PATH + "/" + station_name + "/" + date_path):
+            os.makedirs(PIC_PATH + "/" + station_name + "/" + date_path)
+        if not os.path.exists(
+                PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tiles[0]), int(skala_name))):
+            os.makedirs(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tiles[0]), int(skala_name)))
+
+        grid = GridSpec(9, 4, hspace=0.4, wspace=0.4, left=0.04, right=0.98, bottom=0.04, top=0.96)
+        fig = plt.figure(figsize=(11, 7), facecolor='w')
+
+        ax_top_map = fig.add_subplot(grid[0, 1])
+        ax_top_map.set_axis_off()
+        ax_top_map.plot([0.001, 0.002], color='wheat')
+        ax_top_map.set_xlim(-25, 25)
+        ax_top_map.set_ylim(-25, 25)
+        circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
+        ax_top_map.add_artist(circle1)
+        ax_top_map.annotate("E", (21, -1), fontsize=10, color='black')
+        ax_top_map.annotate("W", (-25, -1), fontsize=10, color='black')
+        ax_top_map.annotate("N", (-1, 21), fontsize=10, color='black')
+        ax_top_map.annotate("S", (-1, -24), fontsize=10, color='black')
+
+        ax_top_tile = fig.add_subplot(grid[0, 2])
+        ax_top_tile.cla()
+        ax_top_tile.plot([0.001, 0.002], color='w')
+        ax_top_tile.set_xlim(-20, 20)
+        ax_top_tile.set_ylim(-20, 20)
+        title = ax_top_tile.annotate("TILE "+str(tiles[0]) + "   " + skala_name, (-12, 6), fontsize=24, color='black')
+        ax_top_tile.set_axis_off()
+
+        ax_xpol = fig.add_subplot(grid[1:5, :])
+        ax_xpol.tick_params(axis='both', which='both', labelsize=8)
+        ax_xpol.set_ylim(0, 50)
+        ax_xpol.set_xlim(0, 512)
+        ax_xpol.set_xticks([0, 128, 256, 384, 512])
+        ax_xpol.set_xticklabels(["0", "100", "200", "300", "400"], fontsize=8)
+        xl, = ax_xpol.plot(range(512), range(512), color='b')
+
+        ax_ypol = fig.add_subplot(grid[5:, :])
+        ax_ypol.tick_params(axis='both', which='both', labelsize=8)
+        ax_ypol.set_ylim(0, 50)
+        ax_ypol.set_xlim(0, 512)
+        ax_ypol.set_xticks([0, 128, 256, 384, 512])
+        ax_ypol.set_xticklabels(["0", "100", "200", "300", "400"], fontsize=8)
+        yl, = ax_ypol.plot(range(512), range(512), color='g')
+
+        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tiles[0] - 1)))
+        t_cnt = 0
+        for cnt_l, l in enumerate(lista):
+            dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile - 1))
+            if dic:
+                data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
+                                                          n_samples=dic['n_blocks'])
+                cnt = 0
+                if not t_start >= timestamps[-1]:
+                    if not t_stop <= timestamps[0]:
+                        for i, t in enumerate(timestamps):
+                            if t_start <= t[0] <= t_stop:
+                                cnt = cnt + 1
+                                t_cnt = t_cnt + 1
+
+                                # Generate picture
+                                orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
+                                for sb_in in antenne:
+                                    with np.errstate(divide='ignore'):
+                                        spettro = 10 * np.log10(data[:, sb_in, 0, i])
+                                    xl.set_ydata(spettro)
+                                    with np.errstate(divide='ignore'):
+                                        spettro = 10 * np.log10(data[:, sb_in, 1, i])
+                                    yl.set_ydata(spettro)
+                                plt.savefig(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d" %
+                                            (int(tiles[0]), int(skala_name), int(tiles[0]), int(skala_name)) + orario + ".png")
+
+
+
 
 
 
