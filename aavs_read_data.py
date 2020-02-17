@@ -393,6 +393,12 @@ if __name__ == "__main__":
         ax_top_map.plot(zx, zy, marker='+', markersize=4,
                         linestyle='None', color='k')
 
+
+        ax_top_label = fig.add_subplot(grid[0:3, 4:6])
+        ax_top_label.set_axis_off()
+        ax_top_label.set_xlim(-20, 20)
+        time_label = ax_top_label.annotate("timestamp", (-16, 0), fontsize=16, color='black')
+
         ax_top_tile = fig.add_subplot(grid[0:3, 0:4])
         ax_top_tile.cla()
         ax_top_tile.plot([0.001, 0.002], color='w')
@@ -447,6 +453,7 @@ if __name__ == "__main__":
                                     with np.errstate(divide='ignore'):
                                         spettro = 10 * np.log10(data[:, sb_in, 1, i])
                                     yl.set_ydata(spettro)
+                                time_label.set_text(ts_to_datestring(t[0]))
                                 plt.savefig(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d" %
                                             (int(tile), int(skala_name), int(tile), int(skala_name)) + orario + ".png")
                                 msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l + 1, len(lista), int(tile),
