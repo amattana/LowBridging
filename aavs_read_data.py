@@ -443,7 +443,7 @@ if __name__ == "__main__":
                                       " --> Writing " + "TILE-%02d_" % int(tile) + orario + ".png"
                                 sys.stdout.write(ERASE_LINE + msg)
                                 sys.stdout.flush()
-                msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), int(tile_names[en_tile]),
+                msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), int(tile),
                     l.split("/")[-1]) + "   " + ts_to_datestring(timestamps[0][0]) + "   " + \
                     ts_to_datestring(timestamps[-1][0])
                 sys.stdout.write(ERASE_LINE + msg)
