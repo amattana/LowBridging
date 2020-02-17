@@ -45,6 +45,15 @@ def find_ant_by_name(antenna):
     return 0, 0
 
 
+def find_pos_by_name(antenna):
+    with open("aavs_map.txt") as fmap:
+        records = fmap.readlines()
+    for r in records:
+        if int(r.split()[2]) == antenna:
+            return float(r.split()[4]), float(r.split()[3])
+    return -20, -20
+
+
 def find_ant_by_tile(gruppo, inp):
     with open("aavs_map.txt") as fmap:
         records = fmap.readlines()

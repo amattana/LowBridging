@@ -11,7 +11,8 @@ from time import sleep
 import datetime, time
 from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
 from aavs_calibration.common import get_antenna_positions, get_antenna_tile_names
-from aavs_utils import tstamp_to_fname, dt_to_timestamp, ts_to_datestring, fname_to_tstamp, find_ant_by_name, find_ant_by_tile
+from aavs_utils import tstamp_to_fname, dt_to_timestamp, ts_to_datestring, fname_to_tstamp, find_ant_by_name, \
+    find_ant_by_tile, find_pos_by_name
 
 # Global flag to stop the scrpts
 FIG_W = 14
@@ -388,6 +389,8 @@ if __name__ == "__main__":
         ax_top_map.annotate("W", (-25, -1), fontsize=10, color='black')
         ax_top_map.annotate("N", (-1, 21), fontsize=10, color='black')
         ax_top_map.annotate("S", (-1, -24), fontsize=10, color='black')
+        ax_top_map.plot(find_pos_by_name(skala_name), marker='+', markersize=4,
+                        linestyle='None', color='k')
 
         ax_top_tile = fig.add_subplot(grid[0:3, 0:4])
         ax_top_tile.cla()
@@ -408,7 +411,7 @@ if __name__ == "__main__":
         ax_xpol.grid()
         xl, = ax_xpol.plot(range(512), range(512), color='b')
 
-        ax_ypol = fig.add_subplot(grid[9:, :])
+        ax_ypol = fig.add_subplot(grid[10:, :])
         ax_ypol.tick_params(axis='both', which='both', labelsize=10)
         ax_ypol.set_ylim(0, 50)
         ax_ypol.set_xlim(0, 512)
