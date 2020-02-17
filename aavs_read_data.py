@@ -376,7 +376,7 @@ if __name__ == "__main__":
         grid = GridSpec(9, 8, hspace=0.8, wspace=0.6, left=0.08, right=0.92, bottom=0.1, top=0.9)
         fig = plt.figure(figsize=(11, 7), facecolor='w')
 
-        ax_top_map = fig.add_subplot(grid[0, 2:3])
+        ax_top_map = fig.add_subplot(grid[0, 4:5])
         ax_top_map.set_axis_off()
         ax_top_map.plot([0.001, 0.002], color='wheat')
         ax_top_map.set_xlim(-25, 25)
@@ -388,33 +388,33 @@ if __name__ == "__main__":
         ax_top_map.annotate("N", (-1, 21), fontsize=10, color='black')
         ax_top_map.annotate("S", (-1, -24), fontsize=10, color='black')
 
-        ax_top_tile = fig.add_subplot(grid[0, 4:7])
+        ax_top_tile = fig.add_subplot(grid[0, 0:4])
         ax_top_tile.cla()
         ax_top_tile.plot([0.001, 0.002], color='w')
         ax_top_tile.set_xlim(-20, 20)
         ax_top_tile.set_ylim(-20, 20)
-        title = ax_top_tile.annotate("TILE: "+str(tile) + "    Antenna:" + str(skala_name), (-12, 6), fontsize=24, color='black')
+        title = ax_top_tile.annotate("TILE: "+str(tile) + "    Antenna: " + str(skala_name), (-18, 6), fontsize=24, color='black')
         ax_top_tile.set_axis_off()
 
         ax_xpol = fig.add_subplot(grid[1:5, :])
-        ax_xpol.tick_params(axis='both', which='both', labelsize=12)
+        ax_xpol.tick_params(axis='both', which='both', labelsize=10)
         ax_xpol.set_ylim(0, 50)
         ax_xpol.set_xlim(0, 512)
-        ax_xpol.set_xlabel("MHz")
-        ax_xpol.set_ylabel("dB")
+        ax_xpol.set_xlabel("MHz", fontsize=12)
+        ax_xpol.set_ylabel("dB", fontsize=12)
         ax_xpol.set_xticks([x*64 for x in range(9)])
-        ax_xpol.set_xticklabels([x*50 for x in range(9)], fontsize=12)
+        ax_xpol.set_xticklabels([x*50 for x in range(9)], fontsize=10)
         ax_xpol.grid()
         xl, = ax_xpol.plot(range(512), range(512), color='b')
 
         ax_ypol = fig.add_subplot(grid[5:, :])
-        ax_ypol.tick_params(axis='both', which='both', labelsize=12)
+        ax_ypol.tick_params(axis='both', which='both', labelsize=10)
         ax_ypol.set_ylim(0, 50)
         ax_ypol.set_xlim(0, 512)
-        ax_ypol.set_xlabel("MHz")
-        ax_ypol.set_ylabel("dB")
+        ax_ypol.set_xlabel("MHz", fontsize=12)
+        ax_ypol.set_ylabel("dB", fontsize=12)
         ax_ypol.set_xticks([x*64 for x in range(9)])
-        ax_ypol.set_xticklabels([x*50 for x in range(9)], fontsize=128)
+        ax_ypol.set_xticklabels([x*50 for x in range(9)], fontsize=10)
         ax_ypol.grid()
         yl, = ax_ypol.plot(range(512), range(512), color='g')
 
@@ -454,6 +454,8 @@ if __name__ == "__main__":
                     ts_to_datestring(timestamps[-1][0])
                 sys.stdout.write(ERASE_LINE + msg)
                 sys.stdout.flush()
+
+    print
 
 
 
