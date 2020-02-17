@@ -373,7 +373,7 @@ if __name__ == "__main__":
                 PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name))):
             os.makedirs(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name)))
 
-        grid = GridSpec(9, 8, hspace=1.7, wspace=0.6, left=0.08, right=0.98, bottom=0.1, top=0.9)
+        grid = GridSpec(9, 8, hspace=2.5, wspace=1, left=0.08, right=0.98, bottom=0.1, top=0.9)
         fig = plt.figure(figsize=(11, 7), facecolor='w')
 
         ax_top_map = fig.add_subplot(grid[0, 7])
