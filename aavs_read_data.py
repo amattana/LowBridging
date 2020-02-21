@@ -12,7 +12,7 @@ import datetime, time
 from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
 from aavs_calibration.common import get_antenna_positions, get_antenna_tile_names
 from aavs_utils import tstamp_to_fname, dt_to_timestamp, ts_to_datestring, fname_to_tstamp, find_ant_by_name, \
-    find_ant_by_tile, find_pos_by_name
+    find_ant_by_tile, find_pos_by_name, closest
 
 # Global flag to stop the scrpts
 FIG_W = 14
@@ -66,8 +66,10 @@ if __name__ == "__main__":
                       default="", help="Stop time for filter (YYYY-mm-DD)")
     parser.add_option("--save", action="store_true", dest="save",
                       default=False, help="Save single antenna measurements in text files")
+    parser.add_option("--single", action="store_true", dest="single",
+                      default=False, help="Produces pictures for specific antenna")
     parser.add_option("--spectrogram", action="store_true", dest="spectrogram",
-                      default=False, help="Produce an antenna (required argument) spectrogram")
+                      default=False, help="Produces a spectrogram for a specific antenna")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -154,11 +156,17 @@ if __name__ == "__main__":
     print "Tile Inputs: ", (np.array(antenne) + 1).tolist(), "\n"
 
     plot_mode = 0
-    if opts.spectrogram:
+    if opts.single:
         if opts.input or opts.antenna:
             plot_mode = 1
         else:
-            print "Spectrogram mode requires antenna argument"
+            print "Missing antenna argument"
+            exit(1)
+    if opts.spectrogram:
+        if opts.antenna:
+            plot_mode = 2
+        else:
+            print "Missing antenna argument"
             exit(1)
 
     if plot_mode == 0:
@@ -468,6 +476,11 @@ if __name__ == "__main__":
                 sys.stdout.write(ERASE_LINE + msg)
                 sys.stdout.flush()
         print "\n" + datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S ") + "Written", t_cnt, "files.\n"
+
+    # SPECTROGRAM
+    elif plot_mode == 1:
+        pass
+
     print
 
 
