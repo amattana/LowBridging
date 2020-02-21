@@ -18,6 +18,7 @@ from aavs_utils import tstamp_to_fname, dt_to_timestamp, ts_to_datestring, fname
 FIG_W = 14
 TILE_H = 3.2
 PIC_PATH = "/storage/monitoring/pictures"
+SPGR_PATH = "/storage/monitoring/spectrograms"
 TEXT_PATH = "/storage/monitoring/text_data"
 ERASE_LINE = '\x1b[2K'
 
@@ -70,6 +71,12 @@ if __name__ == "__main__":
                       default=False, help="Produces pictures for specific antenna")
     parser.add_option("--spectrogram", action="store_true", dest="spectrogram",
                       default=False, help="Produces a spectrogram for a specific antenna")
+    parser.add_option("--startfreq", action="store", dest="startfreq", type="int",
+                      default=0, help="Start Frequency")
+    parser.add_option("--stopfreq", action="store", dest="stopfreq", type="int",
+                      default=400, help="Stop Frequency")
+    parser.add_option("--pol", action="store", dest="pol",
+                      default="x", help="Polarization [x (default)| y]")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -478,8 +485,109 @@ if __name__ == "__main__":
         print "\n" + datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S ") + "Written", t_cnt, "files.\n"
 
     # SPECTROGRAM
-    elif plot_mode == 1:
-        pass
+    elif plot_mode == 2:
+
+        da = tstamp_to_fname(t_start)[:-6]
+        date_path = da[:4] + "-" + da[4:6] + "-" + da[6:]
+
+        band = str("%03d" % int(opts.startfreq)) + "-" + str("%03d" % int(opts.stopfreq))
+        if opts.pol.lower() == "x":
+            pol = 0
+        elif opts.pol.lower() == "y":
+            pol = 1
+        else:
+            print "\nWrong value passed for argument pol, using default X pol"
+            pol = 0
+
+        gs = GridSpec(2, 1, height_ratios=[4, 1])
+        fig = plt.figure(figsize=(14, 9), facecolor='w')
+
+        ax_water = fig.add_subplot(gs[0])
+        asse_x = np.linspace(0, 400, 512)
+        xmin = closest(asse_x, int(opts.startfreq))
+        xmax = closest(asse_x, int(opts.stopfreq))
+
+        dayspgramma = np.empty((10, xmax - xmin + 1,))
+        dayspgramma[:] = np.nan
+
+        wclim = (0, 40)
+        ax_water.cla()
+        ax_water.imshow(dayspgramma, interpolation='none', aspect='auto', extent=[xmin, xmax, 60, 0], cmap='jet', clim=wclim)
+        ax_water.set_ylabel("Time (minutes)")
+        ax_water.set_xlabel('MHz')
+
+        tile = find_ant_by_name(opts.antenna)[0]
+        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
+        t_cnt = 0
+        orari = []
+        for cnt_l, l in enumerate(lista):
+            dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile - 1))
+            if dic:
+                data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
+                                                          n_samples=dic['n_blocks'])
+                cnt = 0
+                if not t_start >= timestamps[-1]:
+                    if not t_stop <= timestamps[0]:
+                        for i, t in enumerate(timestamps):
+                            if t_start <= t[0] <= t_stop:
+                                orari += [datetime.datetime.utcfromtimestamp(t[0])]
+                                for sb_in in antenne:
+                                    with np.errstate(divide='ignore'):
+                                        spettro = 10 * np.log10(data[:, sb_in, pol, i])
+                                if xmin == 0:
+                                    dayspgramma = np.concatenate((dayspgramma, [spettro[:xmax + 1]]), axis=0)
+                                else:
+                                    dayspgramma = np.concatenate((dayspgramma, [spettro[xmin:xmax + 1]]), axis=0)
+                                msg = "\rProcessing " + ts_to_datestring(t[0])
+                                sys.stdout.write(ERASE_LINE + msg)
+                                sys.stdout.flush()
+
+        x_tick = []
+        step = 0
+        for z in range(len(orari)):
+            if orari[z].hour == step:
+                #print str(orari[z])
+                x_tick += [z]
+                step = step + 3
+        #print str(orari[-1])
+        x_tick += [len(dayspgramma[10:])]
+
+        first_empty, dayspgramma = dayspgramma[:10], dayspgramma[10:]
+        ax_water.cla()
+        ax_water.imshow(np.rot90(dayspgramma), interpolation='none', aspect='auto', cmap='jet', clim=wclim)
+        ax_water.set_title("Spectrogram of Ant-%03d"%(opts.antenna) + " Pol-" + opts.pol.upper(), fontsize=14)
+        ax_water.set_ylabel("MHz")
+        ax_water.set_xlabel('Time (UTC)')
+        ax_water.set_xticks(x_tick)
+        ax_water.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
+        ystep = 10
+        if int(band.split("-")[1]) <= 100:
+            ystep = 10
+        elif int(band.split("-")[1]) <= 200:
+            ystep = 20
+        elif int(band.split("-")[1]) > 200:
+            ystep = 50
+        BW = int(band.split("-")[1]) - int(band.split("-")[0])
+        ytic = np.array(range(( BW / ystep) + 1 )) * ystep * (len(np.rot90(dayspgramma)) / float(BW))
+        ax_water.set_yticks(len(np.rot90(dayspgramma)) - ytic)
+        ylabmax = (np.array(range((BW / ystep) + 1 )) * ystep) + int(band.split("-")[0])
+        ax_water.set_yticklabels(ylabmax.astype("str").tolist())
+
+        if not os.path.exists(SPGR_PATH):
+            os.makedirs(SPGR_PATH)
+        if not os.path.exists(SPGR_PATH + "/" + station_name):
+            os.makedirs(SPGR_PATH + "/" + station_name)
+        if not os.path.exists(SPGR_PATH + "/" + station_name + "/" + date_path):
+            os.makedirs(SPGR_PATH + "/" + station_name + "/" + date_path)
+        if not os.path.exists(
+                SPGR_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna))):
+            os.makedirs(SPGR_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna)))
+
+        fname = SPGR_PATH + "/" + station_name + "/" + date_path + \
+                "/TILE-%02d_ANT-%03d/SPGR_"%(int(tile), int(opts.antenna)) + \
+                date_path + "_TILE-%02d_ANT-%03d.png"%(int(tile), int(opts.antenna))
+
+        plt.savefig(fname)
 
     print
 
