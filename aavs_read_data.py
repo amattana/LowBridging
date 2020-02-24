@@ -499,7 +499,7 @@ if __name__ == "__main__":
             print "\nWrong value passed for argument pol, using default X pol"
             pol = 0
 
-        gs = GridSpec(2, 1, height_ratios=[4, 1])
+        gs = GridSpec(2, 1, height_ratios=[4, 1], hspace=0.8, wspace=0.4, left=0.08, right=0.98, bottom=0.1, top=0.98)
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
         ax_water = fig.add_subplot(gs[0])
@@ -543,8 +543,7 @@ if __name__ == "__main__":
                                 sys.stdout.flush()
 
             msg = "\r[%d/%d] File: %s" % (cnt_l + 1, len(lista), l.split("/")[-1]) + "   " + ts_to_datestring(
-                timestamps[0][0]) + "   " + \
-                  ts_to_datestring(timestamps[-1][0])
+                timestamps[0][0]) + "   " + ts_to_datestring(timestamps[-1][0])
             sys.stdout.write(ERASE_LINE + msg)
             sys.stdout.flush()
 
