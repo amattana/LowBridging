@@ -499,10 +499,10 @@ if __name__ == "__main__":
             print "\nWrong value passed for argument pol, using default X pol"
             pol = 0
 
-        gs = GridSpec(2, 1, height_ratios=[4, 1], hspace=0.8, wspace=0.4, left=0.08, right=0.98, bottom=0.1, top=0.98)
+        gs = GridSpec(5, 1, hspace=0.8, wspace=0.4, left=0.08, right=0.98, bottom=0.1, top=0.95)
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
-        ax_water = fig.add_subplot(gs[0])
+        ax_water = fig.add_subplot(gs[0:4])
         asse_x = np.linspace(0, 400, 512)
         xmin = closest(asse_x, int(opts.startfreq))
         xmax = closest(asse_x, int(opts.stopfreq))
