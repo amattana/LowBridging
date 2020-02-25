@@ -125,7 +125,7 @@ def eq_retta(x1, y1, x2, y2):
 def calc_value(serie_x, serie_y, x):
     x1 = closest(np.array(serie_x), x)
     x2 = x1 + 1
-    print " * ", len(serie_x), len(serie_y), x1, x2
+    #print " * ", len(serie_x), len(serie_y), x1, x2
     return eq_retta(x1, serie_y[x1], x2, serie_y[x2])(x)
 
 
