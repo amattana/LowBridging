@@ -261,7 +261,7 @@ def mro_daily_weather(fname="/storage/monitoring/weather/MRO_WEATHER.csv", date=
             units['rain'] = data[3].split(",")[6][1:].split(" ")[-1][1:-1]
             for d in data[4:]:
                 t_stamp = int(time.mktime(datetime.datetime.strptime(d.split(",")[0],
-                               "%Y-%m-%d %H:%M:%S").timetuple())
+                               "%Y-%m-%d %H:%M:%S").timetuple()))
                 if t_start <= t_stamp <= t_stop:
                     dati = {}
                     dati['time'] = t_stamp
