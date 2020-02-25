@@ -12,7 +12,7 @@ import datetime, time
 from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
 from aavs_calibration.common import get_antenna_positions, get_antenna_tile_names
 from aavs_utils import tstamp_to_fname, dt_to_timestamp, ts_to_datestring, fname_to_tstamp, find_ant_by_name, \
-    find_ant_by_tile, find_pos_by_name, closest
+    find_ant_by_tile, find_pos_by_name, closest, mro_daily_weather, diclist_to_array, calc_value
 
 # Global flag to stop the scrpts
 FIG_W = 14
@@ -71,6 +71,8 @@ if __name__ == "__main__":
                       default=False, help="Produces pictures for specific antenna")
     parser.add_option("--spectrogram", action="store_true", dest="spectrogram",
                       default=False, help="Produces a spectrogram for a specific antenna")
+    parser.add_option("--weather", action="store_true", dest="weather",
+                      default=False, help="Add weather info (if available)")
     parser.add_option("--startfreq", action="store", dest="startfreq", type="int",
                       default=0, help="Start Frequency")
     parser.add_option("--stopfreq", action="store", dest="stopfreq", type="int",
@@ -109,6 +111,20 @@ if __name__ == "__main__":
                 print "Stop  Time:  " + ts_to_datestring(t_stop)
             except:
                 print "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)"
+
+    w_data = []
+    if opts.weather:
+        w_units, w_data = mro_daily_weather(start=ts_to_datestring(t_start, formato="%Y-%m-%d_%H:%M:%S"),
+                                             stop=ts_to_datestring(t_stop, formato="%Y-%m-%d_%H:%M:%S"))
+        if len(w_data):
+            w_time = diclist_to_array(w_data, 'time')
+            w_temp = diclist_to_array(w_data, 'temp')
+            w_wind = diclist_to_array(w_data, 'wind')
+            w_wdir = diclist_to_array(w_data, 'wdir')
+            w_rain = diclist_to_array(w_data, 'rain')
+
+        else:
+            print "\nNo weather data available\n"
 
     date_path = tstamp_to_fname(t_start)[:-6]
 
@@ -499,7 +515,11 @@ if __name__ == "__main__":
             print "\nWrong value passed for argument pol, using default X pol"
             pol = 0
 
-        gs = GridSpec(5, 1, hspace=0.8, wspace=0.4, left=0.08, right=0.98, bottom=0.1, top=0.95)
+        row = 4
+        if len(w_data):
+            row = row + 1
+
+        gs = GridSpec(row, 1, hspace=0.8, wspace=0.4, left=0.08, right=0.98, bottom=0.1, top=0.95)
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
         ax_water = fig.add_subplot(gs[0:4])
@@ -516,10 +536,14 @@ if __name__ == "__main__":
         ax_water.set_ylabel("Time (minutes)")
         ax_water.set_xlabel('MHz')
 
+        if len(w_data):
+            ax_weather = fig.add_subplot(gs[-1, :])
+
         tile = find_ant_by_name(opts.antenna)[0]
         lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
         t_cnt = 0
         orari = []
+        t_stamps = []
         for cnt_l, l in enumerate(lista):
             dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile - 1))
             if dic:
@@ -530,6 +554,7 @@ if __name__ == "__main__":
                     if not t_stop <= timestamps[0]:
                         for i, t in enumerate(timestamps):
                             if t_start <= t[0] <= t_stop:
+                                t_stamps += [t[0]]
                                 orari += [datetime.datetime.utcfromtimestamp(t[0])]
                                 for sb_in in antenne:
                                     with np.errstate(divide='ignore'):
@@ -577,6 +602,18 @@ if __name__ == "__main__":
         ax_water.set_yticks(len(np.rot90(dayspgramma)) - ytic)
         ylabmax = (np.array(range((BW / ystep) + 1 )) * ystep) + int(band.split("-")[0])
         ax_water.set_yticklabels(ylabmax.astype("str").tolist())
+
+        if len(w_data):
+            z_temp = []
+            z_wind = []
+            z_wdir = []
+            z_rain = []
+            for t in t_stamps:
+                z_temp += [calc_value(w_time, w_temp, t)]
+                z_wind += [calc_value(w_time, w_wind, t)]
+                z_wdir += [calc_value(w_time, w_wdir, t)]
+                z_rain += [calc_value(w_time, w_rain, t)]
+            ax_weather.plot(t_stamps, w_temp)
 
         if not os.path.exists(SPGR_PATH):
             os.makedirs(SPGR_PATH)

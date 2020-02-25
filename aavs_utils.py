@@ -113,6 +113,21 @@ def closest(serie, num):
     return serie.tolist().index(min(serie.tolist(), key=lambda z: abs(z - num)))
 
 
+def eq_retta(x1, y1, x2, y2):
+    m = float((y2 - y1) / ( x2 - x1))
+    q = y1 - (m * x1)
+
+    def retta(x):
+        return m * x + q
+    return retta
+
+
+def calc_value(serie_x, serie_y, x):
+    x1 = closest(np.array(serie_x), x)
+    x2 = x1 + 1
+    return eq_retta(x1, serie_y[x1], x2, serie_y[x2])(x)
+
+
 def dB2Linear(valueIndB):
     """
     Convert input from dB to linear scale.
@@ -211,4 +226,56 @@ def calcolaspettro(dati, nsamples=131072):
         mediato[:] = 20 * np.log10(mediato / 127.0)
     return mediato
 
+
+def mro_daily_weather(fname="/storage/monitoring/weather/MRO_WEATHER.csv", date="", start="", stop=""):
+    records = []
+    units = {}
+
+    try:
+        if date:
+            t_date = datetime.datetime.strptime(date, "%Y-%m-%d")
+            t_start = int(time.mktime(t_date.timetuple()))
+            t_stop = int(time.mktime(t_date.timetuple()) + (60 * 60 * 24))
+
+        elif start and stop:
+            t_start = int(time.mktime(datetime.datetime.strptime(start, "%Y-%m-%d_%H:%M:%S").timetuple()))
+            t_stop = int(time.mktime(datetime.datetime.strptime(stop, "%Y-%m-%d_%H:%M:%S").timetuple()))
+        else:
+            print "Missing time argument (date | start,stop)"
+            return units, records
+
+    except ValueError:
+        print "Wrong date format, expected %Y-%m-%d"
+        return units, records
+
+    print "Looking for data between", t_start, "and", t_stop
+
+    if os.path.exists(fname):
+        with open(fname) as f:
+            data = f.readlines()
+        if len(data) > 4:
+            units['time'] = "sec"
+            units['temp'] = data[3].split(",")[1][1:].split(" ")[-1][1:-1]
+            units['wind'] = data[3].split(",")[3][1:].split(" ")[-1][1:-1]
+            units['wdir'] = "deg"
+            units['rain'] = data[3].split(",")[6][1:].split(" ")[-1][1:-1]
+            for d in data[4:]:
+                t_stamp = int(time.mktime(datetime.datetime.strptime(d.split(",")[0],
+                               "%Y-%m-%d %H:%M:%S").timetuple()) - (60 * 60 * 8))  # forced to MRO timezone
+                if t_start <= t_stamp <= t_stop:
+                    dati = {}
+                    dati['time'] = t_stamp
+                    dati['temp'] = float(d.split(",")[1])
+                    dati['wind'] = float(d.split(",")[3])
+                    dati['wdir'] = int(d.split(",")[5])
+                    dati['rain'] = float(d.split(",")[6])
+                    records += [dati]
+    return units, records
+
+
+def diclist_to_array(dic, key):
+    lista = []
+    for d in dic:
+        lista += [d[key]]
+    return lista
 
