@@ -609,7 +609,7 @@ if __name__ == "__main__":
             z_wdir = []
             z_rain = []
             for n, t in enumerate(t_stamps):
-                #print len(t_stamps), n, t, ts_to_datestring(t)
+                print len(t_stamps), n, t, ts_to_datestring(t)
                 if not closest(np.array(w_time), t) == w_time[-1]:
                     z_temp += [calc_value(w_time, w_temp, t)]
                     z_wind += [calc_value(w_time, w_wind, t)]
