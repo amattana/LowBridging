@@ -248,8 +248,7 @@ def mro_daily_weather(fname="/storage/monitoring/weather/MRO_WEATHER.csv", date=
         print "Wrong date format, expected %Y-%m-%d"
         return units, records
 
-    print "Looking for data between", t_start, "and", t_stop
-
+    #print "Looking for data between", t_start, "and", t_stop
     if os.path.exists(fname):
         with open(fname) as f:
             data = f.readlines()
