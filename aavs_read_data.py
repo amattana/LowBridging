@@ -610,11 +610,11 @@ if __name__ == "__main__":
             z_rain = []
             for n, t in enumerate(t_stamps):
                 print len(t_stamps), n, t, ts_to_datestring(t)
-                if not closest(np.array(w_time), t) == w_time[-1]:
-                    z_temp += [calc_value(w_time, w_temp, t)]
-                    z_wind += [calc_value(w_time, w_wind, t)]
-                    z_wdir += [calc_value(w_time, w_wdir, t)]
-                    z_rain += [calc_value(w_time, w_rain, t)]
+                #if not closest(np.array(w_time), t) == w_time[-1]:
+                z_temp += [calc_value(w_time, w_temp, t)]
+                z_wind += [calc_value(w_time, w_wind, t)]
+                z_wdir += [calc_value(w_time, w_wdir, t)]
+                z_rain += [calc_value(w_time, w_rain, t)]
             ax_weather.plot(t_stamps[:len(z_temp)], z_temp)
 
         if not os.path.exists(SPGR_PATH):
