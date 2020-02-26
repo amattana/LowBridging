@@ -654,14 +654,14 @@ if __name__ == "__main__":
             ax_rain.set_ylim(0, 20)
             ax_rain.set_ylabel('Rain (mm)', color='g')
             ax_rain.tick_params(axis='y', labelcolor='g')
-            ax_rain.spines["right"].set_position(("axes", 1))
+            ax_rain.spines["right"].set_position(("axes", 1.1))
             make_patch_spines_invisible(ax_rain)
             ax_rain.spines["right"].set_visible(True)
             ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r')
 
             # ax_wind.annotate("", xy=(0.5, 0.5), xytext=(0, 0), arrowprops = dict(arrowstyle="->")) # use this for wind direction
             #print z_temp[0:10]
-            fig.subplots_adjust(right=0.9)
+            fig.subplots_adjust(right=0.85)
 
 
         if not os.path.exists(SPGR_PATH):
