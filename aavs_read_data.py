@@ -122,7 +122,7 @@ if __name__ == "__main__":
             w_wind = diclist_to_array(w_data, 'wind')
             w_wdir = diclist_to_array(w_data, 'wdir')
             w_rain = diclist_to_array(w_data, 'rain')
-            print "\nWeather data acquired, %d records"%len(w_temp)
+            print "\nWeather data acquired, %d records"%len(w_temp), "  ", w_temp[0:8]
         else:
             print "\nNo weather data available\n"
 
