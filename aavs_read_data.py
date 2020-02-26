@@ -618,7 +618,11 @@ if __name__ == "__main__":
                 z_wdir += [calc_value(w_time, w_wdir, t)]
                 z_rain += [calc_value(w_time, w_rain, t)]
             ax_weather.plot(t_stamps[:len(z_temp)], z_temp)
-            ax_weather.set_ylim(0, 60)
+            ax_weather.set_xlabel('Time (UTC)')
+            ax_weather.set_xticks(x_tick)
+            ax_weather.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
+            ax_weather.set_ylim(min(z_temp), max(z_temp))
+            ax_weather.grid()
             #print z_temp[0:10]
 
         if not os.path.exists(SPGR_PATH):
