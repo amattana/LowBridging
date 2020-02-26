@@ -661,7 +661,7 @@ if __name__ == "__main__":
 
             # ax_wind.annotate("", xy=(0.5, 0.5), xytext=(0, 0), arrowprops = dict(arrowstyle="->")) # use this for wind direction
             #print z_temp[0:10]
-            fig.subplots_adjust(right=0.85)
+            fig.subplots_adjust(right=0.88)
 
 
         if not os.path.exists(SPGR_PATH):
