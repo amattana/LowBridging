@@ -635,6 +635,11 @@ if __name__ == "__main__":
             x_tick += [t_stamps[len(dayspgramma[10:])]]
             ax_weather.set_xticks(x_tick)
             ax_weather.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
+
+            ax_wind = ax_weather.twinx()
+            ax_wind.plot(t_stamps[:len(z_temp)], z_wind, color='b')
+            ax_wind.set_ylim(0, 60)
+            ax_wind.set_ylabel('Wind (Km/h)', color='b')
             #print z_temp[0:10]
 
         if not os.path.exists(SPGR_PATH):
