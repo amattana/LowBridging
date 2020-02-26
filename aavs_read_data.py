@@ -530,7 +530,7 @@ if __name__ == "__main__":
         dayspgramma = np.empty((10, xmax - xmin + 1,))
         dayspgramma[:] = np.nan
 
-        wclim = (0, 40)
+        wclim = (10, 35)
         ax_water.cla()
         ax_water.imshow(dayspgramma, interpolation='none', aspect='auto', extent=[xmin, xmax, 60, 0], cmap='jet', clim=wclim)
         ax_water.set_ylabel("Time (minutes)")
@@ -617,8 +617,8 @@ if __name__ == "__main__":
                 z_wind += [calc_value(w_time, w_wind, t)]
                 z_wdir += [calc_value(w_time, w_wdir, t)]
                 z_rain += [calc_value(w_time, w_rain, t)]
-            ax_weather.plot(t_stamps[:len(z_temp)], z_temp)
-            ax_weather.set_xlabel('Time (UTC)')
+            ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r')
+            ax_weather.set_ylabel('Temperature (C)', color='r')
             ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
             ax_weather.set_ylim(15, 45)
             ax_weather.set_yticks(np.arange(15, 50, 5))
