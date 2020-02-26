@@ -526,7 +526,7 @@ if __name__ == "__main__":
         if len(w_data):
             row = row + 1
 
-        gs = GridSpec(row, 1, hspace=0.8, wspace=0.4, left=0.06, right=0.92, bottom=0.1, top=0.95)
+        gs = GridSpec(row, 1, hspace=0.8, wspace=0.4, left=0.06, bottom=0.1, top=0.95)
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
         ax_water = fig.add_subplot(gs[0:4])
