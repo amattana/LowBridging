@@ -617,7 +617,7 @@ if __name__ == "__main__":
                 z_wind += [calc_value(w_time, w_wind, t)]
                 z_wdir += [calc_value(w_time, w_wdir, t)]
                 z_rain += [calc_value(w_time, w_rain, t)]
-            ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r')
+            #ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r')
             ax_weather.set_ylabel('Temperature (C)', color='r')
             ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
             ax_weather.set_ylim(15, 45)
@@ -642,6 +642,8 @@ if __name__ == "__main__":
             ax_wind.set_ylabel('Wind (Km/h)', color='b')
             ax_wind.tick_params(axis='y', labelcolor='b')
             ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r')
+
+            # ax_wind.annotate("", xy=(0.5, 0.5), xytext=(0, 0), arrowprops = dict(arrowstyle="->")) # use this for wind direction
             #print z_temp[0:10]
 
         if not os.path.exists(SPGR_PATH):
