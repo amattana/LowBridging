@@ -629,7 +629,7 @@ if __name__ == "__main__":
                     x_tick += [t_stamps[z]]
                     step = step + 3
             #print str(orari[-1])
-            x_tick += [len(dayspgramma[10:])]
+            x_tick += [t_stamps[len(dayspgramma[10:])]]
             ax_weather.set_xticks(x_tick)
             ax_weather.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
             #print z_temp[0:10]
