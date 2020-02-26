@@ -123,6 +123,7 @@ def eq_retta(x1, y1, x2, y2):
 
 
 def calc_value(serie_x, serie_y, x):
+    print "   -  ", ts_to_datestring(serie_x[0]), serie_x[0]
     x1 = closest(np.array(serie_x), x)
     if x1 >= len(serie_x)-1:
         x1 = len(serie_x)-2
