@@ -529,8 +529,6 @@ if __name__ == "__main__":
         gs = GridSpec(row, 1, hspace=0.8, wspace=0.4, left=0.06, right=0.92, bottom=0.1, top=0.95)
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
-        fig.subplots_adjust(right=0.75)
-
         ax_water = fig.add_subplot(gs[0:4])
         asse_x = np.linspace(0, 400, 512)
         xmin = closest(asse_x, int(opts.startfreq))
@@ -656,13 +654,15 @@ if __name__ == "__main__":
             ax_rain.set_ylim(0, 20)
             ax_rain.set_ylabel('Rain (mm)', color='g')
             ax_rain.tick_params(axis='y', labelcolor='g')
-            ax_rain.spines["right"].set_position(("axes", 0.9))
+            ax_rain.spines["right"].set_position(("axes", 1.2))
             make_patch_spines_invisible(ax_rain)
             ax_rain.spines["right"].set_visible(True)
             ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r')
 
             # ax_wind.annotate("", xy=(0.5, 0.5), xytext=(0, 0), arrowprops = dict(arrowstyle="->")) # use this for wind direction
             #print z_temp[0:10]
+            fig.subplots_adjust(right=0.75)
+
 
         if not os.path.exists(SPGR_PATH):
             os.makedirs(SPGR_PATH)
