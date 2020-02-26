@@ -620,9 +620,9 @@ if __name__ == "__main__":
             ax_weather.plot(t_stamps[:len(z_temp)], z_temp)
             ax_weather.set_xlabel('Time (UTC)')
             ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
-            ax_weather.set_ylim(10, 50)
-            ax_weather.set_yticks(np.arange(10, 55, 5))
-            ax_weather.set_yticklabels(np.arange(10, 55, 5))
+            ax_weather.set_ylim(15, 45)
+            ax_weather.set_yticks(np.arange(15, 50, 5))
+            ax_weather.set_yticklabels(np.arange(15, 50, 5))
             ax_weather.grid()
             x_tick = []
             step = 0
