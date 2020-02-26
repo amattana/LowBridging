@@ -641,6 +641,12 @@ if __name__ == "__main__":
             ax_wind.set_ylim(0, 60)
             ax_wind.set_ylabel('Wind (Km/h)', color='b')
             ax_wind.tick_params(axis='y', labelcolor='b')
+
+            ax_rain = ax_weather.twinx()
+            ax_rain.plot(t_stamps[:len(z_temp)], z_rain, color='b')
+            ax_rain.set_ylim(0, 20)
+            ax_rain.set_ylabel('Rain (mm)', color='g')
+            ax_rain.tick_params(axis='y', labelcolor='g')
             ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r')
 
             # ax_wind.annotate("", xy=(0.5, 0.5), xytext=(0, 0), arrowprops = dict(arrowstyle="->")) # use this for wind direction
