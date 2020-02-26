@@ -23,6 +23,13 @@ TEXT_PATH = "/storage/monitoring/text_data"
 ERASE_LINE = '\x1b[2K'
 
 
+def make_patch_spines_invisible(ax):
+    ax.set_frame_on(True)
+    ax.patch.set_visible(False)
+    for sp in ax.spines.values():
+        sp.set_visible(False)
+
+
 def _connect_station(aavs_station):
     """ Return a connected station """
     # Connect to station and see if properly formed
@@ -122,7 +129,7 @@ if __name__ == "__main__":
             w_wind = diclist_to_array(w_data, 'wind')
             w_wdir = diclist_to_array(w_data, 'wdir')
             w_rain = diclist_to_array(w_data, 'rain')
-            print "\nWeather data acquired, %d records"%len(w_temp), "  ", w_temp[0:8]
+            print "\nWeather data acquired, %d records"%len(w_temp)#, "  ", w_temp[0:8]
         else:
             print "\nNo weather data available\n"
 
@@ -519,7 +526,7 @@ if __name__ == "__main__":
         if len(w_data):
             row = row + 1
 
-        gs = GridSpec(row, 1, hspace=0.8, wspace=0.4, left=0.06, right=0.94, bottom=0.1, top=0.95)
+        gs = GridSpec(row, 1, hspace=0.8, wspace=0.4, left=0.06, right=0.92, bottom=0.1, top=0.95)
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
         ax_water = fig.add_subplot(gs[0:4])
@@ -647,6 +654,9 @@ if __name__ == "__main__":
             ax_rain.set_ylim(0, 20)
             ax_rain.set_ylabel('Rain (mm)', color='g')
             ax_rain.tick_params(axis='y', labelcolor='g')
+            ax_rain.spines["right"].set_position(("axes", 1.2))
+            make_patch_spines_invisible(ax_rain)
+            ax_rain.spines["right"].set_visible(True)
             ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r')
 
             # ax_wind.annotate("", xy=(0.5, 0.5), xytext=(0, 0), arrowprops = dict(arrowstyle="->")) # use this for wind direction
