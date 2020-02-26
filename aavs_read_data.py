@@ -652,7 +652,7 @@ if __name__ == "__main__":
             ax_wind.tick_params(axis='y', labelcolor='b')
 
             ax_rain = ax_weather.twinx()
-            ax_rain.plot(t_stamps[:len(z_temp)], z_rain, color='b')
+            ax_rain.plot(t_stamps[:len(z_temp)], z_rain, color='g')
             ax_rain.set_ylim(0, 20)
             ax_rain.set_ylabel('Rain (mm)', color='g')
             ax_rain.tick_params(axis='y', labelcolor='g')
