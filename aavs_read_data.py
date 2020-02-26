@@ -638,8 +638,10 @@ if __name__ == "__main__":
 
             ax_wind = ax_weather.twinx()
             ax_wind.plot(t_stamps[:len(z_temp)], z_wind, color='b')
-            ax_wind.set_ylim(0, 60, color='b')
+            ax_wind.set_ylim(0, 60)
             ax_wind.set_ylabel('Wind (Km/h)', color='b')
+            ax_wind.tick_params(axis='y', labelcolor='b')
+            ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r')
             #print z_temp[0:10]
 
         if not os.path.exists(SPGR_PATH):
