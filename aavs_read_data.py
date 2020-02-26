@@ -519,7 +519,7 @@ if __name__ == "__main__":
         if len(w_data):
             row = row + 1
 
-        gs = GridSpec(row, 1, hspace=0.8, wspace=0.4, left=0.08, right=0.96, bottom=0.1, top=0.95)
+        gs = GridSpec(row, 1, hspace=0.8, wspace=0.4, left=0.06, right=0.94, bottom=0.1, top=0.95)
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
         ax_water = fig.add_subplot(gs[0:4])
@@ -622,7 +622,7 @@ if __name__ == "__main__":
             ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
             ax_weather.set_ylim(15, 45)
             ax_weather.set_yticks(np.arange(15, 50, 5))
-            ax_weather.set_yticklabels(np.arange(15, 50, 5))
+            ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
             ax_weather.grid()
             x_tick = []
             step = 0
@@ -638,7 +638,7 @@ if __name__ == "__main__":
 
             ax_wind = ax_weather.twinx()
             ax_wind.plot(t_stamps[:len(z_temp)], z_wind, color='b')
-            ax_wind.set_ylim(0, 60)
+            ax_wind.set_ylim(0, 60, color='b')
             ax_wind.set_ylabel('Wind (Km/h)', color='b')
             #print z_temp[0:10]
 
