@@ -619,6 +619,7 @@ if __name__ == "__main__":
                 z_rain += [calc_value(w_time, w_rain, t)]
             ax_weather.plot(t_stamps[:len(z_temp)], z_temp)
             ax_weather.set_xlabel('Time (UTC)')
+            ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
             ax_weather.set_ylim(min(z_temp), max(z_temp))
             ax_weather.grid()
             x_tick = []
