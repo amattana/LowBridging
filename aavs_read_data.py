@@ -654,7 +654,7 @@ if __name__ == "__main__":
             ax_rain.set_ylim(0, 20)
             ax_rain.set_ylabel('Rain (mm)', color='g')
             ax_rain.tick_params(axis='y', labelcolor='g')
-            ax_rain.spines["right"].set_position(("axes", 1.1))
+            ax_rain.spines["right"].set_position(("axes", 1.04))
             make_patch_spines_invisible(ax_rain)
             ax_rain.spines["right"].set_visible(True)
             ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r')
