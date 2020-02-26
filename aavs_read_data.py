@@ -519,7 +519,7 @@ if __name__ == "__main__":
         if len(w_data):
             row = row + 1
 
-        gs = GridSpec(row, 1, hspace=0.8, wspace=0.4, left=0.08, right=0.98, bottom=0.1, top=0.95)
+        gs = GridSpec(row, 1, hspace=0.8, wspace=0.4, left=0.08, right=0.96, bottom=0.1, top=0.95)
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
         ax_water = fig.add_subplot(gs[0:4])
@@ -585,7 +585,7 @@ if __name__ == "__main__":
         first_empty, dayspgramma = dayspgramma[:10], dayspgramma[10:]
         ax_water.cla()
         ax_water.imshow(np.rot90(dayspgramma), interpolation='none', aspect='auto', cmap='jet', clim=wclim)
-        ax_water.set_title("Spectrogram of Ant-%03d"%(opts.antenna) + " Pol-" + opts.pol.upper(), fontsize=14)
+        ax_water.set_title("Spectrogram of Ant-%03d"%(opts.antenna) + " Pol-" + opts.pol.upper() + " " + date_path, fontsize=14)
         ax_water.set_ylabel("MHz")
         ax_water.set_xlabel('Time (UTC)')
         ax_water.set_xticks(x_tick)
