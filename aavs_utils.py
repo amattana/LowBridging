@@ -129,6 +129,7 @@ def calc_value(serie_x, serie_y, x):
         x1 = len(serie_x)-2
     x2 = x1 + 1
     #print " * ", len(serie_x), len(serie_y), x1, x2, ts_to_datestring(serie_x[x1]), serie_x[x1]
+    print "    -  ", serie_y[x1], serie_y[x2], eq_retta(x1, serie_y[x1], x2, serie_y[x2])(x)
     return eq_retta(x1, serie_y[x1], x2, serie_y[x2])(x)
 
 

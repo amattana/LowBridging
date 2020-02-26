@@ -94,8 +94,8 @@ if __name__ == "__main__":
             t_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
             t_start = dt_to_timestamp(t_date)
             t_stop = dt_to_timestamp(t_date) + (60 * 60 * 24)
-            print "Start Time:  " + ts_to_datestring(t_start) + " Timestamp: " + str(t_start)
-            print "Stop  Time:  " + ts_to_datestring(t_stop) + " Timestamp: " + str(t_stop)
+            print "Start Time:  " + ts_to_datestring(t_start) + "    Timestamp: " + str(t_start)
+            print "Stop  Time:  " + ts_to_datestring(t_stop) + "    Timestamp: " + str(t_stop)
         except:
             print "Bad date format detected (must be YYYY-MM-DD)"
     else:
@@ -610,9 +610,10 @@ if __name__ == "__main__":
             z_rain = []
             for n, t in enumerate(t_stamps):
                 #print len(t_stamps), n, t, ts_to_datestring(t)
-                #sleep(1)
+                sleep(1)
                 #if not closest(np.array(w_time), t) == w_time[-1]:
                 z_temp += [calc_value(w_time, w_temp, t)]
+                print " * ", ts_to_datestring(t), calc_value(w_time, w_temp, t)
                 z_wind += [calc_value(w_time, w_wind, t)]
                 z_wdir += [calc_value(w_time, w_wdir, t)]
                 z_rain += [calc_value(w_time, w_rain, t)]
