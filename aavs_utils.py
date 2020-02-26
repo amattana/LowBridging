@@ -238,12 +238,12 @@ def mro_daily_weather(fname="/storage/monitoring/weather/MRO_WEATHER.csv", date=
     try:
         if date:
             t_date = datetime.datetime.strptime(date, "%Y-%m-%d")
-            t_start = int(time.mktime(t_date.timetuple())) - (60 * 60 * 8) # Fix Weather data written in WA Local Time
-            t_stop = int(time.mktime(t_date.timetuple()) + (60 * 60 * 24)) - (60 * 60 * 8) # Fix Weather data written in WA Local Time
+            t_start = int(time.mktime(t_date.timetuple())) + (60 * 60 * 8) # Fix Weather data written in WA Local Time
+            t_stop = int(time.mktime(t_date.timetuple()) + (60 * 60 * 24)) + (60 * 60 * 8) # Fix Weather data written in WA Local Time
 
         elif start and stop:
-            t_start = int(time.mktime(datetime.datetime.strptime(start, "%Y-%m-%d_%H:%M:%S").timetuple())) - (60 * 60 * 8)  # Fix Weather data written in WA Local Time
-            t_stop = int(time.mktime(datetime.datetime.strptime(stop, "%Y-%m-%d_%H:%M:%S").timetuple())) - (60 * 60 * 8)  # Fix Weather data written in WA Local Time
+            t_start = int(time.mktime(datetime.datetime.strptime(start, "%Y-%m-%d_%H:%M:%S").timetuple())) + (60 * 60 * 8)  # Fix Weather data written in WA Local Time
+            t_stop = int(time.mktime(datetime.datetime.strptime(stop, "%Y-%m-%d_%H:%M:%S").timetuple())) + (60 * 60 * 8)  # Fix Weather data written in WA Local Time
         else:
             print "Missing time argument (date | start,stop)"
             return units, records
