@@ -631,20 +631,21 @@ if __name__ == "__main__":
             ax_weather.set_ylim(15, 45)
             ax_weather.set_yticks(np.arange(15, 50, 5))
             ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
+            ax_weather.spines["right"].set_position(("axes", 0.8))
 
             ax_wind = ax_water.twinx()
             ax_wind.plot(z_wind, color='b', lw=3)
             ax_wind.set_ylim(0, 60)
             ax_wind.set_ylabel('Wind (Km/h)', color='b')
             ax_wind.tick_params(axis='y', labelcolor='b')
-            ax_wind.spines["right"].set_position(("axes", 1.06))
+            ax_wind.spines["right"].set_position(("axes", 0.96))
 
             ax_rain = ax_water.twinx()
             ax_rain.plot(z_rain, color='g', lw=3)
             ax_rain.set_ylim(0, 20)
             ax_rain.set_ylabel('Rain (mm)', color='g')
             ax_rain.tick_params(axis='y', labelcolor='g')
-            ax_rain.spines["right"].set_position(("axes", 1.12))
+            ax_rain.spines["right"].set_position(("axes", 1.04))
 
             # #ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r')
             # ax_weather.set_ylabel('Temperature (C)', color='r')
@@ -683,7 +684,7 @@ if __name__ == "__main__":
 
             # ax_wind.annotate("", xy=(0.5, 0.5), xytext=(0, 0), arrowprops = dict(arrowstyle="->")) # use this for wind direction
             #print z_temp[0:10]
-            fig.subplots_adjust(right=0.88)
+            fig.subplots_adjust(right=0.8)
 
 
         if not os.path.exists(SPGR_PATH):
