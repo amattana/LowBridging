@@ -510,14 +510,18 @@ if __name__ == "__main__":
     # SPECTROGRAM
     elif plot_mode == 2:
 
+        POL = "Z"
+
         da = tstamp_to_fname(t_start)[:-6]
         date_path = da[:4] + "-" + da[4:6] + "-" + da[6:]
 
         band = str("%03d" % int(opts.startfreq)) + "-" + str("%03d" % int(opts.stopfreq))
         if opts.pol.lower() == "x":
             pol = 0
+            POL = "X"
         elif opts.pol.lower() == "y":
             pol = 1
+            POL = "Y"
         else:
             print "\nWrong value passed for argument pol, using default X pol"
             pol = 0
@@ -691,15 +695,16 @@ if __name__ == "__main__":
             os.makedirs(SPGR_PATH)
         if not os.path.exists(SPGR_PATH + "/" + station_name):
             os.makedirs(SPGR_PATH + "/" + station_name)
-        if not os.path.exists(SPGR_PATH + "/" + station_name + "/" + date_path):
-            os.makedirs(SPGR_PATH + "/" + station_name + "/" + date_path)
         if not os.path.exists(
-                SPGR_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna))):
-            os.makedirs(SPGR_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna)))
+                SPGR_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna))):
+            os.makedirs(SPGR_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna)))
+        if not os.path.exists(
+                SPGR_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL)):
+            os.makedirs(SPGR_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL))
 
-        fname = SPGR_PATH + "/" + station_name + "/" + date_path + \
-                "/TILE-%02d_ANT-%03d/SPGR_"%(int(tile), int(opts.antenna)) + \
-                date_path + "_TILE-%02d_ANT-%03d.png"%(int(tile), int(opts.antenna))
+        fname = SPGR_PATH + "/" + station_name + \
+                "/TILE-%02d_ANT-%03d/POL-%s/SPGR_"%(int(tile), int(opts.antenna), POL) + \
+                date_path + "_TILE-%02d_ANT-%03d_POL-%s.png"%(int(tile), int(opts.antenna), POL)
 
         plt.savefig(fname)
 
