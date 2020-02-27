@@ -526,7 +526,7 @@ if __name__ == "__main__":
         if len(w_data):
             row = row + 1
 
-        gs = GridSpec(4, 1, hspace=0.8, wspace=0.4, left=0.06, bottom=0.1, top=0.95)
+        gs = GridSpec(row, 1, hspace=0.8, wspace=0.4, left=0.06, bottom=0.1, top=0.95)
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
         ax_water = fig.add_subplot(gs[0:4])
@@ -684,7 +684,7 @@ if __name__ == "__main__":
 
             # ax_wind.annotate("", xy=(0.5, 0.5), xytext=(0, 0), arrowprops = dict(arrowstyle="->")) # use this for wind direction
             #print z_temp[0:10]
-            fig.subplots_adjust(right=0.8)
+            fig.subplots_adjust(right=0.9)
 
 
         if not os.path.exists(SPGR_PATH):
