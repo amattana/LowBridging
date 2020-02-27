@@ -626,7 +626,7 @@ if __name__ == "__main__":
                 z_rain += [calc_value(w_time, w_rain, t)]
 
             ax_wind = ax_water.twinx()
-            ax_wind.plot(t_stamps[:len(z_temp)], z_wind, color='b', lw=3)
+            ax_wind.plot(z_wind, color='b', lw=3)
             ax_wind.set_ylim(0, 60)
             ax_wind.set_ylabel('Wind (Km/h)', color='b')
             ax_wind.tick_params(axis='y', labelcolor='b')
