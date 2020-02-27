@@ -626,7 +626,7 @@ if __name__ == "__main__":
                 z_rain += [calc_value(w_time, w_rain, t)]
 
             ax_weather = ax_water.twinx()
-            ax_weather.set_ylabel('Temperature (C)', color='r')
+            ax_weather.set_ylabel('Temperature (C)', color='r', lw=3)
             ax_weather.set_ylim(15, 45)
             ax_weather.set_yticks(np.arange(15, 50, 5))
             ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
@@ -639,7 +639,7 @@ if __name__ == "__main__":
             ax_wind.spines["right"].set_position(("axes", 1.06))
 
             ax_rain = ax_water.twinx()
-            ax_rain.plot(z_rain, color='g', lw=1.5)
+            ax_rain.plot(z_rain, color='g', lw=3)
             ax_rain.set_ylim(0, 20)
             ax_rain.set_ylabel('Rain (mm)', color='g')
             ax_rain.tick_params(axis='y', labelcolor='g')
