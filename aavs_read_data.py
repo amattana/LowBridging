@@ -526,7 +526,7 @@ if __name__ == "__main__":
         if len(w_data):
             row = row + 1
 
-        gs = GridSpec(row, 1, hspace=0.8, wspace=0.4, left=0.06, bottom=0.1, top=0.95)
+        gs = GridSpec(4, 1, hspace=0.8, wspace=0.4, left=0.06, bottom=0.1, top=0.95)
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
         ax_water = fig.add_subplot(gs[0:4])
@@ -543,8 +543,8 @@ if __name__ == "__main__":
         ax_water.set_ylabel("Time (minutes)")
         ax_water.set_xlabel('MHz')
 
-        if len(w_data):
-            ax_weather = fig.add_subplot(gs[-1, :])
+        #if len(w_data):
+        #    ax_weather = fig.add_subplot(gs[-1, :])
 
         tile = find_ant_by_name(opts.antenna)[0]
         lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
