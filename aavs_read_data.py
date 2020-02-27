@@ -543,8 +543,8 @@ if __name__ == "__main__":
         ax_water.set_ylabel("Time (minutes)")
         ax_water.set_xlabel('MHz')
 
-        #if len(w_data):
-        #    ax_weather = fig.add_subplot(gs[-1, :])
+        if len(w_data):
+            ax_weather = fig.add_subplot(gs[-1, :])
 
         tile = find_ant_by_name(opts.antenna)[0]
         lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
