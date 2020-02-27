@@ -624,40 +624,47 @@ if __name__ == "__main__":
                 z_wind += [calc_value(w_time, w_wind, t)]
                 z_wdir += [calc_value(w_time, w_wdir, t)]
                 z_rain += [calc_value(w_time, w_rain, t)]
-            #ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r')
-            ax_weather.set_ylabel('Temperature (C)', color='r')
-            ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
-            ax_weather.set_ylim(15, 45)
-            ax_weather.set_yticks(np.arange(15, 50, 5))
-            ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
-            ax_weather.grid()
-            x_tick = []
-            step = 0
-            for z in range(len(orari)):
-                if orari[z].hour == step:
-                    #print str(orari[z])
-                    x_tick += [t_stamps[z]]
-                    step = step + 3
-            #print str(orari[-1])
-            x_tick += [t_stamps[len(dayspgramma[10:])]]
-            ax_weather.set_xticks(x_tick)
-            ax_weather.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
 
-            ax_wind = ax_weather.twinx()
-            ax_wind.plot(t_stamps[:len(z_temp)], z_wind, color='b', lw=1.5)
+            ax_wind = ax_water.twinx()
+            ax_wind.plot(t_stamps[:len(z_temp)], z_wind, color='b', lw=3)
             ax_wind.set_ylim(0, 60)
             ax_wind.set_ylabel('Wind (Km/h)', color='b')
             ax_wind.tick_params(axis='y', labelcolor='b')
 
-            ax_rain = ax_weather.twinx()
-            ax_rain.plot(t_stamps[:len(z_temp)], z_rain, color='g', lw=1.5)
-            ax_rain.set_ylim(0, 20)
-            ax_rain.set_ylabel('Rain (mm)', color='g')
-            ax_rain.tick_params(axis='y', labelcolor='g')
-            ax_rain.spines["right"].set_position(("axes", 1.06))
-            #make_patch_spines_invisible(ax_rain)
-            #ax_rain.spines["right"].set_visible(True)
-            ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r', lw=1.5)
+            # #ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r')
+            # ax_weather.set_ylabel('Temperature (C)', color='r')
+            # ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
+            # ax_weather.set_ylim(15, 45)
+            # ax_weather.set_yticks(np.arange(15, 50, 5))
+            # ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
+            # ax_weather.grid()
+            # x_tick = []
+            # step = 0
+            # for z in range(len(orari)):
+            #     if orari[z].hour == step:
+            #         #print str(orari[z])
+            #         x_tick += [t_stamps[z]]
+            #         step = step + 3
+            # #print str(orari[-1])
+            # x_tick += [t_stamps[len(dayspgramma[10:])]]
+            # ax_weather.set_xticks(x_tick)
+            # ax_weather.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
+            #
+            # ax_wind = ax_weather.twinx()
+            # ax_wind.plot(t_stamps[:len(z_temp)], z_wind, color='b', lw=1.5)
+            # ax_wind.set_ylim(0, 60)
+            # ax_wind.set_ylabel('Wind (Km/h)', color='b')
+            # ax_wind.tick_params(axis='y', labelcolor='b')
+            #
+            # ax_rain = ax_weather.twinx()
+            # ax_rain.plot(t_stamps[:len(z_temp)], z_rain, color='g', lw=1.5)
+            # ax_rain.set_ylim(0, 20)
+            # ax_rain.set_ylabel('Rain (mm)', color='g')
+            # ax_rain.tick_params(axis='y', labelcolor='g')
+            # ax_rain.spines["right"].set_position(("axes", 1.06))
+            # #make_patch_spines_invisible(ax_rain)
+            # #ax_rain.spines["right"].set_visible(True)
+            # ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r', lw=1.5)
 
             # ax_wind.annotate("", xy=(0.5, 0.5), xytext=(0, 0), arrowprops = dict(arrowstyle="->")) # use this for wind direction
             #print z_temp[0:10]
