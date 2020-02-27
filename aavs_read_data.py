@@ -577,6 +577,8 @@ if __name__ == "__main__":
                                 msg = "\rProcessing " + ts_to_datestring(t[0])
                                 sys.stdout.write(ERASE_LINE + msg)
                                 sys.stdout.flush()
+                else:
+                    break
 
             msg = "\r[%d/%d] File: %s" % (cnt_l + 1, len(lista), l.split("/")[-1]) + "   " + ts_to_datestring(
                 timestamps[0][0]) + "   " + ts_to_datestring(timestamps[-1][0])
