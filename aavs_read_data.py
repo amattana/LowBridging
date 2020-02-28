@@ -654,6 +654,7 @@ if __name__ == "__main__":
                 ax_rain.tick_params(axis='y', labelcolor='g')
                 ax_rain.spines["right"].set_position(("axes", 1.16))
                 fig.subplots_adjust(right=0.8)
+                ax_water.set_xlim(x_tick[0], x_tick[-1])
 
             else:
                 #ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r')
