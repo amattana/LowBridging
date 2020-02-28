@@ -584,12 +584,12 @@ if __name__ == "__main__":
             sys.stdout.flush()
 
         x_tick = []
-        step = 0
+        step = orari[0].hour
         for z in range(len(orari)):
             if orari[z].hour == step:
                 #print str(orari[z])
                 x_tick += [z]
-                step = step + 3
+                step = step + 1
         #print str(orari[-1])
         x_tick += [len(dayspgramma[10:])]
 
@@ -600,7 +600,7 @@ if __name__ == "__main__":
         ax_water.set_ylabel("MHz")
         ax_water.set_xlabel('Time (UTC)')
         ax_water.set_xticks(x_tick)
-        ax_water.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
+        ax_water.set_xticklabels(np.array(range(0, len(x_tick), 1) + orari[0].hour).astype("str").tolist())
         ystep = 10
         if int(band.split("-")[1]) <= 100:
             ystep = 10
