@@ -659,16 +659,16 @@ if __name__ == "__main__":
             ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
             ax_weather.grid()
             x_tick = []
-            step = 0
+            step = orari[0].hour
             for z in range(len(orari)):
                 if orari[z].hour == step:
                     #print str(orari[z])
                     x_tick += [t_stamps[z]]
-                    step = step + 3
+                    step = step + 1
             #print str(orari[-1])
             x_tick += [t_stamps[len(dayspgramma[10:])]]
             ax_weather.set_xticks(x_tick)
-            ax_weather.set_xticklabels(np.array(range(0, 3*9, 3)).astype("str").tolist())
+            ax_weather.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
 
             ax_wind = ax_weather.twinx()
             ax_wind.plot(t_stamps[:len(z_temp)], z_wind, color='b', lw=1.5)
