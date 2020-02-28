@@ -638,6 +638,7 @@ if __name__ == "__main__":
                 ax_weather.set_ylim(15, 45)
                 ax_weather.set_yticks(np.arange(15, 50, 5))
                 ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
+                ax_weather.tick_params(axis='y', labelcolor='r')
                 ax_weather.spines["right"].set_position(("axes", 1.))
 
                 ax_wind = ax_water.twinx()
