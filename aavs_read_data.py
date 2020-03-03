@@ -666,11 +666,12 @@ if __name__ == "__main__":
                 ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
                 ax_weather.grid()
                 x_tick = []
+                y_wdir = []
                 step = orari[0].hour
                 for z in range(len(orari)):
                     if orari[z].hour == step:
-                        #print str(orari[z])
                         x_tick += [t_stamps[z]]
+                        y_wdir += [z_wdir[z]]
                         step = step + 1
                 #print str(orari[-1])
                 x_tick += [t_stamps[len(dayspgramma[10:])]]
@@ -695,6 +696,14 @@ if __name__ == "__main__":
 
                 # ax_wind.annotate("", xy=(0.5, 0.5), xytext=(0, 0), arrowprops = dict(arrowstyle="->")) # use this for wind direction
                 #print z_temp[0:10]
+
+                # Draw wind direction
+                r = 10
+                for y in y_wdir:
+                    xs = r * np.cos(t)
+                    ys = r * np.sin(t)
+                    ax_wind.annotate("", xy=(xs, ys), xytext=(x_tick, y), arrowprops = dict(arrowstyle="->"))
+
                 fig.subplots_adjust(right=0.9)
 
 
