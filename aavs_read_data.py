@@ -634,6 +634,18 @@ if __name__ == "__main__":
                 z_rain += [calc_value(w_time, w_rain, t)]
 
             if opts.over:
+                x_tick = []
+                y_wdir = []
+                angle_wdir = []
+                step = orari[0].hour
+                for z in range(len(orari)):
+                    if orari[z].hour == step:
+                        x_tick += [t_stamps[z]]
+                        y_wdir += [z_wind[z]]
+                        angle_wdir += [z_wdir[z]]
+                        step = step + 1
+                #print str(orari[-1])
+                x_tick += [t_stamps[len(dayspgramma[10:])]]
                 ax_weather = ax_water.twinx()
                 ax_weather.plot(z_temp, color='r', lw=3)
                 ax_weather.set_ylabel('Temperature (C)', color='r')
@@ -656,6 +668,17 @@ if __name__ == "__main__":
                 ax_rain.set_ylabel('Rain (mm)', color='g')
                 ax_rain.tick_params(axis='y', labelcolor='g')
                 ax_rain.spines["right"].set_position(("axes", 1.16))
+                for a, y in enumerate(y_wdir):
+                #     xs = r * np.cos(np.deg2rad(angle_wdir[a]))
+                #     ys = r * np.sin(np.deg2rad(angle_wdir[a]))
+                #     ax_wind.annotate("", xy=(x_tick[a] + xs, y + ys), xytext=(x_tick[a], y), arrowprops=dict(arrowstyle="->"))
+                #     print a, angle_wdir[a], x_tick[a], y, x_tick[a] + xs, y + ys, r
+                    m = MarkerStyle(">")
+                    m._transform.rotate_deg(angle_wdir[a])
+                    ax_wind.scatter(x_tick[a], y, marker=m, s=100, color='orchid')
+                    m = MarkerStyle("_")
+                    m._transform.rotate_deg(angle_wdir[a])
+                    ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='orchid')
                 fig.subplots_adjust(right=0.8)
 
             else:
@@ -709,10 +732,10 @@ if __name__ == "__main__":
                 #     print a, angle_wdir[a], x_tick[a], y, x_tick[a] + xs, y + ys, r
                     m = MarkerStyle(">")
                     m._transform.rotate_deg(angle_wdir[a])
-                    ax_wind.scatter(x_tick[a], y, marker=m, s=200, color='orchid')
+                    ax_wind.scatter(x_tick[a], y, marker=m, s=100, color='orchid')
                     m = MarkerStyle("_")
                     m._transform.rotate_deg(angle_wdir[a])
-                    ax_wind.scatter(x_tick[a], y, marker=m, s=1000, color='orchid')
+                    ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='orchid')
                 fig.subplots_adjust(right=0.9)
 
 
