@@ -680,6 +680,8 @@ if __name__ == "__main__":
                     m._transform.rotate_deg(angle_wdir[a])
                     ax_wind.scatter(x_tick[a], y+10, marker=m, s=500, color='orchid')
                     print a, y
+                m = MarkerStyle(">")
+                ax_wind.scatter(x_tick[12], 30, marker=m, s=100, color='b')
                 fig.subplots_adjust(right=0.8)
 
             else:
