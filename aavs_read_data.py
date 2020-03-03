@@ -700,7 +700,7 @@ if __name__ == "__main__":
                 #print z_temp[0:10]
 
                 # Draw wind direction
-                r = 100
+                r = 3
                 for a, y in enumerate(y_wdir):
                     xs = r * np.cos(np.deg2rad(angle_wdir[a]))
                     ys = r * np.sin(np.deg2rad(angle_wdir[a]))
