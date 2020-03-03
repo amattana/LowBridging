@@ -705,7 +705,7 @@ if __name__ == "__main__":
                     xs = r * np.cos(np.deg2rad(angle_wdir[a]))
                     ys = r * np.sin(np.deg2rad(angle_wdir[a]))
                     ax_wind.annotate("", xy=(x_tick[a] + xs, y + ys), xytext=(x_tick[a], y), arrowprops=dict(arrowstyle="->"))
-                    print x_tick[a], y, xs, ys
+                    print a, angle_wdir[a], x_tick[a], y, x_tick[a] + xs, y + ys, r
                 fig.subplots_adjust(right=0.9)
 
 
