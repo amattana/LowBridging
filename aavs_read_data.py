@@ -682,7 +682,7 @@ if __name__ == "__main__":
                     print a, y
                 m = MarkerStyle(">")
                 ax_wind.scatter(x_tick[12], 30, marker=m, s=100, color='b')
-                ax_wind.scatter(12, 30, marker=m, s=100, color='b')
+                ax_wind.scatter(len(orari)/2, 30, marker=m, s=500, color='b')
                 plt.draw()
                 fig.subplots_adjust(right=0.8)
 
