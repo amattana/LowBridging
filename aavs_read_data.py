@@ -702,8 +702,8 @@ if __name__ == "__main__":
                 # Draw wind direction
                 r = 100
                 for a, y in enumerate(y_wdir):
-                    xs = r * np.cos(angle_wdir[a])
-                    ys = r * np.sin(angle_wdir[a])
+                    xs = r * np.cos(np.deg2rad(angle_wdir[a]))
+                    ys = r * np.sin(np.deg2rad(angle_wdir[a]))
                     ax_wind.annotate("", xy=(x_tick[a] + xs, y + ys), xytext=(x_tick[a], y), arrowprops=dict(arrowstyle="->"))
                     print x_tick[a], y, xs, ys
                 fig.subplots_adjust(right=0.9)
