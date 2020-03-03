@@ -13,6 +13,7 @@ from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
 from aavs_calibration.common import get_antenna_positions, get_antenna_tile_names
 from aavs_utils import tstamp_to_fname, dt_to_timestamp, ts_to_datestring, fname_to_tstamp, find_ant_by_name, \
     find_ant_by_tile, find_pos_by_name, closest, mro_daily_weather, diclist_to_array, calc_value
+from matplotlib.markers import MarkerStyle
 
 # Global flag to stop the scrpts
 FIG_W = 14
@@ -706,7 +707,12 @@ if __name__ == "__main__":
                 #     ys = r * np.sin(np.deg2rad(angle_wdir[a]))
                 #     ax_wind.annotate("", xy=(x_tick[a] + xs, y + ys), xytext=(x_tick[a], y), arrowprops=dict(arrowstyle="->"))
                 #     print a, angle_wdir[a], x_tick[a], y, x_tick[a] + xs, y + ys, r
-                    ax_wind.plot(x_tick[a], y, marker=('caretright', 0, int(angle_wdir[a])), markersize=12, linestyle='None', color='orchid')
+                    m = MarkerStyle(">")
+                    m._transform.rotate_deg(angle_wdir[a])
+                    ax_wind.plot(x_tick[a], y, marker=m, markersize=12, linestyle='None', color='orchid')
+                    m = MarkerStyle("_")
+                    m._transform.rotate_deg(angle_wdir[a])
+                    ax_wind.plot(x_tick[a], y, marker=m, markersize=16, linestyle='None', color='orchid')
                 fig.subplots_adjust(right=0.9)
 
 
