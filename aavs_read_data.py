@@ -700,12 +700,13 @@ if __name__ == "__main__":
                 #print z_temp[0:10]
 
                 # Draw wind direction
-                r = 20
+                # r = 20
                 for a, y in enumerate(y_wdir):
-                    xs = r * np.cos(np.deg2rad(angle_wdir[a]))
-                    ys = r * np.sin(np.deg2rad(angle_wdir[a]))
-                    ax_wind.annotate("", xy=(x_tick[a] + xs, y + ys), xytext=(x_tick[a], y), arrowprops=dict(arrowstyle="->"))
-                    print a, angle_wdir[a], x_tick[a], y, x_tick[a] + xs, y + ys, r
+                #     xs = r * np.cos(np.deg2rad(angle_wdir[a]))
+                #     ys = r * np.sin(np.deg2rad(angle_wdir[a]))
+                #     ax_wind.annotate("", xy=(x_tick[a] + xs, y + ys), xytext=(x_tick[a], y), arrowprops=dict(arrowstyle="->"))
+                #     print a, angle_wdir[a], x_tick[a], y, x_tick[a] + xs, y + ys, r
+                    ax_wind.plot(x_tick[a], y, marker=(">", 0, angle_wdir[a]), markersize=12, linestyle='None', color='orchid')
                 fig.subplots_adjust(right=0.9)
 
 
