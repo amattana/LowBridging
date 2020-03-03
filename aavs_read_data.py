@@ -704,8 +704,8 @@ if __name__ == "__main__":
                 for a, y in enumerate(y_wdir):
                     xs = r * np.cos(angle_wdir[a])
                     ys = r * np.sin(angle_wdir[a])
-                    ax_wind.annotate("", xy=(xs, ys), xytext=(x_tick, y), arrowprops = dict(arrowstyle="->"))
-
+                    ax_wind.annotate("", xy=(x_tick[a] + xs, y + ys), xytext=(x_tick[a], y), arrowprops=dict(arrowstyle="->"))
+                    print x_tick[a], y, xs, ys
                 fig.subplots_adjust(right=0.9)
 
 
