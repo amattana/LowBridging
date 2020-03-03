@@ -709,10 +709,10 @@ if __name__ == "__main__":
                 #     print a, angle_wdir[a], x_tick[a], y, x_tick[a] + xs, y + ys, r
                     m = MarkerStyle(">")
                     m._transform.rotate_deg(angle_wdir[a])
-                    ax_wind.plot(x_tick[a], y, marker=m, markersize=12, linestyle='None', color='orchid')
+                    ax_wind.scatter(x_tick[a], y, marker=m, s=200, color='orchid')
                     m = MarkerStyle("_")
                     m._transform.rotate_deg(angle_wdir[a])
-                    ax_wind.plot(x_tick[a], y, marker=m, markersize=16, linestyle='None', color='orchid')
+                    ax_wind.scatter(x_tick[a], y, marker=m, s=1000, color='orchid')
                 fig.subplots_adjust(right=0.9)
 
 
