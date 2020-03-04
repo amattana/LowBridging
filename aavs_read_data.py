@@ -902,7 +902,7 @@ if __name__ == "__main__":
                     y_wdir += [z_wind[z]]
                     angle_wdir += [z_wdir[z]]
                     step = step + 1
-            x_tick += [t_stamps[len(orari)]]
+            x_tick += [t_stamps[-1]]
             ax_weather.set_xticks(x_tick)
             ax_weather.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
 
