@@ -766,6 +766,8 @@ if __name__ == "__main__":
                 date_path + "_TILE-%02d_ANT-%03d_POL-%s.png"%(int(tile), int(opts.antenna), POL)
 
         plt.savefig(fname)
+        sys.stdout.write(ERASE_LINE + "\nOutput File: " + fname + "\n")
+        sys.stdout.flush()
 
     print
 
