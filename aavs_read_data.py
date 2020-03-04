@@ -839,15 +839,18 @@ if __name__ == "__main__":
                     if not t_stop <= timestamps[0]:
                         for i, t in enumerate(timestamps):
                             if t_start <= t[0] <= t_stop:
-                                t_stamps += [t[0]]
-                                orari += [datetime.datetime.utcfromtimestamp(t[0])]
                                 for sb_in in antenne:
-                                    with np.errstate(divide='ignore'):
-                                        spettro = data[:, sb_in, pol, i]
-                                if xmin == 0:
-                                    acc_power += [10 * np.log10(np.sum(spettro[:xmax + 1]))]
-                                else:
-                                    acc_power += [10 * np.log10(np.sum(spettro[xmin:xmax + 1]))]
+                                    spettro = data[:, sb_in, pol, i]
+                                if not np.sum(spettro[20:50]) == 0:
+                                    if not np.sum(spettro[300:350]) == 0:
+                                        t_stamps += [t[0]]
+                                        orari += [datetime.datetime.utcfromtimestamp(t[0])]
+                                        if xmin == 0:
+                                            with np.errstate(divide='ignore'):
+                                                acc_power += [10 * np.log10(np.sum(spettro[:xmax + 1]))]
+                                        else:
+                                            with np.errstate(divide='ignore'):
+                                                acc_power += [10 * np.log10(np.sum(spettro[xmin:xmax + 1]))]
                                 msg = "\rProcessing " + ts_to_datestring(t[0])
                                 sys.stdout.write(ERASE_LINE + msg)
                                 sys.stdout.flush()
