@@ -667,7 +667,7 @@ if __name__ == "__main__":
                 #print str(orari[-1])
                 x_tick += [t_stamps[len(dayspgramma[10:])]]
                 ax_weather = ax_water.twinx()
-                ax_weather.plot(z_temp, color='r', lw=3)
+                ax_weather.plot(z_temp, color='r', lw=1.2)
                 ax_weather.set_ylabel('Temperature (C)', color='r')
                 ax_weather.set_ylim(15, 45)
                 ax_weather.set_yticks(np.arange(15, 50, 5))
@@ -683,7 +683,7 @@ if __name__ == "__main__":
                 ax_wind.spines["right"].set_position(("axes", 1.08))
 
                 ax_rain = ax_water.twinx()
-                ax_rain.plot(z_rain, color='g', lw=3)
+                ax_rain.plot(z_rain, color='g', lw=1.2)
                 ax_rain.set_ylim(0, 20)
                 ax_rain.set_ylabel('Rain (mm)', color='g')
                 ax_rain.tick_params(axis='y', labelcolor='g')
@@ -695,10 +695,10 @@ if __name__ == "__main__":
                 #     print a, angle_wdir[a], x_tick[a], y, x_tick[a] + xs, y + ys, r
                     m = MarkerStyle(">")
                     m._transform.rotate_deg(angle_wdir[a])
-                    ax_wind.scatter(z_tick[a], y, marker=m, s=100, color='w')
+                    ax_wind.scatter(z_tick[a], y, marker=m, s=100, color='k')
                     m = MarkerStyle("_")
                     m._transform.rotate_deg(angle_wdir[a])
-                    ax_wind.scatter(z_tick[a], y, marker=m, s=400, color='w')
+                    ax_wind.scatter(z_tick[a], y, marker=m, s=400, color='k')
                 fig.subplots_adjust(right=0.8)
 
             else:
