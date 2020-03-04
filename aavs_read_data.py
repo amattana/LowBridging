@@ -20,7 +20,7 @@ FIG_W = 14
 TILE_H = 3.2
 PIC_PATH = "/storage/monitoring/pictures"
 SPGR_PATH = "/storage/monitoring/spectrograms"
-SPGR_PATH = "/storage/monitoring/power"
+POWER_PATH = "/storage/monitoring/power"
 TEXT_PATH = "/storage/monitoring/text_data"
 ERASE_LINE = '\x1b[2K'
 
