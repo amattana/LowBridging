@@ -593,14 +593,14 @@ if __name__ == "__main__":
             sys.stdout.flush()
 
         x_tick = []
-        #z_tick = []
+        z_tick = []
         step = orari[0].hour
         for z in range(len(orari)):
             if orari[z].hour == step:
                 #print str(orari[z])
                 x_tick += [z]
                 step = step + 1
-                #z_tick += [z]
+                z_tick += [z]
         #print str(orari[-1])
         x_tick += [len(dayspgramma[10:])]
 
@@ -683,13 +683,10 @@ if __name__ == "__main__":
                 #     print a, angle_wdir[a], x_tick[a], y, x_tick[a] + xs, y + ys, r
                     m = MarkerStyle(">")
                     m._transform.rotate_deg(angle_wdir[a])
-                    ax_wind.scatter(x_tick[a], y+10, marker=m, s=500, color='orchid')
+                    ax_wind.scatter(z_tick[a], y+10, marker=m, s=100, color='orchid')
                     m = MarkerStyle("_")
                     m._transform.rotate_deg(angle_wdir[a])
-                    ax_wind.scatter(x_tick[a], y+10, marker=m, s=500, color='orchid')
-                    print a, y
-                m = MarkerStyle(">")
-                ax_wind.scatter(len(orari)/2, 30, marker=m, s=500, color='orchid')
+                    ax_wind.scatter(z_tick[a], y+10, marker=m, s=100, color='orchid')
                 plt.draw()
                 fig.subplots_adjust(right=0.8)
 
