@@ -20,6 +20,7 @@ FIG_W = 14
 TILE_H = 3.2
 PIC_PATH = "/storage/monitoring/pictures"
 SPGR_PATH = "/storage/monitoring/spectrograms"
+SPGR_PATH = "/storage/monitoring/power"
 TEXT_PATH = "/storage/monitoring/text_data"
 ERASE_LINE = '\x1b[2K'
 
@@ -89,7 +90,8 @@ if __name__ == "__main__":
                       default=400, help="Stop Frequency")
     parser.add_option("--pol", action="store", dest="pol",
                       default="x", help="Polarization [x (default)| y]")
-
+    parser.add_option("--power", action="store_true", dest="power",
+                      default=False, help="Total Power of channels")
     (opts, args) = parser.parse_args(argv[1:])
 
     t_date = None
@@ -201,6 +203,14 @@ if __name__ == "__main__":
         else:
             print "Missing antenna argument"
             exit(1)
+
+    if opts.power:
+        if opts.antenna:
+            plot_mode = 3
+        else:
+            print "Missing antenna argument"
+            exit(1)
+
 
     if plot_mode == 0:
         outer_grid = GridSpec(4, 4, hspace=0.4, wspace=0.4, left=0.04, right=0.98, bottom=0.04, top=0.96)
@@ -770,6 +780,171 @@ if __name__ == "__main__":
             os.makedirs(SPGR_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL))
 
         fname = SPGR_PATH + "/" + station_name + \
+                "/TILE-%02d_ANT-%03d/POL-%s/SPGR_"%(int(tile), int(opts.antenna), POL) + \
+                date_path + "_TILE-%02d_ANT-%03d_POL-%s.png"%(int(tile), int(opts.antenna), POL)
+
+        plt.savefig(fname)
+        sys.stdout.write(ERASE_LINE + "\nOutput File: " + fname + "\n")
+        sys.stdout.flush()
+
+    # Channel POWER
+    elif plot_mode == 3:
+
+        POL = "Z"
+
+        da = tstamp_to_fname(t_start)[:-6]
+        date_path = da[:4] + "-" + da[4:6] + "-" + da[6:]
+
+        band = str("%03d" % int(opts.startfreq)) + "-" + str("%03d" % int(opts.stopfreq))
+        if opts.pol.lower() == "x":
+            pol = 0
+            POL = "X"
+        elif opts.pol.lower() == "y":
+            pol = 1
+            POL = "Y"
+        else:
+            print "\nWrong value passed for argument pol, using default X pol"
+            pol = 0
+
+        gs = GridSpec(2, 1, hspace=0.8, wspace=0.4, left=0.06, bottom=0.1, top=0.95)
+        fig = plt.figure(figsize=(14, 9), facecolor='w')
+
+        ax_power = fig.add_subplot(gs[0])
+        asse_x = np.linspace(0, 400, 512)
+        xmin = closest(asse_x, int(opts.startfreq))
+        xmax = closest(asse_x, int(opts.stopfreq))
+
+        if len(w_data) and not opts.over:
+            ax_weather = fig.add_subplot(gs[1])
+
+        tile = find_ant_by_name(opts.antenna)[0]
+        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
+        t_cnt = 0
+        orari = []
+        t_stamps = []
+        acc_power = []
+        for cnt_l, l in enumerate(lista):
+            if cnt_l < len(lista) - 1:
+                t_file = fname_to_tstamp(lista[cnt_l + 1][-21:-7])
+                if t_file < t_start:
+                    continue
+            dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile - 1))
+            if dic:
+                data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
+                                                          n_samples=dic['n_blocks'])
+                cnt = 0
+                if timestamps[0] > t_stop:
+                    break
+                if not t_start >= timestamps[-1]:
+                    if not t_stop <= timestamps[0]:
+                        for i, t in enumerate(timestamps):
+                            if t_start <= t[0] <= t_stop:
+                                t_stamps += [t[0]]
+                                orari += [datetime.datetime.utcfromtimestamp(t[0])]
+                                for sb_in in antenne:
+                                    with np.errstate(divide='ignore'):
+                                        spettro = data[:, sb_in, pol, i]
+                                if xmin == 0:
+                                    acc_power += [10 * np.log10(np.sum(spettro[:xmax + 1]))]
+                                else:
+                                    acc_power += [10 * np.log10(np.sum(spettro[xmin:xmax + 1]))]
+                                msg = "\rProcessing " + ts_to_datestring(t[0])
+                                sys.stdout.write(ERASE_LINE + msg)
+                                sys.stdout.flush()
+
+            msg = "\r[%d/%d] File: %s" % (cnt_l + 1, len(lista), l.split("/")[-1]) + "   " + ts_to_datestring(
+                timestamps[0][0]) + "   " + ts_to_datestring(timestamps[-1][0])
+            sys.stdout.write(ERASE_LINE + msg)
+            sys.stdout.flush()
+
+        x_tick = []
+        z_tick = []
+        step = orari[0].hour
+        for z in range(len(orari)):
+            if orari[z].hour == step:
+                x_tick += [z]
+                step = step + 1
+                z_tick += [z]
+        x_tick += [len(orari)]
+
+        ax_power.set_xlim(x_tick[0], x_tick[-1])
+        ax_power.plot(acc_power)
+        ax_power.set_xlabel("Time")
+        ax_power.set_ylabel("dB")
+        ax_power.set_xticks(x_tick)
+        ax_power.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
+
+        if len(w_data):
+            z_temp = []
+            z_wind = []
+            z_wdir = []
+            z_rain = []
+            for n, t in enumerate(t_stamps):
+                #print len(t_stamps), n, t, ts_to_datestring(t)
+                #sleep(1)
+                #if not closest(np.array(w_time), t) == w_time[-1]:
+                z_temp += [calc_value(w_time, w_temp, t)]
+                #print " * ", ts_to_datestring(t), calc_value(w_time, w_temp, t)
+                z_wind += [calc_value(w_time, w_wind, t)]
+                z_wdir += [calc_value(w_time, w_wdir, t)]
+                z_rain += [calc_value(w_time, w_rain, t)]
+
+                ax_weather.set_ylabel('Temperature (C)', color='r')
+                ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
+                ax_weather.set_ylim(15, 45)
+                ax_weather.set_yticks(np.arange(15, 50, 5))
+                ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
+                ax_weather.grid()
+                x_tick = []
+                y_wdir = []
+                angle_wdir = []
+                step = orari[0].hour
+                for z in range(len(orari)):
+                    if orari[z].hour == step:
+                        x_tick += [t_stamps[z]]
+                        y_wdir += [z_wind[z]]
+                        angle_wdir += [z_wdir[z]]
+                        step = step + 1
+                x_tick += [t_stamps[len(orari)]]
+                ax_weather.set_xticks(x_tick)
+                ax_weather.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
+
+                ax_wind = ax_weather.twinx()
+                ax_wind.plot(t_stamps[:len(z_temp)], z_wind, color='b', lw=1.5)
+                ax_wind.set_ylim(0, 60)
+                ax_wind.set_ylabel('Wind (Km/h)', color='b')
+                ax_wind.tick_params(axis='y', labelcolor='b')
+
+                ax_rain = ax_weather.twinx()
+                ax_rain.plot(t_stamps[:len(z_temp)], z_rain, color='g', lw=1.5)
+                ax_rain.set_ylim(0, 20)
+                ax_rain.set_ylabel('Rain (mm)', color='g')
+                ax_rain.tick_params(axis='y', labelcolor='g')
+                ax_rain.spines["right"].set_position(("axes", 1.06))
+                ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r', lw=1.5)
+
+                # Draw wind direction
+                for a, y in enumerate(y_wdir):
+                    m = MarkerStyle(">")
+                    m._transform.rotate_deg(angle_wdir[a])
+                    ax_wind.scatter(x_tick[a], y, marker=m, s=100, color='g')
+                    m = MarkerStyle("_")
+                    m._transform.rotate_deg(angle_wdir[a])
+                    ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='g')
+                fig.subplots_adjust(right=0.9)
+
+        if not os.path.exists(POWER_PATH):
+            os.makedirs(POWER_PATH)
+        if not os.path.exists(POWER_PATH + "/" + station_name):
+            os.makedirs(POWER_PATH + "/" + station_name)
+        if not os.path.exists(
+                POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna))):
+            os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna)))
+        if not os.path.exists(
+                POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL)):
+            os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL))
+
+        fname = POWER_PATH + "/" + station_name + \
                 "/TILE-%02d_ANT-%03d/POL-%s/SPGR_"%(int(tile), int(opts.antenna), POL) + \
                 date_path + "_TILE-%02d_ANT-%03d_POL-%s.png"%(int(tile), int(opts.antenna), POL)
 
