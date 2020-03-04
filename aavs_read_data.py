@@ -698,7 +698,7 @@ if __name__ == "__main__":
                     ax_wind.scatter(z_tick[a], y, marker=m, s=100, color='cyan')
                     m = MarkerStyle("_")
                     m._transform.rotate_deg(angle_wdir[a])
-                    ax_wind.scatter(z_tick[a], y, marker=m, s=300, color='cyan')
+                    ax_wind.scatter(z_tick[a], y, marker=m, s=400, color='cyan')
                 plt.draw()
                 fig.subplots_adjust(right=0.8)
 
