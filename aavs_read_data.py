@@ -563,6 +563,10 @@ if __name__ == "__main__":
         orari = []
         t_stamps = []
         for cnt_l, l in enumerate(lista):
+            if cnt_l < len(lista) - 1:
+                t_file = fname_to_tstamp(lista[cnt_l + 1][-21:-7])
+                if t_file < t_start:
+                    continue
             dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile - 1))
             if dic:
                 data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
