@@ -699,7 +699,6 @@ if __name__ == "__main__":
                     m = MarkerStyle("_")
                     m._transform.rotate_deg(angle_wdir[a])
                     ax_wind.scatter(z_tick[a], y, marker=m, s=400, color='w')
-                plt.draw()
                 fig.subplots_adjust(right=0.8)
 
             else:
