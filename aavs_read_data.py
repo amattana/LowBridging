@@ -326,6 +326,10 @@ if __name__ == "__main__":
                     os.makedirs(TEXT_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d" % int(tile_names[en_tile]))
 
             for cnt_l, l in enumerate(lista):
+                if cnt_l < len(lista) - 1:
+                    t_file = fname_to_tstamp(lista[cnt_l + 1][-21:-7])
+                    if t_file < t_start:
+                        continue
                 dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile-1))
                 if dic:
                     data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
@@ -476,6 +480,10 @@ if __name__ == "__main__":
         lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
         t_cnt = 0
         for cnt_l, l in enumerate(lista):
+            if cnt_l < len(lista) - 1:
+                t_file = fname_to_tstamp(lista[cnt_l + 1][-21:-7])
+                if t_file < t_start:
+                    continue
             dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile - 1))
             if dic:
                 data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
@@ -668,7 +676,7 @@ if __name__ == "__main__":
                 ax_weather.spines["right"].set_position(("axes", 1.))
 
                 ax_wind = ax_water.twinx()
-                ax_wind.plot(z_wind, color='b', lw=3)
+                ax_wind.plot(z_wind, color='b', lw=1.2)
                 ax_wind.set_ylim(0, 60)
                 ax_wind.set_ylabel('Wind (Km/h)', color='b')
                 ax_wind.tick_params(axis='y', labelcolor='b')
@@ -687,10 +695,10 @@ if __name__ == "__main__":
                 #     print a, angle_wdir[a], x_tick[a], y, x_tick[a] + xs, y + ys, r
                     m = MarkerStyle(">")
                     m._transform.rotate_deg(angle_wdir[a])
-                    ax_wind.scatter(z_tick[a], y, marker=m, s=100, color='orchid')
+                    ax_wind.scatter(z_tick[a], y, marker=m, s=100, color='g')
                     m = MarkerStyle("_")
                     m._transform.rotate_deg(angle_wdir[a])
-                    ax_wind.scatter(z_tick[a], y, marker=m, s=300, color='orchid')
+                    ax_wind.scatter(z_tick[a], y, marker=m, s=300, color='g')
                 plt.draw()
                 fig.subplots_adjust(right=0.8)
 
@@ -750,7 +758,6 @@ if __name__ == "__main__":
                     m._transform.rotate_deg(angle_wdir[a])
                     ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='g')
                 fig.subplots_adjust(right=0.9)
-
 
         if not os.path.exists(SPGR_PATH):
             os.makedirs(SPGR_PATH)
