@@ -683,7 +683,7 @@ if __name__ == "__main__":
                 #     print a, angle_wdir[a], x_tick[a], y, x_tick[a] + xs, y + ys, r
                     m = MarkerStyle(">")
                     m._transform.rotate_deg(angle_wdir[a])
-                    ax_wind.scatter(x_tick[a], y+10, marker=m, s=100, color='orchid')
+                    ax_wind.scatter(x_tick[a], y+10, marker=m, s=500, color='orchid')
                     m = MarkerStyle("_")
                     m._transform.rotate_deg(angle_wdir[a])
                     ax_wind.scatter(x_tick[a], y+10, marker=m, s=500, color='orchid')
