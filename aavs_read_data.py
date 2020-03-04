@@ -806,16 +806,16 @@ if __name__ == "__main__":
             print "\nWrong value passed for argument pol, using default X pol"
             pol = 0
 
-        gs = GridSpec(2, 1, hspace=0.8, wspace=0.4, left=0.06, bottom=0.1, top=0.95)
+        gs = GridSpec(2, 1, left=0.06, bottom=0.1, top=0.95)
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
-        ax_power = fig.add_subplot(gs[0])
+        ax_power = fig.add_subplot(gs[0, 0])
         asse_x = np.linspace(0, 400, 512)
         xmin = closest(asse_x, int(opts.startfreq))
         xmax = closest(asse_x, int(opts.stopfreq))
 
         if len(w_data) and not opts.over:
-            ax_weather = fig.add_subplot(gs[1])
+            ax_weather = fig.add_subplot(gs[1, 0])
 
         tile = find_ant_by_name(opts.antenna)[0]
         lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
@@ -873,6 +873,8 @@ if __name__ == "__main__":
         ax_power.set_ylabel("dB")
         ax_power.set_xticks(x_tick)
         ax_power.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
+        ax_power.set_title("Power of Ant-%03d"%(opts.antenna) + " Pol-" + opts.pol.upper() + " " + date_path +
+                           "  Frequencies: " + str(opts.startfreq) + "-" + str(opts.stopfreq) + " MHz", fontsize=14)
 
         if len(w_data):
             z_temp = []
