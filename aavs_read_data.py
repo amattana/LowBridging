@@ -942,7 +942,7 @@ if __name__ == "__main__":
                 m = MarkerStyle("_")
                 m._transform.rotate_deg(angle_wdir[a])
                 ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='orchid')
-            fig.subplots_adjust(right=0.84)
+            fig.subplots_adjust(right=0.86)
 
         if not os.path.exists(POWER_PATH):
             os.makedirs(POWER_PATH)
