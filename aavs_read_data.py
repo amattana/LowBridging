@@ -928,7 +928,7 @@ if __name__ == "__main__":
             ax_rain.set_ylim(0, 20)
             ax_rain.set_ylabel('Rain (mm)', color='g')
             ax_rain.tick_params(axis='y', labelcolor='g')
-            ax_rain.spines["right"].set_position(("axes", 1.06))
+            ax_rain.spines["right"].set_position(("axes", 1.12))
             #ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r', lw=1.5)
             ax_weather.plot(z_temp, color='r', lw=1.5)
 
@@ -940,7 +940,7 @@ if __name__ == "__main__":
                 m = MarkerStyle("_")
                 m._transform.rotate_deg(angle_wdir[a])
                 ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='orchid')
-            fig.subplots_adjust(right=0.9)
+            fig.subplots_adjust(right=0.84)
 
         if not os.path.exists(POWER_PATH):
             os.makedirs(POWER_PATH)
