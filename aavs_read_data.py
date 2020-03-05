@@ -879,7 +879,7 @@ if __name__ == "__main__":
         ax_power.plot(acc_power_y, color='g')
         ax_power.set_xlabel("Time")
         ax_power.set_ylabel("dB")
-        ax_power.set_ylim(20, 35)
+        ax_power.set_ylim(20, 34)
         ax_power.set_xticks(x_tick)
         ax_power.grid()
         ax_power.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
