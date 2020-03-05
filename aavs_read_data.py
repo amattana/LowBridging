@@ -822,7 +822,8 @@ if __name__ == "__main__":
         t_cnt = 0
         orari = []
         t_stamps = []
-        acc_power = []
+        acc_power_x = []
+        acc_power_y = []
         for cnt_l, l in enumerate(lista):
             if cnt_l < len(lista) - 1:
                 t_file = fname_to_tstamp(lista[cnt_l + 1][-21:-7])
@@ -840,17 +841,20 @@ if __name__ == "__main__":
                         for i, t in enumerate(timestamps):
                             if t_start <= t[0] <= t_stop:
                                 for sb_in in antenne:
-                                    spettro = data[:, sb_in, pol, i]
-                                if not np.sum(spettro[20:50]) == 0:
-                                    if not np.sum(spettro[300:350]) == 0:
+                                    spettro_x = data[:, sb_in, 0, i]
+                                    spettro_y = data[:, sb_in, 1, i]
+                                if not np.sum(spettro_x[20:50]) == 0:
+                                    if not np.sum(spettro_x[300:350]) == 0:
                                         t_stamps += [t[0]]
                                         orari += [datetime.datetime.utcfromtimestamp(t[0])]
                                         if xmin == 0:
                                             with np.errstate(divide='ignore'):
-                                                acc_power += [10 * np.log10(np.sum(spettro[:xmax + 1]))]
+                                                acc_power_x += [10 * np.log10(np.sum(spettro_x[:xmax + 1]))]
+                                                acc_power_y += [10 * np.log10(np.sum(spettro_y[:xmax + 1]))]
                                         else:
                                             with np.errstate(divide='ignore'):
-                                                acc_power += [10 * np.log10(np.sum(spettro[xmin:xmax + 1]))]
+                                                acc_power_x += [10 * np.log10(np.sum(spettro_x[xmin:xmax + 1]))]
+                                                acc_power_y += [10 * np.log10(np.sum(spettro_y[xmin:xmax + 1]))]
                                 msg = "\rProcessing " + ts_to_datestring(t[0])
                                 sys.stdout.write(ERASE_LINE + msg)
                                 sys.stdout.flush()
@@ -871,12 +875,13 @@ if __name__ == "__main__":
         x_tick += [len(orari)]
 
         ax_power.set_xlim(x_tick[0], x_tick[-1])
-        ax_power.plot(acc_power)
+        ax_power.plot(acc_power_x, color='b')
+        ax_power.plot(acc_power_y, color='g')
         ax_power.set_xlabel("Time")
         ax_power.set_ylabel("dB")
         ax_power.set_xticks(x_tick)
         ax_power.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
-        ax_power.set_title("Power of Ant-%03d"%(opts.antenna) + " Pol-" + opts.pol.upper() + " " + date_path +
+        ax_power.set_title("Power of Ant-%03d"%(opts.antenna) + " " + date_path +
                            "  Frequencies: " + str(opts.startfreq) + "-" + str(opts.stopfreq) + " MHz", fontsize=14)
 
         if len(w_data):
