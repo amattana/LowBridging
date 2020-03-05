@@ -879,7 +879,7 @@ if __name__ == "__main__":
         ax_power.plot(acc_power_y, color='g', label='Pol-Y')
         ax_power.set_xlabel("Time", fontsize=14)
         ax_power.set_ylabel("dB", fontsize=14)
-        ax_power.set_yticks(int(np.arange(np.mean(acc_power_x)) - 5, int(np.mean(acc_power_x)) + 6, 1))
+        ax_power.set_yticks(int(np.arange(np.mean(acc_power_x))) - 5, int(np.mean(acc_power_x)) + 6, 1)
         ax_power.set_ylim(int(np.mean(acc_power_x)) - 5, int(np.mean(acc_power_x)) + 5)
         ax_power.set_xticks(x_tick)
         ax_power.grid()
