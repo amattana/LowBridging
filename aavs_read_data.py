@@ -893,7 +893,7 @@ if __name__ == "__main__":
 
             ax_weather.set_ylabel('Temperature (C)', color='r')
             #ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
-            ax_weather.set_ylim(15, 45)
+            ax_weather.set_ylim(45, 15)
             ax_weather.set_yticks(np.arange(15, 50, 5))
             ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
             #ax_weather.grid()
