@@ -879,8 +879,9 @@ if __name__ == "__main__":
         ax_power.plot(acc_power_y, color='g')
         ax_power.set_xlabel("Time")
         ax_power.set_ylabel("dB")
-        ax_power.set_ylim(20, 40)
+        ax_power.set_ylim(20, 35)
         ax_power.set_xticks(x_tick)
+        ax_power.grid()
         ax_power.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
         ax_power.set_title("Power of Ant-%03d"%(opts.antenna) + " " + date_path +
                            "  Frequencies: " + str(opts.startfreq) + "-" + str(opts.stopfreq) + " MHz", fontsize=14)
