@@ -917,30 +917,30 @@ if __name__ == "__main__":
             # ax_weather.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
 
             ax_wind = ax_power.twinx()
-            ax_wind.plot(z_wind, color='c', lw=1.5)
-            ax_wind.set_ylim(0, 60)
+            ax_wind.plot(z_wind, color='orange', lw=1.5)
+            ax_wind.set_ylim(0, 80)
             ax_wind.set_ylabel('Wind (Km/h)', color='b')
             ax_wind.tick_params(axis='y', labelcolor='b')
             ax_wind.spines["right"].set_position(("axes", 1.06))
-            #
-            # ax_rain = ax_weather.twinx()
-            # ax_rain.plot(t_stamps[:len(z_temp)], z_rain, color='g', lw=1.5)
-            # ax_rain.set_ylim(0, 20)
-            # ax_rain.set_ylabel('Rain (mm)', color='g')
-            # ax_rain.tick_params(axis='y', labelcolor='g')
-            # ax_rain.spines["right"].set_position(("axes", 1.06))
+
+            ax_rain = ax_power.twinx()
+            ax_rain.plot(z_rain, color='c', lw=1.5)
+            ax_rain.set_ylim(0, 20)
+            ax_rain.set_ylabel('Rain (mm)', color='g')
+            ax_rain.tick_params(axis='y', labelcolor='g')
+            ax_rain.spines["right"].set_position(("axes", 1.06))
             #ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r', lw=1.5)
             ax_weather.plot(z_temp, color='r', lw=1.5)
-            #
-            # # Draw wind direction
-            # for a, y in enumerate(y_wdir):
-            #     m = MarkerStyle(">")
-            #     m._transform.rotate_deg(angle_wdir[a])
-            #     ax_wind.scatter(x_tick[a], y, marker=m, s=100, color='g')
-            #     m = MarkerStyle("_")
-            #     m._transform.rotate_deg(angle_wdir[a])
-            #     ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='g')
-            # fig.subplots_adjust(right=0.9)
+
+            # Draw wind direction
+            for a, y in enumerate(y_wdir):
+                m = MarkerStyle(">")
+                m._transform.rotate_deg(angle_wdir[a])
+                ax_wind.scatter(x_tick[a], y, marker=m, s=100, color='orchid')
+                m = MarkerStyle("_")
+                m._transform.rotate_deg(angle_wdir[a])
+                ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='orchid')
+            fig.subplots_adjust(right=0.9)
 
         if not os.path.exists(POWER_PATH):
             os.makedirs(POWER_PATH)
