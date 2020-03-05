@@ -875,13 +875,14 @@ if __name__ == "__main__":
         x_tick += [len(orari)]
 
         ax_power.set_xlim(x_tick[0], x_tick[-1])
-        ax_power.plot(acc_power_x, color='b')
-        ax_power.plot(acc_power_y, color='g')
+        ax_power.plot(acc_power_x, color='b', label='Pol-X')
+        ax_power.plot(acc_power_y, color='g', label='Pol-Y')
         ax_power.set_xlabel("Time")
         ax_power.set_ylabel("dB")
-        ax_power.set_ylim(20, 34)
+        ax_power.set_ylim(np.mean(acc_power_x) - 5, np.mean(acc_power_x) + 5)
         ax_power.set_xticks(x_tick)
         ax_power.grid()
+        ax_power.legend()
         ax_power.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
         ax_power.set_title("Power of Ant-%03d"%(opts.antenna) + " " + date_path +
                            "  Frequencies: " + str(opts.startfreq) + "-" + str(opts.stopfreq) + " MHz", fontsize=14)
