@@ -916,11 +916,12 @@ if __name__ == "__main__":
             # ax_weather.set_xticks(x_tick)
             # ax_weather.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
 
-            # ax_wind = ax_weather.twinx()
-            # ax_wind.plot(t_stamps[:len(z_temp)], z_wind, color='b', lw=1.5)
-            # ax_wind.set_ylim(0, 60)
-            # ax_wind.set_ylabel('Wind (Km/h)', color='b')
-            # ax_wind.tick_params(axis='y', labelcolor='b')
+            ax_wind = ax_power.twinx()
+            ax_wind.plot(z_wind, color='c', lw=1.5)
+            ax_wind.set_ylim(0, 60)
+            ax_wind.set_ylabel('Wind (Km/h)', color='b')
+            ax_wind.tick_params(axis='y', labelcolor='b')
+            ax_wind.spines["right"].set_position(("axes", 1.06))
             #
             # ax_rain = ax_weather.twinx()
             # ax_rain.plot(t_stamps[:len(z_temp)], z_rain, color='g', lw=1.5)
