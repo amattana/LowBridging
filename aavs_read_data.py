@@ -902,17 +902,17 @@ if __name__ == "__main__":
             ax_weather.set_yticks(np.arange(15, 50, 5))
             ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
             #ax_weather.grid()
-            # x_tick = []
-            # y_wdir = []
-            # angle_wdir = []
-            # step = orari[0].hour
-            # for z in range(len(orari)):
-            #     if orari[z].hour == step:
-            #         x_tick += [t_stamps[z]]
-            #         y_wdir += [z_wind[z]]
-            #         angle_wdir += [z_wdir[z]]
-            #         step = step + 1
-            # x_tick += [t_stamps[-1]]
+            x_tick = []
+            y_wdir = []
+            angle_wdir = []
+            step = orari[0].hour
+            for z in range(len(orari)):
+                if orari[z].hour == step:
+                    x_tick += [t_stamps[z]]
+                    y_wdir += [z_wind[z]]
+                    angle_wdir += [z_wdir[z]]
+                    step = step + 1
+            x_tick += [t_stamps[-1]]
             # ax_weather.set_xticks(x_tick)
             # ax_weather.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
 
