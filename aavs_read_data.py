@@ -951,13 +951,13 @@ if __name__ == "__main__":
         if not os.path.exists(
                 POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna))):
             os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna)))
-        if not os.path.exists(
-                POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL)):
-            os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL))
+        # if not os.path.exists(
+        #         POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL)):
+        #     os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL))
 
         fname = POWER_PATH + "/" + station_name + \
-                "/TILE-%02d_ANT-%03d/POL-%s/SPGR_"%(int(tile), int(opts.antenna), POL) + \
-                date_path + "_TILE-%02d_ANT-%03d_POL-%s.png"%(int(tile), int(opts.antenna), POL)
+                "/TILE-%02d_ANT-%03d/SPGR_"%(int(tile), int(opts.antenna)) + \
+                date_path + "_TILE-%02d_ANT-%03d.png"%(int(tile), int(opts.antenna))
 
         plt.savefig(fname)
         sys.stdout.write(ERASE_LINE + "\nOutput File: " + fname + "\n")
