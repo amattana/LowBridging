@@ -923,7 +923,8 @@ if __name__ == "__main__":
             # ax_rain.set_ylabel('Rain (mm)', color='g')
             # ax_rain.tick_params(axis='y', labelcolor='g')
             # ax_rain.spines["right"].set_position(("axes", 1.06))
-            ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r', lw=1.5)
+            #ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r', lw=1.5)
+            ax_weather.plot(z_temp, color='r', lw=1.5)
             #
             # # Draw wind direction
             # for a, y in enumerate(y_wdir):
