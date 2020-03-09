@@ -953,12 +953,32 @@ if __name__ == "__main__":
         if not os.path.exists(
                 POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna))):
             os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna)))
+        if not os.path.exists(
+                POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data" % (int(tile), int(opts.antenna))):
+            os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data" % (int(tile), int(opts.antenna)))
+        if not os.path.exists(
+                POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/pic" % (int(tile), int(opts.antenna))):
+            os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/pic" % (int(tile), int(opts.antenna)))
         # if not os.path.exists(
         #         POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL)):
         #     os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL))
 
+        data_fname = POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data/POWER_"%(int(tile),
+                      int(opts.antenna)) + date_path + "_TILE-%02d_ANT-%03d_POL-X_BAND-%d-%dMHz.txt" % \
+                     (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
+        with open(data_fname, "w") as ft:
+            for n, q in enumerate(acc_power_x):
+                ft.write("%d\t%6.3f\n"%(t_stamps[n], q))
+
+        data_fname = POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data/POWER_"%(int(tile),
+                      int(opts.antenna)) + date_path + "_TILE-%02d_ANT-%03d_POL-Y_BAND-%d-%dMHz.txt" % \
+                     (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
+        with open(data_fname, "w") as ft:
+            for n, q in enumerate(acc_power_y):
+                ft.write("%d\t%6.3f\n"%(t_stamps[n], q))
+
         fname = POWER_PATH + "/" + station_name + \
-                "/TILE-%02d_ANT-%03d/SPGR_"%(int(tile), int(opts.antenna)) + \
+                "/TILE-%02d_ANT-%03d/pic/POWER_"%(int(tile), int(opts.antenna)) + \
                 date_path + "_TILE-%02d_ANT-%03d.png"%(int(tile), int(opts.antenna))
 
         plt.savefig(fname)
