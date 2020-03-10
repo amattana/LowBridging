@@ -908,11 +908,9 @@ if __name__ == "__main__":
             y_wdir = []
             angle_wdir = []
             step = orari[0].hour
-            for z in range(len(orari)):
-                if orari[z].hour == step:
-                    y_wdir += [z_wind[t_stamps[z]]]
-                    angle_wdir += [z_wdir[t_stamps[z]]]
-                    step = step + 1
+            for z in x_tick:
+                y_wdir += [z_wind[z]]
+                angle_wdir += [z_wdir[z]]
 
             ax_wind = ax_power.twinx()
             #ax_wind.plot(z_wind, color='orange', lw=1.5)
