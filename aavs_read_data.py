@@ -875,8 +875,8 @@ if __name__ == "__main__":
         x_tick += [len(orari)]
 
         ax_power.set_xlim(x_tick[0], x_tick[-1])
-        ax_power.plot(acc_power_x, color='b', label='Pol-X')
-        ax_power.plot(acc_power_y, color='g', label='Pol-Y')
+        ax_power.plot(t_stamps, acc_power_x, color='b', label='Pol-X')
+        ax_power.plot(t_stamps, acc_power_y, color='g', label='Pol-Y')
         ax_power.set_xlabel("Time", fontsize=14)
         ax_power.set_ylabel("dB", fontsize=14)
         ax_power.set_yticks(np.arange(int(np.mean(acc_power_x)) - 5, int(np.mean(acc_power_x)) + 6, 1))
