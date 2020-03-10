@@ -865,13 +865,19 @@ if __name__ == "__main__":
             sys.stdout.flush()
 
         x_tick = []
-        z_tick = []
+        #z_tick = []
+        y_wdir = []
+        angle_wdir = []
         step = orari[0].hour
         for z in range(len(orari)):
             if orari[z].hour == step:
                 x_tick += [t_stamps[z]]
                 step = step + 1
-                z_tick += [z]
+                #z_tick += [z]
+                if len(w_data):
+                    y_wdir += [w_wind[int(closest(w_time, t_stamps[z]))]]
+                    angle_wdir += [w_wdir[int(closest(w_time, t_stamps[z]))]]
+
         x_tick += [t_stamps[-1]]
 
         ax_power.set_xlim(t_stamps[0], t_stamps[-1])
@@ -889,28 +895,11 @@ if __name__ == "__main__":
                            "  Frequencies: " + str(opts.startfreq) + "-" + str(opts.stopfreq) + " MHz", fontsize=14)
 
         if len(w_data):
-            z_temp = []
-            z_wind = []
-            z_wdir = []
-            z_rain = []
-            for n, t in enumerate(t_stamps):
-                z_temp += [calc_value(w_time, w_temp, t)]
-                #print " * ", ts_to_datestring(t), calc_value(w_time, w_temp, t)
-                z_wind += [calc_value(w_time, w_wind, t)]
-                z_wdir += [calc_value(w_time, w_wdir, t)]
-                z_rain += [calc_value(w_time, w_rain, t)]
-
             ax_weather.set_ylabel('Temperature (C)', color='r')
             #ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
             ax_weather.set_ylim(45, 15)
             ax_weather.set_yticks(np.arange(15, 50, 5))
             ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
-            y_wdir = []
-            angle_wdir = []
-            step = orari[0].hour
-            for z in x_tick:
-                y_wdir += [z_wind[z]]
-                angle_wdir += [z_wdir[z]]
 
             ax_wind = ax_power.twinx()
             #ax_wind.plot(z_wind, color='orange', lw=1.5)
