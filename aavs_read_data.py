@@ -875,8 +875,8 @@ if __name__ == "__main__":
                 step = step + 1
                 #z_tick += [z]
                 if len(w_data):
-                    y_wdir += [w_wind[int(closest(w_time, t_stamps[z]))]]
-                    angle_wdir += [w_wdir[int(closest(w_time, t_stamps[z]))]]
+                    y_wdir += [w_wind[int(closest(np.array(w_time), t_stamps[z]))]]
+                    angle_wdir += [w_wdir[int(closest(np.array(w_time), t_stamps[z]))]]
 
         x_tick += [t_stamps[-1]]
 
