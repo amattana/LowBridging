@@ -921,20 +921,22 @@ if __name__ == "__main__":
             # ax_weather.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
 
             ax_wind = ax_power.twinx()
-            ax_wind.plot(z_wind, color='orange', lw=1.5)
+            #ax_wind.plot(z_wind, color='orange', lw=1.5)
+            ax_wind.plot(w_time, w_wind, color='orange', lw=1.5)
             ax_wind.set_ylim(0, 80)
             ax_wind.set_ylabel('Wind (Km/h)', color='orange')
             ax_wind.tick_params(axis='y', labelcolor='orange')
             ax_wind.spines["right"].set_position(("axes", 1.06))
 
             ax_rain = ax_power.twinx()
-            ax_rain.plot(z_rain, color='cyan', lw=1.5)
+            #ax_rain.plot(z_rain, color='cyan', lw=1.5)
+            ax_rain.plot(w_time, w_rain, color='cyan', lw=1.5)
             ax_rain.set_ylim(0, 100)
             ax_rain.set_ylabel('Rain (mm)', color='cyan')
             ax_rain.tick_params(axis='y', labelcolor='cyan')
             ax_rain.spines["right"].set_position(("axes", 1.12))
-            #ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r', lw=1.5)
-            ax_weather.plot(z_temp, color='r', lw=1.5)
+            #ax_weather.plot(z_temp, color='r', lw=1.5)
+            ax_weather.plot(w_time, w_temp, color='r', lw=1.5)
 
             # Draw wind direction
             for a, y in enumerate(y_wdir):
