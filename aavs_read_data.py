@@ -905,20 +905,14 @@ if __name__ == "__main__":
             ax_weather.set_ylim(45, 15)
             ax_weather.set_yticks(np.arange(15, 50, 5))
             ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
-            #ax_weather.grid()
-            x_tick = []
             y_wdir = []
             angle_wdir = []
             step = orari[0].hour
             for z in range(len(orari)):
                 if orari[z].hour == step:
-                    x_tick += [z]
-                    y_wdir += [z_wind[z]]
-                    angle_wdir += [z_wdir[z]]
+                    y_wdir += [z_wind[t_stamps[z]]]
+                    angle_wdir += [z_wdir[t_stamps[z]]]
                     step = step + 1
-            x_tick += [t_stamps[-1]]
-            # ax_weather.set_xticks(x_tick)
-            # ax_weather.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
 
             ax_wind = ax_power.twinx()
             #ax_wind.plot(z_wind, color='orange', lw=1.5)
@@ -938,14 +932,14 @@ if __name__ == "__main__":
             #ax_weather.plot(z_temp, color='r', lw=1.5)
             ax_weather.plot(w_time, w_temp, color='r', lw=1.5)
 
-            # # Draw wind direction
-            # for a, y in enumerate(y_wdir):
-            #     m = MarkerStyle(">")
-            #     m._transform.rotate_deg(angle_wdir[a])
-            #     ax_wind.scatter(x_tick[a], y, marker=m, s=100, color='orchid')
-            #     m = MarkerStyle("_")
-            #     m._transform.rotate_deg(angle_wdir[a])
-            #     ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='orchid')
+            # Draw wind direction
+            for a, y in enumerate(y_wdir):
+                m = MarkerStyle(">")
+                m._transform.rotate_deg(angle_wdir[a])
+                ax_wind.scatter(x_tick[a], y, marker=m, s=100, color='orchid')
+                m = MarkerStyle("_")
+                m._transform.rotate_deg(angle_wdir[a])
+                ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='orchid')
             fig.subplots_adjust(right=0.86)
 
         if not os.path.exists(POWER_PATH):
