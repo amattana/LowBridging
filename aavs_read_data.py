@@ -869,7 +869,7 @@ if __name__ == "__main__":
         step = orari[0].hour
         for z in range(len(orari)):
             if orari[z].hour == step:
-                x_tick += [z]
+                x_tick += [t_stamps[z]]
                 step = step + 1
                 z_tick += [z]
         x_tick += [len(orari)]
