@@ -872,7 +872,7 @@ if __name__ == "__main__":
                 x_tick += [t_stamps[z]]
                 step = step + 1
                 z_tick += [z]
-        x_tick += [len(orari)]
+        x_tick += [t_stamps[-1]]
 
         #ax_power.set_xlim(x_tick[0], x_tick[-1])
         ax_power.plot(t_stamps, acc_power_x, color='b', label='Pol-X')
