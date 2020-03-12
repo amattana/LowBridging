@@ -50,6 +50,7 @@ if __name__ == "__main__":
         for pol in ["X", "Y"]:
             full_data = []
             full_time = []
+            orari = []
             for k, l in enumerate(lista):
                 fname = l + "/data/POWER_" + opts.date + "_" + l.split("/")[-1] + "_POL-" + pol + "_BAND-160-170MHz.txt"
                 with open(fname) as f:
@@ -59,6 +60,8 @@ if __name__ == "__main__":
                 for d in data:
                     dati += [float(d.split()[1])]
                     tempi += [int(d.split()[0])]
+                    if not k:
+                        orari += [datetime.datetime.utcfromtimestamp(int(d.split()[0]))]
                 if opts.eq:
                     if not k:
                         eq_value = dati[0]
@@ -91,6 +94,16 @@ if __name__ == "__main__":
             if not os.path.exists(path + "processed-pic"):
                 os.mkdir(path + "processed-pic")
             print "Saving " + path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-160-170MHz.png",
+
+            x_tick = []
+            step = orari[0].hour
+            for z in range(len(orari)):
+                if orari[z].hour == step:
+                    x_tick += [full_time[0][z]]
+                    step = step + 1
+
+            x_tick += [full_time[0][-1]]
+            ax.set_xticks(x_tick)
             fig.tight_layout()
             fig.savefig(path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-160-170MHz.png")
             print " ...done!"
