@@ -69,7 +69,7 @@ if __name__ == "__main__":
     plt.ioff()
     gs = GridSpec(1, 1, left=0.04, right=0.98, bottom=0.04, top=0.96)
     fig = plt.figure(figsize=(14, 9), facecolor='w')
-    ax = fig.add_subplot(gs)
+    ax = fig.add_subplot(gs[0])
     for t in tiles:
         lista = glob.glob(path + t + "_*")
         print "Found", len(lista), "Antenna Directories"
