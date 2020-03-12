@@ -78,8 +78,8 @@ if __name__ == "__main__":
                 ax.plot(full_time[n], full_data[n], label=l.split("/")[-1])
                 xmin = min(full_time[n][0], xmin)
                 xmax = max(full_time[n][-1], xmax)
-                ymin = min(np.ceil(np.mean(full_data[n])) - 5, ymin)
-                ymax = max(np.ceil(np.mean(full_data[n])) + 6, ymax)
+                #ymin = min(np.ceil(np.mean(full_data[n])) - 5, ymin)
+                #ymax = max(np.ceil(np.mean(full_data[n])) + 6, ymax)
             #print xmin, xmax, ymin, ymax
             ax.set_xlim(xmin, xmax)
             ax.set_ylim(-6, 6)
