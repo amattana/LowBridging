@@ -66,7 +66,7 @@ if __name__ == "__main__":
                 if opts.eq:
                     if not k:
                         eq_value = dati[0]
-                    dati = (np.array(dati) - eq_value).tolist()
+                    dati = (np.array(dati) - dati[0]).tolist()
                 full_data += [dati]
                 full_time += [tempi]
             ax.cla()
