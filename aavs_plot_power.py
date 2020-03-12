@@ -66,16 +66,14 @@ if __name__ == "__main__":
                 if opts.eq:
                     if not k:
                         eq_value = dati[0]
-                        #print "Equalization value set to ", eq_value
-                    else:
-                        dati = (np.array(dati) + eq_value).tolist()
+                    dati = (np.array(dati) - eq_value).tolist()
                 full_data += [dati]
                 full_time += [tempi]
             ax.cla()
             xmin = full_time[0][0]
             xmax = full_time[-1][-1]
-            ymin = np.ceil(np.mean(full_data[0]) - 5)
-            ymax = np.ceil(np.mean(full_data[0]) + 5)
+            #ymin = np.ceil(np.mean(full_data[0]) - 5)
+            #ymax = np.ceil(np.mean(full_data[0]) + 5)
             for n, l in enumerate(lista):
                 ax.plot(full_time[n], full_data[n], label=l.split("/")[-1])
                 xmin = min(full_time[n][0], xmin)
@@ -84,7 +82,7 @@ if __name__ == "__main__":
                 ymax = max(np.ceil(np.mean(full_data[n])) + 6, ymax)
             #print xmin, xmax, ymin, ymax
             ax.set_xlim(xmin, xmax)
-            ax.set_ylim(ymin, ymax)
+            ax.set_ylim(-6, 6)
             ax.set_xlabel("UTC Time", fontsize=14)
             ax.set_ylabel("dB", fontsize=14)
             ax.grid()
