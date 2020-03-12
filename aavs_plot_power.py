@@ -41,6 +41,7 @@ if __name__ == "__main__":
 
     if opts.eq:
         print "Equalization activated!"
+
     plt.ioff()
     fig = plt.figure(figsize=(14, 9), facecolor='w')
     ax = fig.add_subplot(1, 1, 1)
@@ -67,9 +68,7 @@ if __name__ == "__main__":
                         eq_value = dati[0]
                         #print "Equalization value set to ", eq_value
                     else:
-                        eq_diff = eq_value - dati[0]
-                        #print eq_diff, eq_value, dati[0]
-                        dati = (np.array(dati) + eq_diff).tolist()
+                        dati = (np.array(dati) + eq_value).tolist()
                 full_data += [dati]
                 full_time += [tempi]
             ax.cla()
