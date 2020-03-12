@@ -86,7 +86,7 @@ if __name__ == "__main__":
             #print xmin, xmax, ymin, ymax
             ax.set_xlim(xmin, xmax)
             ax.set_ylim(ymin, ymax)
-            ax.set_xlabel("Timestamps", fontsize=14)
+            ax.set_xlabel("UTC Time", fontsize=14)
             ax.set_ylabel("dB", fontsize=14)
             ax.grid()
             ax.legend(fontsize=8)
@@ -96,14 +96,18 @@ if __name__ == "__main__":
             print "Saving " + path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-160-170MHz.png",
 
             x_tick = []
+            x_tick_label = []
             step = orari[0].hour
             for z in range(len(orari)):
                 if orari[z].hour == step:
                     x_tick += [full_time[0][z]]
+                    x_tick_label += [str(step)]
                     step = step + 1
 
             x_tick += [full_time[0][-1]]
+            x_tick_label += [str(step)]
             ax.set_xticks(x_tick)
+            ax.set_xticklabels(x_tick_label)
             fig.tight_layout()
             fig.savefig(path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-160-170MHz.png")
             print " ...done!"
