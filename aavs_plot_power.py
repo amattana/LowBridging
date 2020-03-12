@@ -83,7 +83,7 @@ if __name__ == "__main__":
             #print xmin, xmax, ymin, ymax
             ax.set_xlim(xmin, xmax)
             if opts.eq:
-                ax.set_ylim(-14, 2)
+                ax.set_ylim(-12, 2)
             else:
                 ax.set_ylim(ymin, ymax)
             ax.set_xlabel("UTC Time", fontsize=14)
