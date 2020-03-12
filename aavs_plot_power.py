@@ -140,7 +140,7 @@ if __name__ == "__main__":
             ax.set_xticks(x_tick)
             ax.set_xticklabels(x_tick_label)
             ax.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8, bbox_to_anchor=(0, -0.2),
-                      loc='lower left', fontsize='small')
+                      loc='lower left', fontsize='small', fontsize=10)
             #fig.tight_layout()
 
             if len(w_data):
