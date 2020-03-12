@@ -3,6 +3,7 @@ import glob
 import os
 import datetime
 import numpy as np
+from aavs_utils import ts_to_datestring, mro_daily_weather, diclist_to_array, dt_to_timestamp, closest
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -21,6 +22,8 @@ if __name__ == "__main__":
                       default=0, help="Antenna Name")
     parser.add_option("--equalize", action="store_true", dest="eq",
                       default=False, help="Equalize antennas power")
+    parser.add_option("--weather", action="store_true", dest="weather",
+                      default=False, help="Add weather info (if available)")
     (opts, args) = parser.parse_args(argv[1:])
 
     path = opts.directory
@@ -35,12 +38,30 @@ if __name__ == "__main__":
 
     try:
         proc_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
+        t_start = dt_to_timestamp(proc_date)
+        t_stop = dt_to_timestamp(proc_date) + (60 * 60 * 24)
+        print "Start Time:  " + ts_to_datestring(t_start) + "    Timestamp: " + str(t_start)
+        print "Stop  Time:  " + ts_to_datestring(t_stop) + "    Timestamp: " + str(t_stop)
     except:
         print "Wrong date format or missing required argument (" + opts.date + ")"
         exit(1)
 
     if opts.eq:
         print "Equalization activated!"
+
+    w_data = []
+    if opts.weather:
+        w_units, w_data = mro_daily_weather(start=ts_to_datestring(t_start, formato="%Y-%m-%d_%H:%M:%S"),
+                                             stop=ts_to_datestring(t_stop, formato="%Y-%m-%d_%H:%M:%S"))
+        if len(w_data):
+            w_time = diclist_to_array(w_data, 'time')
+            w_temp = diclist_to_array(w_data, 'temp')
+            w_wind = diclist_to_array(w_data, 'wind')
+            w_wdir = diclist_to_array(w_data, 'wdir')
+            w_rain = diclist_to_array(w_data, 'rain')
+            print "\nWeather data acquired, %d records"%len(w_temp)#, "  ", w_temp[0:8]
+        else:
+            print "\nNo weather data available\n"
 
     plt.ioff()
     fig = plt.figure(figsize=(14, 9), facecolor='w')
@@ -97,17 +118,63 @@ if __name__ == "__main__":
 
             x_tick = []
             x_tick_label = []
+            if len(w_data):
+                y_wdir = []
+                angle_wdir = []
             step = orari[0].hour
             for z in range(len(orari)):
                 if orari[z].hour == step:
                     x_tick += [full_time[0][z]]
                     x_tick_label += [str(step)]
                     step = step + 1
+                    if len(w_data):
+                        y_wdir += [w_wind[int(closest(np.array(w_time), full_time[0][z]))]]
+                        angle_wdir += [w_wdir[int(closest(np.array(w_time), full_time[0][z]))]]
 
             x_tick += [full_time[0][-1]]
             x_tick_label += [str(step)]
             ax.set_xticks(x_tick)
             ax.set_xticklabels(x_tick_label)
             fig.tight_layout()
+
+            if len(w_data):
+                ax_weather = ax.twinx()
+                ax_weather.set_ylabel('Temperature (C)', color='r')
+                #ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
+                ax_weather.set_ylim(45, 15)
+                ax_weather.set_yticks(np.arange(15, 50, 5))
+                ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
+
+                ax_wind = ax_power.twinx()
+                #ax_wind.plot(z_wind, color='orange', lw=1.5)
+                ax_wind.plot(w_time, w_wind, color='orange', lw=1.5)
+                ax_wind.set_ylim(0, 80)
+                ax_wind.set_ylabel('Wind (Km/h)', color='orange')
+                ax_wind.tick_params(axis='y', labelcolor='orange')
+                ax_wind.spines["right"].set_position(("axes", 1.06))
+
+                ax_rain = ax_power.twinx()
+                #ax_rain.plot(z_rain, color='cyan', lw=1.5)
+                ax_rain.plot(w_time, w_rain, color='cyan', lw=1.5)
+                ax_rain.set_ylim(0, 100)
+                ax_rain.set_ylabel('Rain (mm)', color='cyan')
+                ax_rain.tick_params(axis='y', labelcolor='cyan')
+                ax_rain.spines["right"].set_position(("axes", 1.12))
+                #ax_weather.plot(z_temp, color='r', lw=1.5)
+                ax_weather.plot(w_time, w_temp, color='r', lw=1.5)
+
+                # Draw wind direction
+                for a, y in enumerate(y_wdir):
+                    m = MarkerStyle(">")
+                    m._transform.rotate_deg(angle_wdir[a])
+                    ax_wind.scatter(x_tick[a], y, marker=m, s=100, color='orchid')
+                    m = MarkerStyle("_")
+                    m._transform.rotate_deg(angle_wdir[a])
+                    ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='orchid')
+                fig.subplots_adjust(right=0.86)
+
+
+
+
             fig.savefig(path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-160-170MHz.png")
             print " ...done!"
