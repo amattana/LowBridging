@@ -137,7 +137,8 @@ if __name__ == "__main__":
             x_tick_label += [str(step)]
             ax.set_xticks(x_tick)
             ax.set_xticklabels(x_tick_label)
-            ax.legend(ncol=8, bbox_to_anchor=(0, 1), loc='lower left', fontsize='small')
+            ax.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8, #bbox_to_anchor=(0, 1),
+                      loc='lower left', fontsize='small')
             fig.tight_layout()
 
             if len(w_data):
