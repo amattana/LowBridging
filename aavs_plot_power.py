@@ -67,7 +67,7 @@ if __name__ == "__main__":
             print "\nNo weather data available\n"
 
     plt.ioff()
-    gs = GridSpec(1, 1, left=0.04, right=0.86, bottom=0.15, top=0.96)
+    gs = GridSpec(1, 1, left=0.04, right=0.86, bottom=0.2, top=0.96)
     fig = plt.figure(figsize=(14, 9), facecolor='w')
     ax = fig.add_subplot(gs[0])
     for t in tiles:
@@ -139,7 +139,7 @@ if __name__ == "__main__":
             x_tick_label += [str(step)]
             ax.set_xticks(x_tick)
             ax.set_xticklabels(x_tick_label)
-            ax.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8, bbox_to_anchor=(0, -0.12),
+            ax.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8, bbox_to_anchor=(0, -0.2),
                       loc='lower left', fontsize='small')
             #fig.tight_layout()
 
