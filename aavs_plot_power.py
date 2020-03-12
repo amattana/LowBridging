@@ -28,7 +28,10 @@ if __name__ == "__main__":
         path += "/"
     station = opts.station.upper()
     path += station + "/"
-    tiles = ["TILE-%02d"%(int(k)) for k in opts.tile.split(",")]
+    if "all" in opts.tile.lower()
+        tiles = ["TILE-%02d"%(int(k)+1) for k in range(16)]
+    else:
+        tiles = ["TILE-%02d"%(int(k)) for k in opts.tile.split(",")]
 
     try:
         proc_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
