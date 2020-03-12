@@ -113,7 +113,7 @@ if __name__ == "__main__":
             ax.set_ylabel("dB", fontsize=14)
             ax.grid()
             ax.legend(fontsize=8)
-            ax.set_title(opts.date + "  " + t + "  POL-" + pol, fontsize=14)
+            ax.set_title(opts.date + "  " + t + "  POL-" + pol, fontsize=16)
             if not os.path.exists(path + "processed-pic"):
                 os.mkdir(path + "processed-pic")
             print "Saving " + path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-160-170MHz.png",
