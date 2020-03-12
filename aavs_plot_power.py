@@ -137,6 +137,7 @@ if __name__ == "__main__":
             x_tick_label += [str(step)]
             ax.set_xticks(x_tick)
             ax.set_xticklabels(x_tick_label)
+            ax.legend(ncol=8, bbox_to_anchor=(0, 1), loc='lower left', fontsize='small')
             fig.tight_layout()
 
             if len(w_data):
@@ -175,6 +176,5 @@ if __name__ == "__main__":
                     ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='orchid')
                 fig.subplots_adjust(right=0.86)
 
-            ax.legend(ncol=8, bbox_to_anchor=(0, 1), loc='lower left', fontsize='small')
             fig.savefig(path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-160-170MHz.png")
             print " ...done!"
