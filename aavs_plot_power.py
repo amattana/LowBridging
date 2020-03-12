@@ -67,7 +67,7 @@ if __name__ == "__main__":
             print "\nNo weather data available\n"
 
     plt.ioff()
-    gs = GridSpec(1, 1, left=0.04, right=0.98, bottom=0.04, top=0.96)
+    gs = GridSpec(1, 1, left=0.04, right=0.86, bottom=0.12, top=0.96)
     fig = plt.figure(figsize=(14, 9), facecolor='w')
     ax = fig.add_subplot(gs[0])
     for t in tiles:
@@ -141,7 +141,7 @@ if __name__ == "__main__":
             ax.set_xticklabels(x_tick_label)
             ax.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8, bbox_to_anchor=(0, -0.05),
                       loc='lower left', fontsize='small')
-            fig.tight_layout()
+            #fig.tight_layout()
 
             if len(w_data):
                 ax_weather = ax.twinx()
@@ -177,7 +177,7 @@ if __name__ == "__main__":
                     m = MarkerStyle("_")
                     m._transform.rotate_deg(angle_wdir[a])
                     ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='orchid')
-                fig.subplots_adjust(right=0.86)
+                #fig.subplots_adjust(right=0.86)
 
             fig.savefig(path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-160-170MHz.png")
             print " ...done!"
