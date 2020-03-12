@@ -4,6 +4,8 @@ import os
 import datetime
 import numpy as np
 from aavs_utils import ts_to_datestring, mro_daily_weather, diclist_to_array, dt_to_timestamp, closest
+from matplotlib.markers import MarkerStyle
+
 
 if __name__ == "__main__":
     from optparse import OptionParser
