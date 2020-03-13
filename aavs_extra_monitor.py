@@ -83,6 +83,7 @@ def plotting_thread(directory, cadence):
     base, x, y = get_antenna_positions(station_name)
     # AAVS2 Tile-14 Patch
     if (datetime.datetime.now() > datetime.datetime(2020, 3, 1)) and (station_name == "AAVS2"):
+        print "Patching antenna name and positions"
         base = base[:16*14] + base[16*15:]
         x = x[:16*14] + x[16*15:]
         y = y[:16*14] + y[16*15:]
@@ -95,6 +96,7 @@ def plotting_thread(directory, cadence):
     tiles = get_antenna_tile_names(station_name)
     # AAVS2 Tile-14 Patch
     if (datetime.datetime.now() > datetime.datetime(2020, 3, 1)) and (station_name == "AAVS2"):
+        print "Patching tile names"
         tiles = tiles[:14] + tiles[15:]
     for i in tiles:
         if not i.replace("TPM", "Tile") in tile_names:
