@@ -81,12 +81,21 @@ def plotting_thread(directory, cadence):
 
     # Grab antenna base numbers and positions
     base, x, y = get_antenna_positions(station_name)
+    # AAVS2 Tile-14 Patch
+    if (datetime.datetime.now() > datetime.datetime(2020, 3, 1)) and (station_name == "AAVS2"):
+        base = base[:16*14] + base[16*15:]
+        x = x[:16*14] + x[16*15:]
+        y = y[:16*14] + y[16*15:]
+
     ants = []
     for j in range(16*nof_tiles):
         ants += ["ANT-%03d" % int(base[j])]
 
     tile_names = []
     tiles = get_antenna_tile_names(station_name)
+    # AAVS2 Tile-14 Patch
+    if (datetime.datetime.now() > datetime.datetime(2020, 3, 1)) and (station_name == "AAVS2"):
+        tiles = tiles[:14] + tiles[15:]
     for i in tiles:
         if not i.replace("TPM", "Tile") in tile_names:
             tile_names += [i.replace("TPM", "Tile")]
