@@ -97,7 +97,7 @@ def plotting_thread(directory, cadence):
     # AAVS2 Tile-14 Patch
     if (datetime.datetime.now() > datetime.datetime(2020, 3, 1)) and (station_name == "AAVS2"):
         print "Patching tile names"
-        tiles = tiles[:14] + tiles[15:]
+        tiles = tiles[:16*14] + tiles[16*15:]
         print tiles
     for i in tiles:
         if not i.replace("TPM", "Tile") in tile_names:
