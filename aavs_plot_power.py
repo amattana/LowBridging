@@ -27,6 +27,10 @@ if __name__ == "__main__":
                       default=False, help="Equalize antennas power")
     parser.add_option("--weather", action="store_true", dest="weather",
                       default=False, help="Add weather info (if available)")
+    parser.add_option("--startfreq", action="store", dest="startfreq", type="int",
+                      default=0, help="Start Frequency")
+    parser.add_option("--stopfreq", action="store", dest="stopfreq", type="int",
+                      default=400, help="Stop Frequency")
     (opts, args) = parser.parse_args(argv[1:])
 
     path = opts.directory
@@ -80,7 +84,8 @@ if __name__ == "__main__":
                 full_time = []
                 orari = []
                 for k, l in enumerate(lista):
-                    fname = l + "/data/POWER_" + opts.date + "_" + l.split("/")[-1] + "_POL-" + pol + "_BAND-160-170MHz.txt"
+                    fname = l + "/data/POWER_" + opts.date + "_" + l.split("/")[-1] + "_POL-" + pol + "_BAND-" + \
+                            opts.startfreq + "-" + opts.stoppfreq + "MHz.txt"
                     with open(fname) as f:
                         data = f.readlines()
                     dati = []
@@ -120,7 +125,8 @@ if __name__ == "__main__":
                 ax.set_title(opts.date + "  " + t + "  POL-" + pol, fontsize=16)
                 if not os.path.exists(path + "processed-pic"):
                     os.mkdir(path + "processed-pic")
-                print "Saving " + path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-160-170MHz.png",
+                print "Saving " + path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-" + \
+                      opts.startfreq + "-" + opts.stoppfreq + "MHz.png",
 
                 x_tick = []
                 x_tick_label = []
@@ -181,7 +187,8 @@ if __name__ == "__main__":
                         ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='orchid')
                     #fig.subplots_adjust(right=0.86)
 
-                fig.savefig(path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-160-170MHz.png")
+                fig.savefig(path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-" +
+                            opts.startfreq + "-" + opts.stoppfreq + "MHz.png")
                 print " ...done!"
             except:
                 print "No files found for POL-" + pol + " " + t
