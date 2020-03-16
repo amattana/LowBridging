@@ -75,7 +75,7 @@ if __name__ == "__main__":
     gs = GridSpec(1, 1, left=0.04, right=0.86, bottom=0.2, top=0.96)
     fig = plt.figure(figsize=(14, 9), facecolor='w')
     for t in tiles:
-        lista = glob.glob(path + t + "_*")
+        lista = sorted(glob.glob(path + t + "_*"))
         print "Found", len(lista), "Antenna Directories"
         for pol in ["X", "Y"]:
             try:
