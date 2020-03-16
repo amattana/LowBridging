@@ -175,11 +175,11 @@ if __name__ == "__main__":
                                             daq_mode=FileDAQModes.Integrated)
 
     base, x, y = get_antenna_positions(station_name)
-    if (t_start > datetime.datetime(2020, 3, 1)) and (station_name == "AAVS2"):
-        print "Patching antenna name and positions"
-        base = base[:16*13] + base[16*14:]
-        x = x[:16*13] + x[16*14:]
-        y = y[:16*13] + y[16*14:]
+    # if (t_start > datetime.datetime(2020, 3, 1)) and (station_name == "AAVS2"):
+    #     print "Patching antenna name and positions"
+    #     base = base[:16*13] + base[16*14:]
+    #     x = x[:16*13] + x[16*14:]
+    #     y = y[:16*13] + y[16*14:]
     ants = []
     for j in base:
         ants += ["ANT-%03d" % int(j)]
