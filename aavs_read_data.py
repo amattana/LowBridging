@@ -175,6 +175,11 @@ if __name__ == "__main__":
                                             daq_mode=FileDAQModes.Integrated)
 
     base, x, y = get_antenna_positions(station_name)
+    if (t_start > datetime.datetime(2020, 3, 1)) and (station_name == "AAVS2"):
+        print "Patching antenna name and positions"
+        base = base[:16*13] + base[16*14:]
+        x = x[:16*13] + x[16*14:]
+        y = y[:16*13] + y[16*14:]
     ants = []
     for j in base:
         ants += ["ANT-%03d" % int(j)]
@@ -886,7 +891,8 @@ if __name__ == "__main__":
         ax_power.set_xlabel("Time", fontsize=14)
         ax_power.set_ylabel("dB", fontsize=14)
         ax_power.set_yticks(np.arange(int(np.mean(acc_power_x)) - 5, int(np.mean(acc_power_x)) + 6, 1))
-        ax_power.set_ylim(int(np.mean(acc_power_x)) - 5, int(np.mean(acc_power_x)) + 5)
+        #ax_power.set_ylim(int(np.mean(acc_power_x)) - 5, int(np.mean(acc_power_x)) + 5)
+        ax_power.set_ylim(-12, 4)
         ax_power.set_xticks(x_tick)
         ax_power.grid()
         ax_power.legend(fontsize=13)
@@ -897,7 +903,7 @@ if __name__ == "__main__":
         if len(w_data):
             ax_weather.set_ylabel('Temperature (C)', color='r')
             #ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
-            ax_weather.set_ylim(45, 15)
+            ax_weather.set_ylim(50, 0)
             ax_weather.set_yticks(np.arange(15, 50, 5))
             ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
 
