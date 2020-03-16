@@ -49,7 +49,7 @@ if __name__ == "__main__":
         t_stop = dt_to_timestamp(proc_date) + (60 * 60 * 24)
         print "Start Time:  " + ts_to_datestring(t_start) + "    Timestamp: " + str(t_start)
         print "Stop  Time:  " + ts_to_datestring(t_stop) + "    Timestamp: " + str(t_stop)
-        print "Band selected:  startfreq=", opts.startfreq, ", stopfreq=", opts.stoppfreq
+        print "Band selected:  startfreq=", opts.startfreq, ", stopfreq=", opts.stopfreq
     except:
         print "Wrong date format or missing required argument (" + opts.date + ")"
         exit(1)
@@ -86,7 +86,7 @@ if __name__ == "__main__":
                 orari = []
                 for k, l in enumerate(lista):
                     fname = l + "/data/POWER_" + opts.date + "_" + l.split("/")[-1] + "_POL-" + pol + "_BAND-" + \
-                            opts.startfreq + "-" + opts.stopfreq + "MHz.txt"
+                            str(opts.startfreq) + "-" + str(opts.stopfreq) + "MHz.txt"
                     with open(fname) as f:
                         data = f.readlines()
                     dati = []
@@ -127,7 +127,7 @@ if __name__ == "__main__":
                 if not os.path.exists(path + "processed-pic"):
                     os.mkdir(path + "processed-pic")
                 print "Saving " + path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-" + \
-                      opts.startfreq + "-" + opts.stopfreq + "MHz.png",
+                      str(opts.startfreq) + "-" + str(opts.stopfreq) + "MHz.png",
 
                 x_tick = []
                 x_tick_label = []
@@ -189,7 +189,7 @@ if __name__ == "__main__":
                     #fig.subplots_adjust(right=0.86)
 
                 fig.savefig(path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-" +
-                            opts.startfreq + "-" + opts.stopfreq + "MHz.png")
+                            str(opts.startfreq) + "-" + str(opts.stopfreq) + "MHz.png")
                 print " ...done!"
             except:
                 print "No files found for POL-" + pol + " " + t
