@@ -78,7 +78,7 @@ if __name__ == "__main__":
         lista = sorted(glob.glob(path + t + "_*"))
         print "Found", len(lista), "Antenna Directories"
         for pol in ["X", "Y"]:
-            try:
+            # try:
                 fig.clf()
                 ax = fig.add_subplot(gs[0])
                 full_data = []
@@ -191,5 +191,5 @@ if __name__ == "__main__":
                 fig.savefig(path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-" +
                             str(opts.startfreq) + "-" + str(opts.stopfreq) + "MHz.png")
                 print " ...done!"
-            except:
-                print "No files found for POL-" + pol + " " + t
+            # except:
+            #     print "No files found for POL-" + pol + " " + t
