@@ -159,7 +159,10 @@ def plotting_thread(directory, cadence):
         t_axes[i][2].set_xticklabels(np.array(range(1, 17)).astype("str").tolist(), fontsize=4)
         t_axes[i][2].set_yticks([15, 20])
         t_axes[i][2].set_yticklabels(["15", "20"], fontsize=7)
-        t_axes[i][2].set_ylim([0, 40])
+        if not station_name == "EDA2":
+            t_axes[i][2].set_ylim([0, 40])
+        # else:
+        #     t_axes[i][2].set_ylim([0, 5])
         t_axes[i][2].set_xlim([0, 16])
         t_axes[i][2].set_ylabel("RMS", fontsize=10)
         t_axes[i][2].grid()
@@ -174,7 +177,10 @@ def plotting_thread(directory, cadence):
         t_axes[i][3].set_xticklabels(np.array(range(1, 17)).astype("str").tolist(), fontsize=4)
         t_axes[i][3].set_yticks([15, 20])
         t_axes[i][3].set_yticklabels(["15", "20"], fontsize=7)
-        t_axes[i][3].set_ylim([0, 40])
+        if not station_name == "EDA2":
+            t_axes[i][3].set_ylim([0, 40])
+        # else:
+        #     t_axes[i][2].set_ylim([0, 5])
         t_axes[i][3].set_xlim([0, 16])
         t_axes[i][3].set_ylabel("RMS", fontsize=10)
         t_axes[i][3].set_xlabel("Power Pol Y", fontsize=10)
