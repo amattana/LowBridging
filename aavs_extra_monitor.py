@@ -181,8 +181,12 @@ def plotting_thread(directory, cadence):
         t_axes[i][3].set_yticklabels(["15", "20"], fontsize=7)
         if not station_name == "EDA2":
             t_axes[i][3].set_ylim([0, 40])
-        # else:
-        #     t_axes[i][2].set_ylim([0, 5])
+            t_axes[i][3].set_yticks([15, 20])
+            t_axes[i][3].set_yticklabels(["15", "20"], fontsize=7)
+        else:
+            t_axes[i][3].set_ylim([0, 5])
+            t_axes[i][3].set_yticks([0, 5, 10, 15, 20])
+            t_axes[i][3].set_yticklabels(["0", "5", "10", "15", "20"], fontsize=7)
         t_axes[i][3].set_xlim([0, 16])
         t_axes[i][3].set_ylabel("RMS", fontsize=10)
         t_axes[i][3].set_xlabel("Power Pol Y", fontsize=10)
