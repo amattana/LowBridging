@@ -892,7 +892,7 @@ if __name__ == "__main__":
         ax_power.set_ylabel("dB", fontsize=14)
         #ax_power.set_yticks(np.arange(int(np.mean(acc_power_x)) - 5, int(np.mean(acc_power_x)) + 6, 1))
         ax_power.set_ylim(int(np.mean(acc_power_x)) - 5, int(np.mean(acc_power_x)) + 5)
-        ax_power.set_ylim(-12, 4)
+        #ax_power.set_ylim(-12, 4)
         ax_power.set_xticks(x_tick)
         ax_power.grid()
         ax_power.legend(fontsize=13)
