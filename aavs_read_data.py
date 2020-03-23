@@ -818,6 +818,11 @@ if __name__ == "__main__":
         asse_x = np.linspace(0, 400, 512)
         xmin = closest(asse_x, float(opts.startfreq))
         xmax = closest(asse_x, float(opts.stopfreq))
+        if xmin == xmax:
+            print "Using channel #" + str(xmin) + " (Freq: " + str(asse_x[xmin]) + ")"
+        else:
+            print "Using channels from #" + str(xmin) + " (Freq: " + str(asse_x[xmin]) + ") to #" + str(xmax) + \
+                  " (Freq: " + str(asse_x[xmax]) + ")"
 
         if len(w_data) and not opts.over:
             ax_weather = ax_power.twinx()
