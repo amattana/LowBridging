@@ -84,9 +84,9 @@ if __name__ == "__main__":
                       default=False, help="Add weather info (if available)")
     parser.add_option("--over", action="store_true", dest="over",
                       default=False, help="Plot weather over waterfall")
-    parser.add_option("--startfreq", action="store", dest="startfreq", type="int",
+    parser.add_option("--startfreq", action="store", dest="startfreq", type="float",
                       default=0, help="Start Frequency")
-    parser.add_option("--stopfreq", action="store", dest="stopfreq", type="int",
+    parser.add_option("--stopfreq", action="store", dest="stopfreq", type="float",
                       default=400, help="Stop Frequency")
     parser.add_option("--pol", action="store", dest="pol",
                       default="x", help="Polarization [x (default)| y]")
@@ -816,8 +816,8 @@ if __name__ == "__main__":
 
         ax_power = fig.add_subplot(gs[0, 0])
         asse_x = np.linspace(0, 400, 512)
-        xmin = closest(asse_x, int(opts.startfreq))
-        xmax = closest(asse_x, int(opts.stopfreq))
+        xmin = closest(asse_x, float(opts.startfreq))
+        xmax = closest(asse_x, float(opts.stopfreq))
 
         if len(w_data) and not opts.over:
             ax_weather = ax_power.twinx()
