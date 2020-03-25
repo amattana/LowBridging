@@ -66,29 +66,28 @@ if __name__ == "__main__":
                     #print "next", f_next, dt_to_timestamp(datetime.datetime.strptime(f_next, "%Y-%m-%d_%H%M%S"))
                     if t_start >= dt_to_timestamp(datetime.datetime.strptime(f_next, "%Y-%m-%d_%H%M%S")):
                         pass
-                    else:
-                        f_date = l.split("/")[-1][:17]
-                        #print "current: ", f_date, dt_to_timestamp(datetime.datetime.strptime(f_date, "%Y-%m-%d_%H%M%S"))
-                        if t_stop <= dt_to_timestamp(datetime.datetime.strptime(f_date, "%Y-%m-%d_%H%M%S")):
-                            pass
-                        else:
-                            with open(l) as f:
-                                data = f.readlines()
-                            if len(data):
-                                for d in data:
-                                    record = d.split()
-                                    if len(record) == 35:
-                                        try:
-                                            t_stamp = int(float(record[0]))
-                                            if t_start <= t_stamp <= t_stop:
-                                                dati += [float(record[3 + ((int(opts.input) - 1) * 2) + pol])]
-                                                x += [t_stamp]
-                                                if not datetime.datetime.utcfromtimestamp(t_stamp).hour == hours:
-                                                    xtick += [t_stamp]
-                                                    xticklabel += [str(datetime.datetime.utcfromtimestamp(t_stamp).hour)]
-                                                    hours = datetime.datetime.utcfromtimestamp(t_stamp).hour
-                                        except:
-                                            pass
+                f_date = l.split("/")[-1][:17]
+                #print "current: ", f_date, dt_to_timestamp(datetime.datetime.strptime(f_date, "%Y-%m-%d_%H%M%S"))
+                if t_stop <= dt_to_timestamp(datetime.datetime.strptime(f_date, "%Y-%m-%d_%H%M%S")):
+                    pass
+                else:
+                    with open(l) as f:
+                        data = f.readlines()
+                    if len(data):
+                        for d in data:
+                            record = d.split()
+                            if len(record) == 35:
+                                try:
+                                    t_stamp = int(float(record[0]))
+                                    if t_start <= t_stamp <= t_stop:
+                                        dati += [float(record[3 + ((int(opts.input) - 1) * 2) + pol])]
+                                        x += [t_stamp]
+                                        if not datetime.datetime.utcfromtimestamp(t_stamp).hour == hours:
+                                            xtick += [t_stamp]
+                                            xticklabel += [str(datetime.datetime.utcfromtimestamp(t_stamp).hour)]
+                                            hours = datetime.datetime.utcfromtimestamp(t_stamp).hour
+                                except:
+                                    pass
         print "Found %d valid records\n"%(len(dati))
         plt.ioff()
         gs = GridSpec(1, 1, left=0.1, bottom=0.075, top=0.95)
