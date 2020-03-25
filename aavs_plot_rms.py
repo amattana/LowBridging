@@ -89,7 +89,7 @@ if __name__ == "__main__":
                                 except:
                                     pass
         print "Found %d valid records\n"%(len(dati))
-        plt.ioff()
+        plt.ion()
         gs = GridSpec(1, 1, left=0.1, bottom=0.075, top=0.95)
         fig = plt.figure(figsize=(14, 9), facecolor='w')
         #fig = plt.figure(facecolor='w')
