@@ -105,7 +105,7 @@ if __name__ == "__main__":
         ax.set_ylim(0, 50)
         ax.set_ylabel("ADC RMS")
         ax.set_xlabel("UTC Time (hours)")
-        ax.set_title(opts.date + " Tile-%02d Input %d Pol %s" % (opts.tile, opts.input, opts.pol))
+        ax.set_title(opts.date + " Tile-%02d Input %d Pol %s" % (opts.tile, opts.channel, opts.pol))
         plt.tight_layout()
         plt.show()
 
