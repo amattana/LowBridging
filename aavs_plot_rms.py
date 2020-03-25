@@ -107,6 +107,7 @@ if __name__ == "__main__":
         ax.set_ylabel("ADC RMS")
         ax.set_xlabel("UTC Time (hours)")
         ax.set_title("Tile-%02d Input %d Pol %s" % (opts.tile, opts.input, opts.pol))
+        plt.tight_layout()
         plt.show()
         # if len(dati):
         #     d = np.array(dati)
