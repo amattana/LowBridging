@@ -63,18 +63,17 @@ if __name__ == "__main__":
             for n, l in enumerate(lista):
                 if not n == len(lista) - 1:
                     f_next = lista[n+1].split("/")[-1][:17]
-                    print "next", f_next, dt_to_timestamp(datetime.datetime.strptime(f_next, "%Y-%m-%d_%H%M%S"))
+                    #print "next", f_next, dt_to_timestamp(datetime.datetime.strptime(f_next, "%Y-%m-%d_%H%M%S"))
                     if t_start >= dt_to_timestamp(datetime.datetime.strptime(f_next, "%Y-%m-%d_%H%M%S")):
                         pass
                     else:
                         f_date = l.split("/")[-1][:17]
-                        print "current: ", f_date, dt_to_timestamp(datetime.datetime.strptime(f_date, "%Y-%m-%d_%H%M%S"))
+                        #print "current: ", f_date, dt_to_timestamp(datetime.datetime.strptime(f_date, "%Y-%m-%d_%H%M%S"))
                         if t_stop <= dt_to_timestamp(datetime.datetime.strptime(f_date, "%Y-%m-%d_%H%M%S")):
                             pass
                         else:
                             with open(l) as f:
                                 data = f.readlines()
-                            print l, len(data)
                             if len(data):
                                 for d in data:
                                     record = d.split()
