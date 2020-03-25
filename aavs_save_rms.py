@@ -32,7 +32,7 @@ if __name__ == "__main__":
     parser = OptionParser(usage="usage: %aavs_save_rms [options]")
     parser.add_option("--config", action="store", dest="config",
                       default="/opt/aavs/config/aavs2.yml",
-                      help="Station configuration files to use, comma-separated (default: AAVS2)")
+                      help="Station configuration files to use, comma-separated (default: /opt/aavs/config/aavs2.yml)")
     parser.add_option("--directory", action="store", dest="directory",
                       default="/storage/monitoring/rms",
                       help="Destination directory for data (default: /storage/monitoring/rms, station_name is automatically added)")
