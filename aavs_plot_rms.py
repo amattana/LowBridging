@@ -94,9 +94,14 @@ if __name__ == "__main__":
         fig = plt.figure(figsize=(14, 9), facecolor='w')
         #fig = plt.figure(facecolor='w')
         ax = fig.add_subplot(gs[0, 0])
+
+        ax.plot(np.array(range(24 * 60 * 60)) + t_start, np.zeros(24 * 60 * 60), color='w')
+        ax.set_xticks((np.array(range(24)) * 60 * 60) + t_start)
+        ax.set_xticklabels(np.array(range(24)))
+
         ax.plot(x, dati, color='b', linestyle='None', marker=".", label="Tile-%02d Input %d Pol %s" % (opts.tile, opts.input, opts.pol))
-        ax.set_xticks(xtick)
-        ax.set_xticklabels(xticklabel)
+        #ax.set_xticks(xtick)
+        #ax.set_xticklabels(xticklabel)
         ax.set_xlim(x[0], x[-1])
         ax.set_ylim(0, 50)
         ax.set_ylabel("ADC RMS")
