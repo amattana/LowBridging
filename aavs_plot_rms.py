@@ -69,7 +69,7 @@ if __name__ == "__main__":
                     else:
                         f_date = l.split("/")[-1][:17]
                         print "current: ", f_date, dt_to_timestamp(datetime.datetime.strptime(f_date, "%Y-%m-%d_%H%M%S"))
-                        if t_stop >= dt_to_timestamp(datetime.datetime.strptime(f_date, "%Y-%m-%d_%H%M%S")):
+                        if t_stop <= dt_to_timestamp(datetime.datetime.strptime(f_date, "%Y-%m-%d_%H%M%S")):
                             pass
                         else:
                             with open(l) as f:
