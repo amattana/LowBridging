@@ -49,7 +49,7 @@ if __name__ == "__main__":
             path = path + "/"
         path += opts.station.upper() + "/"
         lista = sorted(glob.glob(path + ("*Tile-%02d.txt"%(opts.tile))))
-
+        print lista
         # if len(lista):
         #     for l in lista:
         #         dati = []
