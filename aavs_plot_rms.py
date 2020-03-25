@@ -81,7 +81,7 @@ if __name__ == "__main__":
                                         try:
                                             t_stamp = int(float(record[0]))
                                             if t_start <= t_stamp <= t_stop:
-                                                dati += [record[3 + ((int(opts.input) - 1) * 2) + pol]]
+                                                dati += [float(record[3 + ((int(opts.input) - 1) * 2) + pol])]
                                                 x += [t_stamp]
                                                 if not datetime.datetime.utcfromtimestamp(t_stamp).hour == hours:
                                                     xtick += [t_stamp]
@@ -90,7 +90,12 @@ if __name__ == "__main__":
                                         except:
                                             pass
         print "Found %d valid records\n"%(len(dati))
-
+        plt.ioff()
+        gs = GridSpec(1, 1, left=0.1, bottom=0.075, top=0.95)
+        fig = plt.figure(figsize=(14, 9), facecolor='w')
+        ax = fig.add_subplot(gs[0, 0])
+        ax.plot(x, dati, color='b', linestyle=None, label="Tile-%02d Input %d Pol %s" % (opts.tile, opts.input, opts.pol))
+        plt.show()
         # if len(dati):
         #     d = np.array(dati)
         #     t = np.transpose(np.array(d))
