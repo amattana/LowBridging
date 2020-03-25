@@ -80,7 +80,6 @@ if __name__ == "__main__":
                                     if len(record) == 35:
                                         try:
                                             t_stamp = int(float(record[0]))
-                                            print t_stamp
                                             if t_start <= t_stamp <= t_stop:
                                                 dati += [record[3 + ((int(opts.input) - 1) * 2) + pol]]
                                                 x += [t_stamp]
