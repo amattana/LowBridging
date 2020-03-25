@@ -73,6 +73,7 @@ if __name__ == "__main__":
                         else:
                             with open(l) as f:
                                 data = f.readlines()
+                            print l, len(data)
                             if len(data):
                                 for d in data:
                                     record = d.split()
