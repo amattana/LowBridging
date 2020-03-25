@@ -104,12 +104,12 @@ if __name__ == "__main__":
                 rms = aavs_station.tiles[t].get_adc_rms()
                 RMS = [rms[rms_remap[x]] for x in range(len(rms))]
                 for r in RMS:
-                    record += "%3.1f\t"
+                    record += "%3.1f\t" % r
                 record = record[:-1] + "\n"
                 files[n].write(record)
                 files[n].flush()
             time.sleep(opts.period)
-        except:
+        except KeyboardInterrupt:
             for f in files:
                 f.close()
 
