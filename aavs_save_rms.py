@@ -6,7 +6,6 @@ import datetime
 import time
 import os
 
-#path = "/storage/monitoring/rms/"
 
 def _connect_station(aavs_station):
     """ Return a connected station """
@@ -113,9 +112,4 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             for f in files:
                 f.close()
-
-
-
-
-
 
