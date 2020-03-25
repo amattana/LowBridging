@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
         print "Found %d valid records\n"%(len(dati))
         plt.ion()
-        gs = GridSpec(1, 1, left=0.1, bottom=0.075, top=0.95)
+        gs = GridSpec(1, 1, left=0.1, bottom=0.075, top=0.95, right=0.9)
         fig = plt.figure(figsize=(12, 7), facecolor='w')
         ax = fig.add_subplot(gs[0, 0])
 
@@ -106,7 +106,7 @@ if __name__ == "__main__":
         ax.set_ylabel("ADC RMS")
         ax.set_xlabel("UTC Time (hours)")
         ax.set_title(opts.date + " Tile-%02d Input %d Pol %s" % (opts.tile, opts.channel, opts.pol))
-        plt.tight_layout()
+        #plt.tight_layout()
         plt.show()
 
     else:
