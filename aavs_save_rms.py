@@ -88,11 +88,17 @@ if __name__ == "__main__":
     for l in lista_file:
         files += [open(l, "w")]
     logging.info("Logging RMS for station " + station_name)
+    hours = 0
     while True:
         try:
             for n, t in enumerate(range(nof_tiles)):
                 t_stamp = int(calendar.timegm(datetime.datetime.utcnow().timetuple()))
-                date = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(t_stamp), "%Y-%m-%d %H:%M:%S")
+                t_date = datetime.datetime.utcfromtimestamp(t_stamp)
+                date = datetime.datetime.strftime(t_date, "%Y-%m-%d %H:%M:%S")
+                if not t_date.hour == hours:
+                    msg = "Continuing acquiring (t_stamp: %d, date: %s)"%(t_stamp, date)
+                    logging.info(msg)
+                    hours = t_date.hour
                 record = "%d\t%s\t" % (t_stamp, date)
                 rms = aavs_station.tiles[t].get_adc_rms()
                 RMS = [rms[rms_remap[x]] for x in range(len(rms))]
