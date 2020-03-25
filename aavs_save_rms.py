@@ -38,7 +38,8 @@ if __name__ == "__main__":
                       help="Destination directory for data (default: /storage/monitoring/rms, station_name is automatically added)")
     parser.add_option("--interface", action="store", dest="interface",
                       default="eth3", help="Network interface (default: eth3)")
-
+    parser.add_option("--period", action="store", dest="period", type=int,
+                      default=5, help="Cadence in seconds (default: 5)")
     (opts, args) = parser.parse_args(argv[1:])
 
     # Set logging
@@ -107,6 +108,7 @@ if __name__ == "__main__":
                 record = record[:-1] + "\n"
                 files[n].write(record)
                 files[n].flush()
+            time.sleep(opts.period)
         except:
             for f in files:
                 f.close()
