@@ -80,7 +80,8 @@ if __name__ == "__main__":
     path += "/"
 
     tile_names = [("Tile-%02d"%(x+1)) for x in range(16)]
-    rms_remap = [1, 0, 3, 2, 5, 4, 7, 6, 17, 16, 19, 18, 21, 20, 23, 22, 30, 31, 28, 29, 26, 27, 24, 25, 14, 15, 12, 13, 10, 11, 8, 9]
+    #remap = [0, 1, 2, 3, 8, 9, 10, 11, 15, 14, 13, 12, 7, 6, 5, 4]
+    rms_remap = [0, 1, 2, 3, 4, 5, 6, 7, 16, 17, 18, 19, 20, 21, 22, 23, 30, 31, 28, 29, 26, 27, 24, 25, 14, 15, 12, 13, 10, 11, 8, 9]
 
     orario = datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d_%H%M%S_")
     lista_file = [(path + orario + t + ".txt") for t in tile_names]
