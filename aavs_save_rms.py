@@ -102,12 +102,13 @@ if __name__ == "__main__":
                     hours = t_date.hour
                 record = "%d\t%s\t" % (t_stamp, date)
                 rms = aavs_station.tiles[t].get_adc_rms()
-                RMS = [rms[rms_remap[x]] for x in range(len(rms))]
-                for r in RMS:
-                    record += "%3.1f\t" % r
-                record = record[:-1] + "\n"
-                files[n].write(record)
-                files[n].flush()
+                if len(rms) == 32:
+                    RMS = [rms[rms_remap[x]] for x in range(len(rms))]
+                    for r in RMS:
+                        record += "%3.1f\t" % r
+                    record = record[:-1] + "\n"
+                    files[n].write(record)
+                    files[n].flush()
             time.sleep(opts.period)
         except KeyboardInterrupt:
             for f in files:
