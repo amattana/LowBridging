@@ -92,6 +92,8 @@ if __name__ == "__main__":
                       default="x", help="Polarization [x (default)| y]")
     parser.add_option("--power", action="store_true", dest="power",
                       default=False, help="Total Power of channels")
+    parser.add_option("--equalize", action="store_true", dest="eq",
+                      default=False, help="Equalize antennas power")
     (opts, args) = parser.parse_args(argv[1:])
 
     t_date = None
@@ -815,6 +817,20 @@ if __name__ == "__main__":
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
         ax_power = fig.add_subplot(gs[0, 0])
+        if "all" in opts.date.lower():
+            delta = (dt_to_timestamp(datetime.datetime.utcnow().date() + datetime.timedelta(1)) -
+                     dt_to_timestamp(datetime.datetime(2020, 03, 01)))
+            delta_h = delta / 3600
+            x = np.array(range(delta)) + t_start
+        else:
+            delta_h = (t_stop - t_start) / 3600
+            x = np.array(range(t_stop - t_start)) + t_start
+
+        xticks = np.array(range(delta_h)) * 3600 + t_start
+        ax_power.plot(x, x, color='w')
+        ax_power.set_xticks(xticks)
+        ax_power.set_xticklabels(np.array(range(delta_h)) % 24)
+
         asse_x = np.linspace(0, 400, 512)
         xmin = closest(asse_x, float(opts.startfreq))
         xmax = closest(asse_x, float(opts.stopfreq))
