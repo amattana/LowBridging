@@ -61,16 +61,22 @@ if __name__ == "__main__":
     parser.add_option("--pol", action="store", dest="pol", type=str,
                       default="X", help="Polarization (default: X)")
     parser.add_option("--date", action="store", dest="date",
-                      default="2020-03-25", help="Date in YYYY-MM-DD (required)")
+                      default="all", help="Date in YYYY-MM-DD (required, default 'all')")
 
     (opts, args) = parser.parse_args(argv[1:])
 
     try:
-        proc_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
-        t_start = dt_to_timestamp(proc_date)
-        t_stop = dt_to_timestamp(proc_date) + (60 * 60 * 24)
-        print "Start Time:  " + ts_to_datestring(t_start) + "    Timestamp: " + str(t_start)
-        print "Stop  Time:  " + ts_to_datestring(t_stop) + "    Timestamp: " + str(t_stop)
+        if "all" in opts.date.lower():
+            proc_date = datetime.datetime.strptime("2020-01-01", "%Y-%m-%d")
+            t_start = dt_to_timestamp(proc_date)
+            t_stop = dt_to_timestamp(datetime.datetime.utcnow())
+            print "All data will be processed!"
+        else:
+            proc_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
+            t_start = dt_to_timestamp(proc_date)
+            t_stop = dt_to_timestamp(proc_date) + (60 * 60 * 24)
+            print "Start Time:  " + ts_to_datestring(t_start) + "    Timestamp: " + str(t_start)
+            print "Stop  Time:  " + ts_to_datestring(t_stop) + "    Timestamp: " + str(t_stop)
     except:
         print "Wrong date format or missing required argument (" + opts.date + ")"
         exit(1)
