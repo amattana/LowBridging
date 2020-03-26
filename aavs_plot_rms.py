@@ -114,7 +114,7 @@ if __name__ == "__main__":
         x, dati = read_data(path, opts.tile, opts.channel, pol)
         print "Found %d valid records\n"%(len(dati))
 
-        ax.plot(x, dati, color='b', linestyle='None', marker=".", markersize=6, label="Tile-%02d Input %d Pol %s" %
+        ax.plot(x, dati, color='b', linestyle='None', marker=".", markersize=2, label="Tile-%02d Input %d Pol %s" %
                                                                         (opts.tile, opts.channel, opts.pol))
         ax.set_xlim(x[0], x[-1])
         ax.set_ylim(0, 50)
