@@ -891,13 +891,13 @@ if __name__ == "__main__":
             sys.stdout.write(ERASE_LINE + msg)
             sys.stdout.flush()
 
-        y_wdir = []
-        angle_wdir = []
-        for z in range(len(orari)):
-            if orari[z].hour == step:
-                if len(w_data):
-                    y_wdir += [w_wind[int(closest(np.array(w_time), t_stamps[z]))]]
-                    angle_wdir += [w_wdir[int(closest(np.array(w_time), t_stamps[z]))]]
+        # y_wdir = []
+        # angle_wdir = []
+        # for z in range(len(orari)):
+        #     if orari[z].hour == step:
+        #         if len(w_data):
+        #             y_wdir += [w_wind[int(closest(np.array(w_time), t_stamps[z]))]]
+        #             angle_wdir += [w_wdir[int(closest(np.array(w_time), t_stamps[z]))]]
 
         ax_power.set_xlim(t_stamps[0], t_stamps[-1])
         ax_power.plot(t_stamps, acc_power_x, color='b', label='Pol-X')
@@ -933,13 +933,13 @@ if __name__ == "__main__":
             ax_weather.plot(w_time, w_temp, color='r', lw=1.5)
 
             # Draw wind direction
-            for a, y in enumerate(y_wdir):
+            for a, y in enumerate(w_wdir):
                 m = MarkerStyle(">")
                 m._transform.rotate_deg(angle_wdir[a])
-                ax_wind.scatter(x_tick[a], y, marker=m, s=100, color='orchid')
+                ax_wind.scatter(xticks[a], y, marker=m, s=100, color='orchid')
                 m = MarkerStyle("_")
                 m._transform.rotate_deg(angle_wdir[a])
-                ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='orchid')
+                ax_wind.scatter(xticks[a], y, marker=m, s=500, color='orchid')
             fig.subplots_adjust(right=0.86)
 
         if not os.path.exists(POWER_PATH):
