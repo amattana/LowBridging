@@ -933,15 +933,15 @@ if __name__ == "__main__":
             ax_weather.plot(w_time, w_temp, color='r', lw=1.5)
 
             # Draw wind direction
-            for a, y in enumerate(xticks):
-                if a*4 <= len(xticks):
+            for a in range(len(xticks)):
+                if not a % 4:
                     m = MarkerStyle(">")
-                    m._transform.rotate_deg(y)
-                    print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
-                    ax_wind.scatter(xticks[a], w_wind[a*4], marker=m, s=100, color='orchid')
+                    m._transform.rotate_deg(w_dir[a])
+                    # print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
+                    ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=100, color='orchid')
                     m = MarkerStyle("_")
-                    m._transform.rotate_deg(y)
-                    ax_wind.scatter(xticks[a], w_wind[a*4], marker=m, s=500, color='orchid')
+                    m._transform.rotate_deg(w_dir[a])
+                    ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=500, color='orchid')
             fig.subplots_adjust(right=0.86)
 
         if not os.path.exists(POWER_PATH):
