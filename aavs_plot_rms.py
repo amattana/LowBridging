@@ -99,12 +99,12 @@ if __name__ == "__main__":
         ax = fig.add_subplot(gs[0, 0])
 
         if "all" in opts.date.lower():
-            x = np.array(range(24 * 60 * 60 * (datetime.datetime.utcnow() - datetime.datetime(2020, 03, 01)).days)) + \
+            x = np.array(range(24 * 60 * 60 * (datetime.datetime.now() - datetime.datetime(2020, 03, 01)).days)) + \
                 t_start
         ax.plot(x, x, color='w')
-        ax.set_xticks(((np.array(range(24 * (datetime.datetime.utcnow() - datetime.datetime(2020, 03, 01)).days))) *
+        ax.set_xticks(((np.array(range(24 * (datetime.datetime.now() - datetime.datetime(2020, 03, 01)).days))) *
                       60 * 60) + t_start)
-        ax.set_xticklabels(((np.array(range(24 * (datetime.datetime.utcnow() - datetime.datetime(2020, 03, 01)).days)))
+        ax.set_xticklabels(((np.array(range(24 * (datetime.datetime.now() - datetime.datetime(2020, 03, 01)).days)))
                             % 24) + t_start)
 
         x, dati = read_data(path, opts.tile, opts.channel, pol)
