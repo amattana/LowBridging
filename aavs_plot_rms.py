@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
     try:
         if "all" in opts.date.lower():
-            proc_date = datetime.datetime.strptime("2020-01-01", "%Y-%m-%d")
+            proc_date = datetime.datetime.strptime("2020-03-01", "%Y-%m-%d")
             t_start = dt_to_timestamp(proc_date)
             t_stop = dt_to_timestamp(datetime.datetime.utcnow())
             print "All data will be processed!"
@@ -101,9 +101,14 @@ if __name__ == "__main__":
         fig = plt.figure(figsize=(12, 7), facecolor='w')
         ax = fig.add_subplot(gs[0, 0])
 
-        ax.plot(np.array(range(24 * 60 * 60)) + t_start, np.zeros(24 * 60 * 60), color='w')
-        ax.set_xticks((np.array(range(24)) * 60 * 60) + t_start)
-        ax.set_xticklabels(np.array(range(24)))
+        if "all" in opts.date.lower():
+            x = np.array(range(24 * 60 * 60 * (datetime.datetime.utcnow() - datetime.datetime(2020, 03, 01)).days)) + \
+                t_start
+        ax.plot(x, x, color='w')
+        ax.set_xticks(((np.array(range(24 * (datetime.datetime.utcnow() - datetime.datetime(2020, 03, 01)).days))) *
+                      60 * 60) + t_start)
+        ax.set_xticklabels(((np.array(range(24 * (datetime.datetime.utcnow() - datetime.datetime(2020, 03, 01)).days)))
+                            % 24) + t_start)
 
         ax.plot(x, dati, color='b', linestyle='None', marker=".", label="Tile-%02d Input %d Pol %s" %
                                                                         (opts.tile, opts.channel, opts.pol))
