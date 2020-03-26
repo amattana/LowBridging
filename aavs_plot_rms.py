@@ -9,8 +9,12 @@ import glob
 t_start = 0
 t_stop = 0
 
+
 def read_data(path, tile, channel, pol):
     global t_start, t_stop
+    p = 0
+    if pol.upper() == "Y":
+        p = 1
     lista = sorted(glob.glob(path + ("*Tile-%02d.txt" % (tile))))
     dati = []
     x = []
@@ -35,7 +39,7 @@ def read_data(path, tile, channel, pol):
                             try:
                                 t_stamp = int(float(record[0]))
                                 if t_start <= t_stamp <= t_stop:
-                                    dati += [float(record[3 + ((channel - 1) * 2) + pol])]
+                                    dati += [float(record[3 + ((channel - 1) * 2) + p])]
                                     x += [t_stamp]
                             except:
                                 pass
@@ -60,6 +64,8 @@ if __name__ == "__main__":
                       default=1, help="SmartBox Input (default: 1)")
     parser.add_option("--pol", action="store", dest="pol", type=str,
                       default="X", help="Polarization (default: X)")
+    parser.add_option("--list", action="store", dest="lista", type=list,
+                      default=[], help="List of signals to plot, each element is a tuple (tile, input, pol)")
     parser.add_option("--date", action="store", dest="date",
                       default="all", help="Date in YYYY-MM-DD (required, default 'all')")
 
@@ -82,10 +88,6 @@ if __name__ == "__main__":
         exit(1)
 
     plt.ion()
-
-    pol = 0
-    if opts.pol.upper() == "Y":
-        pol = 1
 
     if os.path.exists(opts.directory):
         path = opts.directory
@@ -111,17 +113,22 @@ if __name__ == "__main__":
         ax.set_xticks(xticks)
         ax.set_xticklabels(np.array(range(delta_h)) % 24)
 
-        x, dati = read_data(path, opts.tile, opts.channel, pol)
-        print "Found %d valid records\n"%(len(dati))
+        if not opts.lista:
+            data_list = [(opts.tile, opts.channel, pol)]
+        else:
+            data_list = opts.lista
 
-        ax.plot(x, dati, color='b', linestyle='None', marker=".", markersize=2, label="Tile-%02d Input %d Pol %s" %
-                                                                        (opts.tile, opts.channel, opts.pol))
+        for d in data_list:
+            x, dati = read_data(path, d[0], d[1], d[2])
+            print "Found %d valid records for Tile-%02d Input #%02d Pol-%s\n" % (len(dati), d[0], d[1], d[2].upper())
+            ax.plot(x, dati, linestyle='None', marker=".", markersize=2,
+                    label="Tile-%02d Input %02d Pol %s" % (d[0], d[1], d[2].upper()))
+
         ax.set_xlim(x[0], x[-1])
         ax.set_ylim(0, 50)
         ax.set_ylabel("ADC RMS")
         ax.set_xlabel("UTC Time (hours)")
-        ax.set_title(opts.date + " Tile-%02d Input %d Pol %s" % (opts.tile, opts.channel, opts.pol))
-        #plt.tight_layout()
+        ax.set_title("ADC RMS Start Time: %s - End Time: %s" % (ts_to_datestring(x[0]), ts_to_datestring(x[-1])))
         plt.show()
 
     else:
