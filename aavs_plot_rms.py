@@ -76,7 +76,7 @@ if __name__ == "__main__":
             proc_date = datetime.datetime.strptime("2020-03-01", "%Y-%m-%d")
             t_start = dt_to_timestamp(proc_date)
             t_stop = dt_to_timestamp(datetime.datetime.utcnow())
-            print "All data will be processed!"
+            print "All data available will be processed!"
         else:
             proc_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
             t_start = dt_to_timestamp(proc_date)
@@ -118,7 +118,7 @@ if __name__ == "__main__":
         else:
             data_list = []
             for d in opts.lista.split(","):
-                data_list += [(int(d.split("-")[0]), int(d.split("-")[0]), d.split("-")[0])]
+                data_list += [(int(d.split("-")[0]), int(d.split("-")[1]), d.split("-")[2])]
 
         for d in data_list:
             x, dati = read_data(path, d[0], d[1], d[2])
@@ -131,6 +131,7 @@ if __name__ == "__main__":
         ax.set_ylabel("ADC RMS")
         ax.set_xlabel("UTC Time (hours)")
         ax.set_title("ADC RMS Start Time: %s - End Time: %s" % (ts_to_datestring(x[0]), ts_to_datestring(x[-1])))
+        ax.legend()
         plt.show()
 
     else:
