@@ -934,13 +934,14 @@ if __name__ == "__main__":
 
             # Draw wind direction
             for a, y in enumerate(xticks):
-                m = MarkerStyle(">")
-                m._transform.rotate_deg(y)
-                # print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
-                ax_wind.scatter(xticks[a], w_wind[a*4], marker=m, s=100, color='orchid')
-                m = MarkerStyle("_")
-                m._transform.rotate_deg(y)
-                ax_wind.scatter(xticks[a], w_wind[a*4], marker=m, s=500, color='orchid')
+                if a*4 <= len(xticks):
+                    m = MarkerStyle(">")
+                    m._transform.rotate_deg(y)
+                    print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
+                    ax_wind.scatter(xticks[a], w_wind[a*4], marker=m, s=100, color='orchid')
+                    m = MarkerStyle("_")
+                    m._transform.rotate_deg(y)
+                    ax_wind.scatter(xticks[a], w_wind[a*4], marker=m, s=500, color='orchid')
             fig.subplots_adjust(right=0.86)
 
         if not os.path.exists(POWER_PATH):
