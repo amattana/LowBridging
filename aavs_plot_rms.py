@@ -131,7 +131,7 @@ if __name__ == "__main__":
         ax.set_ylabel("ADC RMS")
         ax.set_xlabel("UTC Time (hours)")
         ax.set_title("ADC RMS Start Time: %s - End Time: %s" % (ts_to_datestring(x[0]), ts_to_datestring(x[-1])))
-        ax.legend()
+        ax.legend(markerscale=8)
         plt.show()
 
     else:
