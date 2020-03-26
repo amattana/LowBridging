@@ -762,17 +762,18 @@ if __name__ == "__main__":
 
                 # Draw wind direction
                 # r = 20
-                for a, y in enumerate(y_wdir):
+                for a, y in enumerate(w_wdir):
                 #     xs = r * np.cos(np.deg2rad(angle_wdir[a]))
                 #     ys = r * np.sin(np.deg2rad(angle_wdir[a]))
                 #     ax_wind.annotate("", xy=(x_tick[a] + xs, y + ys), xytext=(x_tick[a], y), arrowprops=dict(arrowstyle="->"))
                 #     print a, angle_wdir[a], x_tick[a], y, x_tick[a] + xs, y + ys, r
-                    m = MarkerStyle(">")
-                    m._transform.rotate_deg(angle_wdir[a])
-                    ax_wind.scatter(x_tick[a], y, marker=m, s=100, color='g')
-                    m = MarkerStyle("_")
-                    m._transform.rotate_deg(angle_wdir[a])
-                    ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='g')
+                    if not a % 4:
+                        m = MarkerStyle(">")
+                        m._transform.rotate_deg(angle_wdir[a])
+                        ax_wind.scatter(w_time[a], y, marker=m, s=100, color='g')
+                        m = MarkerStyle("_")
+                        m._transform.rotate_deg(angle_wdir[a])
+                        ax_wind.scatter(w_time[a], y, marker=m, s=500, color='g')
                 fig.subplots_adjust(right=0.9)
 
         if not os.path.exists(SPGR_PATH):
@@ -890,34 +891,22 @@ if __name__ == "__main__":
             sys.stdout.write(ERASE_LINE + msg)
             sys.stdout.flush()
 
-        x_tick = []
-        #z_tick = []
         y_wdir = []
         angle_wdir = []
-        step = orari[0].hour
         for z in range(len(orari)):
             if orari[z].hour == step:
-                x_tick += [t_stamps[z]]
-                step = step + 1
-                #z_tick += [z]
                 if len(w_data):
                     y_wdir += [w_wind[int(closest(np.array(w_time), t_stamps[z]))]]
                     angle_wdir += [w_wdir[int(closest(np.array(w_time), t_stamps[z]))]]
-
-        x_tick += [t_stamps[-1]]
 
         ax_power.set_xlim(t_stamps[0], t_stamps[-1])
         ax_power.plot(t_stamps, acc_power_x, color='b', label='Pol-X')
         ax_power.plot(t_stamps, acc_power_y, color='g', label='Pol-Y')
         ax_power.set_xlabel("Time", fontsize=14)
         ax_power.set_ylabel("dB", fontsize=14)
-        #ax_power.set_yticks(np.arange(int(np.mean(acc_power_x)) - 5, int(np.mean(acc_power_x)) + 6, 1))
         ax_power.set_ylim(int(np.mean(acc_power_x)) - 5, int(np.mean(acc_power_x)) + 5)
-        #ax_power.set_ylim(-12, 4)
-        #ax_power.set_xticks(x_tick)
         ax_power.grid()
         ax_power.legend(fontsize=13)
-        #ax_power.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
         ax_power.set_title("Power of Ant-%03d"%(opts.antenna) + " " + date_path +
                            "  Frequencies: " + str(opts.startfreq) + "-" + str(opts.stopfreq) + " MHz", fontsize=14)
 
@@ -929,7 +918,6 @@ if __name__ == "__main__":
             ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
 
             ax_wind = ax_power.twinx()
-            #ax_wind.plot(z_wind, color='orange', lw=1.5)
             ax_wind.plot(w_time, w_wind, color='orange', lw=1.5)
             ax_wind.set_ylim(0, 80)
             ax_wind.set_ylabel('Wind (Km/h)', color='orange')
@@ -937,13 +925,11 @@ if __name__ == "__main__":
             ax_wind.spines["right"].set_position(("axes", 1.06))
 
             ax_rain = ax_power.twinx()
-            #ax_rain.plot(z_rain, color='cyan', lw=1.5)
             ax_rain.plot(w_time, w_rain, color='cyan', lw=1.5)
             ax_rain.set_ylim(0, 100)
             ax_rain.set_ylabel('Rain (mm)', color='cyan')
             ax_rain.tick_params(axis='y', labelcolor='cyan')
             ax_rain.spines["right"].set_position(("axes", 1.12))
-            #ax_weather.plot(z_temp, color='r', lw=1.5)
             ax_weather.plot(w_time, w_temp, color='r', lw=1.5)
 
             # Draw wind direction
