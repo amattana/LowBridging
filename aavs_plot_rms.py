@@ -64,8 +64,8 @@ if __name__ == "__main__":
                       default=1, help="SmartBox Input (default: 1)")
     parser.add_option("--pol", action="store", dest="pol", type=str,
                       default="X", help="Polarization (default: X)")
-    parser.add_option("--list", action="store", dest="lista", type=list,
-                      default=[], help="List of signals to plot, each element is a tuple (tile, input, pol)")
+    parser.add_option("--list", action="store", dest="lista", type=str,
+                      default="", help="List of signals to plot, a string where tuple element are comma separated 'tile-input-pol,tile-input-pol'")
     parser.add_option("--date", action="store", dest="date",
                       default="all", help="Date in YYYY-MM-DD (required, default 'all')")
 
@@ -116,7 +116,9 @@ if __name__ == "__main__":
         if not opts.lista:
             data_list = [(opts.tile, opts.channel, pol)]
         else:
-            data_list = opts.lista
+            data_list = []
+            for d in opts.lista.split(","):
+                data_list += [(int(d.split("-")[0]), int(d.split("-")[0]), d.split("-")[0])]
 
         for d in data_list:
             x, dati = read_data(path, d[0], d[1], d[2])
