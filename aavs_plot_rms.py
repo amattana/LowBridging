@@ -109,7 +109,7 @@ if __name__ == "__main__":
         xticks = np.array(range(delta_h)) * 3600 + t_start
         ax.plot(x, x, color='w')
         ax.set_xticks(xticks)
-        ax.set_xticklabels(xticks % 24)
+        ax.set_xticklabels(np.array(range(delta_h)) % 60)
 
         x, dati = read_data(path, opts.tile, opts.channel, pol)
         print "Found %d valid records\n"%(len(dati))
