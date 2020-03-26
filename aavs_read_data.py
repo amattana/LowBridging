@@ -936,6 +936,7 @@ if __name__ == "__main__":
             for a, y in enumerate(w_wdir):
                 m = MarkerStyle(">")
                 m._transform.rotate_deg(y)
+                print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
                 ax_wind.scatter(xticks[a], w_wind[a], marker=m, s=100, color='orchid')
                 m = MarkerStyle("_")
                 m._transform.rotate_deg(y)
