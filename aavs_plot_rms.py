@@ -93,7 +93,6 @@ if __name__ == "__main__":
             path = path + "/"
         path += opts.station.upper() + "/"
 
-        print "Found %d valid records\n"%(len(dati))
         plt.ion()
         gs = GridSpec(1, 1, left=0.1, bottom=0.075, top=0.95, right=0.9)
         fig = plt.figure(figsize=(12, 7), facecolor='w')
@@ -109,6 +108,7 @@ if __name__ == "__main__":
                             % 24) + t_start)
 
         x, dati = read_data(path, opts.tile, opts.channel, pol)
+        print "Found %d valid records\n"%(len(dati))
 
         ax.plot(x, dati, color='b', linestyle='None', marker=".", label="Tile-%02d Input %d Pol %s" %
                                                                         (opts.tile, opts.channel, opts.pol))
