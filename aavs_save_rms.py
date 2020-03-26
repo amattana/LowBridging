@@ -105,7 +105,7 @@ if __name__ == "__main__":
                 if len(rms) == 32:
                     RMS = [rms[rms_remap[x]] for x in range(len(rms))]
                     for r in RMS:
-                        record += "%3.1f\t" % r
+                        record += "%6.3f\t" % r
                     record = record[:-1] + "\n"
                     files[n].write(record)
                     files[n].flush()
