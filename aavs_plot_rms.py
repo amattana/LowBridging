@@ -99,13 +99,17 @@ if __name__ == "__main__":
         ax = fig.add_subplot(gs[0, 0])
 
         if "all" in opts.date.lower():
-            x = np.array(range(24 * 60 * 60 * (datetime.datetime.now() - datetime.datetime(2020, 03, 01)).days)) + \
-                t_start
+            delta = (dt_to_timestamp(datetime.datetime.utcnow().date() + datetime.timedelta(1)) -
+                     dt_to_timestamp(datetime.datetime(2020, 03, 01)))
+            delta_h = delta / 3600
+            x = np.array(range(delta)) + t_start
+        else:
+            delta_h = 24
+            x = np.array(range(24 * 60 * 60)) + t_start
+        xticks = np.array(range(delta_h)) * 3600 + t_start
         ax.plot(x, x, color='w')
-        ax.set_xticks(((np.array(range(24 * (datetime.datetime.now() - datetime.datetime(2020, 03, 01)).days))) *
-                      60 * 60) + t_start)
-        ax.set_xticklabels(((np.array(range(24 * (datetime.datetime.now() - datetime.datetime(2020, 03, 01)).days)))
-                            % 24) + t_start)
+        ax.set_xticks(xticks)
+        ax.set_xticklabels(xticks % 24)
 
         x, dati = read_data(path, opts.tile, opts.channel, pol)
         print "Found %d valid records\n"%(len(dati))
