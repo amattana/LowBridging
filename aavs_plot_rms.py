@@ -112,7 +112,7 @@ if __name__ == "__main__":
         path += opts.station.upper() + "/"
 
         plt.ion()
-        gs = GridSpec(1, 1, left=0.1, bottom=0.075, top=0.95)
+        gs = GridSpec(1, 1, left=0.1, bottom=0.2, top=0.95)
         fig = plt.figure(figsize=(12, 7), facecolor='w')
         ax = fig.add_subplot(gs[0, 0])
 
@@ -183,7 +183,8 @@ if __name__ == "__main__":
                     ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=500, color='orchid')
             fig.subplots_adjust(right=0.86)
 
-        ax.legend(markerscale=8)
+        ax.legend(markerscale=8, fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,
+                  bbox_to_anchor=(-0.02, -0.2), loc='lower left', fontsize='small')
         plt.show()
 
     else:
