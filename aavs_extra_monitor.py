@@ -236,44 +236,43 @@ def plotting_thread(directory, cadence):
         # Wait for a while
         sleep(cadence)
 
-        # Connect to the station
-        _connect_station(aavs_station)
-
-        # Read latest spectra
-        tile_rms = []
-
-        for i in range(nof_tiles):
-            # Grab tile data
-            data, timestamps = file_manager.read_data(tile_id=i, n_samples=1, sample_offset=-1)
-
-            all_data[:, i * 16 : (i + 1) * 16, :, :] = data
-
-            # Grab antenna RMS
-            tile_rms.extend(aavs_station.tiles[i].get_adc_rms())
-
-        #asse_x_secs = []
-        timestamp_day = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(timestamps[0][0]), "%Y-%m-%d")
-        if not current_day == timestamp_day:
-            current_day = timestamp_day
-            tile_acq_timestamp = [int(timestamps[0][0])]
-            # asse_x_secs = [(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]) -
-            #                  datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]).replace(hour=0,
-            #                                                                                     minute=0,
-            #                                                                                     second=0,
-            #                                                                                     microsecond=0)).seconds]
-            if not os.path.isdir(img_dir + station_name + "/" + current_day):
-                os.mkdir(img_dir + station_name + "/" + current_day)
-        else:
-            tile_acq_timestamp += [int(timestamps[0][0])]
-            # asse_x_secs += [(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]) -
-            #                  datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]).replace(hour=0,
-            #                                                                                     minute=0,
-            #                                                                                     second=0,
-            #                                                                                     microsecond=0)).seconds]
-
-        t_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]), "%Y-%m-%d %H:%M:%S UTC")
-
         try:
+            # Connect to the station
+            _connect_station(aavs_station)
+
+            # Read latest spectra
+            tile_rms = []
+
+            for i in range(nof_tiles):
+                # Grab tile data
+                data, timestamps = file_manager.read_data(tile_id=i, n_samples=1, sample_offset=-1)
+
+                all_data[:, i * 16 : (i + 1) * 16, :, :] = data
+
+                # Grab antenna RMS
+                tile_rms.extend(aavs_station.tiles[i].get_adc_rms())
+
+            #asse_x_secs = []
+            timestamp_day = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(timestamps[0][0]), "%Y-%m-%d")
+            if not current_day == timestamp_day:
+                current_day = timestamp_day
+                tile_acq_timestamp = [int(timestamps[0][0])]
+                # asse_x_secs = [(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]) -
+                #                  datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]).replace(hour=0,
+                #                                                                                     minute=0,
+                #                                                                                     second=0,
+                #                                                                                     microsecond=0)).seconds]
+                if not os.path.isdir(img_dir + station_name + "/" + current_day):
+                    os.mkdir(img_dir + station_name + "/" + current_day)
+            else:
+                tile_acq_timestamp += [int(timestamps[0][0])]
+                # asse_x_secs += [(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]) -
+                #                  datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]).replace(hour=0,
+                #                                                                                     minute=0,
+                #                                                                                     second=0,
+                #                                                                                     microsecond=0)).seconds]
+
+            t_timestamp = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(tile_acq_timestamp[-1]), "%Y-%m-%d %H:%M:%S UTC")
 
             for i in range(nof_tiles):
                 tstamp_label[i].set_text(t_timestamp)
