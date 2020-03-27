@@ -112,7 +112,7 @@ if __name__ == "__main__":
         path += opts.station.upper() + "/"
 
         plt.ion()
-        gs = GridSpec(1, 1, left=0.1, bottom=0.075, top=0.95, right=0.98)
+        gs = GridSpec(1, 1, left=0.1, bottom=0.075, top=0.95)
         fig = plt.figure(figsize=(12, 7), facecolor='w')
         ax = fig.add_subplot(gs[0, 0])
 
