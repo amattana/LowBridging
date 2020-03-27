@@ -94,6 +94,8 @@ if __name__ == "__main__":
                       default=False, help="Total Power of channels")
     parser.add_option("--equalize", action="store_true", dest="eq",
                       default=False, help="Equalize antennas power")
+    parser.add_option("--noline", action="store_true", dest="noline",
+                      default=False, help="Do not plot lines but just markers")
     (opts, args) = parser.parse_args(argv[1:])
 
     t_date = None
@@ -900,8 +902,12 @@ if __name__ == "__main__":
         #             angle_wdir += [w_wdir[int(closest(np.array(w_time), t_stamps[z]))]]
 
         ax_power.set_xlim(t_stamps[0], t_stamps[-1])
-        ax_power.plot(t_stamps, acc_power_x, color='b', label='Pol-X')
-        ax_power.plot(t_stamps, acc_power_y, color='g', label='Pol-Y')
+        if opts.noline:
+            ax_power.plot(t_stamps, acc_power_x, color='b', label='Pol-X', linestyle='None', marker=".", markersize=2)
+            ax_power.plot(t_stamps, acc_power_y, color='g', label='Pol-Y', linestyle='None', marker=".", markersize=2)
+        else:
+            ax_power.plot(t_stamps, acc_power_x, color='b', label='Pol-X')
+            ax_power.plot(t_stamps, acc_power_y, color='g', label='Pol-Y')
         ax_power.set_xlabel("Time", fontsize=14)
         ax_power.set_ylabel("dB", fontsize=14)
         ax_power.set_ylim(int(np.mean(acc_power_x)) - 5, int(np.mean(acc_power_x)) + 5)
