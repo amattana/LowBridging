@@ -156,14 +156,14 @@ if __name__ == "__main__":
             ax_weather.set_yticks(np.arange(15, 50, 5))
             ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
 
-            ax_wind = ax_power.twinx()
+            ax_wind = ax.twinx()
             ax_wind.plot(w_time, w_wind, color='orange', lw=1.5)
             ax_wind.set_ylim(0, 80)
             ax_wind.set_ylabel('Wind (Km/h)', color='orange')
             ax_wind.tick_params(axis='y', labelcolor='orange')
             ax_wind.spines["right"].set_position(("axes", 1.06))
 
-            ax_rain = ax_power.twinx()
+            ax_rain = ax.twinx()
             ax_rain.plot(w_time, w_rain, color='cyan', lw=1.5)
             ax_rain.set_ylim(0, 100)
             ax_rain.set_ylabel('Rain (mm)', color='cyan')
