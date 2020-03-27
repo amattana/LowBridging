@@ -147,7 +147,6 @@ if __name__ == "__main__":
         ax.set_ylabel("ADC RMS")
         ax.set_xlabel("UTC Time (hours)")
         ax.set_title("ADC RMS     Start Time: %s      End Time: %s" % (ts_to_datestring(x[0]), ts_to_datestring(x[-1])))
-        ax.legend(markerscale=8)
 
         if len(w_data):
             ax_weather = ax.twinx()
@@ -184,7 +183,7 @@ if __name__ == "__main__":
                     ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=500, color='orchid')
             fig.subplots_adjust(right=0.86)
 
-
+        ax.legend(markerscale=8)
         plt.show()
 
     else:
