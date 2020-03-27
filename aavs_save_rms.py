@@ -64,53 +64,58 @@ if __name__ == "__main__":
     # Store number of tiles
     nof_tiles = len(station.configuration['tiles'])
 
-    # Create station instance
-    aavs_station = station.Station(station.configuration)
-    aavs_station.connect()
-    _connect_station(aavs_station)
+    try:
 
-    if not os.path.exists(opts.directory):
-        os.mkdir(opts.directory)
-    path = opts.directory
-    if not path[-1] == "/":
+        # Create station instance
+        aavs_station = station.Station(station.configuration)
+        aavs_station.connect()
+        _connect_station(aavs_station)
+
+        if not os.path.exists(opts.directory):
+            os.mkdir(opts.directory)
+        path = opts.directory
+        if not path[-1] == "/":
+            path += "/"
+        path += station_name.upper()
+        if not os.path.exists(path):
+            os.mkdir(path)
         path += "/"
-    path += station_name.upper()
-    if not os.path.exists(path):
-        os.mkdir(path)
-    path += "/"
 
-    tile_names = [("Tile-%02d"%(x+1)) for x in range(16)]
-    #remap = [0, 1, 2, 3, 8, 9, 10, 11, 15, 14, 13, 12, 7, 6, 5, 4]
-    rms_remap = [0, 1, 2, 3, 4, 5, 6, 7, 16, 17, 18, 19, 20, 21, 22, 23, 30, 31, 28, 29, 26, 27, 24, 25, 14, 15, 12, 13, 10, 11, 8, 9]
+        tile_names = [("Tile-%02d"%(x+1)) for x in range(16)]
+        #remap = [0, 1, 2, 3, 8, 9, 10, 11, 15, 14, 13, 12, 7, 6, 5, 4]
+        rms_remap = [0, 1, 2, 3, 4, 5, 6, 7, 16, 17, 18, 19, 20, 21, 22, 23, 30, 31, 28, 29, 26, 27, 24, 25, 14, 15, 12, 13, 10, 11, 8, 9]
 
-    orario = datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d_%H%M%S_")
-    lista_file = [(path + orario + t + ".txt") for t in tile_names]
-    files = []
-    for l in lista_file:
-        files += [open(l, "w")]
-    logging.info("Logging RMS for station " + station_name)
-    hours = 0
-    while True:
-        try:
-            for n, t in enumerate(range(nof_tiles)):
-                t_stamp = int(calendar.timegm(datetime.datetime.utcnow().timetuple()))
-                t_date = datetime.datetime.utcfromtimestamp(t_stamp)
-                date = datetime.datetime.strftime(t_date, "%Y-%m-%d %H:%M:%S")
-                if not t_date.hour == hours:
-                    msg = "Continuing acquiring (t_stamp: %d, date: %s)"%(t_stamp, date)
-                    logging.info(msg)
-                    hours = t_date.hour
-                record = "%d\t%s\t" % (t_stamp, date)
-                rms = aavs_station.tiles[t].get_adc_rms()
-                if len(rms) == 32:
-                    RMS = [rms[rms_remap[x]] for x in range(len(rms))]
-                    for r in RMS:
-                        record += "%6.3f\t" % r
-                    record = record[:-1] + "\n"
-                    files[n].write(record)
-                    files[n].flush()
-            time.sleep(opts.period)
-        except KeyboardInterrupt:
-            for f in files:
-                f.close()
+        orario = datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d_%H%M%S_")
+        lista_file = [(path + orario + t + ".txt") for t in tile_names]
+        files = []
+        for l in lista_file:
+            files += [open(l, "w")]
+        logging.info("Logging RMS for station " + station_name)
+        hours = 0
+        while True:
+            try:
+                for n, t in enumerate(range(nof_tiles)):
+                    t_stamp = int(calendar.timegm(datetime.datetime.utcnow().timetuple()))
+                    t_date = datetime.datetime.utcfromtimestamp(t_stamp)
+                    date = datetime.datetime.strftime(t_date, "%Y-%m-%d %H:%M:%S")
+                    if not t_date.hour == hours:
+                        msg = "Continuing acquiring (t_stamp: %d, date: %s)"%(t_stamp, date)
+                        logging.info(msg)
+                        hours = t_date.hour
+                    record = "%d\t%s\t" % (t_stamp, date)
+                    rms = aavs_station.tiles[t].get_adc_rms()
+                    if len(rms) == 32:
+                        RMS = [rms[rms_remap[x]] for x in range(len(rms))]
+                        for r in RMS:
+                            record += "%6.3f\t" % r
+                        record = record[:-1] + "\n"
+                        files[n].write(record)
+                        files[n].flush()
+                time.sleep(opts.period)
+            except KeyboardInterrupt:
+                for f in files:
+                    f.close()
+    except:
+        msg = "Exception manager..."
+        logging.warning(msg)
 
