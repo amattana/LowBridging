@@ -635,7 +635,10 @@ if __name__ == "__main__":
                 step = (step + 1) % 24
                 z_tick += [z]
         #print str(orari[-1])
-        x_tick += [len(dayspgramma[10:])]
+        #x_tick += [len(dayspgramma[10:])]
+
+        x_tick = x_tick[1:]
+        x_ticklabels = x_ticklabels[1:]
 
         first_empty, dayspgramma = dayspgramma[:10], dayspgramma[10:]
         ax_water.cla()
