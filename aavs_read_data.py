@@ -629,9 +629,9 @@ if __name__ == "__main__":
         for z in range(len(orari)):
             if orari[z].hour == step:
                 #print str(orari[z])
-                x_tick += [z]
+                x_tick += [step]
                 step = (step + 1) % 24
-                z_tick += [z]
+                z_tick += [step]
         #print str(orari[-1])
         x_tick += [len(dayspgramma[10:])]
 
