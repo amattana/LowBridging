@@ -630,7 +630,7 @@ if __name__ == "__main__":
             if orari[z].hour == step:
                 #print str(orari[z])
                 x_tick += [z]
-                step = step + 1
+                step = (step + 1) % 24
                 z_tick += [z]
         #print str(orari[-1])
         x_tick += [len(dayspgramma[10:])]
