@@ -661,7 +661,8 @@ if __name__ == "__main__":
         ax_water.set_yticks(len(np.rot90(dayspgramma)) - ytic)
         ylabmax = (np.array(range((BW / ystep) + 1 )) * ystep) + int(band.split("-")[0])
         ax_water.set_yticklabels(ylabmax.astype("str").tolist())
-        ax_water.set_xlim(x_tick[0], x_tick[-1])
+        #ax_water.set_xlim(x_tick[0], x_tick[-1])
+        ax_water.set_xlim(t_stamps[0], t_stamps[-1])
 
         if len(w_data):
             z_temp = []
