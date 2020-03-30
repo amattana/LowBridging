@@ -145,7 +145,8 @@ if __name__ == "__main__":
         xticks = np.array(range(delta_h)) * 3600 + t_start
         ax.plot(x, x, color='w')
         ax.set_xticks(xticks)
-        ax.set_xticklabels(np.array(range(delta_h)) % 24)
+        ax.set_xticklabels((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) % 24,
+                           rotation=90, fontsize=8)
 
         if not opts.lista:
             data_list = [(opts.tile, opts.channel, pol)]
@@ -170,7 +171,7 @@ if __name__ == "__main__":
             ax_weather = ax.twinx()
             ax_weather.set_ylabel('Temperature (C)', color='r')
             #ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
-            ax_weather.set_ylim(50, 0)
+            ax_weather.set_ylim(50, 15)
             ax_weather.set_yticks(np.arange(15, 50, 5))
             ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
 
