@@ -920,13 +920,14 @@ if __name__ == "__main__":
         ax_power.set_ylim(int(np.mean(acc_power_x)) - 5, int(np.mean(acc_power_x)) + 5)
         ax_power.grid()
         ax_power.legend(fontsize=13)
-        ax_power.set_title("Power of Ant-%03d"%(opts.antenna) + " " + date_path +
-                           "  Frequencies: " + str(opts.startfreq) + "-" + str(opts.stopfreq) + " MHz", fontsize=14)
+        ax_power.set_title("Power of Ant-%03d"%(opts.antenna) + " from " + ts_to_datestring(t_start) + " to " +
+                           ts_to_datestring(t_stop) + "  Frequencies: " + str(opts.startfreq) + "-" +
+                           str(opts.stopfreq) + " MHz", fontsize=14)
 
         if len(w_data):
             ax_weather.set_ylabel('Temperature (C)', color='r')
             #ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
-            ax_weather.set_ylim(50, 0)
+            ax_weather.set_ylim(50, 15)
             ax_weather.set_yticks(np.arange(15, 50, 5))
             ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
 
