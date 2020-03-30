@@ -140,8 +140,8 @@ if __name__ == "__main__":
             delta_h = delta / 3600
             x = np.array(range(delta)) + t_start
         else:
-            delta_h = 24
-            x = np.array(range(24 * 60 * 60)) + t_start
+            delta_h = (t_stop - t_start) / 3600
+            x = np.array(range(t_stop - t_start)) + t_start
         xticks = np.array(range(delta_h)) * 3600 + t_start
         ax.plot(x, x, color='w')
         ax.set_xticks(xticks)
