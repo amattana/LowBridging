@@ -839,7 +839,8 @@ if __name__ == "__main__":
         xticks = np.array(range(delta_h)) * 3600 + t_start
         ax_power.plot(x, x, color='w')
         ax_power.set_xticks(xticks)
-        ax_power.set_xticklabels((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) % 24)
+        ax_power.set_xticklabels((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) % 24,
+                                 rotation=90, fontsize=8)
 
         asse_x = np.linspace(0, 400, 512)
         xmin = closest(asse_x, float(opts.startfreq))
