@@ -98,7 +98,7 @@ if __name__ == "__main__":
                       default=False, help="Do not plot lines but just markers")
     parser.add_option("--sbtemp", action="store_true", dest="sbtemp",
                       default=False, help="Plot the SmartBox Temperature if available")
-    parser.add_option("--temp", action="store_true", dest="temperature",
+    parser.add_option("--temp", action="store_true", dest="temp",
                       default=False, help="Plot the Temperature if available")
     parser.add_option("--wind", action="store_true", dest="wind",
                       default=False, help="Plot the Wind data if available")
