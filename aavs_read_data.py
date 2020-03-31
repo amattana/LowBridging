@@ -120,13 +120,13 @@ if __name__ == "__main__":
         if opts.start:
             try:
                 t_start = dt_to_timestamp(datetime.datetime.strptime(opts.start, "%Y-%m-%d_%H:%M:%S"))
-                print "Start Time:  " + ts_to_datestring(t_start)
+                print "Start Time:  " + ts_to_datestring(t_start) + "    Timestamp: " + str(t_start)
             except:
                 print "Bad t_start time format detected (must be YYYY-MM-DD_HH:MM:SS)"
         if opts.stop:
             try:
                 t_stop = dt_to_timestamp(datetime.datetime.strptime(opts.stop, "%Y-%m-%d_%H:%M:%S"))
-                print "Stop  Time:  " + ts_to_datestring(t_stop)
+                print "Stop  Time:  " + ts_to_datestring(t_stop) + "    Timestamp: " + str(t_stop)
             except:
                 print "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)"
 
@@ -966,7 +966,7 @@ if __name__ == "__main__":
                 if sb_dati:
                     ax_weather.plot(sb_tempi, sb_dati, color='purple', lw=1.5, label='SmartBox Internal Temp')
                 else:
-                    print "No SmartBox Temperature available!"
+                    print "\nNo SmartBox Temperature available!"
 
         if not os.path.exists(POWER_PATH):
             os.makedirs(POWER_PATH)
