@@ -285,6 +285,7 @@ def diclist_to_array(dic, key):
 
 
 def get_sbtemp(start=0, stop=2585699200):
+    print start, stop
     with open("/storage/monitoring/data_logger/AAVS2_Data_Logger.txt") as f:
         data = f.readlines()
     tempi = []
