@@ -12,7 +12,7 @@ import datetime, time
 from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
 from aavs_calibration.common import get_antenna_positions, get_antenna_tile_names
 from aavs_utils import tstamp_to_fname, dt_to_timestamp, ts_to_datestring, fname_to_tstamp, find_ant_by_name, \
-    find_ant_by_tile, find_pos_by_name, closest, mro_daily_weather, diclist_to_array, calc_value
+    find_ant_by_tile, find_pos_by_name, closest, mro_daily_weather, diclist_to_array, calc_value, get_sbtemp
 from matplotlib.markers import MarkerStyle
 
 # Global flag to stop the scrpts
@@ -96,6 +96,8 @@ if __name__ == "__main__":
                       default=False, help="Equalize antennas power")
     parser.add_option("--noline", action="store_true", dest="noline",
                       default=False, help="Do not plot lines but just markers")
+    parser.add_option("--sbtemp", action="store_true", dest="sbtemp",
+                      default=False, help="Plot the SmartBox Temperature if available")
     (opts, args) = parser.parse_args(argv[1:])
 
     t_date = None
@@ -928,9 +930,9 @@ if __name__ == "__main__":
         if len(w_data):
             ax_weather.set_ylabel('Temperature (C)', color='r')
             #ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
-            ax_weather.set_ylim(50, 15)
-            ax_weather.set_yticks(np.arange(15, 50, 5))
-            ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
+            ax_weather.set_ylim(70, 15)
+            ax_weather.set_yticks(np.arange(15, 70, 5))
+            ax_weather.set_yticklabels(np.arange(15, 70, 5), color='r')
 
             ax_wind = ax_power.twinx()
             ax_wind.plot(w_time, w_wind, color='orange', lw=1.5)
@@ -945,7 +947,7 @@ if __name__ == "__main__":
             ax_rain.set_ylabel('Rain (mm)', color='cyan')
             ax_rain.tick_params(axis='y', labelcolor='cyan')
             ax_rain.spines["right"].set_position(("axes", 1.12))
-            ax_weather.plot(w_time, w_temp, color='r', lw=1.5)
+            ax_weather.plot(w_time, w_temp, color='r', lw=1.5, label='External Temp')
 
             # Draw wind direction
             for a in range(len(w_wdir)):
@@ -958,6 +960,11 @@ if __name__ == "__main__":
                     m._transform.rotate_deg(w_wdir[a])
                     ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=500, color='orchid')
             fig.subplots_adjust(right=0.86)
+
+            if opts.sbtemp:
+                sb_tempi, sb_dati = get_sbtemp(t_start, t_stop)
+                if sb_dati:
+                    ax_weather.plot(sb_tempi, sb_dati, color='purple', lw=1.5, label='SmartBox Internal Temp')
 
         if not os.path.exists(POWER_PATH):
             os.makedirs(POWER_PATH)
