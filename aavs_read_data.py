@@ -965,6 +965,8 @@ if __name__ == "__main__":
                 sb_tempi, sb_dati = get_sbtemp(t_start, t_stop)
                 if sb_dati:
                     ax_weather.plot(sb_tempi, sb_dati, color='purple', lw=1.5, label='SmartBox Internal Temp')
+                else:
+                    print "No SmartBox Temperature available!"
 
         if not os.path.exists(POWER_PATH):
             os.makedirs(POWER_PATH)
