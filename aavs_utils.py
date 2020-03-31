@@ -292,7 +292,7 @@ def get_sbtemp(start=0, stop=2585699200):
         with open("/storage/monitoring/data_logger/AAVS2_Data_Logger.txt") as f:
             data = f.readlines()
         for d in data:
-            if stop <= int(d.split()[0]) <= start:
+            if start <= int(d.split()[0]) <= stop:
                 tempi += [int(d.split()[0])]
                 dati += [int(d.split()[3])]
     else:
