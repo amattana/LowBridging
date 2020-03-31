@@ -285,14 +285,14 @@ def diclist_to_array(dic, key):
 
 
 def get_sbtemp(start=0, stop=2585699200):
-    print "\nStart Time: ", start, "\tStop Time: ", stop
+    #print "\nStart Time: ", start, "\tStop Time: ", stop
     tempi = []
     dati = []
     if os.path.exists("/storage/monitoring/data_logger/AAVS2_Data_Logger.txt"):
         with open("/storage/monitoring/data_logger/AAVS2_Data_Logger.txt") as f:
             data = f.readlines()
         for d in data:
-            if start <= int(d.split()[0]) <= stop:
+            if stop <= int(d.split()[0]) <= start:
                 tempi += [int(d.split()[0])]
                 dati += [int(d.split()[3])]
     else:
