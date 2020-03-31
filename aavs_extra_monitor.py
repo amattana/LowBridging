@@ -297,6 +297,8 @@ def plotting_thread(directory, cadence):
         except:
             logging.warning("Something went wrong plotting timestamp " + t_timestamp + " ...skipping...")
             logging.warning("Tile RMS len: "+str(len(tile_rms)))
+            logging.warning("Wait for a minute to automatic restart...")
+            sleep(60)
             pass
 
 
