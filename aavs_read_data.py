@@ -81,7 +81,7 @@ if __name__ == "__main__":
     parser.add_option("--spectrogram", action="store_true", dest="spectrogram",
                       default=False, help="Produces a spectrogram for a specific antenna")
     parser.add_option("--weather", action="store_true", dest="weather",
-                      default=False, help="Add weather info (if available)")
+                      default=False, help="Plot all the weather info if available (Temp, Wind, Rain)")
     parser.add_option("--over", action="store_true", dest="over",
                       default=False, help="Plot weather over waterfall")
     parser.add_option("--startfreq", action="store", dest="startfreq", type="float",
@@ -98,6 +98,12 @@ if __name__ == "__main__":
                       default=False, help="Do not plot lines but just markers")
     parser.add_option("--sbtemp", action="store_true", dest="sbtemp",
                       default=False, help="Plot the SmartBox Temperature if available")
+    parser.add_option("--temp", action="store_true", dest="temperature",
+                      default=False, help="Plot the Temperature if available")
+    parser.add_option("--wind", action="store_true", dest="wind",
+                      default=False, help="Plot the Wind data if available")
+    parser.add_option("--rain", action="store_true", dest="rain",
+                      default=False, help="Plot the Rain data if available")
     (opts, args) = parser.parse_args(argv[1:])
 
     t_date = None
@@ -928,45 +934,49 @@ if __name__ == "__main__":
                            str(opts.stopfreq) + " MHz", fontsize=14)
 
         if len(w_data):
-            ax_weather.set_ylabel('Temperature (C)', color='r')
-            #ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
-            ax_weather.set_ylim(70, 15)
-            ax_weather.set_yticks(np.arange(15, 70, 5))
-            ax_weather.set_yticklabels(np.arange(15, 70, 5), color='r')
+            if opts.temp:
+                ax_weather.set_ylabel('Temperature (C)', color='r')
+                #ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
+                ax_weather.set_ylim(70, 15)
+                ax_weather.set_yticks(np.arange(15, 70, 5))
+                ax_weather.set_yticklabels(np.arange(15, 70, 5), color='r')
+                ax_weather.plot(w_time, w_temp, color='r', lw=1.5, label='External Temp')
 
-            ax_wind = ax_power.twinx()
-            ax_wind.plot(w_time, w_wind, color='orange', lw=1.5)
-            ax_wind.set_ylim(0, 80)
-            ax_wind.set_ylabel('Wind (Km/h)', color='orange')
-            ax_wind.tick_params(axis='y', labelcolor='orange')
-            ax_wind.spines["right"].set_position(("axes", 1.06))
+                if opts.sbtemp:
+                    sb_tempi, sb_dati = get_sbtemp(t_start, t_stop)
+                    if sb_dati:
+                        ax_weather.plot(sb_tempi, sb_dati, color='purple', lw=1.5, label='SmartBox Internal Temp')
+                    else:
+                        print "\nNo SmartBox Temperature available!"
 
-            ax_rain = ax_power.twinx()
-            ax_rain.plot(w_time, w_rain, color='cyan', lw=1.5)
-            ax_rain.set_ylim(0, 100)
-            ax_rain.set_ylabel('Rain (mm)', color='cyan')
-            ax_rain.tick_params(axis='y', labelcolor='cyan')
-            ax_rain.spines["right"].set_position(("axes", 1.12))
-            ax_weather.plot(w_time, w_temp, color='r', lw=1.5, label='External Temp')
+            if opts.wind:
+                ax_wind = ax_power.twinx()
+                ax_wind.plot(w_time, w_wind, color='orange', lw=1.5)
+                ax_wind.set_ylim(0, 80)
+                ax_wind.set_ylabel('Wind (Km/h)', color='orange')
+                ax_wind.tick_params(axis='y', labelcolor='orange')
+                ax_wind.spines["right"].set_position(("axes", 1.06))
+                # Draw wind direction
+                for a in range(len(w_wdir)):
+                    if not a % 4:
+                        m = MarkerStyle(">")
+                        m._transform.rotate_deg(w_wdir[a])
+                        # print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
+                        ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=100, color='orchid')
+                        m = MarkerStyle("_")
+                        m._transform.rotate_deg(w_wdir[a])
+                        ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=500, color='orchid')
 
-            # Draw wind direction
-            for a in range(len(w_wdir)):
-                if not a % 4:
-                    m = MarkerStyle(">")
-                    m._transform.rotate_deg(w_wdir[a])
-                    # print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
-                    ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=100, color='orchid')
-                    m = MarkerStyle("_")
-                    m._transform.rotate_deg(w_wdir[a])
-                    ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=500, color='orchid')
+            if opts.rain:
+                ax_rain = ax_power.twinx()
+                ax_rain.plot(w_time, w_rain, color='cyan', lw=1.5)
+                ax_rain.set_ylim(0, 100)
+                ax_rain.set_ylabel('Rain (mm)', color='cyan')
+                ax_rain.tick_params(axis='y', labelcolor='cyan')
+                ax_rain.spines["right"].set_position(("axes", 1.12))
+
             fig.subplots_adjust(right=0.86)
 
-            if opts.sbtemp:
-                sb_tempi, sb_dati = get_sbtemp(t_start, t_stop)
-                if sb_dati:
-                    ax_weather.plot(sb_tempi, sb_dati, color='purple', lw=1.5, label='SmartBox Internal Temp')
-                else:
-                    print "\nNo SmartBox Temperature available!"
 
         if not os.path.exists(POWER_PATH):
             os.makedirs(POWER_PATH)
