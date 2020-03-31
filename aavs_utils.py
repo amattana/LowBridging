@@ -283,3 +283,14 @@ def diclist_to_array(dic, key):
         lista += [d[key]]
     return lista
 
+
+def get_sbtemp(start=0, stop=2585699200):
+    with open("/storage/monitoring/data_logger/AAVS2_Data_Logger.txt") as f:
+        data = f.readlines()
+    tempi = []
+    dati = []
+    for d in data:
+        if start <= int(d.split()[0]) <= stop:
+            tempi += [int(d.split()[0])]
+            dati += [int(d.split()[3])]
+    return tempi, dati
