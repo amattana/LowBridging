@@ -950,8 +950,8 @@ if __name__ == "__main__":
                         ax_weather.plot(sb_tempi, sb_dati, color='purple', lw=1.5, label='SmartBox Internal Temp')
                     else:
                         print "\nNo SmartBox Temperature available!"
-                ax_weather.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,
-                                  bbox_to_anchor=(1-0.2, 1-0.2), fontsize='small')
+                ax_weather.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
+                                  loc="lower right", fontsize='small')
 
             if opts.wind:
                 ax_wind = ax_power.twinx()
