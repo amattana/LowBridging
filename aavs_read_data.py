@@ -938,7 +938,7 @@ if __name__ == "__main__":
         ax_power.set_ylim(int(np.mean(acc_power_x)) - 6, int(np.mean(acc_power_x)) + 6)
         ax_power.set_yticks(np.arange(int(np.mean(acc_power_x)) - 6, int(np.mean(acc_power_x)) + 7))
         ax_power.grid()
-        ax_power.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8, bbox_to_anchor=(-0.02, -0.2),
+        ax_power.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8, #bbox_to_anchor=(-0.02, -0.2),
                           loc='lower left', fontsize='small')
         ax_power.set_title("Power of Ant-%03d"%(opts.antenna) + " from " + ts_to_datestring(t_start) + " to " +
                            ts_to_datestring(t_stop) + "  Frequencies: " + str(opts.startfreq) + "-" +
