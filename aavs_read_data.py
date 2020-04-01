@@ -969,7 +969,7 @@ if __name__ == "__main__":
             if opts.wind:
                 ax_wind = ax_power.twinx()
                 ax_wind.plot(w_time, w_wind, color='orange', lw=1.5)
-                ax_wind.set_ylim(0, 80)
+                ax_wind.set_ylim(80, 0)
                 ax_wind.set_ylabel('Wind (Km/h)', color='orange')
                 ax_wind.tick_params(axis='y', labelcolor='orange')
                 ax_wind.spines["right"].set_position(("axes", 1.06))
