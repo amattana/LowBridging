@@ -926,7 +926,8 @@ if __name__ == "__main__":
             ax_power.plot(t_stamps, acc_power_y, color='g', label='Pol-Y')
         ax_power.set_xlabel("Time", fontsize=14)
         ax_power.set_ylabel("dB", fontsize=14)
-        ax_power.set_ylim(int(np.mean(acc_power_x)) - 5, int(np.mean(acc_power_x)) + 5)
+        ax_power.set_ylim(int(np.mean(acc_power_x)) - 6, int(np.mean(acc_power_x)) + 6)
+        ax_power.set_yticks(np.arange(int(np.mean(acc_power_x)) - 6, int(np.mean(acc_power_x)) + 7))
         ax_power.grid()
         ax_power.legend(fontsize=13)
         ax_power.set_title("Power of Ant-%03d"%(opts.antenna) + " from " + ts_to_datestring(t_start) + " to " +
