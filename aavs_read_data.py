@@ -940,11 +940,9 @@ if __name__ == "__main__":
         ax_power.grid()
         ax_power.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8, #bbox_to_anchor=(-0.02, -0.2),
                           loc='lower left', fontsize='small')
-        title = "Power of Ant-%03d"%(opts.antenna) + " from " + ts_to_datestring(t_start) + " to " +
-                           ts_to_datestring(t_stop)
+        title = "Power of Ant-%03d"%(opts.antenna) + " from " + ts_to_datestring(t_start) + " to " + ts_to_datestring(t_stop)
         if not xmin == xmax:
-            title += "  Frequencies: " + str(opts.startfreq) + "-" +
-                           str(opts.stopfreq) + " MHz"
+            title += "  Frequencies: " + str(opts.startfreq) + "-" + str(opts.stopfreq) + " MHz"
         else:
             title += "  Frequency: %3.1f MHz"%(asse_x[xmin])
 
