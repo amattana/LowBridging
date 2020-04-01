@@ -831,7 +831,7 @@ if __name__ == "__main__":
             print "\nWrong value passed for argument pol, using default X pol"
             pol = 0
 
-        gs = GridSpec(1, 1, left=0.06, bottom=0.2, top=0.95)
+        gs = GridSpec(1, 1, left=0.06, bottom=0.15, top=0.95)
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
         ax_power = fig.add_subplot(gs[0, 0])
@@ -950,7 +950,8 @@ if __name__ == "__main__":
                         ax_weather.plot(sb_tempi, sb_dati, color='purple', lw=1.5, label='SmartBox Internal Temp')
                     else:
                         print "\nNo SmartBox Temperature available!"
-                ax_weather.legend()
+                ax_weather.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8, bbox_to_anchor=(-0.02, -0.2),
+                          loc='lower right', fontsize='small')
 
             if opts.wind:
                 ax_wind = ax_power.twinx()
