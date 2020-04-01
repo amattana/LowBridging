@@ -831,7 +831,7 @@ if __name__ == "__main__":
             print "\nWrong value passed for argument pol, using default X pol"
             pol = 0
 
-        gs = GridSpec(1, 1, left=0.06, bottom=0.1, top=0.95)
+        gs = GridSpec(1, 1, left=0.06, bottom=0.2, top=0.95)
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
         ax_power = fig.add_subplot(gs[0, 0])
@@ -929,7 +929,8 @@ if __name__ == "__main__":
         ax_power.set_ylim(int(np.mean(acc_power_x)) - 6, int(np.mean(acc_power_x)) + 6)
         ax_power.set_yticks(np.arange(int(np.mean(acc_power_x)) - 6, int(np.mean(acc_power_x)) + 7))
         ax_power.grid()
-        ax_power.legend(fontsize=13)
+        ax_power.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8, bbox_to_anchor=(-0.02, -0.2),
+                          loc='lower left', fontsize='small')
         ax_power.set_title("Power of Ant-%03d"%(opts.antenna) + " from " + ts_to_datestring(t_start) + " to " +
                            ts_to_datestring(t_stop) + "  Frequencies: " + str(opts.startfreq) + "-" +
                            str(opts.stopfreq) + " MHz", fontsize=14)
