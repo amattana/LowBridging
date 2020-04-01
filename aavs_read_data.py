@@ -982,8 +982,8 @@ if __name__ == "__main__":
 
             if opts.rain:
                 ax_rain = ax_power.twinx()
-                ax_rain.plot(w_time, w_rain, color='cyan', lw=1.5)
-                ax_rain.set_ylim(0, 100)
+                ax_rain.plot(w_time, w_rain, color='cyan', lw=3)
+                ax_rain.set_ylim(100, 0)
                 ax_rain.set_ylabel('Rain (mm)', color='cyan')
                 ax_rain.tick_params(axis='y', labelcolor='cyan')
                 ax_rain.spines["right"].set_position(("axes", 1.12))
