@@ -840,7 +840,7 @@ if __name__ == "__main__":
             print "\nWrong value passed for argument pol, using default X pol"
             pol = 0
 
-        gs = GridSpec(1, 1, left=0.06, bottom=0.15, top=0.95)
+        gs = GridSpec(1, 1, left=0.06, bottom=0.05, top=0.95)
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
         ax_power = fig.add_subplot(gs[0, 0])
