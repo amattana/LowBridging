@@ -107,6 +107,7 @@ if __name__ == "__main__":
         for pol in ["X", "Y"]:
             # try:
                 fig.clf()
+                ax.cla()
                 ax = fig.add_subplot(gs[0])
                 ax.set_xticks(xticks)
                 ax.set_xticklabels((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) % 24,
@@ -132,7 +133,7 @@ if __name__ == "__main__":
                         dati = (np.array(dati) - dati[0]).tolist()
                     full_data += [dati]
                     full_time += [tempi]
-                ax.cla()
+                #ax.cla()
                 xmin = full_time[0][0]
                 xmax = full_time[-1][-1]
                 ymin = np.ceil(np.mean(full_data[0]) - 5)
