@@ -107,7 +107,6 @@ if __name__ == "__main__":
         for pol in ["X", "Y"]:
             # try:
                 fig.clf()
-                ax.cla()
                 ax = fig.add_subplot(gs[0])
                 ax.set_xticks(xticks)
                 ax.set_xticklabels((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) % 24,
