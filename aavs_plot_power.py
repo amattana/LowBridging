@@ -17,6 +17,10 @@ if __name__ == "__main__":
                       help="Directory containing Tiles data (default: /storage/monitoring/power/)")
     parser.add_option("--station", action="store", dest="station",
                       default="AAVS2", help="Station name (default: AAVS2)")
+    parser.add_option("--start", action="store", dest="start",
+                      default="", help="Start time for filter (YYYY-mm-DD_HH:MM:SS)")
+    parser.add_option("--stop", action="store", dest="stop",
+                      default="", help="Stop time for filter (YYYY-mm-DD_HH:MM:SS)")
     parser.add_option("--date", action="store", dest="date",
                       default="", help="Date in YYYY-MM-DD (required)")
     parser.add_option("--tile", action="store", dest="tile", type=str,
@@ -43,16 +47,28 @@ if __name__ == "__main__":
     else:
         tiles = ["TILE-%02d"%(int(k)) for k in opts.tile.split(",")]
 
-    try:
-        proc_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
-        t_start = dt_to_timestamp(proc_date)
-        t_stop = dt_to_timestamp(proc_date) + (60 * 60 * 24)
-        print "Start Time:  " + ts_to_datestring(t_start) + "    Timestamp: " + str(t_start)
-        print "Stop  Time:  " + ts_to_datestring(t_stop) + "    Timestamp: " + str(t_stop)
-        print "Band selected:  startfreq=", opts.startfreq, ", stopfreq=", opts.stopfreq
-    except:
-        print "Wrong date format or missing required argument (" + opts.date + ")"
-        exit(1)
+    if opts.date:
+        try:
+            t_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
+            t_start = dt_to_timestamp(t_date)
+            t_stop = dt_to_timestamp(t_date) + (60 * 60 * 24)
+            print "Start Time:  " + ts_to_datestring(t_start) + "    Timestamp: " + str(t_start)
+            print "Stop  Time:  " + ts_to_datestring(t_stop) + "    Timestamp: " + str(t_stop)
+        except:
+            print "Bad date format detected (must be YYYY-MM-DD)"
+    else:
+        if opts.start:
+            try:
+                t_start = dt_to_timestamp(datetime.datetime.strptime(opts.start, "%Y-%m-%d_%H:%M:%S"))
+                print "Start Time:  " + ts_to_datestring(t_start) + "    Timestamp: " + str(t_start)
+            except:
+                print "Bad t_start time format detected (must be YYYY-MM-DD_HH:MM:SS)"
+        if opts.stop:
+            try:
+                t_stop = dt_to_timestamp(datetime.datetime.strptime(opts.stop, "%Y-%m-%d_%H:%M:%S"))
+                print "Stop  Time:  " + ts_to_datestring(t_stop) + "    Timestamp: " + str(t_stop)
+            except:
+                print "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)"
 
     if opts.eq:
         print "Equalization activated!"
