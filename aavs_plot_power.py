@@ -97,6 +97,7 @@ if __name__ == "__main__":
         x = np.array(range(t_stop - t_start)) + t_start
 
     xticks = np.array(range(delta_h)) * 3600 + t_start
+    asse_x = np.linspace(0, 400, 512)
 
     plt.ioff()
     gs = GridSpec(1, 1, left=0.04, right=0.86, bottom=0.2, top=0.96)
