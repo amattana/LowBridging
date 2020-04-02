@@ -218,8 +218,13 @@ if __name__ == "__main__":
                         ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='orchid')
                     #fig.subplots_adjust(right=0.86)
 
-                fig.savefig(path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-" +
-                            str(opts.startfreq) + "-" + str(opts.stopfreq) + "MHz.png")
+                fname = path + "processed-pic/POWER_" + ts_to_datestring(t_start, formato="%Y-%m-%d_%H%M%S_to_") +
+                            ts_to_datestring(t_stop, formato="%Y-%m-%d_%H%M%S") + "_" + t + "_POL-" + pol
+                if xmin == xmax:
+                    fname += "_FREQ_%3.1f_MHz.png" % asse_x[xmin]
+                else:
+                    fname += "_BAND_%3.1f-%3.1f_MHz.png" % (asse_x[xmin], asse_x[xmax])
+                fig.savefig(fname)
                 print " ...done!"
             # except:
             #     print "No files found for POL-" + pol + " " + t
