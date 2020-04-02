@@ -223,13 +223,15 @@ if __name__ == "__main__":
                     #ax_weather.plot(z_temp, color='r', lw=1.5)
 
                     # Draw wind direction
-                    for a, y in enumerate(y_wdir):
-                        m = MarkerStyle(">")
-                        m._transform.rotate_deg(angle_wdir[a])
-                        ax_wind.scatter(x_tick[a], y, marker=m, s=100, color='orchid')
-                        m = MarkerStyle("_")
-                        m._transform.rotate_deg(angle_wdir[a])
-                        ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='orchid')
+                    for a in range(len(w_wdir)):
+                        if not a % 4:
+                            m = MarkerStyle(">")
+                            m._transform.rotate_deg(w_wdir[a])
+                            # print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
+                            ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=100, color='orchid')
+                            m = MarkerStyle("_")
+                            m._transform.rotate_deg(w_wdir[a])
+                            ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=500, color='orchid')
                     #fig.subplots_adjust(right=0.86)
 
                 if not os.path.exists(path + "processed-pic"):
