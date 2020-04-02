@@ -31,6 +31,14 @@ if __name__ == "__main__":
                       default=False, help="Equalize antennas power")
     parser.add_option("--weather", action="store_true", dest="weather",
                       default=False, help="Add weather info (if available)")
+    parser.add_option("--sbtemp", action="store_true", dest="sbtemp",
+                      default=False, help="Plot the SmartBox Temperature if available")
+    parser.add_option("--temp", action="store_true", dest="temp",
+                      default=False, help="Plot the Temperature if available")
+    parser.add_option("--wind", action="store_true", dest="wind",
+                      default=False, help="Plot the Wind data if available")
+    parser.add_option("--rain", action="store_true", dest="rain",
+                      default=False, help="Plot the Rain data if available")
     parser.add_option("--startfreq", action="store", dest="startfreq", type="int",
                       default=0, help="Start Frequency")
     parser.add_option("--stopfreq", action="store", dest="stopfreq", type="int",
