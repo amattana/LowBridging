@@ -115,7 +115,7 @@ if __name__ == "__main__":
                 full_time = []
                 orari = []
                 for k, l in enumerate(lista):
-                    fname = l + "/data/POWER_" + opts.date + "_" + l.split("/")[-1] + "_POL-" + pol + "_BAND-" + \
+                    fname = l + "/data/POWER_" + ts_to_datestring(t_start, formato="%Y-%m-%d") + "_" + l.split("/")[-1] + "_POL-" + pol + "_BAND-" + \
                             str(opts.startfreq) + "-" + str(opts.stopfreq) + "MHz.txt"
                     with open(fname) as f:
                         data = f.readlines()
