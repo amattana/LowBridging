@@ -3,7 +3,7 @@ import glob
 import os
 import datetime
 import numpy as np
-from aavs_utils import ts_to_datestring, mro_daily_weather, diclist_to_array, dt_to_timestamp, closest
+from aavs_utils import ts_to_datestring, mro_daily_weather, diclist_to_array, dt_to_timestamp, closest, get_sbtemp
 from matplotlib.markers import MarkerStyle
 from matplotlib.gridspec import GridSpec
 
@@ -149,7 +149,7 @@ if __name__ == "__main__":
                 #print xmin, xmax, ymin, ymax
                 ax.set_xlim(xmin, xmax)
                 if opts.eq:
-                    ax.set_ylim(-8, 2)
+                    ax.set_ylim(-8, 4)
                 else:
                     ax.set_ylim(ymin, ymax)
                 ax.set_xlabel("UTC Time", fontsize=14)
@@ -184,27 +184,35 @@ if __name__ == "__main__":
                     ax_weather = ax.twinx()
                     ax_weather.set_ylabel('Temperature (C)', color='r')
                     #ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
-                    ax_weather.set_ylim(45, 15)
-                    ax_weather.set_yticks(np.arange(15, 50, 5))
-                    ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
+                    ax_weather.set_ylim(70, 15)
+                    ax_weather.set_yticks(np.arange(15, 70, 5))
+                    ax_weather.set_yticklabels(np.arange(15, 70, 5), color='r')
+                    ax_weather.plot(w_time, w_temp, color='r', lw=1.5, label='External Temp')
+                    if opts.sbtemp:
+                        sb_tempi, sb_dati = get_sbtemp(t_start, t_stop)
+                        if sb_dati:
+                            ax_weather.plot(sb_tempi, sb_dati, color='purple', lw=1.5, label='SmartBox Internal Temp')
+                        else:
+                            print "\nNo SmartBox Temperature available!"
+                    ax_weather.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
+                                      loc="lower right", fontsize='small')
 
                     ax_wind = ax.twinx()
                     #ax_wind.plot(z_wind, color='orange', lw=1.5)
                     ax_wind.plot(w_time, w_wind, color='orange', lw=1.5)
-                    ax_wind.set_ylim(0, 80)
+                    ax_wind.set_ylim(80, 0)
                     ax_wind.set_ylabel('Wind (Km/h)', color='orange')
                     ax_wind.tick_params(axis='y', labelcolor='orange')
                     ax_wind.spines["right"].set_position(("axes", 1.06))
 
                     ax_rain = ax.twinx()
                     #ax_rain.plot(z_rain, color='cyan', lw=1.5)
-                    ax_rain.plot(w_time, w_rain, color='cyan', lw=1.5)
-                    ax_rain.set_ylim(0, 100)
+                    ax_rain.plot(w_time, w_rain, color='cyan', lw=3)
+                    ax_rain.set_ylim(100, 0)
                     ax_rain.set_ylabel('Rain (mm)', color='cyan')
                     ax_rain.tick_params(axis='y', labelcolor='cyan')
                     ax_rain.spines["right"].set_position(("axes", 1.12))
                     #ax_weather.plot(z_temp, color='r', lw=1.5)
-                    ax_weather.plot(w_time, w_temp, color='r', lw=1.5)
 
                     # Draw wind direction
                     for a, y in enumerate(y_wdir):
