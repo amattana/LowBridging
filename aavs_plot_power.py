@@ -157,11 +157,6 @@ if __name__ == "__main__":
                 ax.grid()
                 ax.legend(fontsize=8)
                 ax.set_title(opts.date + "  " + t + "  POL-" + pol, fontsize=16)
-                if not os.path.exists(path + "processed-pic"):
-                    os.mkdir(path + "processed-pic")
-                print "Saving " + path + "processed-pic/POWER_" + opts.date + "_" + t + "_POL-" + pol + "_BAND-" + \
-                      str(opts.startfreq) + "-" + str(opts.stopfreq) + "MHz.png",
-
                 x_tick = []
                 x_tick_label = []
                 if len(w_data):
@@ -221,12 +216,16 @@ if __name__ == "__main__":
                         ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='orchid')
                     #fig.subplots_adjust(right=0.86)
 
+                if not os.path.exists(path + "processed-pic"):
+                    os.mkdir(path + "processed-pic")
                 fname = path + "processed-pic/POWER_" + ts_to_datestring(t_start, formato="%Y-%m-%d_%H%M%S_to_")
                 fname += ts_to_datestring(t_stop, formato="%Y-%m-%d_%H%M%S") + "_" + t + "_POL-" + pol
                 if xmin == xmax:
                     fname += "_FREQ_%3.1f_MHz.png" % asse_x[fmin]
                 else:
                     fname += "_BAND_%3.1f-%3.1f_MHz.png" % (asse_x[fmin], asse_x[fmax])
+                print "Saving " + fname,
+
                 fig.savefig(fname)
                 print " ...done!"
             # except:
