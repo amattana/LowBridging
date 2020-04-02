@@ -71,6 +71,17 @@ if __name__ == "__main__":
         else:
             print "\nNo weather data available\n"
 
+    if "all" in opts.date.lower():
+        delta = (dt_to_timestamp(datetime.datetime.utcnow().date() + datetime.timedelta(1)) -
+                 dt_to_timestamp(datetime.datetime(2020, 03, 01)))
+        delta_h = delta / 3600
+        x = np.array(range(delta)) + t_start
+    else:
+        delta_h = (t_stop - t_start) / 3600
+        x = np.array(range(t_stop - t_start)) + t_start
+
+    xticks = np.array(range(delta_h)) * 3600 + t_start
+
     plt.ioff()
     gs = GridSpec(1, 1, left=0.04, right=0.86, bottom=0.2, top=0.96)
     fig = plt.figure(figsize=(14, 9), facecolor='w')
@@ -81,6 +92,9 @@ if __name__ == "__main__":
             # try:
                 fig.clf()
                 ax = fig.add_subplot(gs[0])
+                ax.set_xticks(xticks)
+                ax.set_xticklabels((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) % 24,
+                                         rotation=90, fontsize=8)
                 full_data = []
                 full_time = []
                 orari = []
@@ -146,8 +160,8 @@ if __name__ == "__main__":
 
                 x_tick += [full_time[0][-1]]
                 x_tick_label += [str(step)]
-                ax.set_xticks(x_tick)
-                ax.set_xticklabels(x_tick_label)
+                #ax.set_xticks(x_tick)
+                #ax.set_xticklabels(x_tick_label)
                 ax.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8, bbox_to_anchor=(-0.02, -0.2),
                           loc='lower left', fontsize='small')
                 #fig.tight_layout()
