@@ -218,8 +218,8 @@ if __name__ == "__main__":
                         ax_wind.scatter(x_tick[a], y, marker=m, s=500, color='orchid')
                     #fig.subplots_adjust(right=0.86)
 
-                fname = path + "processed-pic/POWER_" + ts_to_datestring(t_start, formato="%Y-%m-%d_%H%M%S_to_") +
-                            ts_to_datestring(t_stop, formato="%Y-%m-%d_%H%M%S") + "_" + t + "_POL-" + pol
+                fname = path + "processed-pic/POWER_" + ts_to_datestring(t_start, formato="%Y-%m-%d_%H%M%S_to_")
+                fname += ts_to_datestring(t_stop, formato="%Y-%m-%d_%H%M%S") + "_" + t + "_POL-" + pol
                 if xmin == xmax:
                     fname += "_FREQ_%3.1f_MHz.png" % asse_x[xmin]
                 else:
