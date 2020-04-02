@@ -220,7 +220,7 @@ if __name__ == "__main__":
                     os.mkdir(path + "processed-pic")
                 fname = path + "processed-pic/POWER_" + ts_to_datestring(t_start, formato="%Y-%m-%d_%H%M%S_to_")
                 fname += ts_to_datestring(t_stop, formato="%Y-%m-%d_%H%M%S") + "_" + t + "_POL-" + pol
-                if xmin == xmax:
+                if fmin == fmax:
                     fname += "_FREQ_%3.1f_MHz.png" % asse_x[fmin]
                 else:
                     fname += "_BAND_%3.1f-%3.1f_MHz.png" % (asse_x[fmin], asse_x[fmax])
