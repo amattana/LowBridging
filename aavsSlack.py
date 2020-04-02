@@ -5,12 +5,13 @@
 
   example:
         from aavsSlack import aavsSlack
-        slack = aavsSlack()
+        slack = aavsSlack(token="", channel="#aavs-notifications", station="AAVS2", tokenPath="", verbose=False)
         slack.chat("Hello world!")
 
 """
 from slacker import Slacker
 import os
+import datetime
 import urllib3
 urllib3.disable_warnings()
 
@@ -18,24 +19,29 @@ __author__ = "Andrea Mattana"
 __copyright__ = "Copyright 2020, Istituto di RadioAstronomia, INAF, Italy"
 __credits__ = ["Andrea Mattana"]
 __license__ = "GPL"
-__version__ = "1.0"
+__version__ = "1.1"
 __maintainer__ = "Andrea Mattana"
 
 defaultPath = "/opt/aavs/slack/"
 
 
 class aavsSlack():
-    def __init__(self, token="", channel="#aavs-notifications", station="AAVS2", verbose=False):
-        if not token:
-            if os.path.exists(defaultPath + station):
-                with open(defaultPath + station) as f:
+    def __init__(self, token="", channel="#aavs-notifications", station="AAVS2", tokenPath="", verbose=False):
+        self.station = station.upper()
+        self.channel = channel
+        if token:
+            self.token = token
+        else:
+            if tokenPath:
+                tokenFile = tokenPath
+            else:
+                tokenFile = defaultPath + self.station
+            if os.path.exists(tokenFile):
+                with open(tokenFile) as f:
                     tok = f.readline()
                 if tok[-1] == "\n":
                     tok = tok[:-1]
             self.token = tok
-        else:
-            self.token = token
-        self.channel = channel
         if verbose:
             print("Slack object created, channel: " + self.channel + ", token: " + self.token)
         try:
@@ -49,7 +55,8 @@ class aavsSlack():
         try:
             if verbose:
                 print("Sending message to ")
-            self.slack.chat.post_message(self.channel, message, as_user=True)
+            msg = datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S  " + message)
+            self.slack.chat.post_message(self.channel, msg, as_user=True)
         except "not_in_channel":
             if verbose:
                 msg = "The Bot is not in channel " + self.channel
