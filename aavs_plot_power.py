@@ -98,6 +98,8 @@ if __name__ == "__main__":
 
     xticks = np.array(range(delta_h)) * 3600 + t_start
     asse_x = np.linspace(0, 400, 512)
+    fmin = closest(asse_x, float(opts.startfreq))
+    fmax = closest(asse_x, float(opts.stopfreq))
 
     plt.ioff()
     gs = GridSpec(1, 1, left=0.04, right=0.86, bottom=0.2, top=0.96)
@@ -222,9 +224,9 @@ if __name__ == "__main__":
                 fname = path + "processed-pic/POWER_" + ts_to_datestring(t_start, formato="%Y-%m-%d_%H%M%S_to_")
                 fname += ts_to_datestring(t_stop, formato="%Y-%m-%d_%H%M%S") + "_" + t + "_POL-" + pol
                 if xmin == xmax:
-                    fname += "_FREQ_%3.1f_MHz.png" % asse_x[xmin]
+                    fname += "_FREQ_%3.1f_MHz.png" % asse_x[fmin]
                 else:
-                    fname += "_BAND_%3.1f-%3.1f_MHz.png" % (asse_x[xmin], asse_x[xmax])
+                    fname += "_BAND_%3.1f-%3.1f_MHz.png" % (asse_x[fmin], asse_x[fmax])
                 fig.savefig(fname)
                 print " ...done!"
             # except:
