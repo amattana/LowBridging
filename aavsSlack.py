@@ -51,7 +51,7 @@ class aavsSlack():
                 msg = "Not a valid token: " + self.token
                 print(msg)
 
-    def chat(self, message, verbose=False):
+    def _chat(self, message, verbose=False):
         try:
             if verbose:
                 print("Sending message to ")
@@ -67,3 +67,13 @@ class aavsSlack():
                 msg = "Slack Exception: Channel: " + self.channel + ", Msg: " + message + ", Token: " + self.token
                 print(msg)
             pass
+
+    def info(self, m="", v=False):
+        self._chat(message=" INFO: "+m, verbose=v)
+
+    def warning(self, m="", v=False):
+        self._chat(message=" WARN: "+m, verbose=v)
+
+    def error(self, m="", v=False):
+        self._chat(message=" ERR!: "+m, verbose=v)
+
