@@ -128,21 +128,25 @@ if __name__ == "__main__":
                 for k, l in enumerate(lista):
                     fname = l + "/data/POWER_" + ts_to_datestring(t_start, formato="%Y-%m-%d") + "_" + l.split("/")[-1] + "_POL-" + pol + "_BAND-" + \
                             str(opts.startfreq) + "-" + str(opts.stopfreq) + "MHz.txt"
-                    with open(fname) as f:
-                        data = f.readlines()
-                    dati = []
-                    tempi = []
-                    for d in data:
-                        dati += [float(d.split()[1])]
-                        tempi += [int(d.split()[0])]
-                        if not k:
-                            orari += [datetime.datetime.utcfromtimestamp(int(d.split()[0]))]
-                    if opts.eq:
-                        if not k:
-                            eq_value = dati[0]
-                        dati = (np.array(dati) - dati[0]).tolist()
-                    full_data += [dati]
-                    full_time += [tempi]
+                    if os.path.exists(fname):
+                        with open(fname) as f:
+                            data = f.readlines()
+                        dati = []
+                        tempi = []
+                        for d in data:
+                            dati += [float(d.split()[1])]
+                            tempi += [int(d.split()[0])]
+                            if not k:
+                                orari += [datetime.datetime.utcfromtimestamp(int(d.split()[0]))]
+                        if opts.eq:
+                            if not k:
+                                eq_value = dati[0]
+                            dati = (np.array(dati) - dati[0]).tolist()
+                        full_data += [dati]
+                        full_time += [tempi]
+                    else:
+                        print "Missing file: ", fname
+                        break
                 #ax.cla()
                 xmin = full_time[0][0]
                 xmax = full_time[-1][-1]
