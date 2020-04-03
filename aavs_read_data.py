@@ -898,17 +898,18 @@ if __name__ == "__main__":
                                     spettro_x = data[:, sb_in, 0, i]
                                     spettro_y = data[:, sb_in, 1, i]
                                 if not np.sum(spettro_x[20:50]) == 0:
-                                    if not np.sum(spettro_x[300:350]) == 0:
-                                        t_stamps += [t[0]]
-                                        orari += [datetime.datetime.utcfromtimestamp(t[0])]
-                                        if xmin == 0:
-                                            with np.errstate(divide='ignore'):
-                                                acc_power_x += [10 * np.log10(np.sum(spettro_x[:xmax + 1]))]
-                                                acc_power_y += [10 * np.log10(np.sum(spettro_y[:xmax + 1]))]
-                                        else:
-                                            with np.errstate(divide='ignore'):
-                                                acc_power_x += [10 * np.log10(np.sum(spettro_x[xmin:xmax + 1]))]
-                                                acc_power_y += [10 * np.log10(np.sum(spettro_y[xmin:xmax + 1]))]
+                                    if not np.sum(spettro_x[20:210]) == 0:
+                                        if not np.sum(spettro_x[300:350]) == 0:
+                                            t_stamps += [t[0]]
+                                            orari += [datetime.datetime.utcfromtimestamp(t[0])]
+                                            if xmin == 0:
+                                                with np.errstate(divide='ignore'):
+                                                    acc_power_x += [10 * np.log10(np.sum(spettro_x[:xmax + 1]))]
+                                                    acc_power_y += [10 * np.log10(np.sum(spettro_y[:xmax + 1]))]
+                                            else:
+                                                with np.errstate(divide='ignore'):
+                                                    acc_power_x += [10 * np.log10(np.sum(spettro_x[xmin:xmax + 1]))]
+                                                    acc_power_y += [10 * np.log10(np.sum(spettro_y[xmin:xmax + 1]))]
                                 msg = "\rProcessing " + ts_to_datestring(t[0])
                                 sys.stdout.write(ERASE_LINE + msg)
                                 sys.stdout.flush()
@@ -926,6 +927,8 @@ if __name__ == "__main__":
         #             y_wdir += [w_wind[int(closest(np.array(w_time), t_stamps[z]))]]
         #             angle_wdir += [w_wdir[int(closest(np.array(w_time), t_stamps[z]))]]
 
+        #acc_power_x = np.where(acc_power_x==-np.inf, None, acc_power_x)
+
         ax_power.set_xlim(t_stamps[0], t_stamps[-1])
         if opts.noline:
             ax_power.plot(t_stamps, acc_power_x, color='b', label='Pol-X', linestyle='None', marker=".", markersize=2)
@@ -936,7 +939,7 @@ if __name__ == "__main__":
         ax_power.set_xlabel("Time", fontsize=14)
         ax_power.set_ylabel("dB", fontsize=14)
         ax_power.set_yticks(np.arange(0, 101, 1))
-        print "\nDEBUG:", acc_power_x[0:6], "\n"
+        #print "\nDEBUG:", acc_power_x[0:6], "\n"
         ax_power.set_ylim(int(np.mean(acc_power_x)) - 6, int(np.mean(acc_power_x)) + 10)
         ax_power.grid()
         ax_power.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8, #bbox_to_anchor=(-0.02, -0.2),
