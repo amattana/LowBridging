@@ -144,6 +144,9 @@ if __name__ == "__main__":
                             dati = (np.array(dati) - dati[0]).tolist()
                         full_data += [dati]
                         full_time += [tempi]
+                    else:
+                        full_data += [np.zeros(50)-50]
+                        full_time += [np.arange(0, 100)]
                 #ax.cla()
                 xmin = full_time[0][0]
                 xmax = full_time[-1][-1]
