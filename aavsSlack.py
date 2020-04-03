@@ -73,11 +73,11 @@ class aavsSlack():
             pass
 
     def info(self, m="", v=False):
-        self._chat(message=" INFO: "+m, verbose=v)
+        self._chat(message=" - INFO - "+m, verbose=v)
 
     def warning(self, m="", v=False):
-        self._chat(message=" WARNING: "+m, verbose=v)
+        self._chat(message=" - WARNING - "+m, verbose=v)
 
     def error(self, m="", v=False):
-        self._chat(message=" ERROR: "+m, verbose=v)
+        self._chat(message=" - ERROR - "+m, verbose=v)
 
