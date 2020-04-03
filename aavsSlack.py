@@ -6,7 +6,11 @@
   example:
         from aavsSlack import aavsSlack
         slack = aavsSlack(token="", channel="#aavs-notifications", station="AAVS2", tokenPath="", verbose=False)
-        slack.chat("Hello world!")
+        slack.info("Hello world!")
+        slack.warning("Ops!")
+        slack.error("OMG!")
+
+
 
 """
 from slacker import Slacker
@@ -72,8 +76,8 @@ class aavsSlack():
         self._chat(message=" INFO: "+m, verbose=v)
 
     def warning(self, m="", v=False):
-        self._chat(message=" WARN: "+m, verbose=v)
+        self._chat(message=" WARNING: "+m, verbose=v)
 
     def error(self, m="", v=False):
-        self._chat(message=" ERR!: "+m, verbose=v)
+        self._chat(message=" ERROR: "+m, verbose=v)
 
