@@ -967,7 +967,7 @@ if __name__ == "__main__":
                 if opts.sbtemp:
                     sb_tempi, sb_dati = get_sbtemp(t_start, t_stop)
                     if sb_dati:
-                        ax_weather.plot(sb_tempi, sb_dati, color='purple', lw=1.5, label='SmartBox Internal Temp')
+                        ax_weather.plot(sb_tempi, sb_dati, color='purple', linestyle='None', marker=".", markersize=2, label='SmartBox Internal Temp')
                     else:
                         print "\nNo SmartBox Temperature available!"
                 ax_weather.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
