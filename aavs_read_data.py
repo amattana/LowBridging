@@ -662,7 +662,7 @@ if __name__ == "__main__":
         ystep = 1
         if int(band.split("-")[1]) <= 50:
             ystep = 5
-        if int(band.split("-")[1]) <= 100:
+        elif int(band.split("-")[1]) <= 100:
             ystep = 10
         elif int(band.split("-")[1]) <= 200:
             ystep = 20
