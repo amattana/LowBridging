@@ -658,7 +658,7 @@ if __name__ == "__main__":
         ax_water.set_xlabel('Time (UTC)')
         ax_water.set_xticks(x_tick)
         #ax_water.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
-        ax_water.set_xticklabels(x_ticklabels)
+        ax_water.set_xticklabels(x_ticklabels, rotation=90, fontsize=8)
         ystep = 1
         if int(band.split("-")[1]) <= 50:
             ystep = 5
