@@ -613,15 +613,16 @@ if __name__ == "__main__":
                     if not t_stop <= timestamps[0]:
                         for i, t in enumerate(timestamps):
                             if t_start <= t[0] <= t_stop:
-                                t_stamps += [t[0]]
-                                orari += [datetime.datetime.utcfromtimestamp(t[0])]
                                 for sb_in in antenne:
                                     with np.errstate(divide='ignore'):
                                         spettro = 10 * np.log10(data[:, sb_in, pol, i])
-                                if xmin == 0:
-                                    dayspgramma = np.concatenate((dayspgramma, [spettro[:xmax + 1]]), axis=0)
-                                else:
-                                    dayspgramma = np.concatenate((dayspgramma, [spettro[xmin:xmax + 1]]), axis=0)
+                                if not -np.inf in spettro:
+                                    t_stamps += [t[0]]
+                                    orari += [datetime.datetime.utcfromtimestamp(t[0])]
+                                    if xmin == 0:
+                                        dayspgramma = np.concatenate((dayspgramma, [spettro[:xmax + 1]]), axis=0)
+                                    else:
+                                        dayspgramma = np.concatenate((dayspgramma, [spettro[xmin:xmax + 1]]), axis=0)
                                 msg = "\rProcessing " + ts_to_datestring(t[0])
                                 sys.stdout.write(ERASE_LINE + msg)
                                 sys.stdout.flush()
@@ -657,15 +658,15 @@ if __name__ == "__main__":
         ax_water.set_xticks(x_tick)
         #ax_water.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
         ax_water.set_xticklabels(x_ticklabels)
-        ystep = 10
+        ystep = 1
+        if int(band.split("-")[1]) <= 50:
+            ystep = 5
         if int(band.split("-")[1]) <= 100:
             ystep = 10
         elif int(band.split("-")[1]) <= 200:
             ystep = 20
         elif int(band.split("-")[1]) > 200:
             ystep = 50
-        #elif int(band.split("-")[1]) <= 21:
-        ystep = 1
         BW = int(band.split("-")[1]) - int(band.split("-")[0])
         ytic = np.array(range(( BW / ystep) + 1 )) * ystep * (len(np.rot90(dayspgramma)) / float(BW))
         ax_water.set_yticks(len(np.rot90(dayspgramma)) - ytic)
