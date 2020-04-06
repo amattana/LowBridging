@@ -616,7 +616,8 @@ if __name__ == "__main__":
                                 for sb_in in antenne:
                                     with np.errstate(divide='ignore'):
                                         spettro = 10 * np.log10(data[:, sb_in, pol, i])
-                                if not -np.inf in spettro:
+                                if (not np.sum(data[:, antenne[0], pol, i][120:150]) == 0) or \
+                                        (not np.sum(data[:, antenne[0], pol, i][300:350]) == 0):
                                     t_stamps += [t[0]]
                                     orari += [datetime.datetime.utcfromtimestamp(t[0])]
                                     if xmin == 0:
