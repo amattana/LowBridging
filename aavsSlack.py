@@ -42,10 +42,9 @@ class aavsSlack():
                 tokenFile = defaultPath + self.station
             if os.path.exists(tokenFile):
                 with open(tokenFile) as f:
-                    tok = f.readline()
+                    self.token = f.readline()
                 if tok[-1] == "\n":
-                    tok = tok[:-1]
-            self.token = tok
+                    self.token = self.token[:-1]
         if verbose:
             print("Slack object created, channel: " + self.channel + ", token: " + self.token)
         try:
