@@ -36,13 +36,13 @@ class aavsSlack():
         self.token = token
         self.verbose = verbose
         self.tokenFile = tokenPath
-        if not self.token:
-            if not self.tokenPath:
-                tokenFile = defaultPath + self.station
+        if not self.tokenFile:
+            if not self.tokenFile:
+                self.tokenFile = defaultPath + self.station
             if os.path.exists(self.tokenFile):
                 with open(self.tokenFile) as f:
                     self.token = f.readline()
-                if tok[-1] == "\n":
+                if self.token[-1] == "\n":
                     self.token = self.token[:-1]
         if self.verbose:
             print("Slack object created, channel: " + self.channel + ", token: " + self.token)
