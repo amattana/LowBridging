@@ -23,7 +23,7 @@ __author__ = "Andrea Mattana"
 __copyright__ = "Copyright 2020, Istituto di RadioAstronomia, INAF, Italy"
 __credits__ = ["Andrea Mattana"]
 __license__ = "GPL"
-__version__ = "1.1"
+__version__ = "1.2"
 __maintainer__ = "Andrea Mattana"
 
 defaultPath = "/opt/aavs/slack/"
