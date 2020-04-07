@@ -34,38 +34,42 @@ class aavsSlack():
         self.station = station.upper()
         self.channel = channel
         self.token = token
+        self.verbose = verbose
+        self.tokenFile = tokenPath
         if not self.token:
-            if tokenPath:
-                tokenFile = tokenPath
-            else:
+            if not self.tokenPath:
                 tokenFile = defaultPath + self.station
-            if os.path.exists(tokenFile):
-                with open(tokenFile) as f:
+            if os.path.exists(self.tokenFile):
+                with open(self.tokenFile) as f:
                     self.token = f.readline()
                 if tok[-1] == "\n":
                     self.token = self.token[:-1]
-        if verbose:
+        if self.verbose:
             print("Slack object created, channel: " + self.channel + ", token: " + self.token)
         try:
-            self.slack = Slacker(self.token)
+            if self.token:
+                self.slack = Slacker(self.token)
+            else:
+                self.slack = None
         except:
-            if verbose:
+            if self.verbose:
                 msg = "Not a valid token: " + self.token
                 print(msg)
 
     def _chat(self, message, verbose=False):
         try:
-            if verbose:
+            if self.verbose or verbose:
                 print("Sending message to ")
             msg = datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S  " + message)
-            self.slack.chat.post_message(self.channel, msg, as_user=True)
+            if self.token:
+                self.slack.chat.post_message(self.channel, msg, as_user=True)
         except "not_in_channel":
-            if verbose:
+            if self.verbose or verbose:
                 msg = "The Bot is not in channel " + self.channel
                 print(msg)
             pass
         except:
-            if verbose:
+            if self.verbose or verbose:
                 msg = "Slack Exception: Channel: " + self.channel + ", Msg: " + message + ", Token: " + self.token
                 print(msg)
             pass
