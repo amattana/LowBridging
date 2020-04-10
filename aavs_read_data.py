@@ -109,8 +109,8 @@ if __name__ == "__main__":
     t_date = None
     t_start = None
     t_stop = None
-    assex = np.linspace(0, 400, 512)
-
+    #assex = np.linspace(0, 400, 512)
+    asse_x = np.arange(512) * 400/512.
     print
 
     if opts.date:
@@ -576,7 +576,6 @@ if __name__ == "__main__":
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
         ax_water = fig.add_subplot(gs[0:4])
-        asse_x = np.linspace(0, 400, 512)
         xmin = closest(asse_x, int(opts.startfreq))
         xmax = closest(asse_x, int(opts.stopfreq))
 
@@ -863,7 +862,6 @@ if __name__ == "__main__":
         ax_power.set_xticklabels((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) % 24,
                                  rotation=90, fontsize=8)
 
-        asse_x = np.linspace(0, 400, 512)
         xmin = closest(asse_x, float(opts.startfreq))
         xmax = closest(asse_x, float(opts.stopfreq))
         if xmin == xmax:
