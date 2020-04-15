@@ -956,9 +956,9 @@ if __name__ == "__main__":
                           loc='lower left', fontsize='small', markerscale=4)
         title = "Power of Ant-%03d"%(opts.antenna) + " from " + ts_to_datestring(t_start) + " to " + ts_to_datestring(t_stop)
         if not xmin == xmax:
-            title += "  Frequencies: " + str(opts.startfreq) + "-" + str(opts.stopfreq) + " MHz"
+            title += "  Frequencies: " + str(opts.startfreq) + "-" + str(opts.stopfreq) + " MHz  (channels %d-%d)" % (xmin,xmax)
         else:
-            title += "  Frequency: %3.1f MHz"%(asse_x[xmin])
+            title += "  Frequency: %3.1f MHz  (channel %d)" % (asse_x[xmin], xmin)
 
         ax_power.set_title(title, fontsize=14)
 
