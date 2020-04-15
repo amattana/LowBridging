@@ -1120,7 +1120,7 @@ if __name__ == "__main__":
                 timestamps[0][0]) + "   " + ts_to_datestring(timestamps[-1][0])
             sys.stdout.write(ERASE_LINE + msg)
             sys.stdout.flush()
-        sys.stdout.write(ERASE_LINE + "Averaging %d spectra..." % t_cnt)
+        sys.stdout.write(ERASE_LINE + "\rAveraging %d spectra..." % t_cnt)
         sys.stdout.flush()
         avg_spectrum = spectra / t_cnt
         with np.errstate(divide='ignore'):
@@ -1128,7 +1128,9 @@ if __name__ == "__main__":
         ax.plot(asse_x, log_spectrum, label="Ant-%03d Pol-%s"%(opts.antenna, opts.pol.upper()))
         ax.set_title("Averaged Spectrum of Ant-%03d"%(opts.antenna) + " Pol-" + opts.pol.upper() + " ", fontsize=14)
         ax.set_xlabel("MHz")
-        ax.set_xlabel('dB')
+        ax.set_ylabel('dB')
+        ax.set_ylim(0, 50)
+        ax.set_xlim(0, 400)
         #ax.set_xticks(x_tick)
         #ax_water.set_xticklabels(x_ticklabels, rotation=90, fontsize=8)
         #ax.set_xlim(0, len(orari)-1)
