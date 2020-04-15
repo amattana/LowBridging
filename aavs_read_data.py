@@ -80,6 +80,8 @@ if __name__ == "__main__":
                       default=False, help="Produces pictures for specific antenna")
     parser.add_option("--spectrogram", action="store_true", dest="spectrogram",
                       default=False, help="Produces a spectrogram for a specific antenna")
+    parser.add_option("--average", action="store_true", dest="avg",
+                      default=False, help="Produces an average spectrum of a specific antenna")
     parser.add_option("--weather", action="store_true", dest="weather",
                       default=False, help="Plot all the weather info if available (Temp, Wind, Rain)")
     parser.add_option("--over", action="store_true", dest="over",
@@ -224,6 +226,13 @@ if __name__ == "__main__":
     if opts.power:
         if opts.antenna:
             plot_mode = 3
+        else:
+            print "Missing antenna argument"
+            exit(1)
+
+    if opts.avg:
+        if opts.antenna:
+            plot_mode = 4
         else:
             print "Missing antenna argument"
             exit(1)
@@ -1048,6 +1057,84 @@ if __name__ == "__main__":
         sys.stdout.write(ERASE_LINE + "\nOutput File: " + fname + "\n")
         sys.stdout.flush()
 
+    # AVERAGE
+    elif plot_mode == 4:
+
+        POL = "Z"
+
+        da = tstamp_to_fname(t_start)[:-6]
+        date_path = da[:4] + "-" + da[4:6] + "-" + da[6:]
+
+        band = str("%03d" % int(opts.startfreq)) + "-" + str("%03d" % int(opts.stopfreq))
+        if opts.pol.lower() == "x":
+            pol = 0
+            POL = "X"
+        elif opts.pol.lower() == "y":
+            pol = 1
+            POL = "Y"
+        else:
+            print "\nWrong value passed for argument pol, using default X pol"
+            pol = 0
+
+        gs = GridSpec(1, 1, hspace=0.8, wspace=0.4, left=0.06, bottom=0.1, top=0.95)
+        fig = plt.figure(figsize=(14, 9), facecolor='w')
+
+        ax = fig.add_subplot(gs[0])
+        xmin = closest(asse_x, int(opts.startfreq))
+        xmax = closest(asse_x, int(opts.stopfreq))
+
+        spectra = np.zeros(512)
+
+        tile = find_ant_by_name(opts.antenna)[0]
+        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
+        t_cnt = 0
+        orari = []
+        t_stamps = []
+        for cnt_l, l in enumerate(lista):
+            if cnt_l < len(lista) - 1:
+                t_file = fname_to_tstamp(lista[cnt_l + 1][-21:-7])
+                if t_file < t_start:
+                    continue
+            dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile - 1))
+            if dic:
+                data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
+                                                          n_samples=dic['n_blocks'])
+                cnt = 0
+                if timestamps[0] > t_stop:
+                    break
+                if not t_start >= timestamps[-1]:
+                    if not t_stop <= timestamps[0]:
+                        for i, t in enumerate(timestamps):
+                            if t_start <= t[0] <= t_stop:
+                                for sb_in in antenne:
+                                    spettro = np.array(data[:, sb_in, pol, i])
+                                if (not np.sum(data[:, antenne[0], pol, i][120:150]) == 0) and \
+                                        (not np.sum(data[:, antenne[0], pol, i][300:350]) == 0):
+                                    spectra += spettro
+                                    t_cnt = t_cnt + 1
+                                msg = "\rProcessing " + ts_to_datestring(t[0])
+                                sys.stdout.write(ERASE_LINE + msg)
+                                sys.stdout.flush()
+
+            msg = "\r[%d/%d] File: %s" % (cnt_l + 1, len(lista), l.split("/")[-1]) + "   " + ts_to_datestring(
+                timestamps[0][0]) + "   " + ts_to_datestring(timestamps[-1][0])
+            sys.stdout.write(ERASE_LINE + msg)
+            sys.stdout.flush()
+        sys.stdout.write(ERASE_LINE + "Averaging %d spectra..." % t_cnt)
+        sys.stdout.flush()
+        avg_spectrum = spectra / t_cnt
+        with np.errstate(divide='ignore'):
+            log_spectrum = 10 * np.log10(avg_spectrum)
+        ax.plot(asse_x, log_spectrum, label="Ant-%03d Pol-%s"%(opts.antenna, opts.pol.upper()))
+        ax.set_title("Averaged Spectrum of Ant-%03d"%(opts.antenna) + " Pol-" + opts.pol.upper() + " ", fontsize=14)
+        ax.set_xlabel("MHz")
+        ax.set_xlabel('dB')
+        #ax.set_xticks(x_tick)
+        #ax_water.set_xticklabels(x_ticklabels, rotation=90, fontsize=8)
+        #ax.set_xlim(0, len(orari)-1)
+
+        plt.ion()
+        plt.show()
     print
 
 
