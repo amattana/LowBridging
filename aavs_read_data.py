@@ -1131,6 +1131,8 @@ if __name__ == "__main__":
         avg_spectrum = spectra / t_cnt
         with np.errstate(divide='ignore'):
             log_spectrum = 10 * np.log10(avg_spectrum)
+            max_hold = 10 * np.log10(max_hold)
+            min_hold = 10 * np.log10(min_hold)
         ax.plot(asse_x, log_spectrum, label="Average", color='g')
         ax.plot(asse_x, max_hold, label="Max Hold", color='r')
         ax.plot(asse_x, min_hold, label="Min Hold", color='b')
