@@ -1111,6 +1111,12 @@ if __name__ == "__main__":
                                 if (not np.sum(data[:, antenne[0], pol, i][120:150]) == 0) and \
                                         (not np.sum(data[:, antenne[0], pol, i][300:350]) == 0):
                                     spectra += spettro
+                                    if not t_cnt:
+                                        max_hold = spettro
+                                        min_hold = spettro
+                                    else:
+                                        max_hold = np.maximum(max_hold, spettro)
+                                        min_hold = np.minimum(min_hold, spettro)
                                     t_cnt = t_cnt + 1
                                 msg = "\rProcessing " + ts_to_datestring(t[0])
                                 sys.stdout.write(ERASE_LINE + msg)
@@ -1125,8 +1131,11 @@ if __name__ == "__main__":
         avg_spectrum = spectra / t_cnt
         with np.errstate(divide='ignore'):
             log_spectrum = 10 * np.log10(avg_spectrum)
-        ax.plot(asse_x, log_spectrum, label="Ant-%03d Pol-%s"%(opts.antenna, opts.pol.upper()))
-        ax.set_title("Averaged Spectrum of Ant-%03d"%(opts.antenna) + " Pol-" + opts.pol.upper() + " ", fontsize=14)
+        ax.plot(asse_x, log_spectrum, label="Average", color='g')
+        ax.plot(asse_x, max_hold, label="Max Hold", color='r')
+        ax.plot(asse_x, min_hold, label="Min Hold", color='b')
+        ax.set_title("Spectrum of Ant-%03d"%(opts.antenna) + " Pol-" + opts.pol.upper() + " Time Range from " +
+                     opts.start + " to " + opts.stop, fontsize=14)
         ax.set_xlabel("MHz")
         ax.set_ylabel('dB')
         ax.set_ylim(0, 50)
