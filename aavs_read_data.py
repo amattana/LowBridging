@@ -1159,6 +1159,8 @@ if __name__ == "__main__":
         outpath += "/"
         fname = "SPECTRUM_TILE-%02d_ANT-%03d_Pol-%s.png"%(int(tile), int(opts.antenna), opts.pol.upper())
         plt.savefig(outpath + fname)
+        sys.stdout.write(ERASE_LINE + "\nOutput File: " + outpath + fname + "\n")
+        sys.stdout.flush()
     print
 
 
