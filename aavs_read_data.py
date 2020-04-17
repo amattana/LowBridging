@@ -1144,7 +1144,7 @@ if __name__ == "__main__":
         ax.set_yticks(range(0, 55, 5))
         ax.grid()
         ax.set_xlim(0, 400)
-        ax.set_xticks(range(0, 450, 55))
+        ax.set_xticks(range(0, 450, 50))
         ax.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
                                   loc="lower center", fontsize='small', markerscale=8)
         #ax.set_xticks(x_tick)
