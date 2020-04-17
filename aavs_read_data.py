@@ -1076,8 +1076,8 @@ if __name__ == "__main__":
             print "\nWrong value passed for argument pol, using default X pol"
             pol = 0
 
-        gs = GridSpec(1, 1, hspace=0.8, wspace=0.4, left=0.06, bottom=0.1, top=0.95)
-        fig = plt.figure(figsize=(14, 9), facecolor='w')
+        gs = GridSpec(1, 1, hspace=0.8, wspace=0.4, left=0.06, right=0.92, bottom=0.1, top=0.95)
+        fig = plt.figure(figsize=(12, 7), facecolor='w')
 
         ax = fig.add_subplot(gs[0])
         xmin = closest(asse_x, int(opts.startfreq))
@@ -1133,10 +1133,10 @@ if __name__ == "__main__":
             log_spectrum = 10 * np.log10(avg_spectrum)
             max_hold = 10 * np.log10(max_hold)
             min_hold = 10 * np.log10(min_hold)
-        ax.plot(asse_x, log_spectrum, label="Average", color='g')
         ax.plot(asse_x, max_hold, label="Max Hold", color='r')
+        ax.plot(asse_x, log_spectrum, label="Average", color='g')
         ax.plot(asse_x, min_hold, label="Min Hold", color='b')
-        ax.set_title("Spectrum of Ant-%03d"%(opts.antenna) + " Pol-" + opts.pol.upper() + " Time Range from " +
+        ax.set_title("Spectrum of Ant-%03d"%(opts.antenna) + "  Pol-" + opts.pol.upper() + "    Time Range from " +
                      opts.start + " to " + opts.stop, fontsize=14)
         ax.set_xlabel("MHz")
         ax.set_ylabel('dB')
@@ -1144,6 +1144,7 @@ if __name__ == "__main__":
         ax.set_yticks(range(0, 55, 5))
         ax.grid()
         ax.set_xlim(0, 400)
+        ax.set_xticks(range(0, 450, 55))
         ax.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
                                   loc="lower center", fontsize='small', markerscale=8)
         #ax.set_xticks(x_tick)
