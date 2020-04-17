@@ -20,6 +20,7 @@ FIG_W = 14
 TILE_H = 3.2
 PIC_PATH = "/storage/monitoring/pictures"
 SPGR_PATH = "/storage/monitoring/spectrograms"
+SPEC_PATH = "/storage/monitoring/spectrum_analyzer"
 POWER_PATH = "/storage/monitoring/power"
 TEXT_PATH = "/storage/monitoring/text_data"
 ERASE_LINE = '\x1b[2K'
@@ -1147,12 +1148,17 @@ if __name__ == "__main__":
         ax.set_xticks(range(0, 450, 50))
         ax.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
                                   loc="lower center", fontsize='small', markerscale=8)
-        #ax.set_xticks(x_tick)
-        #ax_water.set_xticklabels(x_ticklabels, rotation=90, fontsize=8)
-        #ax.set_xlim(0, len(orari)-1)
 
-        plt.ion()
-        plt.show()
+        if not os.path.exists(SPEC_PATH):
+            os.makedirs(SPEC_PATH)
+        if not os.path.exists(SPEC_PATH + "/" + station_name):
+            os.makedirs(SPEC_PATH + "/" + station_name)
+        outpath = SPEC_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna))
+        if not os.path.exists(outpath):
+            os.makedirs(outpath)
+        outpath += "/"
+        fname = "SPECTRUM_TILE-%02d_ANT-%03d_Pol-%s.png"%(int(tile), int(opts.antenna), opts.pol.upper())
+        plt.savefig(outpath + fname)
     print
 
 
