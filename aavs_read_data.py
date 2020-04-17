@@ -1158,8 +1158,8 @@ if __name__ == "__main__":
             os.makedirs(outpath)
         outpath += "/"
         fname = "SPECTRUM_TILE-%02d_ANT-%03d_Pol-%s_Start_%s_Stop_%s.png" % \
-                (int(tile), int(opts.antenna), opts.pol.upper(), ts_to_datestring(t_start, formato="%Y-%m%d_%H%M%S"),
-                 ts_to_datestring(t_stop, formato="%Y-%m%d_%H%M%S"))
+                (int(tile), int(opts.antenna), opts.pol.upper(), ts_to_datestring(t_start, formato="%Y-%m-%d_%H%M%S"),
+                 ts_to_datestring(t_stop, formato="%Y-%m-%d_%H%M%S"))
         plt.savefig(outpath + fname)
         sys.stdout.write(ERASE_LINE + "\nOutput File: " + outpath + fname + "\n")
         sys.stdout.flush()
