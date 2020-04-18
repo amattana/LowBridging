@@ -1161,6 +1161,22 @@ if __name__ == "__main__":
                 (int(tile), int(opts.antenna), opts.pol.upper(), ts_to_datestring(t_start, formato="%Y-%m-%d_%H%M%S"),
                  ts_to_datestring(t_stop, formato="%Y-%m-%d_%H%M%S"))
         plt.savefig(outpath + fname)
+
+        data_fname = outpath + fname[:-4] + "_maxhold.txt"
+        with open(data_fname, "w") as ft:
+            for k in max_hold:
+                ft.write("%d\n" % (k))
+
+        data_fname = outpath + fname[:-4] + "_minhold.txt"
+        with open(data_fname, "w") as ft:
+            for k in min_hold:
+                ft.write("%d\n" % (k))
+
+        data_fname = outpath + fname[:-4] + "_average.txt"
+        with open(data_fname, "w") as ft:
+            for k in avg_spectrum:
+                ft.write("%6.3f\n" % (k))
+
         sys.stdout.write(ERASE_LINE + "\nOutput File: " + outpath + fname + "\n")
         sys.stdout.flush()
     print
