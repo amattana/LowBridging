@@ -1165,12 +1165,12 @@ if __name__ == "__main__":
         data_fname = outpath + fname[:-4] + "_maxhold.txt"
         with open(data_fname, "w") as ft:
             for k in max_hold:
-                ft.write("%d\n" % (k))
+                ft.write("%6.3f\n" % (k))
 
         data_fname = outpath + fname[:-4] + "_minhold.txt"
         with open(data_fname, "w") as ft:
             for k in min_hold:
-                ft.write("%d\n" % (k))
+                ft.write("%6.3f\n" % (k))
 
         data_fname = outpath + fname[:-4] + "_average.txt"
         with open(data_fname, "w") as ft:
