@@ -1067,28 +1067,14 @@ if __name__ == "__main__":
         date_path = da[:4] + "-" + da[4:6] + "-" + da[6:]
 
         band = str("%03d" % int(opts.startfreq)) + "-" + str("%03d" % int(opts.stopfreq))
-        if opts.pol.lower() == "x":
-            pol = 0
-            POL = "X"
-        elif opts.pol.lower() == "y":
-            pol = 1
-            POL = "Y"
-        else:
-            print "\nWrong value passed for argument pol, using default X pol"
-            pol = 0
-
-        gs = GridSpec(1, 1, hspace=0.8, wspace=0.4, left=0.06, right=0.92, bottom=0.1, top=0.95)
-        fig = plt.figure(figsize=(12, 7), facecolor='w')
-
-        ax = fig.add_subplot(gs[0])
-        xmin = closest(asse_x, int(opts.startfreq))
-        xmax = closest(asse_x, int(opts.stopfreq))
-
-        spectra = np.zeros(512)
+        POLs = ["X", "Y"]
+        spectra_x = np.zeros(512)
+        spectra_y = np.zeros(512)
 
         tile = find_ant_by_name(opts.antenna)[0]
         lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
-        t_cnt = 0
+        t_cnt_x = 0
+        t_cnt_y = 0
         orari = []
         t_stamps = []
         for cnt_l, l in enumerate(lista):
@@ -1107,18 +1093,32 @@ if __name__ == "__main__":
                     if not t_stop <= timestamps[0]:
                         for i, t in enumerate(timestamps):
                             if t_start <= t[0] <= t_stop:
+                                # POL-X
                                 for sb_in in antenne:
-                                    spettro = np.array(data[:, sb_in, pol, i])
-                                if (not np.sum(data[:, antenne[0], pol, i][120:150]) == 0) and \
-                                        (not np.sum(data[:, antenne[0], pol, i][300:350]) == 0):
-                                    spectra += spettro
-                                    if not t_cnt:
-                                        max_hold = spettro
-                                        min_hold = spettro
+                                    spettro_x = np.array(data[:, sb_in, 0, i])
+                                if (not np.sum(data[:, antenne[0], 0, i][120:150]) == 0) and \
+                                        (not np.sum(data[:, antenne[0], 0, i][300:350]) == 0):
+                                    spectra_x += spettro_x
+                                    if not t_cnt_x:
+                                        max_hold_x = spettro_x
+                                        min_hold_x = spettro_x
                                     else:
-                                        max_hold = np.maximum(max_hold, spettro)
-                                        min_hold = np.minimum(min_hold, spettro)
-                                    t_cnt = t_cnt + 1
+                                        max_hold_x = np.maximum(max_hold_x, spettro_x)
+                                        min_hold_x = np.minimum(min_hold_x, spettro_x)
+                                    t_cnt_x = t_cnt_x + 1
+                                # POL-Y
+                                for sb_in in antenne:
+                                    spettro_y = np.array(data[:, sb_in, 1, i])
+                                if (not np.sum(data[:, antenne[0], 1, i][120:150]) == 0) and \
+                                        (not np.sum(data[:, antenne[0], 1, i][300:350]) == 0):
+                                    spectra_y += spettro_y
+                                    if not t_cnt_y:
+                                        max_hold_y = spettro_y
+                                        min_hold_y = spettro_y
+                                    else:
+                                        max_hold_y = np.maximum(max_hold_y, spettro_y)
+                                        min_hold_y = np.minimum(min_hold_y, spettro_y)
+                                    t_cnt_y = t_cnt_y + 1
                                 msg = "\rProcessing " + ts_to_datestring(t[0])
                                 sys.stdout.write(ERASE_LINE + msg)
                                 sys.stdout.flush()
@@ -1129,15 +1129,42 @@ if __name__ == "__main__":
             sys.stdout.flush()
         sys.stdout.write(ERASE_LINE + "\rAveraging %d spectra..." % t_cnt)
         sys.stdout.flush()
-        avg_spectrum = spectra / t_cnt
+        avg_spectrum_x = spectra_x / t_cnt_x
+        avg_spectrum_y = spectra_y / t_cnt_y
         with np.errstate(divide='ignore'):
-            log_spectrum = 10 * np.log10(avg_spectrum)
-            max_hold = 10 * np.log10(max_hold)
-            min_hold = 10 * np.log10(min_hold)
-        ax.plot(asse_x, max_hold, label="Max Hold", color='r')
-        ax.plot(asse_x, log_spectrum, label="Average", color='g')
-        ax.plot(asse_x, min_hold, label="Min Hold", color='b')
-        ax.set_title("Spectrum of Ant-%03d"%(opts.antenna) + "  Pol-" + opts.pol.upper() + "    Time Range from " +
+            log_spectrum_x = 10 * np.log10(avg_spectrum_x)
+            max_hold_x = 10 * np.log10(max_hold_x)
+            min_hold_x = 10 * np.log10(min_hold_x)
+            log_spectrum_y = 10 * np.log10(avg_spectrum_y)
+            max_hold_y = 10 * np.log10(max_hold_y)
+            min_hold_y = 10 * np.log10(min_hold_y)
+
+        if not os.path.exists(SPEC_PATH):
+            os.makedirs(SPEC_PATH)
+        if not os.path.exists(SPEC_PATH + "/" + station_name):
+            os.makedirs(SPEC_PATH + "/" + station_name)
+        outpath = SPEC_PATH + "/" + station_name + ts_to_datestring(t_start, formato="/%Y-%m-%d")
+        if not os.path.exists(outpath):
+            os.makedirs(outpath)
+        out_data_path = outpath + "/data"
+        if not os.path.exists(out_data_path):
+            os.makedirs(out_data_path)
+        out_data_path += "/"
+        out_img_path = outpath + "/img"
+        if not os.path.exists(out_img_path):
+            os.makedirs(out_img_path)
+        out_img_path += "/"
+
+        gs = GridSpec(1, 1, hspace=0.8, wspace=0.4, left=0.06, right=0.92, bottom=0.1, top=0.95)
+        fig = plt.figure(figsize=(12, 7), facecolor='w')
+        ax = fig.add_subplot(gs[0])
+        #xmin = closest(asse_x, int(opts.startfreq))
+        #xmax = closest(asse_x, int(opts.stopfreq))
+
+        ax.plot(asse_x, max_hold_x, label="Max Hold", color='r')
+        ax.plot(asse_x, log_spectrum_x, label="Average", color='g')
+        ax.plot(asse_x, min_hold_x, label="Min Hold", color='b')
+        ax.set_title("Spectrum of Ant-%03d"%(opts.antenna) + "  Pol-X    Time Range from " +
                      opts.start + " to " + opts.stop, fontsize=14)
         ax.set_xlabel("MHz")
         ax.set_ylabel('dB')
@@ -1149,35 +1176,66 @@ if __name__ == "__main__":
         ax.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
                                   loc="lower center", fontsize='small', markerscale=8)
 
-        if not os.path.exists(SPEC_PATH):
-            os.makedirs(SPEC_PATH)
-        if not os.path.exists(SPEC_PATH + "/" + station_name):
-            os.makedirs(SPEC_PATH + "/" + station_name)
-        outpath = SPEC_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna))
-        if not os.path.exists(outpath):
-            os.makedirs(outpath)
-        outpath += "/"
-        fname = "SPECTRUM_TILE-%02d_ANT-%03d_Pol-%s_Start_%s_Stop_%s.png" % \
-                (int(tile), int(opts.antenna), opts.pol.upper(), ts_to_datestring(t_start, formato="%Y-%m-%d_%H%M%S"),
+        fname = "SPECTRUM_TILE-%02d_ANT-%03d_Pol-X_Start_%s_Stop_%s.png" % \
+                (int(tile), int(opts.antenna), ts_to_datestring(t_start, formato="%Y-%m-%d_%H%M%S"),
                  ts_to_datestring(t_stop, formato="%Y-%m-%d_%H%M%S"))
-        plt.savefig(outpath + fname)
+        plt.savefig(out_img_path + fname)
 
-        data_fname = outpath + fname[:-4] + "_maxhold.txt"
+        data_fname = out_data_path + fname[:-4] + "_maxhold.txt"
         with open(data_fname, "w") as ft:
-            for k in max_hold:
+            for k in max_hold_x:
                 ft.write("%6.3f\n" % (k))
 
-        data_fname = outpath + fname[:-4] + "_minhold.txt"
+        data_fname = out_data_path + fname[:-4] + "_minhold.txt"
         with open(data_fname, "w") as ft:
-            for k in min_hold:
+            for k in min_hold_x:
                 ft.write("%6.3f\n" % (k))
 
-        data_fname = outpath + fname[:-4] + "_average.txt"
+        data_fname = out_data_path + fname[:-4] + "_average.txt"
         with open(data_fname, "w") as ft:
-            for k in log_spectrum:
+            for k in log_spectrum_x:
                 ft.write("%6.3f\n" % (k))
 
-        sys.stdout.write(ERASE_LINE + "\nOutput File: " + outpath + fname + "\n")
+        sys.stdout.write(ERASE_LINE + "\nOutput File: " + out_img_path + fname + "\n")
+        sys.stdout.flush()
+
+        ax.cla()
+        ax.plot(asse_x, max_hold_y, label="Max Hold", color='r')
+        ax.plot(asse_x, log_spectrum_y, label="Average", color='g')
+        ax.plot(asse_x, min_hold_y, label="Min Hold", color='b')
+        ax.set_title("Spectrum of Ant-%03d"%(opts.antenna) + "  Pol-Y    Time Range from " +
+                     opts.start + " to " + opts.stop, fontsize=14)
+        ax.set_xlabel("MHz")
+        ax.set_ylabel('dB')
+        ax.set_ylim(0, 50)
+        ax.set_yticks(range(0, 55, 5))
+        ax.grid()
+        ax.set_xlim(0, 400)
+        ax.set_xticks(range(0, 450, 50))
+        ax.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
+                                  loc="lower center", fontsize='small', markerscale=8)
+
+        fname = "SPECTRUM_TILE-%02d_ANT-%03d_Pol-Y_Start_%s_Stop_%s.png" % \
+                (int(tile), int(opts.antenna), ts_to_datestring(t_start, formato="%Y-%m-%d_%H%M%S"),
+                 ts_to_datestring(t_stop, formato="%Y-%m-%d_%H%M%S"))
+        plt.savefig(out_img_path + fname)
+
+        data_fname = out_data_path + fname[:-4] + "_maxhold.txt"
+        with open(data_fname, "w") as ft:
+            for k in max_hold_y:
+                ft.write("%6.3f\n" % (k))
+
+        data_fname = out_data_path + fname[:-4] + "_minhold.txt"
+        with open(data_fname, "w") as ft:
+            for k in min_hold_y:
+                ft.write("%6.3f\n" % (k))
+
+        data_fname = out_data_path + fname[:-4] + "_average.txt"
+        with open(data_fname, "w") as ft:
+            for k in log_spectrum_y:
+                ft.write("%6.3f\n" % (k))
+
+        sys.stdout.write(ERASE_LINE + "\nOutput File: " + out_img_path + fname + "\n")
         sys.stdout.flush()
     print
 
