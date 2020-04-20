@@ -1200,7 +1200,7 @@ if __name__ == "__main__":
             for k in log_spectrum_x:
                 ft.write("%6.3f\n" % (k))
 
-        sys.stdout.write("\nAveraged " + str(t_cnt_x) + " Spectra, saved file: " + fname)
+        sys.stdout.write("\nAveraged " + str(t_cnt_x) + " Spectra\nSaved file: " + fname)
         sys.stdout.flush()
 
         ax.cla()
@@ -1239,7 +1239,7 @@ if __name__ == "__main__":
             for k in log_spectrum_y:
                 ft.write("%6.3f\n" % (k))
 
-        sys.stdout.write("\nAveraged " + str(t_cnt_y) + " Spectra, saved file: " + fname)
+        sys.stdout.write("\nAveraged " + str(t_cnt_y) + " Spectra\nSaved file: " + fname)
         sys.stdout.flush()
     print
 
