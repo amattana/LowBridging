@@ -1174,7 +1174,7 @@ if __name__ == "__main__":
 
         data_fname = outpath + fname[:-4] + "_average.txt"
         with open(data_fname, "w") as ft:
-            for k in avg_spectrum:
+            for k in log_spectrum:
                 ft.write("%6.3f\n" % (k))
 
         sys.stdout.write(ERASE_LINE + "\nOutput File: " + outpath + fname + "\n")
