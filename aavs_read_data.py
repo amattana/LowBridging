@@ -1127,8 +1127,6 @@ if __name__ == "__main__":
                 timestamps[0][0]) + "   " + ts_to_datestring(timestamps[-1][0])
             sys.stdout.write(ERASE_LINE + msg)
             sys.stdout.flush()
-        sys.stdout.write(ERASE_LINE + "\rAveraging %d spectra..." % t_cnt)
-        sys.stdout.flush()
         avg_spectrum_x = spectra_x / t_cnt_x
         avg_spectrum_y = spectra_y / t_cnt_y
         with np.errstate(divide='ignore'):
@@ -1196,7 +1194,8 @@ if __name__ == "__main__":
             for k in log_spectrum_x:
                 ft.write("%6.3f\n" % (k))
 
-        sys.stdout.write(ERASE_LINE + "\nOutput File: " + out_img_path + fname + "\n")
+        sys.stdout.write(ERASE_LINE + "\nAveraged " + str(t_cnt_x) + " Spectra, saved file: " +
+                         out_img_path + fname + "\n")
         sys.stdout.flush()
 
         ax.cla()
@@ -1235,7 +1234,8 @@ if __name__ == "__main__":
             for k in log_spectrum_y:
                 ft.write("%6.3f\n" % (k))
 
-        sys.stdout.write(ERASE_LINE + "\nOutput File: " + out_img_path + fname + "\n")
+        sys.stdout.write(ERASE_LINE + "\nAveraged " + str(t_cnt_y) + " Spectra, saved file: " +
+                         out_img_path + fname + "\n")
         sys.stdout.flush()
     print
 
