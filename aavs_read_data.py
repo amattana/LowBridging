@@ -1127,6 +1127,9 @@ if __name__ == "__main__":
                 timestamps[0][0]) + "   " + ts_to_datestring(timestamps[-1][0])
             sys.stdout.write(ERASE_LINE + msg)
             sys.stdout.flush()
+        sys.stdout.write(ERASE_LINE + "\rAveraging spectra...\n")
+        sys.stdout.flush()
+
         avg_spectrum_x = spectra_x / t_cnt_x
         avg_spectrum_y = spectra_y / t_cnt_y
         with np.errstate(divide='ignore'):
