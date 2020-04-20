@@ -1153,10 +1153,10 @@ if __name__ == "__main__":
             os.makedirs(out_img_path)
         out_img_path += "/"
 
-        sys.stdout.write(ERASE_LINE + "\nData directory: " + out_data_path + "\n")
+        sys.stdout.write("\nData directory: " + out_data_path)
         sys.stdout.flush()
 
-        sys.stdout.write(ERASE_LINE + "\nImg directory: " + out_img_path + "\n")
+        sys.stdout.write("\nImg directory: " + out_img_path)
         sys.stdout.flush()
 
         gs = GridSpec(1, 1, hspace=0.8, wspace=0.4, left=0.06, right=0.92, bottom=0.1, top=0.95)
@@ -1200,7 +1200,7 @@ if __name__ == "__main__":
             for k in log_spectrum_x:
                 ft.write("%6.3f\n" % (k))
 
-        sys.stdout.write(ERASE_LINE + "\nAveraged " + str(t_cnt_x) + " Spectra, saved file: " + fname + "\n")
+        sys.stdout.write("\nAveraged " + str(t_cnt_x) + " Spectra, saved file: " + fname)
         sys.stdout.flush()
 
         ax.cla()
@@ -1239,7 +1239,7 @@ if __name__ == "__main__":
             for k in log_spectrum_y:
                 ft.write("%6.3f\n" % (k))
 
-        sys.stdout.write(ERASE_LINE + "\nAveraged " + str(t_cnt_y) + " Spectra, saved file: " + fname + "\n")
+        sys.stdout.write("\nAveraged " + str(t_cnt_y) + " Spectra, saved file: " + fname)
         sys.stdout.flush()
     print
 
