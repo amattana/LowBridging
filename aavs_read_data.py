@@ -1096,8 +1096,8 @@ if __name__ == "__main__":
                                 # POL-X
                                 for sb_in in antenne:
                                     spettro_x = np.array(data[:, sb_in, 0, i])
-                                if (not np.sum(data[:, antenne[0], 0, i][120:150]) == 0) and \
-                                        (not np.sum(data[:, antenne[0], 0, i][300:350]) == 0):
+                                if (not np.sum(spettro_x[120:150]) == 0) and \
+                                        (not np.sum(spettro_x[300:350]) == 0):
                                     spectra_x += spettro_x
                                     if not t_cnt_x:
                                         max_hold_x = spettro_x
@@ -1109,8 +1109,8 @@ if __name__ == "__main__":
                                 # POL-Y
                                 for sb_in in antenne:
                                     spettro_y = np.array(data[:, sb_in, 1, i])
-                                if (not np.sum(data[:, antenne[0], 1, i][120:150]) == 0) and \
-                                        (not np.sum(data[:, antenne[0], 1, i][300:350]) == 0):
+                                if (not np.sum(spettro_y[120:150]) == 0) and \
+                                        (not np.sum(spettro_y[300:350]) == 0):
                                     spectra_y += spettro_y
                                     if not t_cnt_y:
                                         max_hold_y = spettro_y
@@ -1203,7 +1203,7 @@ if __name__ == "__main__":
             for k in log_spectrum_x:
                 ft.write("%6.3f\n" % (k))
 
-        sys.stdout.write("\nAveraged " + str(t_cnt_x) + " Spectra\nSaved file: " + fname)
+        sys.stdout.write("\n\nAveraged Spectra X " + str(t_cnt_x) + ",  Averaged Spectra Y " + str(t_cnt_y) + "\nSaved file: " + fname)
         sys.stdout.flush()
 
         ax.cla()
@@ -1242,7 +1242,7 @@ if __name__ == "__main__":
             for k in log_spectrum_y:
                 ft.write("%6.3f\n" % (k))
 
-        sys.stdout.write("\nAveraged " + str(t_cnt_y) + " Spectra\nSaved file: " + fname)
+        sys.stdout.write("\nSaved file: " + fname)
         sys.stdout.flush()
     print
 
