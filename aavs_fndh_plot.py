@@ -40,7 +40,7 @@ if __name__ == "__main__":
     parser.add_option("--stop", action="store", dest="stop",
                       default="", help="Stop time for filter (YYYY-mm-DD_HH:MM:SS)")
     parser.add_option("--tile", action="store", dest="tile", type=str,
-                      default="", help="Tile Number")
+                      default="all", help="Comma separated Tile Numbers (default: all)")
 
     (opts, args) = parser.parse_args(argv[1:])
 
