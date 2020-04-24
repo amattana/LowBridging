@@ -4,7 +4,7 @@ import numpy as np
 from matplotlib.gridspec import GridSpec
 import datetime
 import glob
-from aavs_utils import dt_to_timestamp, ts_to_datestring, mro_daily_weather, diclist_to_array
+from aavs_utils import dt_to_timestamp, ts_to_datestring, mro_daily_weather, diclist_to_array, closest
 from matplotlib.markers import MarkerStyle
 
 t_start = 0
