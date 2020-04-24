@@ -202,14 +202,14 @@ if __name__ == "__main__":
 
             # Draw wind direction
             for a in range(len(w_wdir)):
-                if not a % (len(w_wdir)/24):
+                if not a % (len(w_wdir)/12):
                     m = MarkerStyle(">")
                     m._transform.rotate_deg(w_wdir[a])
                     # print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
-                    ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=100, color='orchid')
+                    ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=80, color='orchid')
                     m = MarkerStyle("_")
                     m._transform.rotate_deg(w_wdir[a])
-                    ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=500, color='orchid')
+                    ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=400, color='orchid')
             fig.subplots_adjust(right=0.86)
 
         ax.legend(markerscale=8, fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,
