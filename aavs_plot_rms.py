@@ -202,7 +202,7 @@ if __name__ == "__main__":
 
             # Draw wind direction
             for a in range(len(w_wdir)):
-                if not a % 4:
+                if not a % (len(w_wdir)/24):
                     m = MarkerStyle(">")
                     m._transform.rotate_deg(w_wdir[a])
                     # print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
