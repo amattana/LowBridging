@@ -154,10 +154,6 @@ if __name__ == "__main__":
         xticklabels = xticklabels[::decimation]
 
         ax.plot(x, x, color='w')
-        ax.set_xticks(xticks)
-        ax.set_xticklabels(xticklabels,
-                           rotation=90, fontsize=8)
-
         if not opts.lista:
             data_list = [(opts.tile, opts.channel, pol)]
         else:
@@ -172,6 +168,10 @@ if __name__ == "__main__":
                     label="Tile-%02d Input %02d Pol %s" % (d[0], d[1], d[2].upper()))
 
         ax.set_xlim(x[0], x[-1])
+        ax.set_xticks(xticks)
+        ax.set_xticklabels(xticklabels,
+                           rotation=90, fontsize=8)
+
         ax.set_ylim(0, 50)
         ax.set_ylabel("ADC RMS")
         ax.set_xlabel("UTC Time (hours)")
