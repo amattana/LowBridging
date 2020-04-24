@@ -143,9 +143,19 @@ if __name__ == "__main__":
             delta_h = (t_stop - t_start) / 3600
             x = np.array(range(t_stop - t_start)) + t_start
         xticks = np.array(range(delta_h)) * 3600 + t_start
+        xticklabels = [f if f != 0 else datetime.datetime.strftime(
+            datetime.datetime.utcfromtimestamp(t_start) + datetime.timedelta(n / 24), "%m-%d") for n, f in
+                       enumerate((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) % 24)]
+
+        div = np.array([1, 2, 3, 4, 6, 8, 12, 24])
+        decimation = div[closest(div, len(xticks) / 24)]
+        # print decimation, len(xticks)
+        xticks = xticks[::decimation]
+        xticklabels = xticklabels[::decimation]
+
         ax.plot(x, x, color='w')
         ax.set_xticks(xticks)
-        ax.set_xticklabels((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) % 24,
+        ax.set_xticklabels(xticklabels,
                            rotation=90, fontsize=8)
 
         if not opts.lista:
