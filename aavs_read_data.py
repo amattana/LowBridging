@@ -650,7 +650,10 @@ if __name__ == "__main__":
             if not orari[z].hour == step:
                 #print str(orari[z])
                 x_tick += [z]
-                x_ticklabels += [orari[z].hour]
+                if orari[z].hour == 0:
+                    x_ticklabels += [datetime.datetime.strftime(orari[z], "%m-%d")]
+                else:
+                    x_ticklabels += [orari[z].hour]
                 #step = (step + 1) % 24
                 step = orari[z].hour
                 z_tick += [z]
