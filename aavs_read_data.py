@@ -645,19 +645,21 @@ if __name__ == "__main__":
         x_tick = []
         z_tick = []
         x_ticklabels = []
-        step = orari[0].hour
+        step = orari[0].hour - 1
         for z in range(len(orari)):
-            if orari[z].hour == step:
+            if not orari[z].hour == step:
                 #print str(orari[z])
                 x_tick += [z]
                 x_ticklabels += [step]
-                step = (step + 1) % 24
+                #step = (step + 1) % 24
+                step = orari[z].hour
                 z_tick += [z]
-        #print str(orari[-1])
-        #x_tick += [len(dayspgramma[10:])]
 
-        x_tick = x_tick[1:]
-        x_ticklabels = x_ticklabels[1:]
+        div = np.array([1, 2, 3, 4, 6, 8, 12, 24])
+        decimation = div[closest(div, len(x_tick) / 24)]
+        # print decimation, len(xticks)
+        x_tick = x_tick[::decimation]
+        x_ticklabels = x_ticklabels[::decimation]
 
         first_empty, dayspgramma = dayspgramma[:10], dayspgramma[10:]
         ax_water.cla()
@@ -666,7 +668,6 @@ if __name__ == "__main__":
         ax_water.set_ylabel("MHz")
         ax_water.set_xlabel('Time (UTC)')
         ax_water.set_xticks(x_tick)
-        #ax_water.set_xticklabels((np.array(range(0, len(x_tick), 1)) + orari[0].hour).astype("str").tolist())
         ax_water.set_xticklabels(x_ticklabels, rotation=90, fontsize=8)
         ystep = 1
         if int(band.split("-")[1]) <= 50:
