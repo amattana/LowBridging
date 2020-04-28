@@ -650,7 +650,7 @@ if __name__ == "__main__":
             if not orari[z].hour == step:
                 #print str(orari[z])
                 x_tick += [z]
-                x_ticklabels += [step]
+                x_ticklabels += [orari[z].hour]
                 #step = (step + 1) % 24
                 step = orari[z].hour
                 z_tick += [z]
