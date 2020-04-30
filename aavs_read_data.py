@@ -109,6 +109,10 @@ if __name__ == "__main__":
                       default=False, help="Plot the Rain data if available")
     parser.add_option("--last", action="store_true", dest="last",
                       default=False, help="Plot last saved spectrum")
+    parser.add_option("--xticks", action="store_true", dest="xticks",
+                      default=False, help="Maximize X axis ticks")
+    parser.add_option("--yticks", action="store_true", dest="yticks",
+                      default=False, help="Maximize Y axis ticks")
     (opts, args) = parser.parse_args(argv[1:])
 
     t_date = None
@@ -499,8 +503,12 @@ if __name__ == "__main__":
         ax_xpol.set_xlim(0, 512)
         ax_xpol.set_xlabel("MHz", fontsize=12)
         ax_xpol.set_ylabel("dB", fontsize=12)
-        ax_xpol.set_xticks([x*64 for x in range(9)])
-        ax_xpol.set_xticklabels([x*50 for x in range(9)], fontsize=10)
+        if opts.xticks:
+            ax_xpol.set_xticks(np.arange(len(asse_x)))
+            ax_xpol.set_xticklabels(asse_x, fontsize=6, rotation=90)
+        else:
+            ax_xpol.set_xticks([x*64 for x in range(9)])
+            ax_xpol.set_xticklabels([x*50 for x in range(9)], fontsize=10)
         ax_xpol.grid()
         xl, = ax_xpol.plot(range(512), range(512), color='b')
 
@@ -510,8 +518,12 @@ if __name__ == "__main__":
         ax_ypol.set_xlim(0, 512)
         ax_ypol.set_xlabel("MHz", fontsize=12)
         ax_ypol.set_ylabel("dB", fontsize=12)
-        ax_ypol.set_xticks([x*64 for x in range(9)])
-        ax_ypol.set_xticklabels([x*50 for x in range(9)], fontsize=10)
+        if opts.xticks:
+            ax_ypol.set_xticks(np.arange(len(asse_x)))
+            ax_ypol.set_xticklabels(asse_x, fontsize=6, rotation=90)
+        else:
+            ax_ypol.set_xticks([x*64 for x in range(9)])
+            ax_ypol.set_xticklabels([x*50 for x in range(9)], fontsize=10)
         ax_ypol.grid()
         yl, = ax_ypol.plot(range(512), range(512), color='g')
 
