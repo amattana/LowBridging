@@ -505,7 +505,7 @@ if __name__ == "__main__":
         ax_xpol.set_ylabel("dB", fontsize=12)
         if opts.xticks:
             ax_xpol.set_xticks(np.arange(len(asse_x)))
-            ax_xpol.set_xticklabels(asse_x, fontsize=6, rotation=90)
+            ax_xpol.set_xticklabels(["%3.1f"%s for s in asse_x], fontsize=5, rotation=45)
         else:
             ax_xpol.set_xticks([x*64 for x in range(9)])
             ax_xpol.set_xticklabels([x*50 for x in range(9)], fontsize=10)
@@ -520,7 +520,7 @@ if __name__ == "__main__":
         ax_ypol.set_ylabel("dB", fontsize=12)
         if opts.xticks:
             ax_ypol.set_xticks(np.arange(len(asse_x)))
-            ax_ypol.set_xticklabels(asse_x, fontsize=6, rotation=90)
+            ax_ypol.set_xticklabels(["%3.1f"%s for s in asse_x], fontsize=5, rotation=45)
         else:
             ax_ypol.set_xticks([x*64 for x in range(9)])
             ax_ypol.set_xticklabels([x*50 for x in range(9)], fontsize=10)
