@@ -107,6 +107,8 @@ if __name__ == "__main__":
                       default=False, help="Plot the Wind data if available")
     parser.add_option("--rain", action="store_true", dest="rain",
                       default=False, help="Plot the Rain data if available")
+    parser.add_option("--last", action="store_true", dest="last",
+                      default=False, help="Plot last saved spectrum")
     (opts, args) = parser.parse_args(argv[1:])
 
     t_date = None
@@ -237,7 +239,6 @@ if __name__ == "__main__":
         else:
             print "Missing antenna argument"
             exit(1)
-
 
     if plot_mode == 0:
         outer_grid = GridSpec(4, 4, hspace=0.4, wspace=0.4, left=0.04, right=0.98, bottom=0.04, top=0.96)
@@ -514,50 +515,65 @@ if __name__ == "__main__":
         ax_ypol.grid()
         yl, = ax_ypol.plot(range(512), range(512), color='g')
 
-        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
-        t_cnt = 0
-        for cnt_l, l in enumerate(lista):
-            if cnt_l < len(lista) - 1:
-                t_file = fname_to_tstamp(lista[cnt_l + 1][-21:-7])
-                if t_file < t_start:
-                    continue
-            dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile - 1))
-            if dic:
-                data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
-                                                          n_samples=dic['n_blocks'])
-                cnt = 0
-                if timestamps[0] > t_stop:
-                    break
-                if not t_start >= timestamps[-1]:
-                    if not t_stop <= timestamps[0]:
-                        for i, t in enumerate(timestamps):
-                            if t_start <= t[0] <= t_stop:
-                                cnt = cnt + 1
-                                t_cnt = t_cnt + 1
+        if not opts.last:
+            lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
+            t_cnt = 0
+            for cnt_l, l in enumerate(lista):
+                if cnt_l < len(lista) - 1:
+                    t_file = fname_to_tstamp(lista[cnt_l + 1][-21:-7])
+                    if t_file < t_start:
+                        continue
+                dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile - 1))
+                if dic:
+                    data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
+                                                              n_samples=dic['n_blocks'])
+                    cnt = 0
+                    if timestamps[0] > t_stop:
+                        break
+                    if not t_start >= timestamps[-1]:
+                        if not t_stop <= timestamps[0]:
+                            for i, t in enumerate(timestamps):
+                                if t_start <= t[0] <= t_stop:
+                                    cnt = cnt + 1
+                                    t_cnt = t_cnt + 1
 
-                                # Generate picture
-                                orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
-                                for sb_in in antenne:
-                                    with np.errstate(divide='ignore'):
-                                        spettro = 10 * np.log10(data[:, sb_in, 0, i])
-                                    xl.set_ydata(spettro)
-                                    with np.errstate(divide='ignore'):
-                                        spettro = 10 * np.log10(data[:, sb_in, 1, i])
-                                    yl.set_ydata(spettro)
-                                time_label.set_text(ts_to_datestring(t[0]))
-                                plt.savefig(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d_" %
-                                            (int(tile), int(skala_name), int(tile), int(skala_name)) + orario + ".png")
-                                msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l + 1, len(lista), int(tile),
-                                                                          l.split("/")[-1]) + \
-                                      " --> Writing " + "TILE-%02d_" % int(tile) + orario + ".png"
-                                sys.stdout.write(ERASE_LINE + msg)
-                                sys.stdout.flush()
-                msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), int(tile),
-                    l.split("/")[-1]) + "   " + ts_to_datestring(timestamps[0][0]) + "   " + \
-                    ts_to_datestring(timestamps[-1][0])
-                sys.stdout.write(ERASE_LINE + msg)
-                sys.stdout.flush()
-        print "\n" + datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S ") + "Written", t_cnt, "files.\n"
+                                    # Generate picture
+                                    orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
+                                    for sb_in in antenne:
+                                        with np.errstate(divide='ignore'):
+                                            spettro = 10 * np.log10(data[:, sb_in, 0, i])
+                                        xl.set_ydata(spettro)
+                                        with np.errstate(divide='ignore'):
+                                            spettro = 10 * np.log10(data[:, sb_in, 1, i])
+                                        yl.set_ydata(spettro)
+                                    time_label.set_text(ts_to_datestring(t[0]))
+                                    plt.savefig(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d_" %
+                                                (int(tile), int(skala_name), int(tile), int(skala_name)) + orario + ".png")
+                                    msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l + 1, len(lista), int(tile),
+                                                                              l.split("/")[-1]) + \
+                                          " --> Writing " + "TILE-%02d_" % int(tile) + orario + ".png"
+                                    sys.stdout.write(ERASE_LINE + msg)
+                                    sys.stdout.flush()
+                    msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), int(tile),
+                        l.split("/")[-1]) + "   " + ts_to_datestring(timestamps[0][0]) + "   " + \
+                        ts_to_datestring(timestamps[-1][0])
+                    sys.stdout.write(ERASE_LINE + msg)
+                    sys.stdout.flush()
+            print "\n" + datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S ") + "Written", t_cnt, "files.\n"
+        else:
+            # plot just last measurement
+            data, timestamps = file_manager.read_data(tile_id=tile - 1, n_samples=1, sample_offset=-1)
+            orario = ts_to_datestring(timestamps[0], formato="%Y-%m-%d_%H%M%S")
+            for sb_in in antenne:
+                with np.errstate(divide='ignore'):
+                    spettro = 10 * np.log10(data[:, sb_in, 0, 0])
+                xl.set_ydata(spettro)
+                with np.errstate(divide='ignore'):
+                    spettro = 10 * np.log10(data[:, sb_in, 1, 0])
+                yl.set_ydata(spettro)
+            time_label.set_text(ts_to_datestring(timestamps[0]))
+            plt.savefig(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d_" %
+                        (int(tile), int(skala_name), int(tile), int(skala_name)) + orario + ".png")
 
     # SPECTROGRAM
     elif plot_mode == 2:
