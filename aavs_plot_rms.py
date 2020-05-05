@@ -181,9 +181,9 @@ if __name__ == "__main__":
             ax_weather = ax.twinx()
             ax_weather.set_ylabel('Temperature (C)', color='r')
             #ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
-            ax_weather.set_ylim(50, 15)
-            ax_weather.set_yticks(np.arange(15, 50, 5))
-            ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
+            ax_weather.set_ylim(50, 10)
+            ax_weather.set_yticks(np.arange(10, 50, 5))
+            ax_weather.set_yticklabels(np.arange(10, 50, 5), color='r')
 
             ax_wind = ax.twinx()
             ax_wind.plot(w_time, w_wind, color='orange', lw=1.5)
