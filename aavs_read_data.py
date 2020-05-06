@@ -1411,6 +1411,8 @@ if __name__ == "__main__":
 
         plt.savefig(OPLOT_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d.png"
                     %(int(tile), int(skala_name), int(tile), int(skala_name)))
+        print "\nSaved file: " + OPLOT_PATH + "/" + station_name + "/" + date_path + \
+              "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d.png"%(int(tile), int(skala_name), int(tile), int(skala_name))
 
     print
 
