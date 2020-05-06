@@ -179,6 +179,8 @@ if __name__ == "__main__":
             ax.set_xticklabels(xticklabels,
                                rotation=90, fontsize=8)
         else:
+            print asse_x, "\n"
+            print len(asse_x), "\n"
             xticklabels = [ts_to_datestring(e, "%H:%M:%S") for e in asse_x]
             ax.set_xticklabels(xticklabels, rotation=90, fontsize=8)
 
