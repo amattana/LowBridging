@@ -1295,6 +1295,8 @@ if __name__ == "__main__":
             skala_name = find_ant_by_tile(tile, antenne[0])
         else:
             skala_name = opts.antenna
+        da = tstamp_to_fname(t_start)[:-6]
+        date_path = da[:4] + "-" + da[4:6] + "-" + da[6:]
 
         if not os.path.exists(OPLOT_PATH):
             os.makedirs(OPLOT_PATH)
