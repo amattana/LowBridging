@@ -75,6 +75,10 @@ if __name__ == "__main__":
                       default="", help="Stop time for filter (YYYY-mm-DD_HH:MM:SS)")
     parser.add_option("--weather", action="store_true", dest="weather",
                       default=False, help="Add weather info (if available)")
+    parser.add_option("--xticks", action="store_true", dest="xticks",
+                      default=False, help="Maximize X axis ticks")
+    parser.add_option("--yticks", action="store_true", dest="yticks",
+                      default=False, help="Maximize Y axis ticks")
     (opts, args) = parser.parse_args(argv[1:])
 
     if opts.date:
@@ -168,9 +172,10 @@ if __name__ == "__main__":
                     label="Tile-%02d Input %02d Pol %s" % (d[0], d[1], d[2].upper()))
 
         ax.set_xlim(x[0], x[-1])
-        ax.set_xticks(xticks)
-        ax.set_xticklabels(xticklabels,
-                           rotation=90, fontsize=8)
+        if not opts.xticks:
+            ax.set_xticks(xticks)
+            ax.set_xticklabels(xticklabels,
+                               rotation=90, fontsize=8)
 
         ax.set_ylim(0, 50)
         ax.set_ylabel("ADC RMS")
