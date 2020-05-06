@@ -1417,10 +1417,11 @@ if __name__ == "__main__":
             sys.stdout.write(ERASE_LINE + msg)
             sys.stdout.flush()
 
-        plt.savefig(OPLOT_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d.png"
-                    %(int(tile), int(skala_name), int(tile), int(skala_name)))
-        print "\nSaved file: " + OPLOT_PATH + "/" + station_name + "/" + date_path + \
-              "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d.png"%(int(tile), int(skala_name), int(tile), int(skala_name))
+        fname = OPLOT_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d.png"
+                    %(int(tile), int(skala_name), int(tile), int(skala_name))
+
+        plt.savefig(fname)
+        print "\nSaved file: " + fname
 
     print
 
