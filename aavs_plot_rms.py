@@ -165,10 +165,8 @@ if __name__ == "__main__":
             for d in opts.lista.split(","):
                 data_list += [(int(d.split("-")[0]), int(d.split("-")[1]), d.split("-")[2])]
 
-        asse_x = []
         for d in data_list:
             x, dati = read_data(path, d[0], d[1], d[2])
-            asse_x += x
             print "Found %d valid records for Tile-%02d Input #%02d Pol-%s\n" % (len(dati), d[0], d[1], d[2].upper())
             ax.plot(x, dati, linestyle='None', marker=".", markersize=2,
                     label="Tile-%02d Input %02d Pol %s" % (d[0], d[1], d[2].upper()))
@@ -179,9 +177,8 @@ if __name__ == "__main__":
             ax.set_xticklabels(xticklabels,
                                rotation=90, fontsize=8)
         else:
-            print asse_x, "\n"
-            print len(asse_x), "\n"
-            xticklabels = [ts_to_datestring(e, "%H:%M:%S") for e in asse_x]
+            xticklabels = [ts_to_datestring(e, "%H:%M:%S") for e in x]
+            ax.set_xticks(x)
             ax.set_xticklabels(xticklabels, rotation=90, fontsize=8)
 
         ax.set_ylim(0, 50)
