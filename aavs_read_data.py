@@ -247,6 +247,13 @@ if __name__ == "__main__":
             print "Missing antenna argument"
             exit(1)
 
+    if opts.oplot:
+        if opts.antenna:
+            plot_mode = 5
+        else:
+            print "Missing antenna argument"
+            exit(1)
+
     if plot_mode == 0:
         outer_grid = GridSpec(4, 4, hspace=0.4, wspace=0.4, left=0.04, right=0.98, bottom=0.04, top=0.96)
         gs = GridSpecFromSubplotSpec(int(np.ceil(np.sqrt(nplot))), int(np.ceil(np.sqrt(nplot))), wspace=0.4, hspace=0.6,
@@ -1279,6 +1286,7 @@ if __name__ == "__main__":
 
         sys.stdout.write("\nSaved file: " + fname)
         sys.stdout.flush()
+
     # OPLOT
     elif plot_mode == 5:
 
