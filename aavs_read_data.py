@@ -1409,6 +1409,7 @@ if __name__ == "__main__":
                                 if (not np.sum(spettro[120:150]) == 0) and \
                                         (not np.sum(spettro[300:350]) == 0):
                                     with np.errstate(divide='ignore'):
+                                        spettro = 10 * np.log10(spettro)
                                         ax_ypol.plot(spettro)
                                 msg = "\rProcessing " + ts_to_datestring(t[0])
                                 sys.stdout.write(ERASE_LINE + msg)
