@@ -176,6 +176,9 @@ if __name__ == "__main__":
             ax.set_xticks(xticks)
             ax.set_xticklabels(xticklabels,
                                rotation=90, fontsize=8)
+        else:
+            xticklabels = [ts_to_datestring(e, "%H:%M:%S") for e in x]
+            ax.set_xticklabels(xticklabels, rotation=90, fontsize=8)
 
         ax.set_ylim(0, 50)
         ax.set_ylabel("ADC RMS")
