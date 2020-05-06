@@ -19,6 +19,7 @@ from matplotlib.markers import MarkerStyle
 FIG_W = 14
 TILE_H = 3.2
 PIC_PATH = "/storage/monitoring/pictures"
+OPLOT_PATH = "/storage/monitoring/oplot"
 SPGR_PATH = "/storage/monitoring/spectrograms"
 SPEC_PATH = "/storage/monitoring/spectrum_analyzer"
 POWER_PATH = "/storage/monitoring/power"
@@ -83,6 +84,8 @@ if __name__ == "__main__":
                       default=False, help="Produces a spectrogram for a specific antenna")
     parser.add_option("--average", action="store_true", dest="avg",
                       default=False, help="Produces an average spectrum of a specific antenna")
+    parser.add_option("--oplot", action="store_true", dest="oplot",
+                      default=False, help="Plot spectra in sequence in the same plot for a specific antenna")
     parser.add_option("--weather", action="store_true", dest="weather",
                       default=False, help="Plot all the weather info if available (Temp, Wind, Rain)")
     parser.add_option("--over", action="store_true", dest="over",
@@ -1276,6 +1279,139 @@ if __name__ == "__main__":
 
         sys.stdout.write("\nSaved file: " + fname)
         sys.stdout.flush()
+    # OPLOT
+    elif plot_mode == 5:
+
+        tile = tiles[0]
+        if not opts.antenna:
+            skala_name = find_ant_by_tile(tile, antenne[0])
+        else:
+            skala_name = opts.antenna
+
+        if not os.path.exists(OPLOT_PATH):
+            os.makedirs(OPLOT_PATH)
+        if not os.path.exists(OPLOT_PATH + "/" + station_name):
+            os.makedirs(OPLOT_PATH + "/" + station_name)
+        if not os.path.exists(OPLOT_PATH + "/" + station_name + "/" + date_path):
+            os.makedirs(OPLOT_PATH + "/" + station_name + "/" + date_path)
+        if not os.path.exists(
+                OPLOT_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name))):
+            os.makedirs(OPLOT_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name)))
+
+        grid = GridSpec(15, 8, hspace=0.8, wspace=0.4, left=0.08, right=0.98, bottom=0.1, top=0.98)
+        fig = plt.figure(figsize=(11, 7), facecolor='w')
+
+        ax_top_map = fig.add_subplot(grid[0:3, 7])
+        ax_top_map.set_axis_off()
+        ax_top_map.plot([0.001, 0.002], color='wheat')
+        ax_top_map.set_xlim(-26.2, 26.2)
+        ax_top_map.set_ylim(-26.2, 26.2)
+        circle1 = plt.Circle((0, 0), 20, color='wheat', linewidth=2.5)  # , fill=False)
+        ax_top_map.add_artist(circle1)
+        ax_top_map.annotate("E", (21, -1), fontsize=10, color='black')
+        ax_top_map.annotate("W", (-26, -1), fontsize=10, color='black')
+        ax_top_map.annotate("N", (-1, 21), fontsize=10, color='black')
+        ax_top_map.annotate("S", (-1, -25.5), fontsize=10, color='black')
+        zx, zy = find_pos_by_name(skala_name)
+        ax_top_map.plot(zx, zy, marker='+', markersize=4,
+                        linestyle='None', color='k')
+
+        ax_top_label = fig.add_subplot(grid[0:3, 4:6])
+        ax_top_label.set_axis_off()
+        ax_top_label.set_xlim(-20, 20)
+        ax_top_label.set_ylim(-20, 20)
+        time_label = ax_top_label.annotate("timestamp", (-16, 0), fontsize=16, color='black')
+
+        ax_top_tile = fig.add_subplot(grid[0:3, 0:4])
+        ax_top_tile.cla()
+        ax_top_tile.plot([0.001, 0.002], color='w')
+        ax_top_tile.set_xlim(-20, 20)
+        ax_top_tile.set_ylim(-20, 20)
+        title = ax_top_tile.annotate("TILE: "+str(tile) + "    Antenna: " + str(skala_name), (-20, 0), fontsize=22, color='black')
+        ax_top_tile.set_axis_off()
+
+        ax_xpol = fig.add_subplot(grid[3:9, :])
+        ax_xpol.tick_params(axis='both', which='both', labelsize=10)
+        ax_xpol.set_ylim(0, 50)
+        ax_xpol.set_xlim(0, 512)
+        ax_xpol.set_xlabel("MHz", fontsize=12)
+        ax_xpol.set_ylabel("dB", fontsize=12)
+        if opts.xticks:
+            ax_xpol.set_xticks(np.arange(len(asse_x)))
+            ax_xpol.set_xticklabels(["%3.1f"%s for s in asse_x], fontsize=5, rotation=45)
+        else:
+            ax_xpol.set_xticks([x*64 for x in range(9)])
+            ax_xpol.set_xticklabels([x*50 for x in range(9)], fontsize=10)
+        ax_xpol.grid()
+        xl, = ax_xpol.plot(range(512), range(512), color='b')
+
+        ax_ypol = fig.add_subplot(grid[10:, :])
+        ax_ypol.tick_params(axis='both', which='both', labelsize=10)
+        ax_ypol.set_ylim(0, 50)
+        ax_ypol.set_xlim(0, 512)
+        ax_ypol.set_xlabel("MHz", fontsize=12)
+        ax_ypol.set_ylabel("dB", fontsize=12)
+        if opts.xticks:
+            ax_ypol.set_xticks(np.arange(len(asse_x)))
+            ax_ypol.set_xticklabels(["%3.1f"%s for s in asse_x], fontsize=5, rotation=45)
+        else:
+            ax_ypol.set_xticks([x*64 for x in range(9)])
+            ax_ypol.set_xticklabels([x*50 for x in range(9)], fontsize=10)
+        ax_ypol.grid()
+        yl, = ax_ypol.plot(range(512), range(512), color='g')
+
+        da = tstamp_to_fname(t_start)[:-6]
+        date_path = da[:4] + "-" + da[4:6] + "-" + da[6:]
+
+        tile = find_ant_by_name(opts.antenna)[0]
+        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
+        t_cnt_x = 0
+        t_cnt_y = 0
+        orari = []
+        t_stamps = []
+        for cnt_l, l in enumerate(lista):
+            if cnt_l < len(lista) - 1:
+                t_file = fname_to_tstamp(lista[cnt_l + 1][-21:-7])
+                if t_file < t_start:
+                    continue
+            dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile - 1))
+            if dic:
+                data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
+                                                          n_samples=dic['n_blocks'])
+                cnt = 0
+                if timestamps[0] > t_stop:
+                    break
+                if not t_start >= timestamps[-1]:
+                    if not t_stop <= timestamps[0]:
+                        for i, t in enumerate(timestamps):
+                            if t_start <= t[0] <= t_stop:
+                                # POL-X
+                                for sb_in in antenne:
+                                    spettro = np.array(data[:, sb_in, 0, i])
+                                if (not np.sum(spettro[120:150]) == 0) and \
+                                        (not np.sum(spettro[300:350]) == 0):
+                                    with np.errstate(divide='ignore'):
+                                        spettro = 10 * np.log10(spettro)
+                                        ax_xpol.plot(spettro)
+                                # POL-Y
+                                for sb_in in antenne:
+                                    spettro = np.array(data[:, sb_in, 1, i])
+                                if (not np.sum(spettro[120:150]) == 0) and \
+                                        (not np.sum(spettro[300:350]) == 0):
+                                    with np.errstate(divide='ignore'):
+                                        ax_ypol.plot(spettro)
+                                msg = "\rProcessing " + ts_to_datestring(t[0])
+                                sys.stdout.write(ERASE_LINE + msg)
+                                sys.stdout.flush()
+
+            msg = "\r[%d/%d] File: %s" % (cnt_l + 1, len(lista), l.split("/")[-1]) + "   " + ts_to_datestring(
+                timestamps[0][0]) + "   " + ts_to_datestring(timestamps[-1][0])
+            sys.stdout.write(ERASE_LINE + msg)
+            sys.stdout.flush()
+
+        plt.savefig(OPLOT_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d.png"
+                    %(int(tile), int(skala_name), int(tile), int(skala_name)))
+
     print
 
 
