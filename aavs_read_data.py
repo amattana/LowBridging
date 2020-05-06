@@ -214,7 +214,7 @@ if __name__ == "__main__":
             antenne = range(16)
         else:
             antenne = [remap[opts.input - 1]]
-    print "Tile Inputs: ", (np.array(antenne) + 1).tolist(), "\n"
+    #print "Tile Inputs: ", (np.array(antenne) + 1).tolist(), "\n"
 
     plot_mode = 0
     if opts.single:
