@@ -41,6 +41,8 @@ if __name__ == "__main__":
                       default="", help="Stop time for filter (YYYY-mm-DD_HH:MM:SS)")
     parser.add_option("--tile", action="store", dest="tile", type=str,
                       default="all", help="Comma separated Tile Numbers (default: all)")
+    parser.add_option("--xticks", action="store_true", dest="xticks",
+                      default=False, help="Maximize X axis ticks")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -128,14 +130,18 @@ if __name__ == "__main__":
                 delta_h = (t_stop - t_start) / 3600
                 x = np.array(range(t_stop - t_start)) + t_start
 
-            xticks = np.array(range(delta_h)) * 3600 + t_start
-            xticklabels = [f if f != 0 else datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(t_start) + datetime.timedelta(n/24), "%m-%d") for n, f in enumerate((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) % 24)]
+            if not opts.xticks:
+                xticks = np.array(range(delta_h)) * 3600 + t_start
+                xticklabels = [f if f != 0 else datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(t_start) + datetime.timedelta(n/24), "%m-%d") for n, f in enumerate((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) % 24)]
 
-            div = np.array([1, 2, 3, 4, 6, 8, 12, 24])
-            decimation = div[closest(div, len(xticks)/24)]
-            #print decimation, len(xticks)
-            xticks = xticks[::decimation]
-            xticklabels = xticklabels[::decimation]
+                div = np.array([1, 2, 3, 4, 6, 8, 12, 24])
+                decimation = div[closest(div, len(xticks)/24)]
+                #print decimation, len(xticks)
+                xticks = xticks[::decimation]
+                xticklabels = xticklabels[::decimation]
+            else:
+                xticks = tempi
+                xticklabels = [ts_to_datestring(e, "%H:%M:%S") for e in tempi]
 
             ax = []
             ax2 = []
