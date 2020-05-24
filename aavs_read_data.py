@@ -1,3 +1,6 @@
+import matplotlib
+# if 'matplotlib.backends' not in sys.modules:
+matplotlib.use('agg') # not to use X11
 from pydaq.persisters import ChannelFormatFileManager, FileDAQModes
 import sys, os, glob
 #import matplotlib
