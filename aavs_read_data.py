@@ -1021,9 +1021,9 @@ if __name__ == "__main__":
             if opts.temp:
                 ax_weather.set_ylabel('Temperature (C)', color='r')
                 #ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
-                ax_weather.set_ylim(70, 15)
-                ax_weather.set_yticks(np.arange(15, 70, 5))
-                ax_weather.set_yticklabels(np.arange(15, 70, 5), color='r')
+                ax_weather.set_ylim(70, 10)
+                ax_weather.set_yticks(np.arange(10, 70, 5))
+                ax_weather.set_yticklabels(np.arange(10, 70, 5), color='r')
                 ax_weather.plot(w_time, w_temp, color='r', lw=1.5, label='External Temp')
 
                 if opts.sbtemp:
