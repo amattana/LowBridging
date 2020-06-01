@@ -119,6 +119,8 @@ if __name__ == "__main__":
                       default=False, help="Maximize X axis ticks")
     parser.add_option("--yticks", action="store_true", dest="yticks",
                       default=False, help="Maximize Y axis ticks")
+    parser.add_option("--rangetemp", action="store", dest="rangetemp",
+                      default="10,70", help="min,max temperature range")
     (opts, args) = parser.parse_args(argv[1:])
 
     t_date = None
@@ -126,6 +128,8 @@ if __name__ == "__main__":
     t_stop = None
     #assex = np.linspace(0, 400, 512)
     asse_x = np.arange(512) * 400/512.
+    range_temp_min = int(opts.rangetem.split()[0])
+    range_temp_max = int(opts.rangetem.split()[1])
     print
 
     if opts.date:
@@ -765,9 +769,9 @@ if __name__ == "__main__":
                     ax_weather = ax_water.twinx()
                     ax_weather.plot(z_temp, color='r', lw=1.2)
                     ax_weather.set_ylabel('Temperature (C)', color='r')
-                    ax_weather.set_ylim(15, 45)
-                    ax_weather.set_yticks(np.arange(15, 50, 5))
-                    ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
+                    ax_weather.set_ylim(range_temp_min, range_temp_max)
+                    ax_weather.set_yticks(np.arange(range_temp_min, range_temp_max+5, 5))
+                    ax_weather.set_yticklabels(np.arange(range_temp_min, range_temp_max+5, 5), color='r')
                     ax_weather.tick_params(axis='y', labelcolor='r')
                     ax_weather.spines["right"].set_position(("axes", 1.))
 
@@ -805,9 +809,9 @@ if __name__ == "__main__":
                     #ax_weather.plot(t_stamps[:len(z_temp)], z_temp, color='r')
                     ax_weather.set_ylabel('Temperature (C)', color='r')
                     ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
-                    ax_weather.set_ylim(15, 45)
-                    ax_weather.set_yticks(np.arange(15, 50, 5))
-                    ax_weather.set_yticklabels(np.arange(15, 50, 5), color='r')
+                    ax_weather.set_ylim(range_temp_min, range_temp_max)
+                    ax_weather.set_yticks(np.arange(range_temp_min, range_temp_max+5, 5))
+                    ax_weather.set_yticklabels(np.arange(range_temp_min, range_temp_max+5, 5), color='r')
                     ax_weather.grid()
                     x_tick = []
                     y_wdir = []
@@ -1023,9 +1027,9 @@ if __name__ == "__main__":
             if opts.temp:
                 ax_weather.set_ylabel('Temperature (C)', color='r')
                 #ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
-                ax_weather.set_ylim(70, 10)
-                ax_weather.set_yticks(np.arange(10, 70, 5))
-                ax_weather.set_yticklabels(np.arange(10, 70, 5), color='r')
+                ax_weather.set_ylim(range_temp_max, range_temp_min)
+                ax_weather.set_yticks(np.arange(range_temp_min, range_temp_max, 5))
+                ax_weather.set_yticklabels(np.arange(range_temp_min, range_temp_max, 5), color='r')
                 ax_weather.plot(w_time, w_temp, color='r', lw=1.5, label='External Temp')
 
                 if opts.sbtemp:
