@@ -1327,7 +1327,7 @@ if __name__ == "__main__":
                 OPLOT_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name))):
             os.makedirs(OPLOT_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d" % (int(tile), int(skala_name)))
 
-        grid = GridSpec(15, 8, hspace=0.8, wspace=0.4, left=0.08, right=0.98, bottom=0.1, top=0.98)
+        grid = GridSpec(15, 8, hspace=1, wspace=0.4, left=0.08, right=0.98, bottom=0.1, top=0.98)
         fig = plt.figure(figsize=(11, 7), facecolor='w')
 
         ax_top_map = fig.add_subplot(grid[0:3, 7])
@@ -1349,7 +1349,7 @@ if __name__ == "__main__":
         ax_top_label.set_axis_off()
         ax_top_label.set_xlim(-20, 20)
         ax_top_label.set_ylim(-20, 20)
-        time_label = ax_top_label.annotate("from " + opts.start + " to " + opts.stop, (-16, 0), fontsize=9, color='black')
+        time_label = ax_top_label.annotate("from " + opts.start + " to " + opts.stop, (-18, 0), fontsize=10, color='black')
 
         ax_top_tile = fig.add_subplot(grid[0:3, 0:4])
         ax_top_tile.cla()
