@@ -722,6 +722,8 @@ if __name__ == "__main__":
             ystep = 20
         elif int(band.split("-")[1]) > 200:
             ystep = 25
+        if opts.yticks:
+            ystep = 1
         BW = int(band.split("-")[1]) - int(band.split("-")[0])
         ytic = np.array(range(( BW / ystep) + 1 )) * ystep * (len(np.rot90(dayspgramma)) / float(BW))
         ax_water.set_yticks(len(np.rot90(dayspgramma)) - ytic)
