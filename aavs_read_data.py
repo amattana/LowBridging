@@ -1360,7 +1360,7 @@ if __name__ == "__main__":
         ax_top_tile.set_axis_off()
 
         ax_xpol = fig.add_subplot(grid[3:9, :])
-        ax_xpol.tick_params(axis='both', which='both', labelsize=10)
+        ax_xpol.tick_params(axis='both', which='both', labelsize=8)
         ax_xpol.set_ylim(0, 50)
         ax_xpol.set_xlim(0, 512)
         ax_xpol.set_xlabel("MHz", fontsize=10)
@@ -1370,12 +1370,12 @@ if __name__ == "__main__":
             ax_xpol.set_xticklabels(["%3.1f"%s for s in asse_x], fontsize=3, rotation=90)
         else:
             ax_xpol.set_xticks([x*64 for x in range(9)])
-            ax_xpol.set_xticklabels([x*50 for x in range(9)], fontsize=10)
+            ax_xpol.set_xticklabels([x*50 for x in range(9)], fontsize=8)
         ax_xpol.grid()
         xl, = ax_xpol.plot(range(512), range(512), color='w')
 
         ax_ypol = fig.add_subplot(grid[10:, :])
-        ax_ypol.tick_params(axis='both', which='both', labelsize=10)
+        ax_ypol.tick_params(axis='both', which='both', labelsize=8)
         ax_ypol.set_ylim(0, 50)
         ax_ypol.set_xlim(0, 512)
         ax_ypol.set_xlabel("MHz", fontsize=10)
@@ -1385,7 +1385,7 @@ if __name__ == "__main__":
             ax_ypol.set_xticklabels(["%3.1f"%s for s in asse_x], fontsize=3, rotation=90)
         else:
             ax_ypol.set_xticks([x*64 for x in range(9)])
-            ax_ypol.set_xticklabels([x*50 for x in range(9)], fontsize=10)
+            ax_ypol.set_xticklabels([x*50 for x in range(9)], fontsize=8)
         ax_ypol.grid()
         yl, = ax_ypol.plot(range(512), range(512), color='w')
 
