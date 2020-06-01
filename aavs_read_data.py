@@ -1225,8 +1225,11 @@ if __name__ == "__main__":
         ax.set_ylim(0, 50)
         ax.set_yticks(range(0, 55, 5))
         ax.grid()
-        ax.set_xlim(0, 400)
-        ax.set_xticks(range(0, 450, 50))
+        if opts.xticks:
+            ax.set_xticks(range(0, 450, 1))
+        else:
+            ax.set_xticks(range(0, 450, 50))
+        ax.set_xlim(int(opts.startfreq), int(opts.stopfreq))
         ax.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
                                   loc="lower center", fontsize='small', markerscale=8)
 
