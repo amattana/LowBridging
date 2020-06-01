@@ -1227,7 +1227,8 @@ if __name__ == "__main__":
         ax.grid()
         if opts.xticks:
             ax.set_xticks(asse_x)
-            ax.set_xticklabels(asse_x, rotation=90, fontsize=5)
+            lab = ["%3.1f"%j for j in asse_x]
+            ax.set_xticklabels(lab, rotation=90, fontsize=6)
         else:
             ax.set_xticks(range(0, 450, 50))
         ax.set_xlim(int(opts.startfreq), int(opts.stopfreq))
@@ -1270,7 +1271,8 @@ if __name__ == "__main__":
         ax.grid()
         if opts.xticks:
             ax.set_xticks(asse_x)
-            ax.set_xticklabels(asse_x, rotation=90, fontsize=5)
+            lab = ["%3.1f"%j for j in asse_x]
+            ax.set_xticklabels(lab, rotation=90, fontsize=6)
         else:
             ax.set_xticks(range(0, 450, 50))
         ax.set_xlim(int(opts.startfreq), int(opts.stopfreq))
