@@ -128,8 +128,8 @@ if __name__ == "__main__":
     t_stop = None
     #assex = np.linspace(0, 400, 512)
     asse_x = np.arange(512) * 400/512.
-    range_temp_min = int(opts.rangetem.split()[0])
-    range_temp_max = int(opts.rangetem.split()[1])
+    range_temp_min = int(opts.rangetemp.split()[0])
+    range_temp_max = int(opts.rangetemp.split()[1])
     print
 
     if opts.date:
