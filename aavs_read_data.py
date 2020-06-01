@@ -1349,7 +1349,7 @@ if __name__ == "__main__":
         ax_top_label.set_axis_off()
         ax_top_label.set_xlim(-20, 20)
         ax_top_label.set_ylim(-20, 20)
-        time_label = ax_top_label.annotate("from " + opts.start + " to " + opts.stop, (-16, 0), fontsize=16, color='black')
+        time_label = ax_top_label.annotate("from " + opts.start + " to " + opts.stop, (-16, 0), fontsize=9, color='black')
 
         ax_top_tile = fig.add_subplot(grid[0:3, 0:4])
         ax_top_tile.cla()
@@ -1439,8 +1439,10 @@ if __name__ == "__main__":
             sys.stdout.write(ERASE_LINE + msg)
             sys.stdout.flush()
 
-        ax_xpol.set_xlim(float(opts.startfreq), float(opts.stopfreq))
-        ax_ypol.set_xlim(float(opts.startfreq), float(opts.stopfreq))
+        xmin = closest(asse_x, int(opts.startfreq))
+        xmax = closest(asse_x, int(opts.stopfreq))
+        ax_xpol.set_xlim(xmin, xmax)
+        ax_ypol.set_xlim(xmin, xmax)
         fname = OPLOT_PATH + "/" + station_name + "/" + date_path + \
                 "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d.png"%(int(tile), int(skala_name), int(tile), int(skala_name))
 
