@@ -1226,8 +1226,8 @@ if __name__ == "__main__":
         ax.set_yticks(range(0, 55, 5))
         ax.grid()
         if opts.xticks:
-            ax.set_xticks(range(0, 450, 1))
-            ax.set_xticklabels(range(0, 450, 1), rotation=45, fontsize='small')
+            ax.set_xticks(asse_x)
+            ax.set_xticklabels(asse_x, rotation=45, fontsize='small')
         else:
             ax.set_xticks(range(0, 450, 50))
         ax.set_xlim(int(opts.startfreq), int(opts.stopfreq))
@@ -1269,8 +1269,8 @@ if __name__ == "__main__":
         ax.set_yticks(range(0, 55, 5))
         ax.grid()
         if opts.xticks:
-            ax.set_xticks(range(0, 450, 1))
-            ax.set_xticklabels(range(0, 450, 1), rotation=45, fontsize='small')
+            ax.set_xticks(asse_x)
+            ax.set_xticklabels(asse_x, rotation=45, fontsize='small')
         else:
             ax.set_xticks(range(0, 450, 50))
         ax.set_xlim(int(opts.startfreq), int(opts.stopfreq))
