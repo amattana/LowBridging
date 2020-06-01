@@ -1349,7 +1349,7 @@ if __name__ == "__main__":
         ax_top_label.set_axis_off()
         ax_top_label.set_xlim(-20, 20)
         ax_top_label.set_ylim(-20, 20)
-        time_label = ax_top_label.annotate("from " + opts.start + " to " + opts.stop, (-18, 0), fontsize=10, color='black')
+        time_label = ax_top_label.annotate("from " + opts.start + " to " + opts.stop, (-20, 0), fontsize=10, color='black')
 
         ax_top_tile = fig.add_subplot(grid[0:3, 0:4])
         ax_top_tile.cla()
