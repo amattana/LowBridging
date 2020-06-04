@@ -121,6 +121,9 @@ if __name__ == "__main__":
                       default=False, help="Maximize Y axis ticks")
     parser.add_option("--rangetemp", action="store", dest="rangetemp",
                       default="10,70", help="min,max temperature range")
+    parser.add_option("--test", action="store_true", dest="test",
+                      default=False, help="Test arguments and exit")
+
     (opts, args) = parser.parse_args(argv[1:])
 
     t_date = None
@@ -260,6 +263,9 @@ if __name__ == "__main__":
         else:
             print "Missing antenna argument"
             exit(1)
+
+    if opts.test:
+        exit()
 
     if plot_mode == 0:
         outer_grid = GridSpec(4, 4, hspace=0.4, wspace=0.4, left=0.04, right=0.98, bottom=0.04, top=0.96)
