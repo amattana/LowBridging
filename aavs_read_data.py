@@ -452,8 +452,9 @@ if __name__ == "__main__":
                                     tstamp_picture.set_text(ts_to_datestring(t[0]))
                                     orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
 
-                                    scp_fname = PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d/TILE-%02d_" %
-                                                (int(tile_names[en_tile]), int(tile_names[en_tile])) + orario + ".png"
+                                    scp_fname = PIC_PATH + "/" + station_name + "/" + date_path + \
+                                                "/TILE-%02d/TILE-%02d_" % (int(tile_names[en_tile]),
+                                                                           int(tile_names[en_tile])) + orario + ".png"
                                     plt.savefig(scp_fname)
                                     msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), int(tile_names[en_tile]),
                                                                               l.split("/")[-1]) + \
