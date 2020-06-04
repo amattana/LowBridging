@@ -257,10 +257,10 @@ if __name__ == "__main__":
         plt.savefig(scp_fname)
 
         if opts.scp:
-            sys.stdout.write("\nData transfer: scp -P %d %s %s:%s" % (opts.scp_port,
-                                                                      scp_fname,
-                                                                      opts.scp_server,
-                                                                      opts.scp_dir))
+            sys.stdout.write("\nData transfer: scp -P %d %s %s:%s\n" % (opts.scp_port,
+                                                                        scp_fname,
+                                                                        opts.scp_server,
+                                                                        opts.scp_dir))
             sys.stdout.flush()
             os.system("scp -P %d %s %s:%s" % (opts.scp_port,
                                               scp_fname,
