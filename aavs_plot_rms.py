@@ -226,7 +226,6 @@ if __name__ == "__main__":
             ax_wind.spines["right"].set_position(("axes", 1.06))
             print "Added Wind trace"
 
-
             # Draw wind direction
             for a in range(len(w_wdir)):
                 if not a % (len(w_wdir)/48):
@@ -252,9 +251,9 @@ if __name__ == "__main__":
                   bbox_to_anchor=(-0.02, -0.2), loc='lower left', fontsize='small')
         #plt.show()
 
-        scp_fname = RMS_DIR + opts.station.upper() + "_" + \
-                    opts.start.replace(":", "") + "_" + \
-                    opts.stop.replace(":", "") + ".png"
+        scp_fname = RMS_DIR + opts.station.upper() + "_RMS_" + \
+                    opts.start.replace(":", "").replace("_", "-") + "_" + \
+                    opts.stop.replace(":", "").replace("_", "-") + ".png"
         plt.savefig(scp_fname)
 
         if opts.scp:
