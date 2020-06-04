@@ -141,6 +141,7 @@ if __name__ == "__main__":
             print "\nNo weather data available\n"
 
     #plt.ion()
+    plt.ioff()
     if opts.scp:
         print "Enabled Data Transfer: " + opts.scp_server + ":" + str(opts.scp_port) + " dest: " + opts.scp_dir
 
@@ -207,12 +208,15 @@ if __name__ == "__main__":
         ax.set_title("ADC RMS     Start Time: %s      End Time: %s" % (ts_to_datestring(x[0]), ts_to_datestring(x[-1])))
 
         if len(w_data):
+            print "Plotting weather..."
             ax_weather = ax.twinx()
             ax_weather.set_ylabel('Temperature (C)', color='r')
             #ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
             ax_weather.set_ylim(50, 10)
             ax_weather.set_yticks(np.arange(10, 50, 5))
             ax_weather.set_yticklabels(np.arange(10, 50, 5), color='r')
+            ax_weather.plot(w_time, w_temp, color='r', lw=1.5)
+            print "Added Temperature trace"
 
             ax_wind = ax.twinx()
             ax_wind.plot(w_time, w_wind, color='orange', lw=1.5)
@@ -220,14 +224,8 @@ if __name__ == "__main__":
             ax_wind.set_ylabel('Wind (Km/h)', color='orange')
             ax_wind.tick_params(axis='y', labelcolor='orange')
             ax_wind.spines["right"].set_position(("axes", 1.06))
+            print "Added Wind trace"
 
-            ax_rain = ax.twinx()
-            ax_rain.plot(w_time, w_rain, color='purple', lw=1.5)
-            ax_rain.set_ylim(100, 0)
-            ax_rain.set_ylabel('Rain (mm)', color='purple')
-            ax_rain.tick_params(axis='y', labelcolor='purple')
-            ax_rain.spines["right"].set_position(("axes", 1.12))
-            ax_weather.plot(w_time, w_temp, color='r', lw=1.5)
 
             # Draw wind direction
             for a in range(len(w_wdir)):
@@ -239,6 +237,15 @@ if __name__ == "__main__":
                     m = MarkerStyle("_")
                     m._transform.rotate_deg(w_wdir[a])
                     ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=400, color='orchid')
+            print "Added Wind Direction trace"
+
+            ax_rain = ax.twinx()
+            ax_rain.plot(w_time, w_rain, color='purple', lw=1.5)
+            ax_rain.set_ylim(100, 0)
+            ax_rain.set_ylabel('Rain (mm)', color='purple')
+            ax_rain.tick_params(axis='y', labelcolor='purple')
+            ax_rain.spines["right"].set_position(("axes", 1.12))
+            print "Added Rain trace"
             fig.subplots_adjust(right=0.86)
 
         ax.legend(markerscale=8, fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,
