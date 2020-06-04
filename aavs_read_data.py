@@ -121,6 +121,14 @@ if __name__ == "__main__":
                       default=False, help="Maximize Y axis ticks")
     parser.add_option("--rangetemp", action="store", dest="rangetemp",
                       default="10,70", help="min,max temperature range")
+    parser.add_option("--scp_server", action="store", dest="scp_server",
+                      default="amattana@192.167.189.30", help="scp to a server (user@ip)")
+    parser.add_option("--scp_port", action="store", dest="scp_port", type=int,
+                      default=5122, help="scp port (default: 5122)")
+    parser.add_option("--scp_dir", action="store", dest="scp_dir",
+                      default="/home/amattana/scp/", help="scp path (/home/blablabla/)")
+    parser.add_option("--scp", action="store_true", dest="scp",
+                      default=False, help="scp output file")
     parser.add_option("--test", action="store_true", dest="test",
                       default=False, help="Test arguments and exit")
 
@@ -267,6 +275,7 @@ if __name__ == "__main__":
     if opts.test:
         exit()
 
+    # tile images for videos
     if plot_mode == 0:
         outer_grid = GridSpec(4, 4, hspace=0.4, wspace=0.4, left=0.04, right=0.98, bottom=0.04, top=0.96)
         gs = GridSpecFromSubplotSpec(int(np.ceil(np.sqrt(nplot))), int(np.ceil(np.sqrt(nplot))), wspace=0.4, hspace=0.6,
@@ -443,10 +452,9 @@ if __name__ == "__main__":
                                     tstamp_picture.set_text(ts_to_datestring(t[0]))
                                     orario = ts_to_datestring(t[0], formato="%Y-%m-%d_%H%M%S")
 
-                                    #plt.draw()
-                                    #plt.show()
-                                    plt.savefig(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d/TILE-%02d_" %
-                                                (int(tile_names[en_tile]), int(tile_names[en_tile])) + orario + ".png")
+                                    scp_fname = PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d/TILE-%02d_" %
+                                                (int(tile_names[en_tile]), int(tile_names[en_tile])) + orario + ".png"
+                                    plt.savefig(scp_fname)
                                     msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l+1, len(lista), int(tile_names[en_tile]),
                                                                               l.split("/")[-1]) + \
                                           " --> Writing " + "TILE-%02d_" % int(tile_names[en_tile]) + orario + ".png"
@@ -469,6 +477,7 @@ if __name__ == "__main__":
             sys.stdout.write(ERASE_LINE + msg)
             sys.stdout.flush()
 
+    # Single antenna plot images for videos
     elif plot_mode == 1:
 
         tile = tiles[0]
@@ -582,8 +591,9 @@ if __name__ == "__main__":
                                             spettro = 10 * np.log10(data[:, sb_in, 1, i])
                                         yl.set_ydata(spettro)
                                     time_label.set_text(ts_to_datestring(t[0]))
-                                    plt.savefig(PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d_" %
-                                                (int(tile), int(skala_name), int(tile), int(skala_name)) + orario + ".png")
+                                    scp_fname = PIC_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d_" %
+                                                (int(tile), int(skala_name), int(tile), int(skala_name)) + orario + ".png"
+                                    plt.savefig(scp_fname)
                                     msg = "\r[%d/%d] TILE-%02d   File: %s" % (cnt_l + 1, len(lista), int(tile),
                                                                               l.split("/")[-1]) + \
                                           " --> Writing " + "TILE-%02d_" % int(tile) + orario + ".png"
@@ -883,12 +893,12 @@ if __name__ == "__main__":
                 SPGR_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL)):
             os.makedirs(SPGR_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL))
 
-        fname = SPGR_PATH + "/" + station_name + \
+        scp_fname = SPGR_PATH + "/" + station_name + \
                 "/TILE-%02d_ANT-%03d/POL-%s/SPGR_"%(int(tile), int(opts.antenna), POL) + \
                 date_path + "_TILE-%02d_ANT-%03d_POL-%s.png"%(int(tile), int(opts.antenna), POL)
 
-        plt.savefig(fname)
-        sys.stdout.write(ERASE_LINE + "\nOutput File: " + fname + "\n")
+        plt.savefig(scp_fname)
+        sys.stdout.write(ERASE_LINE + "\nOutput File: " + scp_fname + "\n")
         sys.stdout.flush()
 
     # Channel POWER
@@ -1107,12 +1117,12 @@ if __name__ == "__main__":
             for n, q in enumerate(acc_power_y):
                 ft.write("%d\t%6.3f\n"%(t_stamps[n], q))
 
-        fname = POWER_PATH + "/" + station_name + \
+        scp_fname = POWER_PATH + "/" + station_name + \
                 "/TILE-%02d_ANT-%03d/pic/POWER_"%(int(tile), int(opts.antenna)) + \
                 date_path + "_TILE-%02d_ANT-%03d.png"%(int(tile), int(opts.antenna))
 
-        plt.savefig(fname)
-        sys.stdout.write(ERASE_LINE + "\nOutput File: " + fname + "\n")
+        plt.savefig(scp_fname)
+        sys.stdout.write(ERASE_LINE + "\nOutput File: " + scp_fname + "\n")
         sys.stdout.flush()
 
     # AVERAGE
@@ -1245,27 +1255,28 @@ if __name__ == "__main__":
         ax.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
                                   loc="lower center", fontsize='small', markerscale=8)
 
-        fname = "SPECTRUM_TILE-%02d_ANT-%03d_Pol-X_Start_%s_Stop_%s.png" % \
+        scp_fname = "SPECTRUM_TILE-%02d_ANT-%03d_Pol-X_Start_%s_Stop_%s.png" % \
                 (int(tile), int(opts.antenna), ts_to_datestring(t_start, formato="%Y-%m-%d_%H%M%S"),
                  ts_to_datestring(t_stop, formato="%Y-%m-%d_%H%M%S"))
-        plt.savefig(out_img_path + fname)
+        scp_fname = out_img_path + scp_fname
+        plt.savefig(scp_fname)
 
-        data_fname = out_data_path + fname[:-4] + "_maxhold.txt"
+        data_fname = scp_fname[:-4] + "_maxhold.txt"
         with open(data_fname, "w") as ft:
             for k in max_hold_x:
                 ft.write("%6.3f\n" % (k))
 
-        data_fname = out_data_path + fname[:-4] + "_minhold.txt"
+        data_fname = scp_fname[:-4] + "_minhold.txt"
         with open(data_fname, "w") as ft:
             for k in min_hold_x:
                 ft.write("%6.3f\n" % (k))
 
-        data_fname = out_data_path + fname[:-4] + "_average.txt"
+        data_fname = scp_fname[:-4] + "_average.txt"
         with open(data_fname, "w") as ft:
             for k in log_spectrum_x:
                 ft.write("%6.3f\n" % (k))
 
-        sys.stdout.write("\n\nAveraged Spectra X " + str(t_cnt_x) + ",  Averaged Spectra Y " + str(t_cnt_y) + "\nSaved file: " + fname)
+        sys.stdout.write("\n\nAveraged Spectra X " + str(t_cnt_x) + ",  Averaged Spectra Y " + str(t_cnt_y) + "\nSaved file: " + scp_fname)
         sys.stdout.flush()
 
         ax.cla()
@@ -1289,27 +1300,28 @@ if __name__ == "__main__":
         ax.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
                                   loc="lower center", fontsize='small', markerscale=8)
 
-        fname = "SPECTRUM_TILE-%02d_ANT-%03d_Pol-Y_Start_%s_Stop_%s.png" % \
+        scp_fname = "SPECTRUM_TILE-%02d_ANT-%03d_Pol-Y_Start_%s_Stop_%s.png" % \
                 (int(tile), int(opts.antenna), ts_to_datestring(t_start, formato="%Y-%m-%d_%H%M%S"),
                  ts_to_datestring(t_stop, formato="%Y-%m-%d_%H%M%S"))
-        plt.savefig(out_img_path + fname)
+        scp_fname = out_img_path + scp_fname
+        plt.savefig(scp_fname)
 
-        data_fname = out_data_path + fname[:-4] + "_maxhold.txt"
+        data_fname = scp_fname[:-4] + "_maxhold.txt"
         with open(data_fname, "w") as ft:
             for k in max_hold_y:
                 ft.write("%6.3f\n" % (k))
 
-        data_fname = out_data_path + fname[:-4] + "_minhold.txt"
+        data_fname = scp_fname[:-4] + "_minhold.txt"
         with open(data_fname, "w") as ft:
             for k in min_hold_y:
                 ft.write("%6.3f\n" % (k))
 
-        data_fname = out_data_path + fname[:-4] + "_average.txt"
+        data_fname = scp_fname[:-4] + "_average.txt"
         with open(data_fname, "w") as ft:
             for k in log_spectrum_y:
                 ft.write("%6.3f\n" % (k))
 
-        sys.stdout.write("\nSaved file: " + fname)
+        sys.stdout.write("\nSaved file: " + scp_fname)
         sys.stdout.flush()
 
     # OPLOT
@@ -1449,13 +1461,26 @@ if __name__ == "__main__":
         xmax = closest(asse_x, int(opts.stopfreq))
         ax_xpol.set_xlim(xmin, xmax)
         ax_ypol.set_xlim(xmin, xmax)
-        fname = OPLOT_PATH + "/" + station_name + "/" + date_path + \
+        scp_fname = OPLOT_PATH + "/" + station_name + "/" + date_path + \
                 "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d.png"%(int(tile), int(skala_name), int(tile), int(skala_name))
 
-        plt.savefig(fname)
-        print "\nSaved file: " + fname
+        plt.savefig(scp_fname)
+        print "\nSaved file: " + scp_fname
 
     print
+
+    if opts.scp:
+        sys.stdout.write("\nData transfer: scp -P %d %s %s:%s" % (opts.scp_port,
+                                                                  scp_fname,
+                                                                  opts.scp_server,
+                                                                  opts.scp_dir))
+        sys.stdout.flush()
+        os.system("scp -P %d %s %s:%s" % (opts.scp_port,
+                                          scp_fname,
+                                          opts.scp_server,
+                                          opts.scp_dir))
+        print
+
 
 
 
