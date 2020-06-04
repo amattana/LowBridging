@@ -2,6 +2,7 @@ import matplotlib
 matplotlib.use('agg') # not to use X11
 from matplotlib import pyplot as plt
 import os
+import sys
 import numpy as np
 from matplotlib.gridspec import GridSpec
 import datetime
@@ -139,7 +140,7 @@ if __name__ == "__main__":
         else:
             print "\nNo weather data available\n"
 
-    plt.ion()
+    #plt.ion()
     if opts.scp:
         print "Enabled Data Transfer: " + opts.scp_server + ":" + str(opts.scp_port) + " dest: " + opts.scp_dir
 
@@ -186,7 +187,7 @@ if __name__ == "__main__":
 
         for d in data_list:
             x, dati = read_data(path, d[0], d[1], d[2])
-            print "Found %d valid records for Tile-%02d Input #%02d Pol-%s\n" % (len(dati), d[0], d[1], d[2].upper())
+            print "Found %d valid records for Tile-%02d Input #%02d Pol-%s" % (len(dati), d[0], d[1], d[2].upper())
             ax.plot(x, dati, linestyle='None', marker=".", markersize=2,
                     label="Tile-%02d Input %02d Pol %s" % (d[0], d[1], d[2].upper()))
 
