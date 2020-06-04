@@ -273,7 +273,7 @@ if __name__ == "__main__":
             exit(1)
 
     if opts.scp:
-        print "Enabled Data Transfer: " + opts.scp_server + ":" + opts.scp_port + " dest: " + opts.scp_dir
+        print "Enabled Data Transfer: " + opts.scp_server + ":" + str(opts.scp_port) + " dest: " + opts.scp_dir
 
     if opts.test:
         exit()
