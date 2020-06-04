@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('agg') # not to use X11
 from matplotlib import pyplot as plt
 import os
 import numpy as np
@@ -9,6 +11,8 @@ from matplotlib.markers import MarkerStyle
 
 t_start = 0
 t_stop = 0
+
+RMS_DIR = "/storage/monitoring/rms/images/"
 
 
 def read_data(path, tile, channel, pol):
@@ -79,6 +83,16 @@ if __name__ == "__main__":
                       default=False, help="Maximize X axis ticks")
     parser.add_option("--yticks", action="store_true", dest="yticks",
                       default=False, help="Maximize Y axis ticks")
+    parser.add_option("--scp_server", action="store", dest="scp_server",
+                      default="amattana@192.167.189.30", help="scp to a server (user@ip)")
+    parser.add_option("--scp_port", action="store", dest="scp_port", type=int,
+                      default=5122, help="scp port (default: 5122)")
+    parser.add_option("--scp_dir", action="store", dest="scp_dir",
+                      default="/home/amattana/scp/", help="scp path (/home/blablabla/)")
+    parser.add_option("--scp", action="store_true", dest="scp",
+                      default=False, help="scp output file")
+    parser.add_option("--test", action="store_true", dest="test",
+                      default=False, help="Just test arguments and exit")
     (opts, args) = parser.parse_args(argv[1:])
 
     if opts.date:
@@ -126,6 +140,11 @@ if __name__ == "__main__":
             print "\nNo weather data available\n"
 
     plt.ion()
+    if opts.scp:
+        print "Enabled Data Transfer: " + opts.scp_server + ":" + str(opts.scp_port) + " dest: " + opts.scp_dir
+
+    if opts.test:
+        exit()
 
     if os.path.exists(opts.directory):
         path = opts.directory
@@ -223,7 +242,24 @@ if __name__ == "__main__":
 
         ax.legend(markerscale=8, fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,
                   bbox_to_anchor=(-0.02, -0.2), loc='lower left', fontsize='small')
-        plt.show()
+        #plt.show()
+
+        scp_fname = RMS_DIR + opts.station.upper() + "_" + \
+                    opts.start.replace(":", "") + "_" + \
+                    opts.stop.replace(":", "") + ".png"
+        plt.savefig(scp_fname)
+
+        if opts.scp:
+            sys.stdout.write("\nData transfer: scp -P %d %s %s:%s" % (opts.scp_port,
+                                                                      scp_fname,
+                                                                      opts.scp_server,
+                                                                      opts.scp_dir))
+            sys.stdout.flush()
+            os.system("scp -P %d %s %s:%s" % (opts.scp_port,
+                                              scp_fname,
+                                              opts.scp_server,
+                                              opts.scp_dir))
+            print
 
     else:
         print "\nThe given path does not exists! (%s)\n" % opts.directory
