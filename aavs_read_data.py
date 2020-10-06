@@ -1540,8 +1540,16 @@ if __name__ == "__main__":
                                         t_stamps += [t[0]]
                                         orari += [datetime.datetime.utcfromtimestamp(t[0])]
                                         with np.errstate(divide='ignore'):
-                                            station_rms_x[ants[sb_in + 16 * tile]] += [10 * np.log10(np.sum(spettro_x[:]))]
-                                            station_rms_y[ants[sb_in + 16 * tile]] += [10 * np.log10(np.sum(spettro_y[:]))]
+                                            pow = 10 * np.log10(np.sum(spettro_x[:]))
+                                            if pow == -np.inf:
+                                                station_rms_x[ants[sb_in + 16 * tile]] += [0]
+                                            else:
+                                                station_rms_x[ants[sb_in + 16 * tile]] += [pow]
+                                            pow = 10 * np.log10(np.sum(spettro_y[:]))
+                                            if pow == -np.inf:
+                                                station_rms_y[ants[sb_in + 16 * tile]] += [0]
+                                            else:
+                                                station_rms_y[ants[sb_in + 16 * tile]] += [pow]
                                     #msg = "\rProcessing Tile " + str(tile + 1) + " " + ts_to_datestring(t[0])
                                     #sys.stdout.write(ERASE_LINE + msg)
                                     #sys.stdout.flush()
