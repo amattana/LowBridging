@@ -101,6 +101,8 @@ if __name__ == "__main__":
                       default="x", help="Polarization [x (default)| y]")
     parser.add_option("--power", action="store_true", dest="power",
                       default=False, help="Total Power of channels")
+    parser.add_option("--rms", action="store_true", dest="rms",
+                      default=False, help="RMS Station Map")
     parser.add_option("--equalize", action="store_true", dest="eq",
                       default=False, help="Equalize antennas power")
     parser.add_option("--noline", action="store_true", dest="noline",
@@ -271,6 +273,9 @@ if __name__ == "__main__":
         else:
             print "Missing antenna argument"
             exit(1)
+
+    if opts.rms:
+        plot_mode = 6
 
     if opts.scp:
         print "Enabled Data Transfer: " + opts.scp_server + ":" + str(opts.scp_port) + " dest: " + opts.scp_dir
@@ -1473,6 +1478,78 @@ if __name__ == "__main__":
 
         plt.savefig(scp_fname)
         print "\nSaved file: " + scp_fname
+
+    # RMS MAP
+    elif plot_mode == 6:
+
+        antenne = range(16)
+        da = tstamp_to_fname(t_start)[:-6]
+        date_path = da[:4] + "-" + da[4:6] + "-" + da[6:]
+
+        gs = GridSpec(1, 2, left=0.06, bottom=0.1, top=0.95)
+        fig = plt.figure(figsize=(14, 9), facecolor='w')
+
+        ax_polx = fig.add_subplot(gs[0, 0])
+        ax_poly = fig.add_subplot(gs[0, 1])
+        if "all" in opts.date.lower():
+            delta = (dt_to_timestamp(datetime.datetime.utcnow().date() + datetime.timedelta(1)) -
+                     dt_to_timestamp(datetime.datetime(2020, 03, 01)))
+            delta_h = delta / 3600
+            x = np.array(range(delta)) + t_start
+        else:
+            delta_h = (t_stop - t_start) / 3600
+            x = np.array(range(t_stop - t_start)) + t_start
+
+        spettro_x = []
+        spettro_y = []
+        station_rms_x = {}
+        station_rms_y = {}
+        station_tiles_tstamp = {}
+
+        for tile in range(16):
+            station_tiles_tstamp['TILE-%02d'%(tile+1)] = []
+            for sb_in in range(16):
+                station_rms_x[ants[sb_in + 16 * tile]] = []
+                station_rms_y[ants[sb_in + 16 * tile]] = []
+            lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile)))
+            t_cnt = 0
+            orari = []
+            t_stamps = []
+            tile_rms_x = []
+            tile_rms_y = []
+            for cnt_l, l in enumerate(lista):
+                if cnt_l < len(lista) - 1:
+                    t_file = fname_to_tstamp(lista[cnt_l + 1][-21:-7])
+                    if t_file < t_start:
+                        continue
+                dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile))
+                if dic:
+                    data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile,
+                                                              n_samples=dic['n_blocks'])
+                    cnt = 0
+                    if timestamps[0] > t_stop:
+                        break
+                    if not t_start >= timestamps[-1]:
+                        if not t_stop <= timestamps[0]:
+                            for i, t in enumerate(timestamps):
+                                if t_start <= t[0] <= t_stop:
+                                    station_tiles_tstamp['TILE-%02d'%(tile+1)] += [t[0]]
+                                    for sb_in in antenne:
+                                        spettro_x = data[:, sb_in, 0, i]
+                                        spettro_y = data[:, sb_in, 1, i]
+                                        t_stamps += [t[0]]
+                                        orari += [datetime.datetime.utcfromtimestamp(t[0])]
+                                        with np.errstate(divide='ignore'):
+                                            station_rms_x[ants[sb_in + 16 * tile]] += [10 * np.log10(np.sum(spettro_x[:]))]
+                                            station_rms_y[ants[sb_in + 16 * tile]] += [10 * np.log10(np.sum(spettro_y[:]))]
+                                    #msg = "\rProcessing Tile " + str(tile + 1) + " " + ts_to_datestring(t[0])
+                                    #sys.stdout.write(ERASE_LINE + msg)
+                                    #sys.stdout.flush()
+
+                msg = "\r[%d/%d] File: %s" % (cnt_l + 1, len(lista), l.split("/")[-1]) + "   " + \
+                      ts_to_datestring(timestamps[0][0]) + "   " + ts_to_datestring(timestamps[-1][0])
+                sys.stdout.write(ERASE_LINE + msg)
+                sys.stdout.flush()
 
     print
 
