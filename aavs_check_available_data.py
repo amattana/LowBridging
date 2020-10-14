@@ -154,6 +154,7 @@ if __name__ == "__main__":
                 ts_to_datestring(fname_to_tstamp(l[-21:-7])), "\t", ": no metadata available"
     if t_cnt:
         print "\nFound %d measurements\n" % t_cnt
+    print
 
 
 
