@@ -134,7 +134,7 @@ if __name__ == "__main__":
             data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=int(opts.tile)-1,
                                                       n_samples=dic['n_blocks'])
             if not t_start and not t_stop:
-                print l[-21:-7], "\t", timestamps[0][0], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
+                print l[-21:-7], "\t", int(timestamps[0][0]), "\t", ts_to_datestring(timestamps[0][0]), "\t", \
                     ts_to_datestring(timestamps[-1][0]), "\t%6s"%(str(os.path.getsize(l)/1000000)), "\t\t", "%6s"%(str(dic['n_blocks']))
             else:
                 if timestamps[0] > t_stop:
@@ -147,7 +147,7 @@ if __name__ == "__main__":
                                 cnt = cnt + 1
                                 t_cnt = t_cnt + 1
                 if cnt:
-                    print l[-21:-7], "\t", timestamps[0][0], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
+                    print l[-21:-7], "\t", int(timestamps[0][0]), "\t", ts_to_datestring(timestamps[0][0]), "\t", \
                         ts_to_datestring(timestamps[-1][0]), "\t%6s\t"%(str(os.path.getsize(l)/1000000)), "\t", "%6s"%(str(cnt))
         else:
             print l[-21:-7], "\t", fname_to_tstamp(l[-21:-7]), "\t", \
