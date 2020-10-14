@@ -10,6 +10,7 @@ import time
 import glob
 import datetime
 from aavs_utils import ts_to_datestring, tstamp_to_fname, dt_to_timestamp, fname_to_tstamp
+import os
 
 
 def _connect_station(aavs_station):
@@ -132,7 +133,7 @@ if __name__ == "__main__":
                                                       n_samples=dic['n_blocks'])
             if not t_start and not t_stop:
                 print l[-21:-7], "\t", timestamps[0][0], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
-                    ts_to_datestring(timestamps[-1][0]), "\t", dic['n_blocks']
+                    ts_to_datestring(timestamps[-1][0]), "\t%dMB"%(os.path.get_size(l)/1000000), "\t", dic['n_blocks']
             else:
                 if timestamps[0] > t_stop:
                     break
@@ -145,7 +146,7 @@ if __name__ == "__main__":
                                 t_cnt = t_cnt + 1
                 if cnt:
                     print l[-21:-7], "\t", timestamps[0][0], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
-                        ts_to_datestring(timestamps[-1][0]), "\t", cnt
+                        ts_to_datestring(timestamps[-1][0]), "\t%dMB"%(os.path.get_size(l)/1000000), "\t", cnt
         else:
             print l[-21:-7], "\t", fname_to_tstamp(l[-21:-7]), "\t", \
                 ts_to_datestring(fname_to_tstamp(l[-21:-7])), "\t", ": no metadata available"
