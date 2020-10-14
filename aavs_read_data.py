@@ -581,7 +581,7 @@ if __name__ == "__main__":
                 dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile - 1))
                 if dic:
                     data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
-                                                              n_samples=dic['n_blocks'])
+                                                              n_samples=200000)
                     cnt = 0
                     if timestamps[0] > t_stop:
                         break
@@ -688,7 +688,7 @@ if __name__ == "__main__":
             dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile - 1))
             if dic:
                 data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
-                                                          n_samples=dic['n_blocks'])
+                                                          n_samples=200000)
                 cnt = 0
                 if timestamps[0] > t_stop:
                     break
@@ -987,7 +987,7 @@ if __name__ == "__main__":
             dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile - 1))
             if dic:
                 data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
-                                                          n_samples=dic['n_blocks'])
+                                                          n_samples=200000)
                 cnt = 0
                 if timestamps[0] > t_stop:
                     break
@@ -1166,7 +1166,7 @@ if __name__ == "__main__":
             dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile - 1))
             if dic:
                 data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
-                                                          n_samples=dic['n_blocks'])
+                                                          n_samples=200000)
                 cnt = 0
                 if timestamps[0] > t_stop:
                     break
@@ -1438,7 +1438,7 @@ if __name__ == "__main__":
             dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile - 1))
             if dic:
                 data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile - 1,
-                                                          n_samples=dic['n_blocks'])
+                                                          n_samples=200000)
                 cnt = 0
                 if timestamps[0] > t_stop:
                     break
@@ -1527,7 +1527,7 @@ if __name__ == "__main__":
                 dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile))
                 if dic:
                     data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile,
-                                                              n_samples=dic['n_blocks'])
+                                                              n_samples=200000)
                     cnt = 0
                     if timestamps[0] > t_stop:
                         break
