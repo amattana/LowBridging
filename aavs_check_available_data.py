@@ -134,6 +134,8 @@ if __name__ == "__main__":
                 print l[-21:-7], "\t", timestamps[0][0], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
                     ts_to_datestring(timestamps[-1][0]), "\t", dic['n_blocks']
             else:
+                if timestamps[0] > t_stop:
+                    break
                 cnt = 0
                 if not t_start >= timestamps[-1]:
                     if not t_stop <= timestamps[0]:
@@ -141,8 +143,9 @@ if __name__ == "__main__":
                             if t_start <= t[0] <= t_stop:
                                 cnt = cnt + 1
                                 t_cnt = t_cnt + 1
-                print l[-21:-7], "\t", timestamps[0][0], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
-                    ts_to_datestring(timestamps[-1][0]), "\t", cnt
+                if cont:
+                    print l[-21:-7], "\t", timestamps[0][0], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
+                        ts_to_datestring(timestamps[-1][0]), "\t", cnt
         else:
             print l[-21:-7], "\t", fname_to_tstamp(l[-21:-7]), "\t", \
                 ts_to_datestring(fname_to_tstamp(l[-21:-7])), "\t", ": no metadata available"
