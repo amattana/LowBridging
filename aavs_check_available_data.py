@@ -125,6 +125,8 @@ if __name__ == "__main__":
     print "Checking directory: ", opts.directory+station_name.lower() + "\n"
     file_manager = ChannelFormatFileManager(root_path=opts.directory+station_name.lower(),
                                             daq_mode=FileDAQModes.Integrated)
+    print "FILE\t\tSTART\t\tSTOP\t\tSIZE\tBLOCKS"
+    print "-------------+------------------+------------------+------------+-----------"
     lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (int(opts.tile)-1)))
     for l in lista:
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
