@@ -143,7 +143,7 @@ if __name__ == "__main__":
                             if t_start <= t[0] <= t_stop:
                                 cnt = cnt + 1
                                 t_cnt = t_cnt + 1
-                if cont:
+                if cnt:
                     print l[-21:-7], "\t", timestamps[0][0], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
                         ts_to_datestring(timestamps[-1][0]), "\t", cnt
         else:
