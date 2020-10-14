@@ -105,11 +105,13 @@ if __name__ == "__main__":
         if opts.start:
             try:
                 t_start = dt_to_timestamp(datetime.datetime.strptime(opts.start, "%Y-%m-%d_%H:%M:%S"))
+                print "Start Time:  " + ts_to_datestring(t_start)
             except:
                 print "Bad t_start time format detected (must be YYYY-MM-DD_HH:MM:SS)"
         if opts.stop:
             try:
                 t_stop = dt_to_timestamp(datetime.datetime.strptime(opts.stop, "%Y-%m-%d_%H:%M:%S"))
+                print "Stop  Time:  " + ts_to_datestring(t_stop)
             except:
                 print "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)"
 
