@@ -126,7 +126,7 @@ if __name__ == "__main__":
     file_manager = ChannelFormatFileManager(root_path=opts.directory+station_name.lower(),
                                             daq_mode=FileDAQModes.Integrated)
     print "FILE\t\tTIMESTAMP\t\tSTART\t\t\tSTOP\t\tSIZE (MB)\tBLOCKS"
-    print "---------------+---------------+---------------------+-----------------------+----------+-------------"
+    print "---------------+---------------+---------------------+-----------------------+--------------+---------"
     lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (int(opts.tile)-1)))
     for l in lista:
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
@@ -135,7 +135,7 @@ if __name__ == "__main__":
                                                       n_samples=dic['n_blocks'])
             if not t_start and not t_stop:
                 print l[-21:-7], "\t", timestamps[0][0], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
-                    ts_to_datestring(timestamps[-1][0]), "\t%6s"%(str(os.path.getsize(l)/1000000)), "\t\t", dic['n_blocks']
+                    ts_to_datestring(timestamps[-1][0]), "\t%6s"%(str(os.path.getsize(l)/1000000)), "\t\t", "%6s"%(str(dic['n_blocks']))
             else:
                 if timestamps[0] > t_stop:
                     break
@@ -148,7 +148,7 @@ if __name__ == "__main__":
                                 t_cnt = t_cnt + 1
                 if cnt:
                     print l[-21:-7], "\t", timestamps[0][0], "\t", ts_to_datestring(timestamps[0][0]), "\t", \
-                        ts_to_datestring(timestamps[-1][0]), "\t%6s\t"%(str(os.path.getsize(l)/1000000)), "\t", cnt
+                        ts_to_datestring(timestamps[-1][0]), "\t%6s\t"%(str(os.path.getsize(l)/1000000)), "\t", "%6s"%(str(cnt))
         else:
             print l[-21:-7], "\t", fname_to_tstamp(l[-21:-7]), "\t", \
                 ts_to_datestring(fname_to_tstamp(l[-21:-7])), "\t", ": no metadata available"
