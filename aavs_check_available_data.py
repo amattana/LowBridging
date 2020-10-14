@@ -136,7 +136,7 @@ if __name__ == "__main__":
             if len(timestamps):
                 if not t_start and not t_stop:
                     print " ", l[-21:-5], "\t", int(timestamps[0][0]), "\t", ts_to_datestring(timestamps[0][0]), "\t", \
-                        ts_to_datestring(timestamps[-1][0]), "\t%6s"%(str(os.path.getsize(l)/1000000)), "\t\t", "%6s"%(str(dic['n_blocks']))
+                        ts_to_datestring(timestamps[-1][0]), "\t%6s"%(str(os.path.getsize(l)/1000000)), "\t\t", "%6s"%(str(len(timestamps)))
                 else:
                     if timestamps[0] > t_stop:
                         break
