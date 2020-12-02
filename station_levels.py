@@ -82,12 +82,12 @@ if __name__ == "__main__":
         print tile_names[n]
 
         if not options.rms:
-            print "\n TPM INPUT\tANTENNA\tPol-X Level\tPol-Y Level"
-            print "\n    #\t\t\t (dBm)\t\t (dBm)"
+            print "\n TPM INPUT\tANTENNA\t\tPol-X Level\tPol-Y Level"
+            print "\n    #\t\t\t\t  (dBm)\t\t (dBm)"
             print "\n-----------------------------------------------------"
         else:
-            print "\n TPM INPUT\tANTENNA\tPol-X Level\tPol-Y Level"
-            print "\n    #\t\t \t (dBm)\tRMS\t (dBm)\tRMS"
+            print "\n TPM INPUT\tANTENNA\t\t Pol-X Level\tPol-Y Level"
+            print "\n    #\t\t \t\t  (dBm)\tRMS\t (dBm)\tRMS"
             print "\n-----------------------------------------------------"
 
         for rx in xrange(len(power_adc) / 2):
