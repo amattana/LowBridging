@@ -70,7 +70,7 @@ if __name__ == "__main__":
         power_rf = power_adc + 12  # single ended to diff net loose 12 dBm
 
         print "\n\n=========================================================="
-        print " Tile-%02d\n" % (int(tile.get_tile_id()))
+        print " Tile-%02d\n" % (int(tile.get_tile_id()) + 1)
 
         if not options.rms:
             print "\n TPM INPUT\tPol-X Level\tPol-Y Level"
