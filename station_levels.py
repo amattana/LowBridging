@@ -91,7 +91,7 @@ if __name__ == "__main__":
             print "\n-----------------------------------------------------"
 
         for rx in xrange(len(power_adc) / 2):
-            print "\n INPUT %02d\t%s\t" % ((rx + 1), ants[16 * n + rx])
+            print "\n INPUT %02d\t%s\t" % ((rx + 1), ants[16 * n + rx]),
             for p, pol in enumerate(["X", "Y"]):
                 print "\t%3.1f" % (power_rf[(rx * 2) + p]),
                 if options.rms:
