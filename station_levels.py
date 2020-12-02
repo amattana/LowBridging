@@ -61,7 +61,7 @@ if __name__ == "__main__":
     aavs_station = station.Station(station.configuration)
     aavs_station.connect()
 
-    for tile in station.tiles:
+    for tile in aavs_station.tiles:
 
         adu_rms = np.array(tile.get_adc_rms())
         volt_rms = adu_rms * (1.7 / 256.)  # VppADC9680/2^bits * ADU_RMS
