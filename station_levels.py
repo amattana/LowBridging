@@ -15,9 +15,6 @@ __maintainer__ = "Andrea Mattana"
 
 from aavs_calibration.common import get_antenna_positions, get_antenna_tile_names
 from pyaavs import station
-from pyaavs.tile import Tile
-import os
-import yaml
 import numpy as np
 
 from optparse import OptionParser
