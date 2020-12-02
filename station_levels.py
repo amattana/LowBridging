@@ -61,8 +61,17 @@ if __name__ == "__main__":
     aavs_station = station.Station(station.configuration)
     aavs_station.connect()
 
-    for tile in aavs_station.tiles:
+    tile_names = []
+    tiles = get_antenna_tile_names(station_name)
+    for i in tiles:
+        if not i.replace("TPM", "Tile") in tile_names:
+            tile_names += [i.replace("TPM", "Tile")]
 
+    ants = []
+    for j in range(16 * nof_tiles):
+        ants += ["ANT-%03d" % int(base[j])]
+
+    for n, tile in enumerate(aavs_station.tiles):
         adu_rms = np.array(tile.get_adc_rms())
         volt_rms = adu_rms * (1.7 / 256.)  # VppADC9680/2^bits * ADU_RMS
         power_adc = 10 * np.log10(
@@ -70,26 +79,26 @@ if __name__ == "__main__":
         power_rf = power_adc + 12  # single ended to diff net loose 12 dBm
 
         print "\n\n=========================================================="
-        print " Tile-%02d\n" % (int(tile.get_tile_id()) + 1)
+        print tile_names[n]
 
         if not options.rms:
-            print "\n TPM INPUT\tPol-X Level\tPol-Y Level"
-            print "\n    #\t\t (dBm)\t\t (dBm)"
+            print "\n TPM INPUT\tANTENNA\tPol-X Level\tPol-Y Level"
+            print "\n    #\t\t\t (dBm)\t\t (dBm)"
             print "\n-----------------------------------------------------"
         else:
-            print "\n TPM INPUT\tPol-X Level\tPol-Y Level"
-            print "\n    #\t\t  (dBm)\tRMS\t (dBm)\tRMS"
+            print "\n TPM INPUT\tANTENNA\tPol-X Level\tPol-Y Level"
+            print "\n    #\t\t \t (dBm)\tRMS\t (dBm)\tRMS"
             print "\n-----------------------------------------------------"
 
         for rx in xrange(len(power_adc) / 2):
-            print "\n INPUT %02d"%(rx+1),
+            print "\n INPUT %02d\t%s\t" % ((rx + 1), ants[16 * n + rx])
             for p, pol in enumerate(["X", "Y"]):
-                print "\t%3.1f"%(power_rf[(rx*2)+p]),
+                print "\t%3.1f" % (power_rf[(rx * 2) + p]),
                 if options.rms:
                     print "\t%3.1f" % (adu_rms[(rx * 2) + p]),
                 else:
                     print "\t",
-            if (rx+1) % 4 == 0:
+            if (rx + 1) % 4 == 0:
                 print
         print "\n"
 
