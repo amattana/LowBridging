@@ -124,7 +124,7 @@ if __name__ == "__main__":
     parser.add_option("--rangetemp", action="store", dest="rangetemp",
                       default="10,70", help="min,max temperature range")
     parser.add_option("--rangepower", action="store", dest="rangepower",
-                      default="16,32", help="min,max rf power range")
+                      default="12,28", help="min,max rf power range")
     parser.add_option("--scp_server", action="store", dest="scp_server",
                       default="amattana@192.167.189.30", help="scp to a server (user@ip)")
     parser.add_option("--scp_port", action="store", dest="scp_port", type=int,
