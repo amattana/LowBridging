@@ -123,6 +123,8 @@ if __name__ == "__main__":
                       default=False, help="Maximize Y axis ticks")
     parser.add_option("--rangetemp", action="store", dest="rangetemp",
                       default="10,70", help="min,max temperature range")
+    parser.add_option("--rangepower", action="store", dest="rangepower",
+                      default="16,32", help="min,max rf power range")
     parser.add_option("--scp_server", action="store", dest="scp_server",
                       default="amattana@192.167.189.30", help="scp to a server (user@ip)")
     parser.add_option("--scp_port", action="store", dest="scp_port", type=int,
@@ -1039,8 +1041,9 @@ if __name__ == "__main__":
         ax_power.set_ylabel("dB", fontsize=14)
         ax_power.set_yticks(np.arange(0, 101, 1))
         #print "\nDEBUG:", acc_power_x[0:6], "\n"
-        ax_power.set_ylim(int(np.mean(np.array(acc_power_x)[np.array(acc_power_x) != -np.inf])) - 6,
-                          int(np.mean(np.array(acc_power_x)[np.array(acc_power_x) != -np.inf])) + 10)
+        #ax_power.set_ylim(int(np.mean(np.array(acc_power_x)[np.array(acc_power_x) != -np.inf])) - 6,
+        #                  int(np.mean(np.array(acc_power_x)[np.array(acc_power_x) != -np.inf])) + 10)
+        ax_power.set_ylim(int(opts.rangepower.split(",")[0]), int(opts.rangepower.split(",")[1]))
         ax_power.grid()
         ax_power.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8, #bbox_to_anchor=(-0.02, -0.2),
                           loc='lower left', fontsize='small', markerscale=4)
