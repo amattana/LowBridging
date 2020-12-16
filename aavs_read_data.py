@@ -1120,19 +1120,25 @@ if __name__ == "__main__":
         #         POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL)):
         #     os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL))
 
-        data_fname = POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data/POWER_"%(int(tile),
-                      int(opts.antenna)) + date_path + "_TILE-%02d_ANT-%03d_POL-X_BAND-%d-%dMHz.txt" % \
-                     (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
+        # data_fname = POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data/POWER_"%(int(tile),
+        #               int(opts.antenna)) + date_path + "_TILE-%02d_ANT-%03d_POL-X_BAND-%d-%dMHz.txt" % \
+        #              (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
+        if not os.path.exists(POWER_PATH + "/" + station_name + "/power_data/"):
+            os.makedirs(POWER_PATH + "/" + station_name + "/power_data/")
+        data_fname = POWER_PATH + "/" + station_name + "/power_data/" + station_name + "POWER_" + date_path + "_TILE-%02d_ANT-%03d_POL-X_BAND-%d-%dMHz.txt" % (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
         with open(data_fname, "w") as ft:
+            ft.write("Tstamp\tDate\tTime\tdB\n")
             for n, q in enumerate(acc_power_x):
-                ft.write("%d\t%6.3f\n"%(t_stamps[n], q))
+                ft.write("%d\t%s\t%6.3f\n" % (t_stamps[n], ts_to_datestring(t_stamps[n], "%Y-%m-%d\t%H:%M:%S"), q))
 
-        data_fname = POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data/POWER_"%(int(tile),
-                      int(opts.antenna)) + date_path + "_TILE-%02d_ANT-%03d_POL-Y_BAND-%d-%dMHz.txt" % \
-                     (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
+        # data_fname = POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data/POWER_"%(int(tile),
+        #               int(opts.antenna)) + date_path + "_TILE-%02d_ANT-%03d_POL-Y_BAND-%d-%dMHz.txt" % \
+        #              (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
+        data_fname = POWER_PATH + "/" + station_name + "/power_data/" + station_name + "POWER_" + date_path + "_TILE-%02d_ANT-%03d_POL-Y_BAND-%d-%dMHz.txt" % (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
         with open(data_fname, "w") as ft:
+            ft.write("Tstamp\tDate\tTime\tdB\n")
             for n, q in enumerate(acc_power_y):
-                ft.write("%d\t%6.3f\n"%(t_stamps[n], q))
+                ft.write("%d\t%s\t%6.3f\n" % (t_stamps[n], ts_to_datestring(t_stamps[n], "%Y-%m-%d\t%H:%M:%S"), q))
 
         scp_fname = POWER_PATH + "/" + station_name + \
                 "/TILE-%02d_ANT-%03d/pic/POWER_"%(int(tile), int(opts.antenna)) + \
