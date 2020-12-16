@@ -1140,9 +1140,14 @@ if __name__ == "__main__":
             for n, q in enumerate(acc_power_y):
                 ft.write("%d\t%s\t%6.3f\n" % (t_stamps[n], ts_to_datestring(t_stamps[n], "%Y-%m-%d\t%H:%M:%S"), q))
 
-        scp_fname = POWER_PATH + "/" + station_name + \
-                "/TILE-%02d_ANT-%03d/pic/POWER_"%(int(tile), int(opts.antenna)) + \
-                date_path + "_TILE-%02d_ANT-%03d.png"%(int(tile), int(opts.antenna))
+        # scp_fname = POWER_PATH + "/" + station_name + \
+        #         "/TILE-%02d_ANT-%03d/pic/" + station_name + "_POWER_"%(int(tile), int(opts.antenna)) + \
+        #         date_path + "_TILE-%02d_ANT-%03d.png"%(int(tile), int(opts.antenna))
+
+        if not os.path.exists(POWER_PATH + "/" + station_name + "/power_pics/"):
+            os.makedirs(POWER_PATH + "/" + station_name + "/power_pics/")
+        scp_fname = POWER_PATH + "/" + station_name + "/power_pics/" + station_name + "_POWER_" + date_path + \
+                    "_TILE-%02d_ANT-%03d.png"%(int(tile), int(opts.antenna))
 
         plt.savefig(scp_fname)
         sys.stdout.write(ERASE_LINE + "\nOutput File: " + scp_fname + "\n")
