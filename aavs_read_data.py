@@ -1124,7 +1124,7 @@ if __name__ == "__main__":
         #               int(opts.antenna)) + date_path + "_TILE-%02d_ANT-%03d_POL-X_BAND-%d-%dMHz.txt" % \
         #              (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
         t_date = datetime.datetime.strftime(datetime.datetime.strptime(opts.start, "%Y-%m-%d_%H:%M:%S"), "%Y-%m-%d")
-        opath = POWER_PATH + "/" + t_date
+        opath = POWER_PATH + t_date
         if not os.path.exists(opath):
             os.makedirs(opath)
         opath += "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz"
