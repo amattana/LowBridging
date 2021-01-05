@@ -6,7 +6,10 @@ from matplotlib.markers import MarkerStyle
 import datetime, time
 import glob
 import os
-
+import sys
+import warnings
+warnings.filterwarnings("ignore")
+ERASE_LINE = '\x1b[2K'
 
 def dt_to_timestamp(d):
     return calendar.timegm(d.timetuple())
@@ -33,8 +36,19 @@ if __name__ == "__main__":
                       default="", help="Stop time for filter (YYYY-mm-DD_HH:MM:SS)")
     parser.add_option("--date", action="store", dest="date",
                       default="", help="Stop time for filter (YYYY-mm-DD)")
+    parser.add_option("--dir", action="store", dest="dir",
+                      default="", help="Directory containing data")
+    parser.add_option("--freq", action="store", dest="freq",
+                      default="160", help="Frequency of interest")
 
     (opts, args) = parser.parse_args(argv[1:])
+
+    data_dir = "/storage/monitoring/power/station_power/"
+    if not opts.dir == "":
+        data_dir += opts.dir + "/"
+
+    freq = opts.freq
+    start_date = ""
 
     if opts.date:
         try:
@@ -55,7 +69,7 @@ if __name__ == "__main__":
                 print "Bad t_start time format detected (must be YYYY-MM-DD_HH:MM:SS)"
         if opts.stop:
             try:
-                t_stop = dt_to_timestamp(datetime.datetime.strptime(opts.stop, "%Y-%m-%d_%H:%M:%S"))
+                t_stop = dt_to_timestamp(datetime.datetime.strptime(opts.stop, "%Y-%m-%d_%H:%M:%S")) + 3600
                 print "Stop  Time:  " + ts_to_datestring(t_stop) + "    Timestamp: " + str(t_stop)
             except:
                 print "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)"
@@ -69,7 +83,10 @@ if __name__ == "__main__":
                 data_list += []
 
     plt.ion()
-    gs = GridSpec(1, 1, left=0.06, top=0.935, right=0.8)
+    if opts.freq == "ecg":
+        gs = GridSpec(1, 1, left=0.06, top=0.935, right=0.98)
+    else:
+        gs = GridSpec(1, 1, left=0.06, top=0.935, right=0.8)
     fig = plt.figure(figsize=(14, 9), facecolor='w')
     ax = fig.add_subplot(gs[0, 0])
 
@@ -90,6 +107,8 @@ if __name__ == "__main__":
     div = np.array([1, 2, 3, 4, 6, 8, 12, 24])
     decimation = div[closest(div, len(xticks) / 24)]
     # print decimation, len(xticks)
+    #print xticks
+    #print xticklabels
     xticks = xticks[::decimation]
     xticklabels = xticklabels[::decimation]
 
@@ -97,41 +116,102 @@ if __name__ == "__main__":
     ax.set_xticks(xticks)
     ax.set_xticklabels(xticklabels, rotation=90, fontsize=8)
 
-    tiles = range(1, 17)
-    for pol in ["X", "Y"]:
-        for t in tiles:
-            print "Plotting Tile-%02d, Pol-%s" % (t, pol)
-            ax.cla()
-            ax.set_xticks(xticks)
-            ax.set_xticklabels(xticklabels, rotation=90, fontsize=8)
-            flist = sorted(glob.glob(start_date + "/" + opts.station + "/power_data/" + opts.station + "_POWER_" +
-                                     start_date + "_TILE-%02d_ANT*_POL-%s_*.txt" % (t, pol)))
-            y0 = 0
-            for n, f in enumerate(flist):
-                with open(f) as g:
-                    data = g.readlines()
-                asse_x = []
-                dati = []
-                for d in data[1:]:
-                    asse_x += [int(d.split()[0])]
-                    dati += [float(d.split()[3])]
-                dati = np.array(dati) - dati[0] - (1 * n)
-                # if not n:
-                #     y0 = dati[0]
-                #     dati = dati - y0
-                ax.plot(asse_x, dati, label=f[f.rfind("TILE"):f.rfind("TILE") + 15], linestyle='None', marker=".", markersize=2)
-            if opts.station == "AAVS2":
-                ax.set_ylim(-20, y0+3)
-            else:
-                ax.set_ylim(-20, y0+3)
-            ax.set_xlim(xticks[0], xticks[-1])
-            ax.set_title("Tile-%02d  Pol %s" % (t, pol))
-            ax.legend(bbox_to_anchor=(1.01, 1), loc='upper left', borderaxespad=0., fontsize=14, markerscale=8)
-            ax.grid()
-            #fig.subplots_adjust(right=0.86)
-            if not os.path.isdir(start_date + "/" + opts.station + "/tile_pics/"):
-                os.mkdir(start_date + "/" + opts.station + "/tile_pics/")
-            if not os.path.isdir(start_date + "/" + opts.station + "/tile_pics/Pol-" + pol):
-                os.mkdir(start_date + "/" + opts.station + "/tile_pics/Pol-" + pol)
-            fig.savefig(start_date + "/" + opts.station + "/tile_pics/Pol-" + pol + "/" + start_date + "_" +
-                        opts.station + "_Tile-%02d_Pol-" % t + pol + ".png")
+    if freq.lower() == "ecg":
+        dirlist = sorted(glob.glob(data_dir + start_date + "/" + opts.station + "_*MHz"))
+        for ant in range(256):
+            for pol in ["X", "Y"]:
+                yticks = []
+                yticklabels = []
+                sys.stdout.write(ERASE_LINE + "\r[%d/256] Processing Antenna: %d" % (ant + 1, ant + 1))
+                sys.stdout.flush()
+                ax.cla()
+                ax.set_xticks(xticks)
+                ax.set_xticklabels(xticklabels, rotation=90, fontsize=8)
+                for dn, dl in enumerate(dirlist):
+                    f = glob.glob(dl + "/power_data/" + opts.station + "_POWER_" + start_date +
+                                  "_TILE-*_ANT-%03d_POL-%s_*.txt" % (ant + 1, pol))
+                    if len(f):
+                        if os.path.exists(f[0]):
+                            with open(f[0]) as g:
+                                data = g.readlines()
+                            asse_x = []
+                            dati = []
+                            for d in data[1:]:
+                                asse_x += [int(d.split()[0])]
+                                dati += [float(d.split()[3])]
+                            dati = np.array(dati) - dati[0] - (1 * dn)
+                            ax.plot(asse_x, dati, linestyle='None', marker=".", markersize=2)
+                            yticks += [-dn]
+                            yticklabels += [dl[-6:-3]]
+                ax.set_xlabel("UTC time")
+                ax.set_ylabel("MHz")
+                ax.set_xlim(xticks[0], xticks[-1])
+                ax.set_ylim(-(len(dirlist)) - 2, 2)
+                ax.set_yticks(yticks)
+                ax.set_yticklabels(yticklabels)
+                ax.set_title("%s Antenna %03d Pol %s" % (opts.station, ant + 1, pol))
+                ax.grid()
+                #fig.subplots_adjust(right=0.86)
+                opath = data_dir + start_date + "/ecg_pics/"
+                if not os.path.isdir(opath):
+                    os.mkdir(opath)
+                if not os.path.isdir(opath + "Pol-" + pol):
+                    os.mkdir(opath + "Pol-" + pol)
+                fig.savefig(opath + "Pol-" + pol + "/" + start_date + "_" + opts.station + "_ANT-%03d_Pol-%s.png" %
+                            (ant + 1, pol))
+        print
+
+    else:
+        tiles = range(1, 17)
+        if freq.lower() == "all":
+            dirlist = sorted(glob.glob(data_dir + start_date + "/" + opts.station + "_*MHz"))
+        else:
+            dirlist = [data_dir + start_date + "/" + opts.station + "_" + str(freq) + "MHz"]
+
+        print
+        for dlcnt, dl in enumerate(dirlist):
+            sys.stdout.write(ERASE_LINE + "\r[%d/%d] Processing directory: %s" % (dlcnt + 1, len(dirlist), dl))
+            sys.stdout.flush()
+            freq = dl[-6:-3]
+            for pol in ["X", "Y"]:
+                for t in tiles:
+                    sys.stdout.write(ERASE_LINE + "\r[%d/%d] Plotting Tile-%02d, Pol-%s" %
+                                     (dlcnt + 1, len(dirlist), t, pol))
+                    sys.stdout.flush()
+                    ax.cla()
+                    ax.set_xticks(xticks)
+                    ax.set_xticklabels(xticklabels, rotation=90, fontsize=8)
+                    flist = sorted(glob.glob(dl + "/power_data/" + opts.station + "_POWER_" + start_date +
+                                             "_TILE-%02d_ANT*_POL-%s_*.txt" % (t, pol)))
+                    y0 = 0
+                    for n, f in enumerate(flist):
+                        with open(f) as g:
+                            data = g.readlines()
+                        asse_x = []
+                        dati = []
+                        for d in data[1:]:
+                            asse_x += [int(d.split()[0])]
+                            dati += [float(d.split()[3])]
+                        dati = np.array(dati) - dati[0] - (1 * n)
+                        # if not n:
+                        #     y0 = dati[0]
+                        #     dati = dati - y0
+                        ax.plot(asse_x, dati, label=f[f.rfind("TILE"):f.rfind("TILE") + 15], linestyle='None', marker=".", markersize=2)
+                    if opts.station == "AAVS2":
+                        ax.set_ylim(-20, y0+3)
+                    else:
+                        ax.set_ylim(-20, y0+3)
+                    ax.set_xlim(xticks[0], xticks[-1])
+                    ax.set_title("%s Tile-%02d  Pol %s  Frequency %s MHz" % (opts.station, t, pol, freq))
+                    ax.legend(bbox_to_anchor=(1.01, 1), loc='upper left', borderaxespad=0., fontsize=14, markerscale=8)
+                    ax.grid()
+                    #fig.subplots_adjust(right=0.86)
+                    opath = dl + "/tile_pics/"
+                    if not os.path.isdir(opath):
+                        os.mkdir(opath)
+                    if not os.path.isdir(opath + "Pol-" + pol):
+                        os.mkdir(opath + "Pol-" + pol)
+                    fig.savefig(opath + "Pol-" + pol + "/" + start_date + "_" + opts.station + "_Tile-%02d_"  % t + freq +
+                                "MHz_Pol-" + pol + ".png")
+            sys.stdout.write(ERASE_LINE + "\r[%d/%d] Processed directory: %s\n" % (dlcnt + 1, len(dirlist), dl))
+            sys.stdout.flush()
