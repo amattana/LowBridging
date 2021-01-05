@@ -1103,19 +1103,19 @@ if __name__ == "__main__":
             fig.subplots_adjust(right=0.86)
 
 
-        if not os.path.exists(POWER_PATH):
-            os.makedirs(POWER_PATH)
-        if not os.path.exists(POWER_PATH + "/" + station_name):
-            os.makedirs(POWER_PATH + "/" + station_name)
-        if not os.path.exists(
-                POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna))):
-            os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna)))
-        if not os.path.exists(
-                POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data" % (int(tile), int(opts.antenna))):
-            os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data" % (int(tile), int(opts.antenna)))
-        if not os.path.exists(
-                POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/pic" % (int(tile), int(opts.antenna))):
-            os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/pic" % (int(tile), int(opts.antenna)))
+        # if not os.path.exists(POWER_PATH):
+        #     os.makedirs(POWER_PATH)
+        # if not os.path.exists(POWER_PATH + "/" + station_name):
+        #     os.makedirs(POWER_PATH + "/" + station_name)
+        # if not os.path.exists(
+        #         POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna))):
+        #     os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d" % (int(tile), int(opts.antenna)))
+        # if not os.path.exists(
+        #         POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data" % (int(tile), int(opts.antenna))):
+        #     os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data" % (int(tile), int(opts.antenna)))
+        # if not os.path.exists(
+        #         POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/pic" % (int(tile), int(opts.antenna))):
+        #     os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/pic" % (int(tile), int(opts.antenna)))
         # if not os.path.exists(
         #         POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL)):
         #     os.makedirs(POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/POL-%s" % (int(tile), int(opts.antenna), POL))
@@ -1123,9 +1123,9 @@ if __name__ == "__main__":
         # data_fname = POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data/POWER_"%(int(tile),
         #               int(opts.antenna)) + date_path + "_TILE-%02d_ANT-%03d_POL-X_BAND-%d-%dMHz.txt" % \
         #              (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
-        if not os.path.exists(POWER_PATH + "/" + station_name + "/power_data/"):
-            os.makedirs(POWER_PATH + "/" + station_name + "/power_data/")
-        data_fname = POWER_PATH + "/" + station_name + "/power_data/" + station_name + "_POWER_" + date_path + "_TILE-%02d_ANT-%03d_POL-X_BAND-%d-%dMHz.txt" % (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
+        if not os.path.exists(POWER_PATH + "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz/power_data/"):
+            os.makedirs(POWER_PATH + "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz/power_data/")
+        data_fname = POWER_PATH + "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz/power_data/" + station_name + "_POWER_" + date_path + "_TILE-%02d_ANT-%03d_POL-X_BAND-%d-%dMHz.txt" % (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
         with open(data_fname, "w") as ft:
             ft.write("Tstamp\tDate\tTime\tdB\n")
             for n, q in enumerate(acc_power_x):
@@ -1134,7 +1134,7 @@ if __name__ == "__main__":
         # data_fname = POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data/POWER_"%(int(tile),
         #               int(opts.antenna)) + date_path + "_TILE-%02d_ANT-%03d_POL-Y_BAND-%d-%dMHz.txt" % \
         #              (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
-        data_fname = POWER_PATH + "/" + station_name + "/power_data/" + station_name + "_POWER_" + date_path + "_TILE-%02d_ANT-%03d_POL-Y_BAND-%d-%dMHz.txt" % (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
+        data_fname = POWER_PATH + "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz/power_data/" + station_name + "_POWER_" + date_path + "_TILE-%02d_ANT-%03d_POL-Y_BAND-%d-%dMHz.txt" % (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
         with open(data_fname, "w") as ft:
             ft.write("Tstamp\tDate\tTime\tdB\n")
             for n, q in enumerate(acc_power_y):
@@ -1144,9 +1144,9 @@ if __name__ == "__main__":
         #         "/TILE-%02d_ANT-%03d/pic/" + station_name + "_POWER_"%(int(tile), int(opts.antenna)) + \
         #         date_path + "_TILE-%02d_ANT-%03d.png"%(int(tile), int(opts.antenna))
 
-        if not os.path.exists(POWER_PATH + "/" + station_name + "/power_pics/"):
-            os.makedirs(POWER_PATH + "/" + station_name + "/power_pics/")
-        scp_fname = POWER_PATH + "/" + station_name + "/power_pics/" + station_name + "_POWER_" + date_path + \
+        if not os.path.exists(POWER_PATH + "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz/power_pics/"):
+            os.makedirs(POWER_PATH + "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz/power_pics/")
+        scp_fname = POWER_PATH + "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz/power_pics/" + station_name + "_POWER_" + date_path + \
                     "_TILE-%02d_ANT-%03d.png"%(int(tile), int(opts.antenna))
 
         plt.savefig(scp_fname)
