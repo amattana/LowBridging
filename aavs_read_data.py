@@ -25,7 +25,7 @@ PIC_PATH = "/storage/monitoring/pictures"
 OPLOT_PATH = "/storage/monitoring/oplot"
 SPGR_PATH = "/storage/monitoring/spectrograms"
 SPEC_PATH = "/storage/monitoring/spectrum_analyzer"
-POWER_PATH = "/storage/monitoring/power"
+POWER_PATH = "/storage/monitoring/power/station_power/"
 TEXT_PATH = "/storage/monitoring/text_data"
 ERASE_LINE = '\x1b[2K'
 
@@ -1123,9 +1123,18 @@ if __name__ == "__main__":
         # data_fname = POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data/POWER_"%(int(tile),
         #               int(opts.antenna)) + date_path + "_TILE-%02d_ANT-%03d_POL-X_BAND-%d-%dMHz.txt" % \
         #              (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
-        if not os.path.exists(POWER_PATH + "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz/power_data/"):
-            os.makedirs(POWER_PATH + "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz/power_data/")
-        data_fname = POWER_PATH + "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz/power_data/" + station_name + "_POWER_" + date_path + "_TILE-%02d_ANT-%03d_POL-X_BAND-%d-%dMHz.txt" % (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
+        t_date = datetime.datetime.strftime(t_start, "%Y-%m-%d")
+        opath = POWER_PATH + "/" + t_date
+        if not os.path.exists(opath):
+            os.makedirs(opath)
+        opath += "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz"
+        if not os.path.exists(opath):
+            os.makedirs(opath)
+        if not os.path.exists(opath + "/power_data/"):
+            os.makedirs(opath + "/power_data/")
+        data_fname = opath + "/power_data/" + station_name + "_POWER_" + date_path + \
+                     "_TILE-%02d_ANT-%03d_POL-X_BAND-%d-%dMHz.txt" % \
+                     (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
         with open(data_fname, "w") as ft:
             ft.write("Tstamp\tDate\tTime\tdB\n")
             for n, q in enumerate(acc_power_x):
@@ -1134,7 +1143,9 @@ if __name__ == "__main__":
         # data_fname = POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data/POWER_"%(int(tile),
         #               int(opts.antenna)) + date_path + "_TILE-%02d_ANT-%03d_POL-Y_BAND-%d-%dMHz.txt" % \
         #              (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
-        data_fname = POWER_PATH + "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz/power_data/" + station_name + "_POWER_" + date_path + "_TILE-%02d_ANT-%03d_POL-Y_BAND-%d-%dMHz.txt" % (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
+        data_fname = opath + "/power_data/" + station_name + "_POWER_" + date_path + \
+                     "_TILE-%02d_ANT-%03d_POL-Y_BAND-%d-%dMHz.txt" % \
+                     (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
         with open(data_fname, "w") as ft:
             ft.write("Tstamp\tDate\tTime\tdB\n")
             for n, q in enumerate(acc_power_y):
@@ -1144,10 +1155,10 @@ if __name__ == "__main__":
         #         "/TILE-%02d_ANT-%03d/pic/" + station_name + "_POWER_"%(int(tile), int(opts.antenna)) + \
         #         date_path + "_TILE-%02d_ANT-%03d.png"%(int(tile), int(opts.antenna))
 
-        if not os.path.exists(POWER_PATH + "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz/power_pics/"):
-            os.makedirs(POWER_PATH + "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz/power_pics/")
-        scp_fname = POWER_PATH + "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz/power_pics/" + station_name + "_POWER_" + date_path + \
-                    "_TILE-%02d_ANT-%03d.png"%(int(tile), int(opts.antenna))
+        if not os.path.exists(opath + "/power_pics/"):
+            os.makedirs(opath + "/power_pics/")
+        scp_fname = opath + "/power_pics/" + station_name + "_POWER_" + date_path + "_TILE-%02d_ANT-%03d.png" % \
+                    (int(tile), int(opts.antenna))
 
         plt.savefig(scp_fname)
         sys.stdout.write(ERASE_LINE + "\nOutput File: " + scp_fname + "\n")
