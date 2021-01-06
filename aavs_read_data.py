@@ -1145,7 +1145,7 @@ if __name__ == "__main__":
             os.makedirs(opath + "/power_data/")
         data_fname = opath + "/power_data/" + station_name + "_POWER_" + date_path + \
                      "_TILE-%02d_ANT-%03d_POL-X_BAND-%d-%dMHz.txt" % \
-                     (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
+                     (int(tile), int(opts.antenna), int(asse_x[xmin]), int(asse_x[xmax]))
         with open(data_fname, "w") as ft:
             ft.write("Tstamp\tDate\tTime\tdB\n")
             for n, q in enumerate(acc_power_x):
@@ -1158,7 +1158,7 @@ if __name__ == "__main__":
         #              (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
         data_fname = opath + "/power_data/" + station_name + "_POWER_" + date_path + \
                      "_TILE-%02d_ANT-%03d_POL-Y_BAND-%d-%dMHz.txt" % \
-                     (int(tile), int(opts.antenna), int(opts.startfreq), int(opts.stopfreq))
+                     (int(tile), int(opts.antenna), int(asse_x[xmin]), int(asse_x[xmax]))
         with open(data_fname, "w") as ft:
             ft.write("Tstamp\tDate\tTime\tdB\n")
             for n, q in enumerate(acc_power_y):
