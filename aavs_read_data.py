@@ -97,6 +97,8 @@ if __name__ == "__main__":
                       default=0, help="Start Frequency")
     parser.add_option("--stopfreq", action="store", dest="stopfreq", type="float",
                       default=400, help="Stop Frequency")
+    parser.add_option("--channel", action="store", dest="channel",
+                      default="", help="Frequency channel")
     parser.add_option("--pol", action="store", dest="pol",
                       default="x", help="Polarization [x (default)| y]")
     parser.add_option("--power", action="store_true", dest="power",
@@ -926,7 +928,7 @@ if __name__ == "__main__":
         da = tstamp_to_fname(t_start)[:-6]
         date_path = da[:4] + "-" + da[4:6] + "-" + da[6:]
 
-        band = str("%03d" % int(opts.startfreq)) + "-" + str("%03d" % int(opts.stopfreq))
+        #band = str("%03d" % int(opts.startfreq)) + "-" + str("%03d" % int(opts.stopfreq))
         if opts.pol.lower() == "x":
             pol = 0
             POL = "X"
@@ -966,8 +968,12 @@ if __name__ == "__main__":
             ax_power.set_xticks(xticks)
             ax_power.set_xticklabels(xticklabels, rotation=90, fontsize=8)
 
-        xmin = closest(asse_x, float(opts.startfreq))
-        xmax = closest(asse_x, float(opts.stopfreq))
+        if opts.channel == "":
+            xmin = closest(asse_x, float(opts.startfreq))
+            xmax = closest(asse_x, float(opts.stopfreq))
+        else:
+            xmin = int(opts.channel)
+            xmax = int(opts.channel)
         if xmin == xmax:
             print "Using channel #" + str(xmin) + " (Freq: " + str(asse_x[xmin]) + ")"
         else:
