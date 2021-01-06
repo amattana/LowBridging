@@ -135,6 +135,8 @@ if __name__ == "__main__":
                       default=False, help="scp output file")
     parser.add_option("--test", action="store_true", dest="test",
                       default=False, help="Test arguments and exit")
+    parser.add_option("--noplot", action="store_true", dest="noplot",
+                      default=False, help="Skip the plot, just save data files")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -935,33 +937,34 @@ if __name__ == "__main__":
             print "\nWrong value passed for argument pol, using default X pol"
             pol = 0
 
-        gs = GridSpec(1, 1, left=0.06, bottom=0.1, top=0.95)
-        fig = plt.figure(figsize=(14, 9), facecolor='w')
+        if not opts.noplot:
+            gs = GridSpec(1, 1, left=0.06, bottom=0.1, top=0.95)
+            fig = plt.figure(figsize=(14, 9), facecolor='w')
 
-        ax_power = fig.add_subplot(gs[0, 0])
-        if "all" in opts.date.lower():
-            delta = (dt_to_timestamp(datetime.datetime.utcnow().date() + datetime.timedelta(1)) -
-                     dt_to_timestamp(datetime.datetime(2020, 03, 01)))
-            delta_h = delta / 3600
-            x = np.array(range(delta)) + t_start
-        else:
-            delta_h = (t_stop - t_start) / 3600
-            x = np.array(range(t_stop - t_start)) + t_start
+            ax_power = fig.add_subplot(gs[0, 0])
+            if "all" in opts.date.lower():
+                delta = (dt_to_timestamp(datetime.datetime.utcnow().date() + datetime.timedelta(1)) -
+                         dt_to_timestamp(datetime.datetime(2020, 03, 01)))
+                delta_h = delta / 3600
+                x = np.array(range(delta)) + t_start
+            else:
+                delta_h = (t_stop - t_start) / 3600
+                x = np.array(range(t_stop - t_start)) + t_start
 
-        xticks = np.array(range(delta_h)) * 3600 + t_start
-        xticklabels = [f if f != 0 else datetime.datetime.strftime(
-            datetime.datetime.utcfromtimestamp(t_start) + datetime.timedelta(n / 24), "%m-%d") for n, f in
-                       enumerate((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) % 24)]
+            xticks = np.array(range(delta_h)) * 3600 + t_start
+            xticklabels = [f if f != 0 else datetime.datetime.strftime(
+                datetime.datetime.utcfromtimestamp(t_start) + datetime.timedelta(n / 24), "%m-%d") for n, f in
+                           enumerate((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) % 24)]
 
-        div = np.array([1, 2, 3, 4, 6, 8, 12, 24])
-        decimation = div[closest(div, len(xticks) / 24)]
-        # print decimation, len(xticks)
-        xticks = xticks[::decimation]
-        xticklabels = xticklabels[::decimation]
+            div = np.array([1, 2, 3, 4, 6, 8, 12, 24])
+            decimation = div[closest(div, len(xticks) / 24)]
+            # print decimation, len(xticks)
+            xticks = xticks[::decimation]
+            xticklabels = xticklabels[::decimation]
 
-        ax_power.plot(x, x, color='w')
-        ax_power.set_xticks(xticks)
-        ax_power.set_xticklabels(xticklabels, rotation=90, fontsize=8)
+            ax_power.plot(x, x, color='w')
+            ax_power.set_xticks(xticks)
+            ax_power.set_xticklabels(xticklabels, rotation=90, fontsize=8)
 
         xmin = closest(asse_x, float(opts.startfreq))
         xmax = closest(asse_x, float(opts.stopfreq))
@@ -971,8 +974,9 @@ if __name__ == "__main__":
             print "Using channels from #" + str(xmin) + " (Freq: " + str(asse_x[xmin]) + ") to #" + str(xmax) + \
                   " (Freq: " + str(asse_x[xmax]) + ")"
 
-        if len(w_data) and not opts.over:
-            ax_weather = ax_power.twinx()
+        if not opts.noplot:
+            if len(w_data) and not opts.over:
+                ax_weather = ax_power.twinx()
 
         tile = find_ant_by_name(opts.antenna)[0]
         lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
@@ -1030,77 +1034,78 @@ if __name__ == "__main__":
         #             y_wdir += [w_wind[int(closest(np.array(w_time), t_stamps[z]))]]
         #             angle_wdir += [w_wdir[int(closest(np.array(w_time), t_stamps[z]))]]
 
-        ax_power.set_xlim(t_stamps[0], t_stamps[-1])
-        if opts.noline:
-            ax_power.plot(t_stamps, acc_power_x, color='b', label='Pol-X', linestyle='None', marker=".", markersize=2)
-            ax_power.plot(t_stamps, acc_power_y, color='g', label='Pol-Y', linestyle='None', marker=".", markersize=2)
-        else:
-            ax_power.plot(t_stamps, acc_power_x, color='b', label='Pol-X')
-            ax_power.plot(t_stamps, acc_power_y, color='g', label='Pol-Y')
-        ax_power.set_xlabel("Time", fontsize=14)
-        ax_power.set_ylabel("dB", fontsize=14)
-        ax_power.set_yticks(np.arange(0, 101, 1))
-        #print "\nDEBUG:", acc_power_x[0:6], "\n"
-        #ax_power.set_ylim(int(np.mean(np.array(acc_power_x)[np.array(acc_power_x) != -np.inf])) - 6,
-        #                  int(np.mean(np.array(acc_power_x)[np.array(acc_power_x) != -np.inf])) + 10)
-        ax_power.set_ylim(int(opts.rangepower.split(",")[0]), int(opts.rangepower.split(",")[1]))
-        ax_power.grid()
-        ax_power.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8, #bbox_to_anchor=(-0.02, -0.2),
-                          loc='lower left', fontsize='small', markerscale=4)
-        title = station_name + "  Power of Ant-%03d"%(opts.antenna) + " from " + ts_to_datestring(t_start) + " to " + ts_to_datestring(t_stop)
-        if not xmin == xmax:
-            title += "  Frequencies: " + str(opts.startfreq) + "-" + str(opts.stopfreq) + " MHz  (channels %d-%d)" % (xmin,xmax)
-        else:
-            title += "  Frequency: %3.1f MHz  (channel %d)" % (asse_x[xmin], xmin)
+        if not opts.noplot:
+            ax_power.set_xlim(t_stamps[0], t_stamps[-1])
+            if opts.noline:
+                ax_power.plot(t_stamps, acc_power_x, color='b', label='Pol-X', linestyle='None', marker=".", markersize=2)
+                ax_power.plot(t_stamps, acc_power_y, color='g', label='Pol-Y', linestyle='None', marker=".", markersize=2)
+            else:
+                ax_power.plot(t_stamps, acc_power_x, color='b', label='Pol-X')
+                ax_power.plot(t_stamps, acc_power_y, color='g', label='Pol-Y')
+            ax_power.set_xlabel("Time", fontsize=14)
+            ax_power.set_ylabel("dB", fontsize=14)
+            ax_power.set_yticks(np.arange(0, 101, 1))
+            #print "\nDEBUG:", acc_power_x[0:6], "\n"
+            #ax_power.set_ylim(int(np.mean(np.array(acc_power_x)[np.array(acc_power_x) != -np.inf])) - 6,
+            #                  int(np.mean(np.array(acc_power_x)[np.array(acc_power_x) != -np.inf])) + 10)
+            ax_power.set_ylim(int(opts.rangepower.split(",")[0]), int(opts.rangepower.split(",")[1]))
+            ax_power.grid()
+            ax_power.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8, #bbox_to_anchor=(-0.02, -0.2),
+                              loc='lower left', fontsize='small', markerscale=4)
+            title = station_name + "  Power of Ant-%03d"%(opts.antenna) + " from " + ts_to_datestring(t_start) + " to " + ts_to_datestring(t_stop)
+            if not xmin == xmax:
+                title += "  Frequencies: " + str(opts.startfreq) + "-" + str(opts.stopfreq) + " MHz  (channels %d-%d)" % (xmin,xmax)
+            else:
+                title += "  Frequency: %3.1f MHz  (channel %d)" % (asse_x[xmin], xmin)
 
-        ax_power.set_title(title, fontsize=14)
+            ax_power.set_title(title, fontsize=14)
 
-        if len(w_data):
-            if opts.temp:
-                ax_weather.set_ylabel('Temperature (C)', color='r')
-                #ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
-                ax_weather.set_ylim(range_temp_max, range_temp_min)
-                ax_weather.set_yticks(np.arange(range_temp_min, range_temp_max, 5))
-                ax_weather.set_yticklabels(np.arange(range_temp_min, range_temp_max, 5), color='r')
-                ax_weather.plot(w_time, w_temp, color='r', lw=1.5, label='External Temp')
+            if len(w_data):
+                if opts.temp:
+                    ax_weather.set_ylabel('Temperature (C)', color='r')
+                    #ax_weather.set_xlim(t_stamps[0], t_stamps[-1])
+                    ax_weather.set_ylim(range_temp_max, range_temp_min)
+                    ax_weather.set_yticks(np.arange(range_temp_min, range_temp_max, 5))
+                    ax_weather.set_yticklabels(np.arange(range_temp_min, range_temp_max, 5), color='r')
+                    ax_weather.plot(w_time, w_temp, color='r', lw=1.5, label='External Temp')
 
-                if opts.sbtemp:
-                    sb_tempi, sb_dati = get_sbtemp(t_start, t_stop)
-                    if sb_dati:
-                        #ax_weather.plot(sb_tempi, sb_dati, color='purple', linestyle='None', marker=".", markersize=2, label='SmartBox Internal Temp')
-                        ax_weather.plot(sb_tempi, sb_dati, color='purple', label='SmartBox Internal Temp')
-                    else:
-                        print "\nNo SmartBox Temperature available!"
-                ax_weather.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
-                                  loc="lower right", fontsize='small')
+                    if opts.sbtemp:
+                        sb_tempi, sb_dati = get_sbtemp(t_start, t_stop)
+                        if sb_dati:
+                            #ax_weather.plot(sb_tempi, sb_dati, color='purple', linestyle='None', marker=".", markersize=2, label='SmartBox Internal Temp')
+                            ax_weather.plot(sb_tempi, sb_dati, color='purple', label='SmartBox Internal Temp')
+                        else:
+                            print "\nNo SmartBox Temperature available!"
+                    ax_weather.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
+                                      loc="lower right", fontsize='small')
 
-            if opts.wind:
-                ax_wind = ax_power.twinx()
-                ax_wind.plot(w_time, w_wind, color='orange', lw=1.5)
-                ax_wind.set_ylim(80, 0)
-                ax_wind.set_ylabel('Wind (Km/h)', color='orange')
-                ax_wind.tick_params(axis='y', labelcolor='orange')
-                ax_wind.spines["right"].set_position(("axes", 1.06))
-                # Draw wind direction
-                for a in range(len(w_wdir)):
-                    if not a % (len(w_wdir)/24):
-                        m = MarkerStyle(">")
-                        m._transform.rotate_deg(w_wdir[a])
-                        # print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
-                        ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=100, color='orchid')
-                        m = MarkerStyle("_")
-                        m._transform.rotate_deg(w_wdir[a])
-                        ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=500, color='orchid')
+                if opts.wind:
+                    ax_wind = ax_power.twinx()
+                    ax_wind.plot(w_time, w_wind, color='orange', lw=1.5)
+                    ax_wind.set_ylim(80, 0)
+                    ax_wind.set_ylabel('Wind (Km/h)', color='orange')
+                    ax_wind.tick_params(axis='y', labelcolor='orange')
+                    ax_wind.spines["right"].set_position(("axes", 1.06))
+                    # Draw wind direction
+                    for a in range(len(w_wdir)):
+                        if not a % (len(w_wdir)/24):
+                            m = MarkerStyle(">")
+                            m._transform.rotate_deg(w_wdir[a])
+                            # print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
+                            ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=100, color='orchid')
+                            m = MarkerStyle("_")
+                            m._transform.rotate_deg(w_wdir[a])
+                            ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=500, color='orchid')
 
-            if opts.rain:
-                ax_rain = ax_power.twinx()
-                ax_rain.plot(w_time, w_rain, color='cyan', lw=3)
-                ax_rain.set_ylim(100, 0)
-                ax_rain.set_ylabel('Rain (mm)', color='cyan')
-                ax_rain.tick_params(axis='y', labelcolor='cyan')
-                ax_rain.spines["right"].set_position(("axes", 1.12))
+                if opts.rain:
+                    ax_rain = ax_power.twinx()
+                    ax_rain.plot(w_time, w_rain, color='cyan', lw=3)
+                    ax_rain.set_ylim(100, 0)
+                    ax_rain.set_ylabel('Rain (mm)', color='cyan')
+                    ax_rain.tick_params(axis='y', labelcolor='cyan')
+                    ax_rain.spines["right"].set_position(("axes", 1.12))
 
-            fig.subplots_adjust(right=0.86)
+                fig.subplots_adjust(right=0.86)
 
 
         # if not os.path.exists(POWER_PATH):
@@ -1139,6 +1144,8 @@ if __name__ == "__main__":
             ft.write("Tstamp\tDate\tTime\tdB\n")
             for n, q in enumerate(acc_power_x):
                 ft.write("%d\t%s\t%6.3f\n" % (t_stamps[n], ts_to_datestring(t_stamps[n], "%Y-%m-%d\t%H:%M:%S"), q))
+        sys.stdout.write(ERASE_LINE + "\nOutput File: " + data_fname + "\n")
+        sys.stdout.flush()
 
         # data_fname = POWER_PATH + "/" + station_name + "/TILE-%02d_ANT-%03d/data/POWER_"%(int(tile),
         #               int(opts.antenna)) + date_path + "_TILE-%02d_ANT-%03d_POL-Y_BAND-%d-%dMHz.txt" % \
@@ -1150,19 +1157,22 @@ if __name__ == "__main__":
             ft.write("Tstamp\tDate\tTime\tdB\n")
             for n, q in enumerate(acc_power_y):
                 ft.write("%d\t%s\t%6.3f\n" % (t_stamps[n], ts_to_datestring(t_stamps[n], "%Y-%m-%d\t%H:%M:%S"), q))
+        sys.stdout.write(ERASE_LINE + "\nOutput File: " + data_fname + "\n")
+        sys.stdout.flush()
 
         # scp_fname = POWER_PATH + "/" + station_name + \
         #         "/TILE-%02d_ANT-%03d/pic/" + station_name + "_POWER_"%(int(tile), int(opts.antenna)) + \
         #         date_path + "_TILE-%02d_ANT-%03d.png"%(int(tile), int(opts.antenna))
 
-        if not os.path.exists(opath + "/power_pics/"):
-            os.makedirs(opath + "/power_pics/")
-        scp_fname = opath + "/power_pics/" + station_name + "_POWER_" + date_path + "_TILE-%02d_ANT-%03d.png" % \
-                    (int(tile), int(opts.antenna))
+        if not opts.noplot:
+            if not os.path.exists(opath + "/power_pics/"):
+                os.makedirs(opath + "/power_pics/")
+            scp_fname = opath + "/power_pics/" + station_name + "_POWER_" + date_path + "_TILE-%02d_ANT-%03d.png" % \
+                        (int(tile), int(opts.antenna))
 
-        plt.savefig(scp_fname)
-        sys.stdout.write(ERASE_LINE + "\nOutput File: " + scp_fname + "\n")
-        sys.stdout.flush()
+            plt.savefig(scp_fname)
+            sys.stdout.write(ERASE_LINE + "\nOutput File: " + scp_fname + "\n")
+            sys.stdout.flush()
 
     # AVERAGE
     elif plot_mode == 4:
