@@ -36,10 +36,12 @@ def mro_daily_weather(fname="/storage/monitoring/weather/MRO_WEATHER.csv", date=
             t_stop = int(time.mktime(t_date.timetuple()) + (60 * 60 * 24))# + (60 * 60 * 8) # Fix Weather data written in WA Local Time
 
         elif start and stop:
-            t_start = int(time.mktime(datetime.datetime.strptime(start, "%Y-%m-%d_%H:%M:%S").timetuple()))# + (60 * 60 * 8)  # Fix Weather data written in WA Local Time
-            t_start = int(time.mktime(datetime.datetime.strptime(start, "%Y-%m-%d_%H:%M:%S").timetuple())) + (60 * 60)  # Fix Weather data written in Local Time
+            #t_start = int(time.mktime(datetime.datetime.strptime(start, "%Y-%m-%d_%H:%M:%S").timetuple()))# + (60 * 60 * 8)  # Fix Weather data written in WA Local Time
+            #t_start = int(time.mktime(datetime.datetime.strptime(start, "%Y-%m-%d_%H:%M:%S").timetuple())) + (60 * 60)  # Fix Weather data written in Local Time
+            t_start = dt_to_timestamp(datetime.datetime.strptime(start, "%Y-%m-%d_%H:%M:%S"))
             #print "Weather Start Time: ", t_start
-            t_stop = int(time.mktime(datetime.datetime.strptime(stop, "%Y-%m-%d_%H:%M:%S").timetuple())) + (60 * 60)  # Fix Weather data written in Local Time
+            #t_stop = int(time.mktime(datetime.datetime.strptime(stop, "%Y-%m-%d_%H:%M:%S").timetuple())) + (60 * 60)  # Fix Weather data written in Local Time
+            t_stop = dt_to_timestamp(datetime.datetime.strptime(stop, "%Y-%m-%d_%H:%M:%S"))
         else:
             print "Missing time argument (date | start,stop)"
             return units, records
@@ -59,8 +61,8 @@ def mro_daily_weather(fname="/storage/monitoring/weather/MRO_WEATHER.csv", date=
             units['wdir'] = "deg"
             units['rain'] = data[3].split(",")[6][1:].split(" ")[-1][1:-1]
             for d in data[4:]:
-                t_stamp = int(time.mktime(datetime.datetime.strptime(d.split(",")[0],
-                               "%Y-%m-%d %H:%M:%S").timetuple())) - (60 * 60 * 6)
+                #t_stamp = int(time.mktime(datetime.datetime.strptime(d.split(",")[0], "%Y-%m-%d %H:%M:%S").timetuple())) - (60 * 60 * 6)
+                t_stamp = dt_to_timestamp(datetime.datetime.strptime(d.split(",")[0], "%Y-%m-%d %H:%M:%S")) - (60 * 60 * 8) # Time is in Local WA, GMT+8
                 if t_start <= t_stamp <= t_stop:
                     dati = {}
                     dati['time'] = t_stamp
@@ -202,14 +204,16 @@ if __name__ == "__main__":
 
     plt.ion()
     if opts.freq == "ecg":
-        gs = GridSpec(1, 1, left=0.06, top=0.935, right=0.98)
+        gs = GridSpec(1, 1, left=0.06, top=0.935, bottom=0.15, right=0.98)
+    elif opts.chart:
+        gs = GridSpec(1, 1, left=0.06, top=0.935, bottom=0.15, right=0.8)
     else:
-        gs = GridSpec(1, 1, left=0.06, top=0.935, right=0.8)
-    fig = plt.figure(figsize=(14, 9), facecolor='w')
-    ax = fig.add_subplot(gs[0, 0])
+        gs = GridSpec(1, 1, left=0.06, top=0.935, bottom=0.15, right=0.8)
 
     if opts.chart:
         t_start = t_start - (60 * 60 * 24 * 3) # Chart plot x axes starts 3 days before
+    fig = plt.figure(figsize=(14, 9), facecolor='w')
+    ax = fig.add_subplot(gs[0, 0])
 
     if "all" in opts.date.lower():
         delta = (dt_to_timestamp(datetime.datetime.utcnow().date() + datetime.timedelta(1)) -
@@ -222,7 +226,7 @@ if __name__ == "__main__":
 
     xticks = np.array(range(delta_h)) * 3600 + t_start
     xticklabels = [f if f != 0 else datetime.datetime.strftime(
-        datetime.datetime.utcfromtimestamp(t_start) + datetime.timedelta(n / 24), "%m-%d") for n, f in
+        datetime.datetime.utcfromtimestamp(t_start) + datetime.timedelta(n / 24), "%Y-%m-%d") for n, f in
                    enumerate((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) % 24)]
 
     div = np.array([1, 2, 3, 4, 6, 8, 12, 24])
@@ -430,20 +434,8 @@ if __name__ == "__main__":
                 colore = "b"
             else:
                 colore = "g"
-
-            # eq_data = [dati[0]]
-            # eqvalue = 0
-            # for d in dati[1:]:
-            #     if -1 <= (d - eq_data[-1]) <= 1:
-            #         eq_data += [d + eqvalue]
-            #     else:
-            #         if d < eq_data[-1]:
-            #             eqvalue = d + eq_data[-1]
-            #         else:
-            #             eqvalue = d - eq_data[-1]
-            #         eq_data += [d + eqvalue]
             ax.plot(asse_x, dati, color=colore, linestyle='None', marker=".", markersize=2)
-        ax.set_xlabel("UTC Time")
+        ax.set_xlabel("UTC Time", fontsize=12)
         ax.set_ylabel("dB", fontsize=12)
         ax.set_yticks(np.array(range(0, 50, 2))-36)
         ax.set_ylim(-20, 4)
@@ -456,14 +448,15 @@ if __name__ == "__main__":
                 ax_weather.set_ylim(range_temp_min, range_temp_max)
                 ax_weather.set_yticks(np.arange(range_temp_min, range_temp_max, 5))
                 ax_weather.set_yticklabels(np.arange(range_temp_min, range_temp_max, 5), color='r')
-                ax_weather.plot(w_time, w_temp, color='r', lw=1.5, label='External Temp')
+                ax_weather.plot(w_time, w_temp, color='r', label='External Temp', lw=2)
+                                #linestyle='None', marker=".", markersize=2)
 
                 if opts.sbtemp:
                     sb_tempi, sb_dati = get_sbtemp(t_start + (60 * 60 * 24 * 3), t_stop)
                     if sb_dati:
                         #ax_weather.plot(sb_tempi, sb_dati, color='purple', linestyle='None', marker=".", markersize=2, label='SmartBox Internal Temp')
-                        ax_weather.plot(sb_tempi, sb_dati, color='purple', label='SmartBox Internal Temp',
-                                        linestyle='None', marker=".", markersize=2)
+                        ax_weather.plot(sb_tempi, sb_dati, color='purple', label='SmartBox Internal Temp', lw=2)
+                                        #linestyle='None', marker=".", markersize=2)
                     else:
                         print "\nNo SmartBox Temperature available!"
                 #ax_weather.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
