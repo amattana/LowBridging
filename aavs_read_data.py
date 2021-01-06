@@ -1138,7 +1138,7 @@ if __name__ == "__main__":
         opath = POWER_PATH + t_date
         if not os.path.exists(opath):
             os.makedirs(opath)
-        opath += "/" + station_name + "_" + str("%03d" % int(opts.startfreq)) + "MHz"
+        opath += "/" + station_name + "_" + str("%03d" % int(asse_x[xmin])) + "MHz"
         if not os.path.exists(opath):
             os.makedirs(opath)
         if not os.path.exists(opath + "/power_data/"):
