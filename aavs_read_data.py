@@ -87,6 +87,10 @@ if __name__ == "__main__":
                       default=False, help="Produces a spectrogram for a specific antenna")
     parser.add_option("--average", action="store_true", dest="avg",
                       default=False, help="Produces an average spectrum of a specific antenna")
+    parser.add_option("--maxhold", action="store_true", dest="maxhold",
+                      default=False, help="Add MaxHold axes")
+    parser.add_option("--minhold", action="store_true", dest="minhold",
+                      default=False, help="Add MinHold axes")
     parser.add_option("--oplot", action="store_true", dest="oplot",
                       default=False, help="Plot spectra in sequence in the same plot for a specific antenna")
     parser.add_option("--weather", action="store_true", dest="weather",
@@ -1290,9 +1294,11 @@ if __name__ == "__main__":
         #xmin = closest(asse_x, int(opts.startfreq))
         #xmax = closest(asse_x, int(opts.stopfreq))
 
-        ax.plot(asse_x, max_hold_x, label="Max Hold", color='r')
+        if opts.maxhold:
+            ax.plot(asse_x, max_hold_x, label="Max Hold", color='r')
         ax.plot(asse_x, log_spectrum_x, label="Average", color='g')
-        ax.plot(asse_x, min_hold_x, label="Min Hold", color='b')
+        if opts.minhold:
+            ax.plot(asse_x, min_hold_x, label="Min Hold", color='b')
         ax.set_title("Spectrum of Ant-%03d"%(opts.antenna) + "  Pol-X    Time Range from " +
                      opts.start + " to " + opts.stop, fontsize=14)
         ax.set_xlabel("MHz")
@@ -1335,9 +1341,11 @@ if __name__ == "__main__":
         sys.stdout.flush()
 
         ax.cla()
-        ax.plot(asse_x, max_hold_y, label="Max Hold", color='r')
+        if opts.maxhold:
+            ax.plot(asse_x, max_hold_y, label="Max Hold", color='r')
         ax.plot(asse_x, log_spectrum_y, label="Average", color='g')
-        ax.plot(asse_x, min_hold_y, label="Min Hold", color='b')
+        if opts.minhold:
+            ax.plot(asse_x, min_hold_y, label="Min Hold", color='b')
         ax.set_title("Spectrum of Ant-%03d"%(opts.antenna) + "  Pol-Y    Time Range from " +
                      opts.start + " to " + opts.stop, fontsize=14)
         ax.set_xlabel("MHz")
