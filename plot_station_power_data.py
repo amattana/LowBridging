@@ -100,6 +100,65 @@ def get_sbtemp(start=0, stop=2585699200):
     return tempi, dati
 
 
+def plot_weather():
+    if len(w_data):
+        if opts.weather:
+            ax_weather = ax.twinx()
+            ax_weather.set_ylabel('Temperature (C) red: External Temp, purple: Internal SmartBox', color='r')
+            ax_weather.set_ylim(range_temp_min, range_temp_max)
+            ax_weather.set_yticks(np.arange(range_temp_min, range_temp_max, 5))
+            ax_weather.set_yticklabels(np.arange(range_temp_min, range_temp_max, 5), color='r')
+            ax_weather.plot(w_time, w_temp, color='r', lw=1.5, label='External Temp')
+            ax_weather.tick_params(axis='y', labelcolor='r')
+            ax_weather.spines["right"].set_position(("axes", 1.07))
+
+            if opts.sbtemp:
+                sb_tempi, sb_dati = get_sbtemp(t_start, t_stop)
+                if sb_dati:
+                    # ax_weather.plot(sb_tempi, sb_dati, color='purple', linestyle='None', marker=".", markersize=2, label='SmartBox Internal Temp')
+                    ax_weather.plot(sb_tempi, sb_dati, color='purple', label='SmartBox Internal Temp',
+                                    linestyle='None', marker=".", markersize=2)
+                # else:
+                #     print "\nNo SmartBox Temperature available!"
+            # ax_weather.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
+            #                  loc="lower right", fontsize='small')
+
+        if opts.wind:
+            ax_wind = ax.twinx()
+            ax_wind.plot(w_time, w_wind, color='orange', lw=2.5, linestyle='None', marker=".", markersize=3)
+            ax_wind.set_ylim(0, 100)
+            ax_wind.set_ylabel('Wind (Km/h)', color='orange')
+            ax_wind.tick_params(axis='y', labelcolor='orange')
+            ax_wind.spines["right"].set_position(("axes", 1.16))
+            # Draw wind direction
+            for a in range(len(w_wdir)):
+                if not a % (len(w_wdir) / 24):
+                    m = MarkerStyle(">")
+                    m._transform.rotate_deg(w_wdir[a])
+                    # print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
+                    ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=20, color='black')
+                    m = MarkerStyle("_")
+                    m._transform.rotate_deg(w_wdir[a])
+                    ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=100, color='black')
+
+        if opts.rain:
+            ax_rain = ax.twinx()
+            ax_rain.plot(w_time, w_rain, color='cyan', lw=3)
+            ax_rain.set_ylim(0, 100)
+            ax_rain.set_ylabel('Rain (mm)', color='cyan')
+            ax_rain.tick_params(axis='y', labelcolor='cyan')
+            ax_rain.spines["right"].set_position(("axes", 1.24))
+
+        if opts.sun:
+            if len(sun_data):
+                ax_sun = ax.twinx()
+                ax_sun.plot(sun_time, sun_data, color='k', lw=1.5)
+                ax_sun.set_ylim(0, 4000)
+                ax_sun.set_ylabel('Solar Radiation (W/m^2)', color='k')
+                ax_sun.tick_params(axis='y', labelcolor='k')
+                ax_sun.spines["right"].set_position(("axes", 1.32))
+
+
 if __name__ == "__main__":
     from optparse import OptionParser
     from sys import argv, stdout
@@ -117,6 +176,10 @@ if __name__ == "__main__":
                       default="", help="Directory containing data")
     parser.add_option("--freq", action="store", dest="freq",
                       default="160", help="Frequency of interest")
+    parser.add_option("--pol", action="store", dest="pol",
+                      default="", help="Polarization to plot, 'both' means both in the same axes")
+    parser.add_option("--groupname", action="store", dest="groupname",
+                      default="", help="Antenna group name to be added to title")
     parser.add_option("--mixed", action="store_true", dest="mixed",
                       default=False, help="Plot Specific set of Antenna (antenna option required)")
     parser.add_option("--chart", action="store_true", dest="chart",
@@ -211,13 +274,13 @@ if __name__ == "__main__":
     plt.ion()
     if opts.freq == "ecg":
         if opts.weather:
-            gs = GridSpec(1, 1, left=0.06, top=0.935, bottom=0.15, right=0.78)
+            gs = GridSpec(1, 1, left=0.06, top=0.935, bottom=0.15, right=0.8)
         else:
             gs = GridSpec(1, 1, left=0.06, top=0.935, bottom=0.15, right=0.92)
     elif opts.chart:
         gs = GridSpec(1, 1, left=0.06, top=0.935, bottom=0.15, right=0.8)
     else:
-        gs = GridSpec(1, 1, left=0.06, top=0.935, bottom=0.15, right=0.8)
+        gs = GridSpec(1, 1, left=0.06, top=0.935, bottom=0.15, right=0.72)
 
     if opts.chart:
         t_start = t_start - (60 * 60 * 24 * 3) # Chart plot x axes starts 3 days before
@@ -277,110 +340,123 @@ if __name__ == "__main__":
             sys.stdout.write(ERASE_LINE + "\r[%d/%d] Processing directory: %s" % (dlcnt + 1, len(dirlist), dl))
             sys.stdout.flush()
             freq = dl[-6:-3]
-            for pol in ["X", "Y"]:
-                for ng, gr in enumerate(ant_group):
-                    sys.stdout.write(ERASE_LINE + "\r[%d/%d] Plotting Pol-%s of Group %d/%d" %
-                                     (dlcnt + 1, len(dirlist), pol, ng + 1, len(ant_group)))
+            if not opts.pol == "both":
+                for pol in ["X", "Y"]:
+                    for ng, gr in enumerate(ant_group):
+                        sys.stdout.write(ERASE_LINE + "\r[%d/%d] Plotting Pol-%s of Group %d/%d" %
+                                         (dlcnt + 1, len(dirlist), pol, ng + 1, len(ant_group)))
+                        sys.stdout.flush()
+                        plt.clf()
+                        ax = fig.add_subplot(gs[0, 0])
+                        ax.cla()
+                        #if len(w_data):
+                        #    ax_weather = ax.twinx()
+                        ax.set_xticks(xticks)
+                        ax.set_xticklabels(xticklabels, rotation=90, fontsize=8)
+                        yticks = []
+                        yticklabels = []
+                        for n, g in enumerate(gr):
+                            flist = sorted(glob.glob(dl + "/power_data/" + opts.station + "_POWER_" + start_date +
+                                                     "*_ANT-%03d_POL-%s_*.txt" % (int(g), pol)))
+                            for f in flist:
+                                with open(f) as fi:
+                                    data = fi.readlines()
+                                asse_x = []
+                                dati = []
+                                for d in data[1:]:
+                                    asse_x += [int(d.split()[0])]
+                                    dati += [float(d.split()[3])]
+                                if len(dati):
+                                    dati = np.array(dati) - dati[0] - ((16/len(gr)) * n)
+                                    ax.plot(asse_x, dati, linestyle='None', marker=".", markersize=1)
+                                    yticks += [-((16/len(gr)) * n)]
+                                    yticklabels += [f[f.rfind("ANT"):f.rfind("ANT") + 7]]
+                        if opts.station == "AAVS2":
+                            ax.set_ylim(-17, 1)
+                        else:
+                            ax.set_ylim(-17, 1)
+                        ax.set_xlim(xticks[0], xticks[-1])
+                        ax.set_xlabel("UTC Time")
+
+                        ax.set_yticks(yticks)
+                        ax.set_yticklabels(yticklabels)
+                        group_name = opts.groupname
+                        tempo = "From " + opts.start.replace("_", " ") + " to " + opts.stop.replace("_", " ") + " UTC  " \
+                                + group_name
+                        ax.set_title("%s  Pol-%s   Frequency %sMHz  %s" % (opts.station, pol, freq, tempo))
+                        #ax.legend(bbox_to_anchor=(1.01, 1), loc='upper left', borderaxespad=0., fontsize=14, markerscale=8)
+                        #ax.grid()
+                        ax_db = ax.twinx()
+                        ax_db.set_yticks((np.arange(50)-24).tolist())
+                        ax_db.set_ylim(-15, 3)
+                        ax_db.set_ylabel('dB', color='k')
+                        ax_db.tick_params(axis='y', labelcolor='k')
+                        ax_db.spines["right"].set_position(("axes", 1))
+                        ax_db.grid()
+                        plot_weather()
+                        gruppo = opts.antenna.replace(",", "-")
+                        opath = dl + "/group_pics/"
+                        if not os.path.isdir(opath):
+                            os.mkdir(opath)
+                        if not os.path.isdir(opath + "Pol-" + pol):
+                            os.mkdir(opath + "Pol-" + pol)
+                        fig.savefig(opath + "Pol-" + pol + "/" + start_date + "_" + opts.station + "_GROUP-%s_" % gruppo +
+                                    freq + "MHz_Pol-" + pol + ".png")
+            else:
+                # single antenna
+                group_reshaped = np.array(ant_group).reshape(len(ant_group) * (len(ant_group[0]))).tolist()
+                for nant, ant in enumerate(group_reshaped):
+                    sys.stdout.write(ERASE_LINE + "\r[%d/%d] Frequency: %s MHz --> [%d/%d] Plotting Antenna %d" %
+                                     (dlcnt + 1, len(dirlist), freq,nant + 1, len(group_reshaped), int(ant)))
                     sys.stdout.flush()
                     plt.clf()
                     ax = fig.add_subplot(gs[0, 0])
                     ax.cla()
-                    if len(w_data):
-                        ax_weather = ax.twinx()
+                    #if len(w_data):
+                    #    ax_weather = ax.twinx()
                     ax.set_xticks(xticks)
                     ax.set_xticklabels(xticklabels, rotation=90, fontsize=8)
-                    yticks = []
-                    yticklabels = []
-                    for n, g in enumerate(gr):
-                        flist = sorted(glob.glob(dl + "/power_data/" + opts.station + "_POWER_" + start_date +
-                                                 "*_ANT-%03d_POL-%s_*.txt" % (int(g), pol)))
-                        for f in flist:
-                            with open(f) as g:
-                                data = g.readlines()
-                            asse_x = []
-                            dati = []
-                            for d in data[1:]:
-                                asse_x += [int(d.split()[0])]
-                                dati += [float(d.split()[3])]
-                            if len(dati):
-                                dati = np.array(dati) - dati[0] - (3 * n)
-                                ax.plot(asse_x, dati, linestyle='None', marker=".", markersize=1)
-                                yticks += [-(3 * n)]
-                                yticklabels += [f[f.rfind("ANT"):f.rfind("ANT") + 7]]
+                    f = sorted(glob.glob(dl + "/power_data/" + opts.station + "_POWER_" + start_date +
+                                             "*_ANT-%03d_POL-X_*.txt" % (int(ant))))[0]
+                    with open(f) as fi:
+                        data = fi.readlines()
+                    asse_x = []
+                    dati = []
+                    for d in data[1:]:
+                        asse_x += [int(d.split()[0])]
+                        dati += [float(d.split()[3])]
+                    if len(dati):
+                        dati = np.array(dati) - dati[0]
+                        ax.plot(asse_x, dati, color='b', linestyle='None', marker=".", markersize=1)
+                    f = sorted(glob.glob(dl + "/power_data/" + opts.station + "_POWER_" + start_date +
+                                             "*_ANT-%03d_POL-Y_*.txt" % (int(ant))))[0]
+                    with open(f) as fi:
+                        data = fi.readlines()
+                    asse_x = []
+                    dati = []
+                    for d in data[1:]:
+                        asse_x += [int(d.split()[0])]
+                        dati += [float(d.split()[3])]
+                    if len(dati):
+                        dati = np.array(dati) - dati[0]
+                        ax.plot(asse_x, dati, color='g', linestyle='None', marker=".", markersize=1)
+
                     if opts.station == "AAVS2":
-                        ax.set_ylim(-15, 3)
+                        ax.set_ylim(-12, 6)
                     else:
-                        ax.set_ylim(-15, 3)
+                        ax.set_ylim(-12, 6)
                     ax.set_xlim(xticks[0], xticks[-1])
                     ax.set_xlabel("UTC Time")
-                    ax.set_yticks(yticks)
-                    ax.set_yticklabels(yticklabels)
                     tempo = "From " + opts.start.replace("_", " ") + " to " + opts.stop.replace("_", " ") + " UTC"
-                    ax.set_title("%s  Pol-%s   Frequency %sMHz  %s" % (opts.station, pol, freq, tempo))
+                    ax.set_title("%s  Antenna %d  Frequency %sMHz  %s" % (opts.station, int(ant), freq, tempo))
                     #ax.legend(bbox_to_anchor=(1.01, 1), loc='upper left', borderaxespad=0., fontsize=14, markerscale=8)
                     ax.grid()
-                    if len(w_data):
-                        if opts.weather:
-                            ax_weather.set_ylabel('Temperature (C) red: External Temp, purple: Internal SmartBox', color='r')
-                            ax_weather.set_ylim(range_temp_min, range_temp_max)
-                            ax_weather.set_yticks(np.arange(range_temp_min, range_temp_max, 5))
-                            ax_weather.set_yticklabels(np.arange(range_temp_min, range_temp_max, 5), color='r')
-                            ax_weather.plot(w_time, w_temp, color='r', lw=1.5, label='External Temp')
-
-                            if opts.sbtemp:
-                                sb_tempi, sb_dati = get_sbtemp(t_start, t_stop)
-                                if sb_dati:
-                                    #ax_weather.plot(sb_tempi, sb_dati, color='purple', linestyle='None', marker=".", markersize=2, label='SmartBox Internal Temp')
-                                    ax_weather.plot(sb_tempi, sb_dati, color='purple', label='SmartBox Internal Temp',
-                                                    linestyle='None', marker=".", markersize=2)
-                                # else:
-                                #     print "\nNo SmartBox Temperature available!"
-                            #ax_weather.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
-                            #                  loc="lower right", fontsize='small')
-
-                        if opts.wind:
-                            ax_wind = ax.twinx()
-                            ax_wind.plot(w_time, w_wind, color='orange', lw=2.5, linestyle='None', marker=".", markersize=3)
-                            ax_wind.set_ylim(0, 100)
-                            ax_wind.set_ylabel('Wind (Km/h)', color='orange')
-                            ax_wind.tick_params(axis='y', labelcolor='orange')
-                            ax_wind.spines["right"].set_position(("axes", 1.06))
-                            # Draw wind direction
-                            for a in range(len(w_wdir)):
-                                if not a % (len(w_wdir)/24):
-                                    m = MarkerStyle(">")
-                                    m._transform.rotate_deg(w_wdir[a])
-                                    # print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
-                                    ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=20, color='black')
-                                    m = MarkerStyle("_")
-                                    m._transform.rotate_deg(w_wdir[a])
-                                    ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=100, color='black')
-
-                        if opts.rain:
-                            ax_rain = ax.twinx()
-                            ax_rain.plot(w_time, w_rain, color='cyan', lw=3)
-                            ax_rain.set_ylim(0, 100)
-                            ax_rain.set_ylabel('Rain (mm)', color='cyan')
-                            ax_rain.tick_params(axis='y', labelcolor='cyan')
-                            ax_rain.spines["right"].set_position(("axes", 1.12))
-
-                        if opts.sun:
-                            if len(sun_data):
-                                ax_sun = ax.twinx()
-                                ax_sun.plot(sun_time, sun_data, color='k', lw=1.5)
-                                ax_sun.set_ylim(0, 4000)
-                                ax_sun.set_ylabel('Solar Radiation (W/m^2)', color='k')
-                                ax_sun.tick_params(axis='y', labelcolor='k')
-                                ax_sun.spines["right"].set_position(("axes", 1.18))
-
-                    gruppo = opts.antenna.replace(",", "-")
-                    opath = dl + "/group_pics/"
+                    plot_weather()
+                    opath = dl + "/ant_pics/"
                     if not os.path.isdir(opath):
                         os.mkdir(opath)
-                    if not os.path.isdir(opath + "Pol-" + pol):
-                        os.mkdir(opath + "Pol-" + pol)
-                    fig.savefig(opath + "Pol-" + pol + "/" + start_date + "_" + opts.station + "_GROUP-%s_" % gruppo +
-                                freq + "MHz_Pol-" + pol + ".png")
+                    fig.savefig(opath + start_date + "_" + opts.station + "_FREQ-%sMHz_ANT-%03d.png" % (freq, int(ant)))
+
         print
 
     elif not opts.chart:
@@ -426,65 +502,7 @@ if __name__ == "__main__":
                                                                              opts.start.replace("_", " "),
                                                                              opts.stop.replace("_", " ")))
                     ax.grid()
-
-                    if len(w_data):
-                        ax_weather = ax.twinx()
-                        if opts.weather:
-                            ax_weather.set_ylabel('Temperature (C) red: External Temp, purple: Internal SmartBox',
-                                                  color='r')
-                            ax_weather.set_ylim(range_temp_min, range_temp_max)
-                            ax_weather.set_yticks(np.arange(range_temp_min, range_temp_max, 5))
-                            ax_weather.set_yticklabels(np.arange(range_temp_min, range_temp_max, 5), color='r')
-                            ax_weather.plot(w_time, w_temp, color='r', lw=1.5, label='External Temp')
-                            #print "\n", w_time
-                            #exit()
-
-                            if opts.sbtemp:
-                                sb_tempi, sb_dati = get_sbtemp(t_start, t_stop)
-                                if sb_dati:
-                                    # ax_weather.plot(sb_tempi, sb_dati, color='purple', linestyle='None', marker=".", markersize=2, label='SmartBox Internal Temp')
-                                    ax_weather.plot(sb_tempi, sb_dati, color='purple', label='SmartBox Internal Temp',
-                                                    linestyle='None', marker=".", markersize=2)
-                                # else:
-                                #     print "\nNo SmartBox Temperature available!"
-                            # ax_weather.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
-                            #                  loc="lower right", fontsize='small')
-
-                        if opts.wind:
-                            ax_wind = ax.twinx()
-                            ax_wind.plot(w_time, w_wind, color='orange', lw=2.5, linestyle='None', marker=".",
-                                         markersize=3)
-                            ax_wind.set_ylim(0, 100)
-                            ax_wind.set_ylabel('Wind (Km/h)', color='orange')
-                            ax_wind.tick_params(axis='y', labelcolor='orange')
-                            ax_wind.spines["right"].set_position(("axes", 1.08))
-                            # Draw wind direction
-                            for a in range(len(w_wdir)):
-                                if not a % (len(w_wdir) / 24):
-                                    m = MarkerStyle(">")
-                                    m._transform.rotate_deg(w_wdir[a])
-                                    # print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
-                                    ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=20, color='black')
-                                    m = MarkerStyle("_")
-                                    m._transform.rotate_deg(w_wdir[a])
-                                    ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=100, color='black')
-
-                        if opts.rain:
-                            ax_rain = ax.twinx()
-                            ax_rain.plot(w_time, w_rain, color='cyan', lw=3)
-                            ax_rain.set_ylim(0, 100)
-                            ax_rain.set_ylabel('Rain (mm)', color='cyan')
-                            ax_rain.tick_params(axis='y', labelcolor='cyan')
-                            ax_rain.spines["right"].set_position(("axes", 1.14))
-
-                        if opts.sun:
-                            if len(sun_data):
-                                ax_sun = ax.twinx()
-                                ax_sun.plot(sun_time, sun_data, color='k', lw=1.5)
-                                ax_sun.set_ylim(0, 4000)
-                                ax_sun.set_ylabel('Solar Radiation (W/m^2)', color='k')
-                                ax_sun.tick_params(axis='y', labelcolor='k')
-                                ax_sun.spines["right"].set_position(("axes", 1.20))
+                    plot_weather()
 
                     #fig.subplots_adjust(right=0.86)
                     opath = data_dir + start_date + "/ecg_pics/"
@@ -550,61 +568,9 @@ if __name__ == "__main__":
                         tempo = "From " + opts.start.replace("_", " ") + " to " + opts.stop.replace("_", " ") + " UTC"
                         ax.set_title("%s Tile-%02d   Pol-%s   Frequency %sMHz  %s" % (opts.station, t, pol, freq, tempo))
                         #ax.legend(bbox_to_anchor=(1.01, 1), loc='upper left', borderaxespad=0., fontsize=14, markerscale=8)
+
                         ax.grid()
-
-                        if len(w_data):
-                            if opts.weather:
-                                ax_weather.set_ylabel('Temperature (C) red: External Temp, purple: Internal SmartBox', color='r')
-                                ax_weather.set_ylim(range_temp_min, range_temp_max)
-                                ax_weather.set_yticks(np.arange(range_temp_min, range_temp_max, 5))
-                                ax_weather.set_yticklabels(np.arange(range_temp_min, range_temp_max, 5), color='r')
-                                ax_weather.plot(w_time, w_temp, color='r', lw=1.5, label='External Temp')
-
-                                if opts.sbtemp:
-                                    sb_tempi, sb_dati = get_sbtemp(t_start, t_stop)
-                                    if sb_dati:
-                                        #ax_weather.plot(sb_tempi, sb_dati, color='purple', linestyle='None', marker=".", markersize=2, label='SmartBox Internal Temp')
-                                        ax_weather.plot(sb_tempi, sb_dati, color='purple', label='SmartBox Internal Temp',
-                                                        linestyle='None', marker=".", markersize=2)
-                                    # else:
-                                    #     print "\nNo SmartBox Temperature available!"
-                                #ax_weather.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
-                                #                  loc="lower right", fontsize='small')
-
-                            if opts.wind:
-                                ax_wind = ax.twinx()
-                                ax_wind.plot(w_time, w_wind, color='orange', lw=2.5, linestyle='None', marker=".", markersize=3)
-                                ax_wind.set_ylim(0, 100)
-                                ax_wind.set_ylabel('Wind (Km/h)', color='orange')
-                                ax_wind.tick_params(axis='y', labelcolor='orange')
-                                ax_wind.spines["right"].set_position(("axes", 1.06))
-                                # Draw wind direction
-                                for a in range(len(w_wdir)):
-                                    if not a % (len(w_wdir)/24):
-                                        m = MarkerStyle(">")
-                                        m._transform.rotate_deg(w_wdir[a])
-                                        # print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
-                                        ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=20, color='black')
-                                        m = MarkerStyle("_")
-                                        m._transform.rotate_deg(w_wdir[a])
-                                        ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=100, color='black')
-
-                            if opts.rain:
-                                ax_rain = ax.twinx()
-                                ax_rain.plot(w_time, w_rain, color='cyan', lw=3)
-                                ax_rain.set_ylim(0, 100)
-                                ax_rain.set_ylabel('Rain (mm)', color='cyan')
-                                ax_rain.tick_params(axis='y', labelcolor='cyan')
-                                ax_rain.spines["right"].set_position(("axes", 1.12))
-
-                            if opts.sun:
-                                if len(sun_data):
-                                    ax_sun = ax.twinx()
-                                    ax_sun.plot(sun_time, sun_data, color='k', lw=1.5)
-                                    ax_sun.set_ylim(0, 4000)
-                                    ax_sun.set_ylabel('Solar Radiation (W/m^2)', color='k')
-                                    ax_sun.tick_params(axis='y', labelcolor='k')
-                                    ax_sun.spines["right"].set_position(("axes", 1.18))
+                        plot_weather()
 
                         opath = dl + "/tile_pics/"
                         if not os.path.isdir(opath):
@@ -642,61 +608,7 @@ if __name__ == "__main__":
         ax.set_ylim(-20, 4)
         ax.set_title("Antenna #%03d Chart - Frequency %d MHz" % (ant, int(freq)))
         ax.grid()
-
-        if len(w_data):
-            if opts.weather:
-                ax_weather.set_ylabel('Temperature C (red: external, purple: SmartBox)', color='r')
-                ax_weather.set_ylim(range_temp_min, range_temp_max)
-                ax_weather.set_yticks(np.arange(range_temp_min, range_temp_max, 5))
-                ax_weather.set_yticklabels(np.arange(range_temp_min, range_temp_max, 5), color='r')
-                ax_weather.plot(w_time, w_temp, color='r', label='External Temp', lw=2)
-                                #linestyle='None', marker=".", markersize=2)
-
-                if opts.sbtemp:
-                    sb_tempi, sb_dati = get_sbtemp(t_start + (60 * 60 * 24 * 3), t_stop)
-                    if sb_dati:
-                        #ax_weather.plot(sb_tempi, sb_dati, color='purple', linestyle='None', marker=".", markersize=2, label='SmartBox Internal Temp')
-                        ax_weather.plot(sb_tempi, sb_dati, color='purple', label='SmartBox Internal Temp', lw=2)
-                                        #linestyle='None', marker=".", markersize=2)
-                    else:
-                        print "\nNo SmartBox Temperature available!"
-                #ax_weather.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1, ncol=8,#bbox_to_anchor=(1-0.2, 1-0.2)
-                #                  loc="lower right", fontsize='small')
-
-            if opts.wind:
-                ax_wind = ax.twinx()
-                ax_wind.plot(w_time, w_wind, color='orange', lw=2.5, linestyle='None', marker=".", markersize=3)
-                ax_wind.set_ylim(0, 100)
-                ax_wind.set_ylabel('Wind (Km/h)', color='orange')
-                ax_wind.tick_params(axis='y', labelcolor='orange')
-                ax_wind.spines["right"].set_position(("axes", 1.06))
-                # Draw wind direction
-                for a in range(len(w_wdir)):
-                    if not a % (len(w_wdir)/24):
-                        m = MarkerStyle(">")
-                        m._transform.rotate_deg(w_wdir[a])
-                        # print a, xticks[a], w_wind[a], len(xticks), len(w_wind)
-                        ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=20, color='black')
-                        m = MarkerStyle("_")
-                        m._transform.rotate_deg(w_wdir[a])
-                        ax_wind.scatter(w_time[a], w_wind[a], marker=m, s=100, color='black')
-
-            if opts.rain:
-                ax_rain = ax.twinx()
-                ax_rain.plot(w_time, w_rain, color='cyan', lw=3)
-                ax_rain.set_ylim(0, 100)
-                ax_rain.set_ylabel('Rain (mm)', color='cyan')
-                ax_rain.tick_params(axis='y', labelcolor='cyan')
-                ax_rain.spines["right"].set_position(("axes", 1.12))
-
-        if opts.sun:
-            if len(sun_data):
-                ax_sun = ax.twinx()
-                ax_sun.plot(sun_time, sun_data, color='k', lw=1.5)
-                ax_sun.set_ylim(0, 2000)
-                ax_sun.set_ylabel('Solar Irradiation', color='k')
-                ax_sun.tick_params(axis='y', labelcolor='k')
-                ax_sun.spines["right"].set_position(("axes", 1.18))
+        plot_weather()
 
         tempo = t_start
         while tempo < t_stop - (60 * 60 * 24 * 3):
