@@ -102,6 +102,8 @@ if __name__ == "__main__":
     modo = FileDAQModes.Integrated
     if opts.mode == "cont":
         modo = FileDAQModes.Continuous
+    elif opts.mode == "burst":
+        modo = FileDAQModes.Burst
 
     if opts.date:
         try:
