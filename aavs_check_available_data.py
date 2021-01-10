@@ -145,7 +145,10 @@ if __name__ == "__main__":
         exit()
     print "\tFILE\t\t TIMESTAMP\t\tSTART\t\t\tSTOP\t\tSIZE (MB)\tBLOCKS"
     print "---------------------+-----------------+------------------+--------------------------+--------------+-----------"
-    lista = sorted(glob.glob(opts.directory + "/channel_" + opts.mode + "_%d_*hdf5" % (int(opts.tile)-1)))
+    if opts.mode == "null":
+        lista = sorted(glob.glob(opts.directory + "/channel_%d_*hdf5" % (int(opts.tile)-1)))
+    else:
+        lista = sorted(glob.glob(opts.directory + "/channel_" + opts.mode + "_%d_*hdf5" % (int(opts.tile)-1)))
     for l in lista:
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         if dic:
