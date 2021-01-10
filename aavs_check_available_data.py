@@ -90,7 +90,7 @@ if __name__ == "__main__":
     parser.add_option("--type", action="store", dest="type",
                       default="channel", help="File Manager Format (channel, raw)")
     parser.add_option("--mode", action="store", dest="mode",
-                      default="integ", help="FileDAQ Mode (integ, cont, burst)")
+                      default="integ", help="FileDAQ Mode (integ, cont, burst, null)")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -104,6 +104,8 @@ if __name__ == "__main__":
         modo = FileDAQModes.Continuous
     elif opts.mode == "burst":
         modo = FileDAQModes.Burst
+    elif opts.mode == "null":
+        modo = FileDAQModes.Null
 
     if opts.date:
         try:
