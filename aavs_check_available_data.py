@@ -88,7 +88,7 @@ if __name__ == "__main__":
     parser.add_option("--date", action="store", dest="date",
                       default="", help="Stop time for filter (YYYY-mm-DD)")
     parser.add_option("--mode", action="store", dest="mode",
-                      default="integr", help="FileDAQ Mode (integr, cont)")
+                      default="integr", help="FileDAQ Mode (integ, cont)")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -133,7 +133,7 @@ if __name__ == "__main__":
                                             daq_mode=modo)
     print "\tFILE\t\t TIMESTAMP\t\tSTART\t\t\tSTOP\t\tSIZE (MB)\tBLOCKS"
     print "---------------------+-----------------+------------------+--------------------------+--------------+-----------"
-    lista = sorted(glob.glob(opts.directory + "/channel_integ_%d_*hdf5" % (int(opts.tile)-1)))
+    lista = sorted(glob.glob(opts.directory + "/channel_" + modo + "_%d_*hdf5" % (int(opts.tile)-1)))
     for l in lista:
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         if dic:
