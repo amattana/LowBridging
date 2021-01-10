@@ -1,4 +1,4 @@
-from pydaq.persisters import ChannelFormatFileManager, FileDAQModes
+from pydaq.persisters import ChannelFormatFileManager, FileDAQModes, RawFormatFileManager
 import sys
 import matplotlib
 if not 'matplotlib.backends' in sys.modules:
@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
     if opts.type == "channel":
         file_manager = ChannelFormatFileManager(root_path=opts.directory, daq_mode=modo)
-    elif:
+    elif opts.type == "raw":
         file_manager = RawFormatFileManager(root_path=opts.directory, daq_mode=modo)
     else:
         print "\n Please specify a data format (channel, raw)"
