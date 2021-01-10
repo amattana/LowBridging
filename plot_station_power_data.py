@@ -337,6 +337,7 @@ if __name__ == "__main__":
 
         print
         for dlcnt, dl in enumerate(dirlist):
+            plt.show()
             sys.stdout.write(ERASE_LINE + "\r[%d/%d] Processing directory: %s" % (dlcnt + 1, len(dirlist), dl))
             sys.stdout.flush()
             freq = dl[-6:-3]
@@ -364,17 +365,20 @@ if __name__ == "__main__":
                                 asse_x = []
                                 dati = []
                                 for d in data[1:]:
-                                    asse_x += [int(d.split()[0])]
-                                    dati += [float(d.split()[3])]
+                                    if not float(d.split()[3]) == 0:
+                                        asse_x += [int(d.split()[0])]
+                                        dati += [float(d.split()[3])]
                                 if len(dati):
-                                    dati = np.array(dati) - dati[0] - ((16/len(gr)) * n)
+                                    #dati = np.array(dati) - dati[0] - ((16/len(gr)) * n)
+                                    dati = np.array(dati) - dati[0] - (2 * n)
                                     ax.plot(asse_x, dati, linestyle='None', marker=".", markersize=1)
-                                    yticks += [-((16/len(gr)) * n)]
+                                    #yticks += [-((16/len(gr)) * n)]
+                                    yticks += [-(2 * n)]
                                     yticklabels += [f[f.rfind("ANT"):f.rfind("ANT") + 7]]
                         if opts.station == "AAVS2":
-                            ax.set_ylim(-17, 1)
+                            ax.set_ylim(-20, 3)
                         else:
-                            ax.set_ylim(-17, 1)
+                            ax.set_ylim(-20, 3)
                         ax.set_xlim(xticks[0], xticks[-1])
                         ax.set_xlabel("UTC Time")
 
