@@ -1334,15 +1334,17 @@ if __name__ == "__main__":
         scp_fname = out_img_path + scp_fname
         plt.savefig(scp_fname)
 
-        data_fname = scp_fname[:-4] + "_maxhold.txt"
-        with open(data_fname, "w") as ft:
-            for k in max_hold_x:
-                ft.write("%6.3f\n" % (k))
+        if opts.maxhold:
+            data_fname = scp_fname[:-4] + "_maxhold.txt"
+            with open(data_fname, "w") as ft:
+                for k in max_hold_x:
+                    ft.write("%6.3f\n" % (k))
 
-        data_fname = scp_fname[:-4] + "_minhold.txt"
-        with open(data_fname, "w") as ft:
-            for k in min_hold_x:
-                ft.write("%6.3f\n" % (k))
+        if opts.maxhold:
+            data_fname = scp_fname[:-4] + "_minhold.txt"
+            with open(data_fname, "w") as ft:
+                for k in min_hold_x:
+                    ft.write("%6.3f\n" % (k))
 
         data_fname = scp_fname[:-4] + "_average.txt"
         with open(data_fname, "w") as ft:
@@ -1381,15 +1383,17 @@ if __name__ == "__main__":
         scp_fname = out_img_path + scp_fname
         plt.savefig(scp_fname)
 
-        data_fname = scp_fname[:-4] + "_maxhold.txt"
-        with open(data_fname, "w") as ft:
-            for k in max_hold_y:
-                ft.write("%6.3f\n" % (k))
+        if opts.maxhold:
+            data_fname = scp_fname[:-4] + "_maxhold.txt"
+            with open(data_fname, "w") as ft:
+                for k in max_hold_y:
+                    ft.write("%6.3f\n" % (k))
 
-        data_fname = scp_fname[:-4] + "_minhold.txt"
-        with open(data_fname, "w") as ft:
-            for k in min_hold_y:
-                ft.write("%6.3f\n" % (k))
+        if opts.maxhold:
+            data_fname = scp_fname[:-4] + "_minhold.txt"
+            with open(data_fname, "w") as ft:
+                for k in min_hold_y:
+                    ft.write("%6.3f\n" % (k))
 
         data_fname = scp_fname[:-4] + "_average.txt"
         with open(data_fname, "w") as ft:
