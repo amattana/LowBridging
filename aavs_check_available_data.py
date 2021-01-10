@@ -87,6 +87,8 @@ if __name__ == "__main__":
                       default="", help="Stop time for filter (YYYY-mm-DD_HH:MM:SS)")
     parser.add_option("--date", action="store", dest="date",
                       default="", help="Stop time for filter (YYYY-mm-DD)")
+    parser.add_option("--mode", action="store", dest="mode",
+                      default="integr", help="FileDAQ Mode (integr, cont)")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -94,6 +96,10 @@ if __name__ == "__main__":
     t_start = None
     t_stop = None
     t_cnt = 0
+
+    modo = FileDAQModes.Integrated
+    if opts.mode == cont:
+        modo = FileDAQModes.Continuous
 
     if opts.date:
         try:
@@ -122,12 +128,12 @@ if __name__ == "__main__":
     station.load_configuration_file(opts.config)
     station_name = station.configuration['station']['name']
     print "\nStation Name: ", station_name
-    print "Checking directory: ", opts.directory+station_name.lower() + "\n"
-    file_manager = ChannelFormatFileManager(root_path=opts.directory+station_name.lower(),
-                                            daq_mode=FileDAQModes.Integrated)
+    print "Checking directory: ", opts.directory + "\n"
+    file_manager = ChannelFormatFileManager(root_path=opts.directory,
+                                            daq_mode=modo)
     print "\tFILE\t\t TIMESTAMP\t\tSTART\t\t\tSTOP\t\tSIZE (MB)\tBLOCKS"
     print "---------------------+-----------------+------------------+--------------------------+--------------+-----------"
-    lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (int(opts.tile)-1)))
+    lista = sorted(glob.glob(opts.directory + "/channel_integ_%d_*hdf5" % (int(opts.tile)-1)))
     for l in lista:
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         if dic:
