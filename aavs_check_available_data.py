@@ -87,8 +87,10 @@ if __name__ == "__main__":
                       default="", help="Stop time for filter (YYYY-mm-DD_HH:MM:SS)")
     parser.add_option("--date", action="store", dest="date",
                       default="", help="Stop time for filter (YYYY-mm-DD)")
+    parser.add_option("--type", action="store", dest="type",
+                      default="channel", help="File Manager Format (channel, raw)")
     parser.add_option("--mode", action="store", dest="mode",
-                      default="integ", help="FileDAQ Mode (integ, cont)")
+                      default="integ", help="FileDAQ Mode (integ, cont, burst)")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -129,8 +131,14 @@ if __name__ == "__main__":
     station_name = station.configuration['station']['name']
     print "\nStation Name: ", station_name
     print "Checking directory: ", opts.directory + "\n"
-    file_manager = ChannelFormatFileManager(root_path=opts.directory,
-                                            daq_mode=modo)
+
+    if opts.type == "channel":
+        file_manager = ChannelFormatFileManager(root_path=opts.directory, daq_mode=modo)
+    elif:
+        file_manager = RawFormatFileManager(root_path=opts.directory, daq_mode=modo)
+    else:
+        print "\n Please specify a data format (channel, raw)"
+        exit()
     print "\tFILE\t\t TIMESTAMP\t\tSTART\t\t\tSTOP\t\tSIZE (MB)\tBLOCKS"
     print "---------------------+-----------------+------------------+--------------------------+--------------+-----------"
     lista = sorted(glob.glob(opts.directory + "/channel_" + opts.mode + "_%d_*hdf5" % (int(opts.tile)-1)))
