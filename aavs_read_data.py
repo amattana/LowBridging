@@ -1226,11 +1226,15 @@ if __name__ == "__main__":
                                         (not np.sum(spettro_x[300:350]) == 0):
                                     spectra_x += spettro_x
                                     if not t_cnt_x:
-                                        max_hold_x = spettro_x
-                                        min_hold_x = spettro_x
+                                        if opts.maxhold:
+                                            max_hold_x = spettro_x
+                                        if opts.minhold:
+                                            min_hold_x = spettro_x
                                     else:
-                                        max_hold_x = np.maximum(max_hold_x, spettro_x)
-                                        min_hold_x = np.minimum(min_hold_x, spettro_x)
+                                        if opts.maxhold:
+                                            max_hold_x = np.maximum(max_hold_x, spettro_x)
+                                        if opts.minhold:
+                                            min_hold_x = np.minimum(min_hold_x, spettro_x)
                                     t_cnt_x = t_cnt_x + 1
                                 # POL-Y
                                 for sb_in in antenne:
@@ -1239,11 +1243,15 @@ if __name__ == "__main__":
                                         (not np.sum(spettro_y[300:350]) == 0):
                                     spectra_y += spettro_y
                                     if not t_cnt_y:
-                                        max_hold_y = spettro_y
-                                        min_hold_y = spettro_y
+                                        if opts.maxhold:
+                                            max_hold_y = spettro_y
+                                        if opts.minhold:
+                                            min_hold_y = spettro_y
                                     else:
-                                        max_hold_y = np.maximum(max_hold_y, spettro_y)
-                                        min_hold_y = np.minimum(min_hold_y, spettro_y)
+                                        if opts.maxhold:
+                                            max_hold_y = np.maximum(max_hold_y, spettro_y)
+                                        if opts.minhold:
+                                            min_hold_y = np.minimum(min_hold_y, spettro_y)
                                     t_cnt_y = t_cnt_y + 1
                                 msg = "\rProcessing " + ts_to_datestring(t[0])
                                 sys.stdout.write(ERASE_LINE + msg)
@@ -1260,11 +1268,15 @@ if __name__ == "__main__":
         avg_spectrum_y = spectra_y / t_cnt_y
         with np.errstate(divide='ignore'):
             log_spectrum_x = 10 * np.log10(avg_spectrum_x)
-            max_hold_x = 10 * np.log10(max_hold_x)
-            min_hold_x = 10 * np.log10(min_hold_x)
+            if opts.maxhold:
+                max_hold_x = 10 * np.log10(max_hold_x)
+            if opts.minhold:
+                min_hold_x = 10 * np.log10(min_hold_x)
             log_spectrum_y = 10 * np.log10(avg_spectrum_y)
-            max_hold_y = 10 * np.log10(max_hold_y)
-            min_hold_y = 10 * np.log10(min_hold_y)
+            if opts.maxhold:
+                max_hold_y = 10 * np.log10(max_hold_y)
+            if opts.minhold:
+                min_hold_y = 10 * np.log10(min_hold_y)
 
         if not os.path.exists(SPEC_PATH):
             os.makedirs(SPEC_PATH)
