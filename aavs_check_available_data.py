@@ -98,7 +98,7 @@ if __name__ == "__main__":
     t_cnt = 0
 
     modo = FileDAQModes.Integrated
-    if opts.mode == cont:
+    if opts.mode == "cont":
         modo = FileDAQModes.Continuous
 
     if opts.date:
