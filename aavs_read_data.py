@@ -757,7 +757,9 @@ if __name__ == "__main__":
         ax_water.set_xticks(x_tick)
         ax_water.set_xticklabels(x_ticklabels, rotation=90, fontsize=8)
         ystep = 1
-        if int(band.split("-")[1]) <= 50:
+        if int(band.split("-")[1]) <= 20:
+            ystep = 1
+        elif int(band.split("-")[1]) <= 50:
             ystep = 5
         elif int(band.split("-")[1]) <= 100:
             ystep = 10
