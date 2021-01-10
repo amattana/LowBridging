@@ -138,7 +138,7 @@ if __name__ == "__main__":
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         if dic:
             #data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=int(opts.tile)-1, n_samples=dic['n_blocks'])
-            data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=int(opts.tile)-1, n_samples=200000)
+            data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=int(opts.tile)-1, n_samples=20000000)
             if len(timestamps):
                 if not t_start and not t_stop:
                     print " ", l[-21:-5], "\t", int(timestamps[0][0]), "\t", ts_to_datestring(timestamps[0][0]), "\t", \
