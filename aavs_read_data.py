@@ -1016,12 +1016,12 @@ if __name__ == "__main__":
                                 for sb_in in antenne:
                                     spettro_x = data[:, sb_in, 0, i]
                                     spettro_y = data[:, sb_in, 1, i]
-                                #if not np.sum(spettro_x[20:50]) == 0:
-                                if True:
-                                    #if not np.sum(spettro_x[20:210]) == 0:
-                                    if True:
-                                        #if not np.sum(spettro_x[300:350]) == 0:
-                                        if True:
+                                if not np.sum(spettro_x[20:50]) == 0:
+                                #if True: # syncbox patch
+                                    if not np.sum(spettro_x[20:210]) == 0:
+                                    #if True: # syncbox patch
+                                        if not np.sum(spettro_x[300:350]) == 0:
+                                        #if True: # syncbox patch
                                             t_stamps += [t[0]]
                                             orari += [datetime.datetime.utcfromtimestamp(t[0])]
                                             if xmin == 0:
