@@ -34,7 +34,7 @@ for t in tiles:
             datix += [np.abs(np.sum(samplex))]
             datiy += [np.abs(np.sum(sampley))]
             tempi += [timestamps[0]]
-        print " - Timestamp: %s - Pol-X: %d, Pol-Y: %d" % (ts_to_datestring(tempi[-1]), datix[-1], datiy[-1])
+            print " - Timestamp: %s - Pol-X: %d, Pol-Y: %d" % (ts_to_datestring(tempi[-1]), datix[-1], datiy[-1])
         print "Saving file:", "/storage/monitoring/aavs1_data/AAVS1_ANT-%03d_Pol-X.txt" % (ant + 1)
         with open("/storage/monitoring/aavs1_data/AAVS1_ANT-%03d_Pol-X.txt" % (ant + 1), "w") as f:
             for n, d in enumerate(datix):
