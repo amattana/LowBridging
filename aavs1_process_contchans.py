@@ -28,18 +28,18 @@ for t in tiles:
             sampley = []
             data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=0, n_samples=20000000)
             d = data[0, ant, 0, :]
-            datix += [np.abs(np.complex(np.sum(np.transpose(d.tolist())[0]), np.sum(np.transpose(d.tolist())[1])))]
+            datix += [10*np.log10(np.abs(np.complex(np.sum(np.transpose(d.tolist())[0]), np.sum(np.transpose(d.tolist())[1]))))]
             d = data[0, ant, 1, :]
-            datiy += [np.abs(np.complex(np.sum(np.transpose(d.tolist())[0]), np.sum(np.transpose(d.tolist())[1])))]
+            datiy += [10*np.log10(np.abs(np.complex(np.sum(np.transpose(d.tolist())[0]), np.sum(np.transpose(d.tolist())[1]))))]
             tempi += [timestamps[0]]
             print " - Timestamp: %s - Pol-X: %d, Pol-Y: %d" % (ts_to_datestring(tempi[-1]), datix[-1], datiy[-1])
         print "Saving file:", "/storage/monitoring/aavs1_data/AAVS1_TILE-%02d_ANT-%03d_Pol-X.txt" % (t + 1,  ant + 1)
         with open("/storage/monitoring/aavs1_data/AAVS1_TILE-%02d_ANT-%03d_Pol-X.txt" % (t + 1,  ant + 1), "w") as f:
             for n, d in enumerate(datix):
-                f.write("%d\t%d\n" % (tempi[n], d))
+                f.write("%d\t%f\n" % (tempi[n], d))
                 f.flush()
         print "Saving file:", "/storage/monitoring/aavs1_data/AAVS1_TILE-%02d_ANT-%03d_Pol-Y.txt" % (t + 1,  ant + 1)
         with open("/storage/monitoring/aavs1_data/AAVS1_TILE-%02d_ANT-%03d_Pol-Y.txt" % (t + 1,  ant + 1), "w") as f:
             for n, d in enumerate(datiy):
-                f.write("%d\t%d\n" % (tempi[n], d))
+                f.write("%d\t%f\n" % (tempi[n], d))
                 f.flush()
