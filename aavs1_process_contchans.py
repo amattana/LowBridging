@@ -18,7 +18,7 @@ tiles = range(16)
 for t in tiles:
     lista = sorted(glob.glob("/data/data_2/2019_03_25_204_24hr/channel_cont_%d_*hdf5" % t))
     for ant in range(16):
-        print "Processing ANT-%03d" % (ant + 1)
+        print "Processing TILE-%02d ANT-%03d" % (t + 1, ant + 1)
         datix = []
         datiy = []
         tempi = []
