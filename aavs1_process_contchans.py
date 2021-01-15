@@ -6,6 +6,9 @@ import glob
 import datetime
 from aavs_utils import ts_to_datestring, tstamp_to_fname, dt_to_timestamp, fname_to_tstamp
 import os
+import numpy as np
+
+
 conf = "/opt/aavs/config/aavs1_full_station.yml"
 station.load_configuration_file(conf)
 station_name = station.configuration['station']['name']
