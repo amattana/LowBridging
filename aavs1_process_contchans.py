@@ -15,11 +15,12 @@ station_name = station.configuration['station']['name']
 modo = FileDAQModes.Continuous
 file_manager = ChannelFormatFileManager(root_path="/data/data_2/2019_03_25_204_24hr/", daq_mode=modo)
 tiles = range(16)
-for t in tqdm(range(len(tiles))):
+for t in tiles:
+    print "Processing Tile-%02d" % (t + 1)
     lista = sorted(glob.glob("/data/data_2/2019_03_25_204_24hr/channel_cont_%d_*hdf5" % t))
-    for l in lista:
-        dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=t)
-        data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=t, n_samples=20000000)
+    for l in tqdm(range(len(lista))):
+        dic = file_manager.get_metadata(timestamp=fname_to_tstamp(lista[l][-21:-7]), tile_id=t)
+        data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(lista[l][-21:-7]), tile_id=t, n_samples=20000000)
         #print "Timestamp: %s " % (ts_to_datestring(timestamps[0]))
         for ant in range(16):
             #sys.stdout.write("\rProcessing TILE-%02d ANT-%03d" % (t + 1, ant + 1))
