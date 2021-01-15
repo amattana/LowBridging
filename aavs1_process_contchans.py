@@ -20,20 +20,19 @@ for t in tiles:
     for l in lista:
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=t)
         data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=t, n_samples=20000000)
-        print " - Timestamp: %s " % (ts_to_datestring(timestamps[0]))
+        print "Timestamp: %s " % (ts_to_datestring(timestamps[0]))
         for ant in range(16):
-            print "Processing TILE-%02d ANT-%03d" % (t + 1, ant + 1)
+            sys.stdout.write("\rProcessing TILE-%02d ANT-%03d" % (t + 1, ant + 1))
+            sys.stdout.flush()
             d = data[0, ant, 0, :]
             x = 10 * np.log10(np.abs(np.complex(np.sum(np.transpose(d.tolist())[0]),
                                                 np.sum(np.transpose(d.tolist())[1]))))
             d = data[0, ant, 1, :]
             y = 10 * np.log10(np.abs(np.complex(np.sum(np.transpose(d.tolist())[0]),
                                                 np.sum(np.transpose(d.tolist())[1]))))
-        print "   Saving file:", "/storage/monitoring/aavs1_data/AAVS1_TILE-%02d_ANT-%03d_Pol-X.txt" % (t + 1,  ant + 1)
-        with open("/storage/monitoring/aavs1_data/AAVS1_TILE-%02d_ANT-%03d_Pol-X.txt" % (t + 1,  ant + 1), "a") as f:
-            f.write("%d\t%f\n" % (timestamps[0], x))
-            f.flush()
-        print "   Saving file:", "/storage/monitoring/aavs1_data/AAVS1_TILE-%02d_ANT-%03d_Pol-Y.txt" % (t + 1,  ant + 1)
-        with open("/storage/monitoring/aavs1_data/AAVS1_TILE-%02d_ANT-%03d_Pol-Y.txt" % (t + 1,  ant + 1), "a") as f:
-            f.write("%d\t%f\n" % (timestamps[0], y))
-            f.flush()
+            with open("/storage/monitoring/aavs1_data/AAVS1_TILE-%02d_ANT-%03d_Pol-X.txt" % (t + 1,  ant + 1), "a") as f:
+                f.write("%d\t%f\n" % (timestamps[0], x))
+                f.flush()
+            with open("/storage/monitoring/aavs1_data/AAVS1_TILE-%02d_ANT-%03d_Pol-Y.txt" % (t + 1,  ant + 1), "a") as f:
+                f.write("%d\t%f\n" % (timestamps[0], y))
+                f.flush()
