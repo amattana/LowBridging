@@ -15,7 +15,7 @@ station_name = station.configuration['station']['name']
 modo = FileDAQModes.Continuous
 file_manager = ChannelFormatFileManager(root_path="/data/data_2/2019_03_25_204_24hr/", daq_mode=modo)
 tiles = range(16)
-for n, t in tqdm(enumerate(tiles)):
+for t in tqdm(range(len(tiles))):
     lista = sorted(glob.glob("/data/data_2/2019_03_25_204_24hr/channel_cont_%d_*hdf5" % t))
     for l in lista:
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=t)
