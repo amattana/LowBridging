@@ -17,10 +17,10 @@ file_manager = ChannelFormatFileManager(root_path="/data/data_2/2019_03_25_204_2
 tiles = range(16)
 for t in tiles:
     lista = sorted(glob.glob("/data/data_2/2019_03_25_204_24hr/channel_cont_%d_*hdf5" % t))
-    print " - Timestamp: %s " % (ts_to_datestring(tempi[-1]))
     for l in lista:
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=t)
         data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=t, n_samples=20000000)
+        print " - Timestamp: %s " % (ts_to_datestring(timestamps[0]))
         for ant in range(16):
             print "Processing TILE-%02d ANT-%03d" % (t + 1, ant + 1)
             d = data[0, ant, 0, :]
