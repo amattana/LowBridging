@@ -10,7 +10,7 @@ conf = "/opt/aavs/config/aavs1_full_station.yml"
 station.load_configuration_file(conf)
 station_name = station.configuration['station']['name']
 modo = FileDAQModes.Continuous
-file_manager = ChannelFormatFileManager(root_path="/data/data_2/2019_03_25_204_24hr/", daq_mode=modo
+file_manager = ChannelFormatFileManager(root_path="/data/data_2/2019_03_25_204_24hr/", daq_mode=modo)
 tiles = range(16)
 for t in tiles:
     lista = sorted(glob.glob("/data/data_2/2019_03_25_204_24hr/channel_cont_%d_*hdf5" % t))
