@@ -200,6 +200,8 @@ if __name__ == "__main__":
                       default=False, help="Plot the Rain data if available")
     parser.add_option("--sun", action="store_true", dest="sun",
                       default=False, help="Plot the Solar Irradiation data if available")
+    parser.add_option("--writeribbon", action="store_true", dest="writeribbon",
+                      default=False, help="Add Ribbon ID in y ticks labels")
     parser.add_option("--rangetemp", action="store", dest="rangetemp",
                       default="20,160", help="min,max temperature range")
 
@@ -334,6 +336,8 @@ if __name__ == "__main__":
             dirlist = sorted(glob.glob(data_dir + start_date + "/" + opts.station + "_*MHz"))
         else:
             dirlist = [data_dir + start_date + "/" + opts.station + "_" + str(freq) + "MHz"]
+            #dirlist = [data_dir + "2019-12-01" + "/" + opts.station + "_" + str(freq) + "MHz"]
+            print dirlist
 
         print
         for dlcnt, dl in enumerate(dirlist):
@@ -358,6 +362,7 @@ if __name__ == "__main__":
                         yticklabels = []
                         for n, g in enumerate(gr):
                             flist = sorted(glob.glob(dl + "/power_data/" + opts.station + "_POWER_" + start_date +
+                            #flist = sorted(glob.glob(dl + "/power_data/" + opts.station + "_POWER_" + "2019-12-01" +
                                                      "*_ANT-%03d_POL-%s_*.txt" % (int(g), pol)))
                             for f in flist:
                                 with open(f) as fi:
@@ -366,17 +371,22 @@ if __name__ == "__main__":
                                 dati = []
                                 for d in data[1:]:
                                     if not float(d.split()[3]) == 0:
-                                        asse_x += [int(d.split()[0])]
-                                        dati += [float(d.split()[3])]
+                                        if t_start <= float(d.split()[0]) <= t_stop:
+                                            asse_x += [int(d.split()[0])]
+                                            dati += [float(d.split()[3])]
                                 if len(dati):
                                     #dati = np.array(dati) - dati[0] - ((16/len(gr)) * n)
-                                    dati = np.array(dati) - dati[0] - (2 * n)
+                                    dati = np.array(dati) - dati[0] - (3 * n)
                                     ax.plot(asse_x, dati, linestyle='None', marker=".", markersize=1)
                                     #yticks += [-((16/len(gr)) * n)]
-                                    yticks += [-(2 * n)]
+                                    yticks += [-(3 * n)]
                                     yticklabels += [f[f.rfind("ANT"):f.rfind("ANT") + 7]]
+                                    if opts.writeribbon:
+                                        yticks += [-(3 * n)-0.4]
+                                        yticklabels += ["S.1.2.4"]
+                        dblim = (-17, 7)
                         if opts.station == "AAVS2":
-                            ax.set_ylim(-20, 3)
+                            ax.set_ylim(dblim)
                         else:
                             ax.set_ylim(-20, 3)
                         ax.set_xlim(xticks[0], xticks[-1])
@@ -391,8 +401,8 @@ if __name__ == "__main__":
                         #ax.legend(bbox_to_anchor=(1.01, 1), loc='upper left', borderaxespad=0., fontsize=14, markerscale=8)
                         #ax.grid()
                         ax_db = ax.twinx()
-                        ax_db.set_yticks((np.arange(50)-24).tolist())
-                        ax_db.set_ylim(-15, 3)
+                        ax_db.set_yticks((np.arange(int(dblim[1]-dblim[0])*2)-(dblim[1]-dblim[0])).tolist())
+                        ax_db.set_ylim(dblim)
                         ax_db.set_ylabel('dB', color='k')
                         ax_db.tick_params(axis='y', labelcolor='k')
                         ax_db.spines["right"].set_position(("axes", 1))
@@ -446,7 +456,7 @@ if __name__ == "__main__":
                         ax.plot(asse_x, dati, color='g', linestyle='None', marker=".", markersize=1)
 
                     if opts.station == "AAVS2":
-                        ax.set_ylim(-12, 6)
+                        ax.set_ylim(-10, 5)
                     else:
                         ax.set_ylim(-12, 6)
                     ax.set_xlim(xticks[0], xticks[-1])
