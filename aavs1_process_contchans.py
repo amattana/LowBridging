@@ -36,9 +36,9 @@ for t in tiles:
             x = 10 * np.log10(np.abs((np.complex(np.sum(np.transpose(d.tolist())[0]), np.sum(np.transpose(d.tolist())[1]))/len(d))))
             d = data[0, ant, 1, :]
             y = 10 * np.log10(np.abs((np.complex(np.sum(np.transpose(d.tolist())[0]), np.sum(np.transpose(d.tolist())[1]))/len(d))))
-            with open("/storage/monitoring/aavs1_data/AAVS1_TILE-%02d_ANT-%03d_Pol-X.txt" % (t + 1,  ant + 1), "a") as f:
+            with open("/storage/monitoring/aavs1_data/AAVS1_2019_03_25_TILE-%02d_ANT-%03d_Pol-X.txt" % (t + 1,  ant + 1), "a") as f:
                 f.write("%d\t%f\n" % (timestamps[0], x))
                 f.flush()
-            with open("/storage/monitoring/aavs1_data/AAVS1_TILE-%02d_ANT-%03d_Pol-Y.txt" % (t + 1,  ant + 1), "a") as f:
+            with open("/storage/monitoring/aavs1_data/AAVS1_2019_03_25_TILE-%02d_ANT-%03d_Pol-Y.txt" % (t + 1,  ant + 1), "a") as f:
                 f.write("%d\t%f\n" % (timestamps[0], y))
                 f.flush()
