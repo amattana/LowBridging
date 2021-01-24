@@ -12,6 +12,11 @@ import datetime
 from aavs_utils import ts_to_datestring, tstamp_to_fname, dt_to_timestamp, fname_to_tstamp
 import os
 
+complex_8t = np.dtype([('real', np.int8), ('imag', np.int8)])
+
+# Antenna mapping
+antenna_mapping = [0, 1, 2, 3, 12, 13, 14, 15, 4, 5, 6, 7, 8, 9, 11, 12]
+nof_samples = 20000000
 
 def _connect_station(aavs_station):
     """ Return a connected station """
@@ -29,41 +34,6 @@ def _connect_station(aavs_station):
             except:
                 continue
 
-
-# def dt_to_timestamp(d):
-#     return time.mktime(d.timetuple())
-#
-#
-# def fname_to_tstamp(date_time_string):
-#     time_parts = date_time_string.split('_')
-#     d = datetime.datetime.strptime(time_parts[0], "%Y%m%d")  # "%d/%m/%Y %H:%M:%S"
-#     timestamp = time.mktime(d.timetuple())
-#     timestamp += int(time_parts[1])
-#     return timestamp
-#
-#
-# def ts_to_datestring(tstamp):
-#     return datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(tstamp), "%Y-%m-%d %H:%M:%S")
-#
-#
-# def tstamp_to_fname(timestamp=None):
-#     """
-#     Returns a string date/time from a UNIX timestamp.
-#     :param timestamp: A UNIX timestamp.
-#     :return: A date/time string of the form yyyymmdd_secs
-#     """
-#     if timestamp is None:
-#         timestamp = 0
-#
-#     datetime_object = datetime.datetime.fromtimestamp(timestamp)
-#     hours = datetime_object.hour
-#     minutes = datetime_object.minute
-#     seconds = datetime_object.second
-#     full_seconds = seconds + (minutes * 60) + (hours * 60 * 60)
-#     full_seconds_formatted = format(full_seconds, '05')
-#     base_date_string = datetime.datetime.fromtimestamp(timestamp).strftime('%Y%m%d')
-#     full_date_string = base_date_string + '_' + str(full_seconds_formatted)
-#     return str(full_date_string)
 
 
 if __name__ == "__main__":
@@ -149,28 +119,41 @@ if __name__ == "__main__":
         lista = sorted(glob.glob(opts.directory + "/" + opts.type + "_%d_*hdf5" % (int(opts.tile)-1)))
     else:
         lista = sorted(glob.glob(opts.directory + "/" + opts.type + "_" + opts.mode + "_%d_*hdf5" % (int(opts.tile)-1)))
+    nof_tiles = 16
     for l in lista:
-        dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
-        if dic:
-            #data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=int(opts.tile)-1, n_samples=dic['n_blocks'])
-            data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=int(opts.tile)-1, n_samples=20000000)
-            if len(timestamps):
-                if not t_start and not t_stop:
+        #dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
+        file_manager.read_data(n_samples=1)
+        if file_manager.file_partitions(tile_id=0) == 0:
+            total_samples = file_manager.n_samples * file_manager.n_blocks
+        else:
+            total_samples = file_manager.n_samples * file_manager.n_blocks * \
+                            (file_manager.file_partitions(tile_id=0))
+        nof_blocks = total_samples
+        nof_antennas = file_manager.n_antennas * nof_tiles
+
+        # Read data in antenna, pol, sample order
+        data, timestamps = file_manager.read_data(n_samples=total_samples*100)
+        # Fix antenna mapping, convert to complex and place in data placeholder
+        data = data[0, antenna_mapping, :, :].transpose((1, 0, 2))
+        data = (data['real'] + 1j * data['imag']).astype(np.complex64)
+
+        if len(timestamps):
+            if not t_start and not t_stop:
+                print " ", l[-21:-5], "\t", int(timestamps[0][0]), "\t", ts_to_datestring(timestamps[0][0]), "\t", \
+                    ts_to_datestring(timestamps[-1][0]), "\t%6s"%(str(os.path.getsize(l)/1000000)), "\t\t", "%6s"%(str(len(timestamps)))
+            else:
+                if timestamps[0] > t_stop:
+                    break
+                cnt = 0
+                if not t_start >= timestamps[-1]:
+                    if not t_stop <= timestamps[0]:
+                        for i, t in enumerate(timestamps):
+                            if t_start <= t[0] <= t_stop:
+                                cnt = cnt + 1
+                                t_cnt = t_cnt + 1
+                if cnt:
                     print " ", l[-21:-5], "\t", int(timestamps[0][0]), "\t", ts_to_datestring(timestamps[0][0]), "\t", \
-                        ts_to_datestring(timestamps[-1][0]), "\t%6s"%(str(os.path.getsize(l)/1000000)), "\t\t", "%6s"%(str(len(timestamps)))
-                else:
-                    if timestamps[0] > t_stop:
-                        break
-                    cnt = 0
-                    if not t_start >= timestamps[-1]:
-                        if not t_stop <= timestamps[0]:
-                            for i, t in enumerate(timestamps):
-                                if t_start <= t[0] <= t_stop:
-                                    cnt = cnt + 1
-                                    t_cnt = t_cnt + 1
-                    if cnt:
-                        print " ", l[-21:-5], "\t", int(timestamps[0][0]), "\t", ts_to_datestring(timestamps[0][0]), "\t", \
-                            ts_to_datestring(timestamps[-1][0]), "\t%6s\t"%(str(os.path.getsize(l)/1000000)), "\t", "%6s"%(str(cnt))
+                        ts_to_datestring(timestamps[-1][0]), "\t%6s\t"%(str(os.path.getsize(l)/1000000)), "\t", "%6s"%(str(cnt))
         else:
             print l[-21:-5], "\t", fname_to_tstamp(l[-21:-7]), "\t", \
                 ts_to_datestring(fname_to_tstamp(l[-21:-7])), "\t", ": no metadata available"
