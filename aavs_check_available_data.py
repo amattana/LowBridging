@@ -122,7 +122,7 @@ if __name__ == "__main__":
     nof_tiles = 16
     for l in lista:
         #dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
-        file_manager.read_data(n_samples=1)
+        file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), n_samples=1)
         if file_manager.file_partitions(tile_id=0) == 0:
             total_samples = file_manager.n_samples * file_manager.n_blocks
         else:
@@ -132,7 +132,7 @@ if __name__ == "__main__":
         nof_antennas = file_manager.n_antennas * nof_tiles
 
         # Read data in antenna, pol, sample order
-        data, timestamps = file_manager.read_data(n_samples=total_samples*100)
+        data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), n_samples=total_samples*100)
         # Fix antenna mapping, convert to complex and place in data placeholder
         data = data[0, antenna_mapping, :, :].transpose((1, 0, 2))
         data = (data['real'] + 1j * data['imag']).astype(np.complex64)
