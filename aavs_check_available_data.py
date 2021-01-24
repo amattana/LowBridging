@@ -121,8 +121,8 @@ if __name__ == "__main__":
         lista = sorted(glob.glob(opts.directory + "/" + opts.type + "_" + opts.mode + "_%d_*hdf5" % (int(opts.tile)-1)))
     nof_tiles = 16
     for l in lista:
-        #dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
-        file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), n_samples=1)
+        dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
+        #file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), n_samples=1)
         if file_manager.file_partitions(tile_id=0) == 0:
             total_samples = file_manager.n_samples * file_manager.n_blocks
         else:
