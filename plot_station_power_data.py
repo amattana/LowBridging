@@ -305,9 +305,6 @@ if __name__ == "__main__":
 
     div = np.array([1, 2, 3, 4, 6, 8, 12, 24])
     decimation = div[closest(div, len(xticks) / 24)]
-    # print decimation, len(xticks)
-    # print xticks
-    # print xticklabels
     if opts.chart:
         decimation = 3
     xticks = xticks[::decimation]
