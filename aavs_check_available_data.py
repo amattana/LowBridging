@@ -147,14 +147,14 @@ if __name__ == "__main__":
             if not opts.outfile == "":
                 fname = opts.outfile
                 with open(fname, "a") as f:
-                    for k in range(len(data[0, 0])/100):
-                        print ts_to_datestring(timestamps[(100*k)], formato="%Y-%m-%d %H:%M:%S.%s")
-                        f.write("%f\t%s\t" % (timestamps[(100*k)], ts_to_datestring(timestamps[(100*k)])))
-                        for ant in range(16):
-                            for pol in range(2):
-                                f.write("%6.3f\t" % (10 * np.log10(np.sum(np.abs(data[pol, ant, (100*k):(100*k)+100].real)))))
-                        f.write("\n")
-                        f.flush()
+                    #for k in range(len(data[0, 0])/100):
+                    print ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S.%s")
+                    f.write("%f\t%s\t" % (timestamps[0], ts_to_datestring(timestamps[0])))
+                    for ant in range(16):
+                        for pol in range(2):
+                            f.write("%6.3f\t" % (10 * np.log10(np.sum(np.abs(data[pol, ant, :].real)))))
+                    f.write("\n")
+                    f.flush()
             else:
                 print "WARNING: Missing required argument 'outfile'..."
         #print opts.tile, int(timestamps[0][0]), ts_to_datestring(timestamps[-1][0]), "Blocks:", len(timestamps)
