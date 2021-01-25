@@ -61,6 +61,10 @@ if __name__ == "__main__":
                       default="channel", help="File Manager Format (channel, raw)")
     parser.add_option("--mode", action="store", dest="mode",
                       default="integ", help="FileDAQ Mode (integ, cont, burst, null)")
+    parser.add_option("--save", action="store_true", dest="save",
+                      default=False, help="Save txt data")
+    parser.add_option("--outfile", action="store", dest="outfile",
+                      default="", help="Destination file")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -121,21 +125,39 @@ if __name__ == "__main__":
         lista = sorted(glob.glob(opts.directory + "/" + opts.type + "_" + opts.mode + "_%d_*hdf5" % (int(opts.tile)-1)))
     nof_tiles = 16
     for l in lista:
-        dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
-        #file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), n_samples=1)
-        if file_manager.file_partitions(tile_id=0) == 0:
+        #dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
+        file_manager.read_data(n_samples=1)
+        if file_manager.file_partitions(tile_id=(int(opts.tile)-1)) == 0:
             total_samples = file_manager.n_samples * file_manager.n_blocks
         else:
             total_samples = file_manager.n_samples * file_manager.n_blocks * \
-                            (file_manager.file_partitions(tile_id=0))
+                            (file_manager.file_partitions(tile_id=(int(opts.tile)-1)))
         nof_blocks = total_samples
         nof_antennas = file_manager.n_antennas * nof_tiles
 
         # Read data in antenna, pol, sample order
-        data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), n_samples=total_samples*100)
+        data, timestamps = file_manager.read_data(n_samples=total_samples*100)
         # Fix antenna mapping, convert to complex and place in data placeholder
         data = data[0, antenna_mapping, :, :].transpose((1, 0, 2))
         data = (data['real'] + 1j * data['imag']).astype(np.complex64)
+
+        #d = data[0, 0][:]
+        #print "\n", 10 * np.log10(np.sum(np.sqrt(np.power(d.real, 2))))
+        if opts.save:
+            if not opts.outfile == "":
+                fname = opts.outfile
+                with open(fname, "a") as f:
+                    for k in range(len(data[0, 0])/100):
+                        print ts_to_datestring(timestamps[(100*k)], formato="%Y-%m-%d %H:%M:%S.%s")
+                        f.write("%f\t%s\t" % (timestamps[(100*k)], ts_to_datestring(timestamps[(100*k)])))
+                        for ant in range(16):
+                            for pol in range(2):
+                                f.write("%6.3f\t" % (10 * np.log10(np.sum(np.abs(data[pol, ant, (100*k):(100*k)+100].real)))))
+                        f.write("\n")
+                        f.flush()
+            else:
+                print "WARNING: Missing required argument 'outfile'..."
+        #print opts.tile, int(timestamps[0][0]), ts_to_datestring(timestamps[-1][0]), "Blocks:", len(timestamps)
 
         if len(timestamps):
             if not t_start and not t_stop:
