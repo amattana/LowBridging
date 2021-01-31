@@ -125,7 +125,7 @@ if __name__ == "__main__":
               " (Freq: " + str(asse_x[xmax]) + ")"
 
     for tile in tiles:
-        sys.stdout.write(ERASE_LINE + datetime.datetime.strftime(datetime.datetime.utcnow(), "\n%Y-%m-%d %H:%M:%S - ") +
+        sys.stdout.write(datetime.datetime.strftime(datetime.datetime.utcnow(), "\n%Y-%m-%d %H:%M:%S - ") +
                          "Processing Tile-%02d" % (tile + 1))
         sys.stdout.flush()
         lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile)))
@@ -168,7 +168,7 @@ if __name__ == "__main__":
                                                         [10 * np.log10(np.sum(spettro_x[xmin:xmax + 1]))]
                                                     acc_power_y["ANT-%03d" % ant_map[(tile * 16) + sb_in][2]] += \
                                                         [10 * np.log10(np.sum(spettro_y[xmin:xmax + 1]))]
-                                msg = "\rProcessing " + ts_to_datestring(t[0])
+                                msg = "\rProcessing Tile-%02d - " % (tile + 1) + ts_to_datestring(t[0])
                                 sys.stdout.write(ERASE_LINE + msg)
                                 sys.stdout.flush()
 
@@ -207,7 +207,8 @@ if __name__ == "__main__":
             sys.stdout.write(ERASE_LINE + "\rOutput File: " + data_fname)
             sys.stdout.flush()
 
-        sys.stdout.write(ERASE_LINE)
+        sys.stdout.write(ERASE_LINE + datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S - ") +
+                         "Processed Tile-%02d" % (tile + 1))
         sys.stdout.flush()
 
 
