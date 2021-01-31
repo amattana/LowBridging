@@ -190,10 +190,10 @@ if __name__ == "__main__":
         for sb_in in range(16):
             if int(asse_x[xmin]) == int(asse_x[xmax]):
                 data_fname = opath + station_name + "_POWER_" + opts.date + "_TILE-%02d_ANT-%03d_%s.txt" % \
-                             (int(tile + 1), int(opts.antenna), t_freq)
+                             (int(tile + 1), ant_map[(tile * 16) + sb_in], t_freq)
             else:
                 data_fname = opath + station_name + "_POWER_" + opts.date + "_TILE-%02d_ANT-%03d_BAND-%d-%dMHz.txt" % \
-                            (int(tile + 1), int(opts.antenna), int(asse_x[xmin]), int(asse_x[xmax]))
+                            (int(tile + 1), ant_map[(tile * 16) + sb_in], int(asse_x[xmin]), int(asse_x[xmax]))
             with open(data_fname, "w") as ft:
                 ft.write("Tstamp\tDate\tTime\tPol-X\tPol-Y\n")
                 for n, q in enumerate(acc_power_x["ANT-%03d" % ant_map[(tile * 16) + sb_in]]):
