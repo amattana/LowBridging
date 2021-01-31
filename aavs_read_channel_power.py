@@ -80,7 +80,8 @@ if __name__ == "__main__":
             print "Start Time:  " + ts_to_datestring(t_start) + "    Timestamp: " + str(t_start)
             print "Stop  Time:  " + ts_to_datestring(t_stop) + "    Timestamp: " + str(t_stop)
         except:
-            print "Bad date format detected (must be YYYY-MM-DD)"
+            print "Bad date format detected (must be YYYY-MM)"
+            exit()
     else:
         print "Missing Argument 'date'\n"
         exit()
@@ -200,7 +201,7 @@ if __name__ == "__main__":
                     ft.write("%d\t%s\t%6.3f\t%6.3f\n" % (t_stamps["ANT-%03d" % ant_map[(tile * 16) + sb_in]][n],
                                                          ts_to_datestring(t_stamps[n], "%Y-%m-%d\t%H:%M:%S"),
                                                          q, acc_power_y["ANT-%03d" % ant_map[(tile * 16) + sb_in]][n]))
-            sys.stdout.write(ERASE_LINE + "Output File: " + data_fname)
+            sys.stdout.write(ERASE_LINE + "\rOutput File: " + data_fname)
             sys.stdout.flush()
 
         print datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S - ") + "Processed Tile-%02d\n" % (tile + 1)
