@@ -198,8 +198,10 @@ if __name__ == "__main__":
                 ft.write("Tstamp\tDate\tTime\tPol-X\tPol-Y\n")
                 for n, q in enumerate(acc_power_x["ANT-%03d" % ant_map[(tile * 16) + sb_in]]):
                     ft.write("%d\t%s\t%6.3f\t%6.3f\n" % (t_stamps["ANT-%03d" % ant_map[(tile * 16) + sb_in]][n],
-                                                         ts_to_datestring(t_stamps[n], "%Y-%m-%d\t%H:%M:%S"),
-                                                         q, acc_power_y["ANT-%03d" % ant_map[(tile * 16) + sb_in]][n]))
+                                                         ts_to_datestring(t_stamps["ANT-%03d" % ant_map[(tile * 16) +
+                                                                                                        sb_in]][n],
+                                                                          "%Y-%m-%d\t%H:%M:%S"), q,
+                                                         acc_power_y["ANT-%03d" % ant_map[(tile * 16) + sb_in]][n]))
             sys.stdout.write(ERASE_LINE + "\rOutput File: " + data_fname)
             sys.stdout.flush()
 
