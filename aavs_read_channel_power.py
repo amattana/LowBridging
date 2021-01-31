@@ -7,8 +7,7 @@ import numpy as np
 from pyaavs import station
 from time import sleep
 import datetime
-from aavs_calibration.common import get_antenna_positions
-from aavs_utils import tstamp_to_fname, dt_to_timestamp, ts_to_datestring, fname_to_tstamp, find_ant_by_name, closest
+from aavs_utils import tstamp_to_fname, dt_to_timestamp, ts_to_datestring, fname_to_tstamp, closest
 
 POWER_PATH = "/storage/monitoring/power/station_power/"
 ERASE_LINE = '\x1b[2K'
@@ -73,10 +72,10 @@ if __name__ == "__main__":
         try:
             t_date = datetime.datetime.strptime(opts.date, "%Y-%m")
             t_start = dt_to_timestamp(t_date)
-            if not t_date.month == 11:
-                t_stop = datetime.datetime(t_date.year, t_date.month + 1, 1)
+            if not t_date.month == 12:
+                t_stop = dt_to_timestamp(datetime.datetime(t_date.year, t_date.month + 1, 1))
             else:
-                t_stop = datetime.datetime(t_date.year + 1, 1, 1)
+                t_stop = dt_to_timestamp(datetime.datetime(t_date.year + 1, 1, 1))
             print "Start Time:  " + ts_to_datestring(t_start) + "    Timestamp: " + str(t_start)
             print "Stop  Time:  " + ts_to_datestring(t_stop) + "    Timestamp: " + str(t_stop)
         except:
