@@ -125,7 +125,7 @@ if __name__ == "__main__":
               " (Freq: " + str(asse_x[xmax]) + ")"
 
     for tile in tiles:
-        print datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S - ") + "Processing Tile-%02d\n" % (tile + 1)
+        print datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S - ") + "Processing Tile-%02d" % (tile + 1)
         lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile)))
         t_stamps = {}
         acc_power_x = {}
@@ -203,7 +203,7 @@ if __name__ == "__main__":
             sys.stdout.write(ERASE_LINE + "\rOutput File: " + data_fname)
             sys.stdout.flush()
 
-        print datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S - ") + "Processed Tile-%02d\n" % (tile + 1)
+        print datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S - ") + "Processed Tile-%02d" % (tile + 1)
 
 
 
