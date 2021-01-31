@@ -205,8 +205,7 @@ if __name__ == "__main__":
             sys.stdout.write(ERASE_LINE + "\rOutput File: " + data_fname)
             sys.stdout.flush()
 
-        sys.stdout.write(ERASE_LINE + datetime.datetime.strftime(datetime.datetime.utcnow(), "\r%Y-%m-%d %H:%M:%S - ") +
-                         "Processed Tile-%02d" % (tile + 1))
+        sys.stdout.write(ERASE_LINE)
         sys.stdout.flush()
 
 
