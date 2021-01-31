@@ -17,7 +17,7 @@ def get_ant_map():
     adu_remap = [0, 1, 2, 3, 8, 9, 10, 11, 15, 14, 13, 12, 7, 6, 5, 4]
     with open("aavs_map.txt") as fmap:
         records = fmap.readlines()
-    ant_map = [[]]
+    ant_map = []
     for r in records:
         if len(r.split()) > 2:
             ant_map += [[int(r.split()[0]), adu_remap[int(r.split()[1])-1], int(r.split()[2])]]
