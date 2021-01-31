@@ -17,10 +17,10 @@ def get_ant_map():
     adu_remap = [0, 1, 2, 3, 8, 9, 10, 11, 15, 14, 13, 12, 7, 6, 5, 4]
     with open("aavs_map.txt") as fmap:
         records = fmap.readlines()
-    ant_map = []
+    ant_map = [[]]
     for r in records:
         if len(r.split()) > 2:
-            ant_map += [int(r.split()[0]), adu_remap[int(r.split()[1])-1], int(r.split()[2])]
+            ant_map += [[int(r.split()[0]), adu_remap[int(r.split()[1])-1], int(r.split()[2])]]
     return ant_map
 
 
@@ -131,9 +131,9 @@ if __name__ == "__main__":
         acc_power_x = {}
         acc_power_y = {}
         for a in range(16):
-            t_stamps["ANT-%03d" % ant_map[(tile * 16) + a]] = []
-            acc_power_x["ANT-%03d" % ant_map[(tile * 16) + a]] = []
-            acc_power_y["ANT-%03d" % ant_map[(tile * 16) + a]] = []
+            t_stamps["ANT-%03d" % ant_map[(tile * 16) + a][2]] = []
+            acc_power_x["ANT-%03d" % ant_map[(tile * 16) + a][2]] = []
+            acc_power_y["ANT-%03d" % ant_map[(tile * 16) + a][2]] = []
 
         for cnt_l, l in enumerate(lista):
             if cnt_l < len(lista) - 1:
@@ -160,11 +160,11 @@ if __name__ == "__main__":
                                         #if True: # syncbox patch
                                             if not np.sum(spettro_x[300:350]) == 0:
                                             #if True: # syncbox patch
-                                                t_stamps["ANT-%03d" % ant_map[(tile * 16) + sb_in]] += [t[0]]
+                                                t_stamps["ANT-%03d" % ant_map[(tile * 16) + sb_in][2]] += [t[0]]
                                                 with np.errstate(divide='ignore'):
-                                                    acc_power_x["ANT-%03d" % ant_map[(tile * 16) + sb_in]] += \
+                                                    acc_power_x["ANT-%03d" % ant_map[(tile * 16) + sb_in][2]] += \
                                                         [10 * np.log10(np.sum(spettro_x[xmin:xmax + 1]))]
-                                                    acc_power_y["ANT-%03d" % ant_map[(tile * 16) + sb_in]] += \
+                                                    acc_power_y["ANT-%03d" % ant_map[(tile * 16) + sb_in][2]] += \
                                                         [10 * np.log10(np.sum(spettro_y[xmin:xmax + 1]))]
                                 msg = "\rProcessing " + ts_to_datestring(t[0])
                                 sys.stdout.write(ERASE_LINE + msg)
@@ -190,22 +190,24 @@ if __name__ == "__main__":
         for sb_in in range(16):
             if int(asse_x[xmin]) == int(asse_x[xmax]):
                 data_fname = opath + station_name + "_POWER_" + opts.date + "_TILE-%02d_ANT-%03d_%s.txt" % \
-                             (int(tile + 1), ant_map[(tile * 16) + sb_in], t_freq)
+                             (int(tile + 1), ant_map[(tile * 16) + sb_in][2], t_freq)
             else:
                 data_fname = opath + station_name + "_POWER_" + opts.date + "_TILE-%02d_ANT-%03d_BAND-%d-%dMHz.txt" % \
-                            (int(tile + 1), ant_map[(tile * 16) + sb_in], int(asse_x[xmin]), int(asse_x[xmax]))
+                            (int(tile + 1), ant_map[(tile * 16) + sb_in][2], int(asse_x[xmin]), int(asse_x[xmax]))
             with open(data_fname, "w") as ft:
                 ft.write("Tstamp\tDate\tTime\tPol-X\tPol-Y\n")
-                for n, q in enumerate(acc_power_x["ANT-%03d" % ant_map[(tile * 16) + sb_in]]):
-                    ft.write("%d\t%s\t%6.3f\t%6.3f\n" % (t_stamps["ANT-%03d" % ant_map[(tile * 16) + sb_in]][n],
+                for n, q in enumerate(acc_power_x["ANT-%03d" % ant_map[(tile * 16) + sb_in][2]]):
+                    ft.write("%d\t%s\t%6.3f\t%6.3f\n" % (t_stamps["ANT-%03d" % ant_map[(tile * 16) + sb_in][2]][n],
                                                          ts_to_datestring(t_stamps["ANT-%03d" % ant_map[(tile * 16) +
-                                                                                                        sb_in]][n],
+                                                                                                        sb_in][2]][n],
                                                                           "%Y-%m-%d\t%H:%M:%S"), q,
-                                                         acc_power_y["ANT-%03d" % ant_map[(tile * 16) + sb_in]][n]))
+                                                         acc_power_y["ANT-%03d" % ant_map[(tile * 16) + sb_in][2]][n]))
             sys.stdout.write(ERASE_LINE + "\rOutput File: " + data_fname)
             sys.stdout.flush()
 
-        print datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S - ") + "Processed Tile-%02d" % (tile + 1)
+        sys.stdout.write(ERASE_LINE + datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S - ") +
+                         "Processed Tile-%02d" % (tile + 1))
+        sys.stdout.flush()
 
 
 
