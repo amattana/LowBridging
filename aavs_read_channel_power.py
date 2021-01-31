@@ -20,7 +20,8 @@ def get_ant_map():
         records = fmap.readlines()
     ant_map = []
     for r in records:
-        ant_map += [int(r.split()[0]), adu_remap[int(r.split()[1])], int(r.split()[2])]
+        if len(r.split()) > 2:
+            ant_map += [int(r.split()[0]), adu_remap[int(r.split()[1])], int(r.split()[2])]
     return ant_map
 
 
