@@ -170,10 +170,10 @@ if __name__ == "__main__":
                                 sys.stdout.write(ERASE_LINE + msg)
                                 sys.stdout.flush()
 
-            msg = "\r[%d/%d] File: %s" % (cnt_l + 1, len(lista), l.split("/")[-1]) + "   " + ts_to_datestring(
-                timestamps[0][0]) + "   " + ts_to_datestring(timestamps[-1][0])
-            sys.stdout.write(ERASE_LINE + msg)
-            sys.stdout.flush()
+            # msg = "\r[%d/%d] File: %s" % (cnt_l + 1, len(lista), l.split("/")[-1]) + "   " + ts_to_datestring(
+            #     timestamps[0][0]) + "   " + ts_to_datestring(timestamps[-1][0])
+            # sys.stdout.write(ERASE_LINE + msg)
+            # sys.stdout.flush()
 
         opath = POWER_PATH + station_name
         if not os.path.exists(opath):
