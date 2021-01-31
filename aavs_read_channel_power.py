@@ -178,8 +178,7 @@ if __name__ == "__main__":
         opath = POWER_PATH + station_name
         if not os.path.exists(opath):
             os.makedirs(opath)
-        t_date = datetime.datetime.strftime(datetime.datetime.strptime(opts.start, "%Y-%m-%d_%H:%M:%S"), "%Y-%m")
-        opath = POWER_PATH + "/" + t_date
+        opath = POWER_PATH + "/" + opts.date
         if not os.path.exists(opath):
             os.makedirs(opath)
         t_freq = "FREQ-" + str("%03d" % int(asse_x[xmin])) + "MHz"
@@ -190,10 +189,10 @@ if __name__ == "__main__":
 
         for sb_in in range(16):
             if int(asse_x[xmin]) == int(asse_x[xmax]):
-                data_fname = opath + station_name + "_POWER_" + t_date + "_TILE-%02d_ANT-%03d_%s.txt" % \
+                data_fname = opath + station_name + "_POWER_" + opts.date + "_TILE-%02d_ANT-%03d_%s.txt" % \
                              (int(tile + 1), int(opts.antenna), t_freq)
             else:
-                data_fname = opath + station_name + "_POWER_" + t_date + "_TILE-%02d_ANT-%03d_BAND-%d-%dMHz.txt" % \
+                data_fname = opath + station_name + "_POWER_" + opts.date + "_TILE-%02d_ANT-%03d_BAND-%d-%dMHz.txt" % \
                             (int(tile + 1), int(opts.antenna), int(asse_x[xmin]), int(asse_x[xmax]))
             with open(data_fname, "w") as ft:
                 ft.write("Tstamp\tDate\tTime\tPol-X\tPol-Y\n")
