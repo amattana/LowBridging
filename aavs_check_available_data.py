@@ -137,7 +137,8 @@ if __name__ == "__main__":
         nof_antennas = file_manager.n_antennas * nof_tiles
 
         # Read data in antenna, pol, sample order
-        data, timestamps = file_manager.read_data(n_samples=total_samples*100)
+        #print l[-21:-7], fname_to_tstamp(l[-21:-7]), ts_to_datestring(fname_to_tstamp(l[-21:-7]))
+        data, timestamps = file_manager.read_data(n_samples=total_samples*100, tile_id=(int(opts.tile)-1))
         # Fix antenna mapping, convert to complex and place in data placeholder
         data = data[0, antenna_mapping, :, :].transpose((1, 0, 2))
         data = (data['real'] + 1j * data['imag']).astype(np.complex64)
