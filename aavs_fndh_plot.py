@@ -117,9 +117,9 @@ if __name__ == "__main__":
             d = np.array(dati)
             t = np.transpose(np.array(d))
 
-            gs = GridSpec((2 * int(np.ceil(np.sqrt(nplot)))) + 1, int(np.ceil(np.sqrt(nplot))), hspace=1.5,
-                          wspace=0.1 + (int(np.ceil(np.sqrt(nplot))))/10., left=0.06, right=0.96, bottom=0.08, top=0.98)
-            fig = plt.figure(figsize=(15, 9), facecolor='w')
+            gs = GridSpec((2 * int(np.ceil(np.sqrt(nplot)))) + 1, int(np.ceil(np.sqrt(nplot))), hspace=3,
+                          wspace=0.4 + (int(np.ceil(np.sqrt(nplot))))/10., left=0.06, right=0.93, bottom=0.08, top=0.98)
+            fig = plt.figure(figsize=(10, 7), facecolor='w')
 
             if "all" in opts.date.lower():
                 delta = (dt_to_timestamp(datetime.datetime.utcnow().date() + datetime.timedelta(1)) -
@@ -158,27 +158,27 @@ if __name__ == "__main__":
             elif "eda2" in opts.station.lower():
                 title += "Station EDA2  "
             title += "SmartBoxes Monitor from " + ts_to_datestring(x[0]) + " to " + ts_to_datestring(x[-1])
-            ax_title.annotate(title, (-17, 0), fontsize=18, color='black')
-            ax_title.annotate("Currents of SmartBox Input 1-8", (-16, -20), fontsize=10, color='b')
-            ax_title.annotate("Currents of SmartBox Input 9-16", (-8, -20), fontsize=10, color='g')
-            ax_title.annotate("Voltages of SmartBox Input 1-8", (1, -20), fontsize=10, color='r')
-            ax_title.annotate("Voltages of SmartBox Input 9-16", (8, -20), fontsize=10, color='k')
+            ax_title.annotate(title, (-19.4, 0), fontsize=13, color='black')
+            ax_title.annotate("Currents of SmartBox Input 1-8", (-16, -20), fontsize=7, color='b')
+            ax_title.annotate("Currents of SmartBox Input 9-16", (-8, -20), fontsize=7, color='g')
+            ax_title.annotate("Voltages of SmartBox Input 1-8", (1, -20), fontsize=7, color='r')
+            ax_title.annotate("Voltages of SmartBox Input 9-16", (9, -20), fontsize=7, color='k')
             for i in range(nplot):
                 #print nplot, 1 + 2*(i/int(np.ceil(np.sqrt(nplot)))), 1 + 2*(i/int(np.ceil(np.sqrt(nplot))) + 1),  i % int(np.ceil(np.sqrt(nplot)))
                 ax += [fig.add_subplot(gs[1 + 2*(i/int(np.ceil(np.sqrt(nplot)))):1 + 2*(i/int(np.ceil(np.sqrt(nplot))) + 1), i % int(np.ceil(np.sqrt(nplot)))])]
                 ax2 += [ax[i].twinx()]
                 #ax[i].set_xlabel("time", fontsize=6)
-                ax[i].set_ylabel("mA")
+                ax[i].set_ylabel("mA", fontsize=10)
                 ax[i].set_ylim(300, 450)
                 ax[i].set_xlim(x[0], x[-1])
                 ax[i].set_xticks(xticks)
                 #ax[i].set_xticklabels((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) %
                 #                      24, rotation=90, fontsize=8)
-                ax[i].set_xticklabels(xticklabels, rotation=90, fontsize=8)
-                ax[i].set_title("TILE-%02d"%(tiles[i]+1), fontsize=10)
+                ax[i].set_xticklabels(xticklabels, rotation=90, fontsize=6)
+                ax[i].set_title("TILE-%02d"%(tiles[i]+1), fontsize=9, weight='bold')
                 ax[i].grid()
                 ax2[i].set_ylim(0, 60)
-                ax2[i].set_ylabel("Volt")
+                ax2[i].set_ylabel("Volt", fontsize=10)
                 line, = ax[i].plot(tempi, xrange(len(dati)), color="g", linewidth=0.5)
                 curr_lines += [line]
                 line, = ax[i].plot(tempi, xrange(len(dati)), color="b", linewidth=0.5)
