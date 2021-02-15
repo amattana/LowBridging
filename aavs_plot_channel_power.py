@@ -47,8 +47,12 @@ if __name__ == "__main__":
     #p.add_option("--pol", action="store", dest="pol", default="", help="Polarization (default: both)")
     p.add_option("--freq", action="store", dest="freq", default=159, help="Frequency (default: 159)")
     p.add_option("--station", action="store", dest="station", default="AAVS2", help="Station Name (default: AAVS2)")
+    p.add_option("--path", action="store", dest="path", default="", help="Data Path (default: /storage/monitoring/power/")
     p.add_option("--window", action="store", dest="window", default=3, help="Plot time window (default: 3 days)")
     opts, args = p.parse_args(sys.argv[1:])
+
+    if not opts.path == "":
+        data_path = opts.path
 
     if not opts.date == "":
         try:
@@ -119,21 +123,28 @@ if __name__ == "__main__":
     print "done! Found %d records" % len(rain_data)
 
     print "Loading Wind data...",
-    with open("/storage/monitoring/weather/MRO_WINDSPEED.csv") as s:
-        data = s.readlines()
+    wind_files = sorted(glob.glob("/storage/monitoring/weather/MRO_WINDSPEED_20*.csv"))
     wind_time = []
     wind_data = []
-    for s in data:
-        if s[0:2] == "0x":
-            try:
-                tstamp = dt_to_timestamp(datetime.datetime.strptime(s.split(",")[1], " %Y-%m-%d %H:%M:%S.%f"))
-                if t_start <= tstamp <= t_stop:
-                    wind_time += [tstamp]
-                    wind_data += [float(s.split(",")[2])]
-                if tstamp > t_stop:
-                    break
-            except:
-                pass
+    for wf in wind_files:
+        if datetime.datetime.strptime(ts_to_datestring(t_stop, "%Y-%m"), "%Y-%m") >= datetime.datetime.strptime(
+                wf[-11:-4], "%Y-%m"):
+            if datetime.datetime.strptime(ts_to_datestring(t_start, "%Y-%m"), "%Y-%m") <= \
+                    datetime.datetime.strptime(wf[-11:-4], "%Y-%m"):
+                with open(wf) as s:
+                    data = s.readlines()
+                for s in data:
+                    if s[0:2] == "0x":
+                        try:
+                            tstamp = dt_to_timestamp(
+                                datetime.datetime.strptime(s.split(",")[1], " %Y-%m-%d %H:%M:%S.%f"))
+                            if t_start <= tstamp <= t_stop:
+                                wind_time += [tstamp]
+                                wind_data += [float(s.split(",")[2])]
+                            if tstamp > t_stop:
+                                break
+                        except:
+                            pass
     print "done! Found %d records" % len(wind_data)
 
     print "Loading Solar data...",
@@ -155,29 +166,30 @@ if __name__ == "__main__":
     for tile in range(16):
         # Loading tile data
         for a in range(16):
-            sys.stdout.write(ERASE_LINE + "\r[%03d/%03d] Loading Antenna %03d data..." %
-                             (a, 16, int(ant_map[(tile * 16) + a][2])))
-            sys.stdout.flush()
-            ant_data["%03d_tstamp" % int(ant_map[(tile * 16) + a][2])] = []
-            ant_data["%03d_Xdata" % int(ant_map[(tile * 16) + a][2])] = []
-            ant_data["%03d_Ydata" % int(ant_map[(tile * 16) + a][2])] = []
-            with open(files[(tile * 16) + a]) as f:
-                dati = f.readlines()
-            x_norm_factor = 0
-            y_norm_factor = 0
-            for d in dati:
-                try:
-                    t = int(d.split()[0])
-                    x = float(d.split()[3])
-                    y = float(d.split()[4])
-                    ant_data["%03d_tstamp" % int(ant_map[(tile * 16) + a][2])] += [t]
-                    ant_data["%03d_Xdata" % int(ant_map[(tile * 16) + a][2])] += [x - x_norm_factor]
-                    ant_data["%03d_Ydata" % int(ant_map[(tile * 16) + a][2])] += [y - y_norm_factor]
-                    if len(ant_data["%03d_tstamp" % int(ant_map[(tile * 16) + a][2])]) == 1:
-                        x_norm_factor = x
-                        y_norm_factor = y
-                except:
-                    pass
+            if os.path.exists(files[(tile * 16) + a]):
+                sys.stdout.write(ERASE_LINE + "\r[%03d/%03d] Loading Antenna %03d data..." %
+                                 (a, 16, int(ant_map[(tile * 16) + a][2])))
+                sys.stdout.flush()
+                ant_data["%03d_tstamp" % int(ant_map[(tile * 16) + a][2])] = []
+                ant_data["%03d_Xdata" % int(ant_map[(tile * 16) + a][2])] = []
+                ant_data["%03d_Ydata" % int(ant_map[(tile * 16) + a][2])] = []
+                with open(files[(tile * 16) + a]) as f:
+                    dati = f.readlines()
+                x_norm_factor = 0
+                y_norm_factor = 0
+                for d in dati:
+                    try:
+                        t = int(d.split()[0])
+                        x = float(d.split()[3])
+                        y = float(d.split()[4])
+                        ant_data["%03d_tstamp" % int(ant_map[(tile * 16) + a][2])] += [t]
+                        ant_data["%03d_Xdata" % int(ant_map[(tile * 16) + a][2])] += [x - x_norm_factor]
+                        ant_data["%03d_Ydata" % int(ant_map[(tile * 16) + a][2])] += [y - y_norm_factor]
+                        if len(ant_data["%03d_tstamp" % int(ant_map[(tile * 16) + a][2])]) == 1:
+                            x_norm_factor = x
+                            y_norm_factor = y
+                    except:
+                        pass
         sys.stdout.write(ERASE_LINE + "\rAntenna data loaded!\n")
         sys.stdout.flush()
 
@@ -234,6 +246,15 @@ if __name__ == "__main__":
                 ax_db.tick_params(axis='y', labelcolor='k')
                 ax_db.spines["right"].set_position(("axes", 1))
 
+                if len(wind_data):
+                    ax_wind = ax.twinx()
+                    ax_wind.plot(wind_time, wind_data, color='orange', lw=1.5)
+                    ax_wind.set_yticks(range(0, 201, 5))
+                    ax_wind.set_ylim(0, 200)
+                    ax_wind.set_ylabel('WindSpeed (mm)', color='orange')
+                    ax_wind.tick_params(axis='y', labelcolor='orange')
+                    ax_wind.spines["right"].set_position(("axes", 1.32))
+
                 if len(temp_data):
                     ax_temp = ax.twinx()
                     ax_temp.plot(temp_time, temp_data, color='r', lw=1.5)
@@ -245,20 +266,11 @@ if __name__ == "__main__":
 
                 if len(rain_data):
                     ax_rain = ax.twinx()
-                    ax_rain.plot(rain_time, rain_data, color='steelblue', lw=1.5)
-                    ax_rain.set_ylim(0, 40)
+                    ax_rain.plot(rain_time, rain_data, color='steelblue', lw=2)
+                    ax_rain.set_ylim(0, 20)
                     ax_rain.set_ylabel('Rain (mm)', color='steelblue')
                     ax_rain.tick_params(axis='y', labelcolor='steelblue')
                     ax_rain.spines["right"].set_position(("axes", 1.24))
-
-                if len(wind_data):
-                    ax_wind = ax.twinx()
-                    ax_wind.plot(wind_time, wind_data, color='orange', lw=1.5)
-                    ax_wind.set_yticks(range(0, 201, 5))
-                    ax_wind.set_ylim(0, 200)
-                    ax_wind.set_ylabel('WindSpeed (mm)', color='orange')
-                    ax_wind.tick_params(axis='y', labelcolor='orange')
-                    ax_wind.spines["right"].set_position(("axes", 1.32))
 
                 if len(sun_data):
                     ax_sun = ax.twinx()
