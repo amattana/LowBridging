@@ -143,6 +143,8 @@ if __name__ == "__main__":
                       default=False, help="Test arguments and exit")
     parser.add_option("--noplot", action="store_true", dest="noplot",
                       default=False, help="Skip the plot, just save data files")
+    parser.add_option("--syncbox", action="store_true", dest="syncbox",
+                      default=False, help="For syncbox data ignore zeros test")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -1016,22 +1018,31 @@ if __name__ == "__main__":
                                 for sb_in in antenne:
                                     spettro_x = data[:, sb_in, 0, i]
                                     spettro_y = data[:, sb_in, 1, i]
-                                if not np.sum(spettro_x[20:50]) == 0:
-                                #if True: # syncbox patch
-                                    if not np.sum(spettro_x[20:210]) == 0:
-                                    #if True: # syncbox patch
-                                        if not np.sum(spettro_x[300:350]) == 0:
-                                        #if True: # syncbox patch
-                                            t_stamps += [t[0]]
-                                            orari += [datetime.datetime.utcfromtimestamp(t[0])]
-                                            if xmin == 0:
-                                                with np.errstate(divide='ignore'):
-                                                    acc_power_x += [10 * np.log10(np.sum(spettro_x[:xmax + 1]))]
-                                                    acc_power_y += [10 * np.log10(np.sum(spettro_y[:xmax + 1]))]
-                                            else:
-                                                with np.errstate(divide='ignore'):
-                                                    acc_power_x += [10 * np.log10(np.sum(spettro_x[xmin:xmax + 1]))]
-                                                    acc_power_y += [10 * np.log10(np.sum(spettro_y[xmin:xmax + 1]))]
+                                if opts.syncbox:
+                                    t_stamps += [t[0]]
+                                    orari += [datetime.datetime.utcfromtimestamp(t[0])]
+                                    if xmin == 0:
+                                        with np.errstate(divide='ignore'):
+                                            acc_power_x += [10 * np.log10(np.sum(spettro_x[:xmax + 1]))]
+                                            acc_power_y += [10 * np.log10(np.sum(spettro_y[:xmax + 1]))]
+                                    else:
+                                        with np.errstate(divide='ignore'):
+                                            acc_power_x += [10 * np.log10(np.sum(spettro_x[xmin:xmax + 1]))]
+                                            acc_power_y += [10 * np.log10(np.sum(spettro_y[xmin:xmax + 1]))]
+                                else:
+                                    if not np.sum(spettro_x[20:50]) == 0:
+                                        if not np.sum(spettro_x[20:210]) == 0:
+                                            if not np.sum(spettro_x[300:350]) == 0:
+                                                t_stamps += [t[0]]
+                                                orari += [datetime.datetime.utcfromtimestamp(t[0])]
+                                                if xmin == 0:
+                                                    with np.errstate(divide='ignore'):
+                                                        acc_power_x += [10 * np.log10(np.sum(spettro_x[:xmax + 1]))]
+                                                        acc_power_y += [10 * np.log10(np.sum(spettro_y[:xmax + 1]))]
+                                                else:
+                                                    with np.errstate(divide='ignore'):
+                                                        acc_power_x += [10 * np.log10(np.sum(spettro_x[xmin:xmax + 1]))]
+                                                        acc_power_y += [10 * np.log10(np.sum(spettro_y[xmin:xmax + 1]))]
                                 msg = "\rProcessing " + ts_to_datestring(t[0])
                                 sys.stdout.write(ERASE_LINE + msg)
                                 sys.stdout.flush()
