@@ -25,6 +25,10 @@ if __name__ == "__main__":
                       default="", help="Date in YYYY-MM-DD (required)")
     parser.add_option("--antenna", action="store", dest="antenna", type=int,
                       default=0, help="Antenna Name")
+    parser.add_option("--yrange", action="store", dest="yrange",
+                      default="-10,25", help="Y dB range to plot")
+    parser.add_option("--spacer", action="store", dest="spacer", type=int,
+                      default=1, help="Spacer between antenna plot in dB (default: 1)")
     parser.add_option("--weather", action="store_true", dest="weather",
                       default=False, help="Add weather info (if available)")
     (opts, args) = parser.parse_args(argv[1:])
@@ -79,11 +83,11 @@ if __name__ == "__main__":
                     tempi += [int(d.split("\t")[0])]
                     if not len(dati):
                         eq_value = dato
-                    dati += [dato - eq_value + k]
+                    dati += [dato - eq_value + (k * opts.spacer)]
                 except:
                     pass
             ax.plot(tempi, dati, label=l, lw=0, marker=".", markersize=1)
-            yticks += [k]
+            yticks += [(k * opts.spacer)]
             yticklabels += [l[l.rfind("ANT"): l.rfind("ANT")+13]]
         else:
             print "Missing file: ", l
@@ -107,8 +111,8 @@ if __name__ == "__main__":
                    enumerate((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) % 24)]
 
     decimation = 3
-    xticks = xticks[2::decimation]
-    xticklabels = xticklabels[2::decimation]
+    xticks = xticks[::decimation]
+    xticklabels = xticklabels[::decimation]
     ax.set_xticks(xticks)
     ax.set_xticklabels(xticklabels, rotation=90, fontsize=8)
 
@@ -116,8 +120,8 @@ if __name__ == "__main__":
     ax_db = ax.twinx()
     ax_db.set_ylabel("dB")
     ax_db.set_yticks(np.array(range(200)) - 100)
-    ax.set_ylim(-10, 25)
-    ax_db.set_ylim(-10, 25)
+    ax.set_ylim(float(opts.yrange.split(",")[0]), float(opts.yrange.split(",")[1]))
+    ax_db.set_ylim(float(opts.yrange.split(",")[0]), float(opts.yrange.split(",")[1]))
     ax_db.tick_params(axis='y', labelcolor='k')
     ax_db.spines["right"].set_position(("axes", 1))
 
