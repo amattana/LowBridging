@@ -127,6 +127,8 @@ if __name__ == "__main__":
                       default=False, help="Maximize X axis ticks")
     parser.add_option("--yticks", action="store_true", dest="yticks",
                       default=False, help="Maximize Y axis ticks")
+    parser.add_option("--yrange", action="store", dest="yrange",
+                      default="", help="Comma separated Y range limits")
     parser.add_option("--rangetemp", action="store", dest="rangetemp",
                       default="10,70", help="min,max temperature range")
     parser.add_option("--rangepower", action="store", dest="rangepower",
