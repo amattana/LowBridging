@@ -1476,6 +1476,7 @@ if __name__ == "__main__":
         ax_xpol.tick_params(axis='both', which='both', labelsize=8)
         ax_xpol.set_ylim(0, 50)
         ax_xpol.set_xlim(0, 512)
+        ax_xpol.set_title("Pol-X")
         ax_xpol.set_xlabel("MHz", fontsize=10)
         ax_xpol.set_ylabel("dB", fontsize=12)
         if opts.xticks:
@@ -1489,6 +1490,7 @@ if __name__ == "__main__":
 
         ax_ypol = fig.add_subplot(grid[10:, :])
         ax_ypol.tick_params(axis='both', which='both', labelsize=8)
+        ax_ypol.set_title("Pol-Y")
         ax_ypol.set_ylim(0, 50)
         ax_ypol.set_xlim(0, 512)
         ax_ypol.set_xlabel("MHz", fontsize=10)
