@@ -1333,11 +1333,11 @@ if __name__ == "__main__":
                      opts.start + " to " + opts.stop, fontsize=14)
         ax.set_xlabel("MHz")
         ax.set_ylabel('dB')
+        ax.set_yticks(range(0, 55, 5))
         if not opts.yrange == "":
             ax.set_ylim(float(opts.yrange.split(",")[0]), float(opts.yrange.split(",")[1]))
         else:
             ax.set_ylim(0, 50)
-        ax.set_yticks(range(0, 55, 5))
         ax.grid()
         if opts.xticks:
             ax.set_xticks(asse_x)
@@ -1385,10 +1385,11 @@ if __name__ == "__main__":
                      opts.start + " to " + opts.stop, fontsize=14)
         ax.set_xlabel("MHz")
         ax.set_ylabel('dB')
+        ax.set_yticks(range(0, 55, 5))
         ax.set_ylim(0, 50)
         if not opts.yrange == "":
+            print "Setting Y Range to ", opts.yrange
             ax.set_ylim(float(opts.yrange.split(",")[0]), float(opts.yrange.split(",")[1]))
-        ax.set_yticks(range(0, 55, 5))
         ax.grid()
         if opts.xticks:
             ax.set_xticks(asse_x)
