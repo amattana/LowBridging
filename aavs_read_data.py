@@ -1388,7 +1388,6 @@ if __name__ == "__main__":
         ax.set_yticks(range(0, 55, 5))
         ax.set_ylim(0, 50)
         if not opts.yrange == "":
-            print "Setting Y Range to ", opts.yrange
             ax.set_ylim(float(opts.yrange.split(",")[0]), float(opts.yrange.split(",")[1]))
         ax.grid()
         if opts.xticks:
