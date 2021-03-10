@@ -58,8 +58,12 @@ if __name__ == "__main__":
                       default=0, help="Start Frequency")
     parser.add_option("--stopfreq", action="store", dest="stopfreq", type="float",
                       default=400, help="Stop Frequency")
+    parser.add_option("--tile", action="store", dest="tile",
+                      default="", help="Stop Frequency")
     parser.add_option("--channel", action="store", dest="channel",
                       default="", help="Frequency channel")
+    parser.add_option("--lab", action="store_true", dest="lab",
+                      default=False, help="Lab data does not require station name in directory path")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -100,13 +104,19 @@ if __name__ == "__main__":
             tiles = [1, 2, 3]
             tile_names = ["7", "11", "16"]
     else:
-        tiles = range(16)
+        if opts.tile == "":
+            tiles = range(16)
+        else:
+            tiles = [int(t) for t in opts.tile.split(",")]
 
+    directory = opts.directory
+    if not opts.lab:
+        directory += station_name.lower()
     print "\nStation Name: ", station_name
-    print "Checking directory: ", opts.directory+station_name.lower() + "\n"
+    print "Checking directory: ", directory + "\n"
     print "Looking for tiles: ", tiles, "\n"
 
-    file_manager = ChannelFormatFileManager(root_path=opts.directory+station_name.lower(),
+    file_manager = ChannelFormatFileManager(root_path=directory,
                                             daq_mode=FileDAQModes.Integrated)
 
     da = tstamp_to_fname(t_start)[:-6]
@@ -125,10 +135,11 @@ if __name__ == "__main__":
               " (Freq: " + str(asse_x[xmax]) + ")"
 
     for tile in tiles:
-        sys.stdout.write(datetime.datetime.strftime(datetime.datetime.utcnow(), "\n%Y-%m-%d %H:%M:%S - ") +
-                         "Processing Tile-%02d" % (tile + 1))
-        sys.stdout.flush()
-        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile)))
+        #sys.stdout.write(datetime.datetime.strftime(datetime.datetime.utcnow(), "\n%Y-%m-%d %H:%M:%S - ") +
+        #                 "Processing Tile-%02d" % (tile + 1))
+        #sys.stdout.flush()
+        #print "Processing Tile-%02d" % (tile + 1)
+        lista = sorted(glob.glob(directory + "/channel_integ_%d_*hdf5" % (tile)))
         t_stamps = {}
         acc_power_x = {}
         acc_power_y = {}
@@ -142,10 +153,13 @@ if __name__ == "__main__":
                 t_file = fname_to_tstamp(lista[cnt_l + 1][-21:-7])
                 if t_file < t_start:
                     continue
-            dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile))
+            #print l[-21:-7], " --> ", fname_to_tstamp(l[-21:-7])
+            #dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(tile))
+            dic = file_manager.get_metadata(tile_id=(tile))
             if dic:
-                data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile,
-                                                          n_samples=200000)
+                #data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile,
+                data, timestamps = file_manager.read_data(tile_id=tile, n_samples=200000)
+                #print "LEN DATA: ", len(data)
                 cnt = 0
                 if timestamps[0] > t_stop:
                     break
@@ -169,6 +183,7 @@ if __name__ == "__main__":
                                                     acc_power_y["ANT-%03d" % ant_map[(tile * 16) + sb_in][2]] += \
                                                         [10 * np.log10(np.sum(spettro_y[xmin:xmax + 1]))]
                                 msg = "\rProcessing Tile-%02d - " % (tile + 1) + ts_to_datestring(t[0])
+                                #print msg
                                 sys.stdout.write(ERASE_LINE + msg)
                                 sys.stdout.flush()
 
@@ -204,11 +219,11 @@ if __name__ == "__main__":
                                                                                                         sb_in][2]][n],
                                                                           "%Y-%m-%d\t%H:%M:%S"), q,
                                                          acc_power_y["ANT-%03d" % ant_map[(tile * 16) + sb_in][2]][n]))
-            sys.stdout.write(ERASE_LINE + "\rOutput File: " + data_fname)
-            sys.stdout.flush()
+            #sys.stdout.write(ERASE_LINE + "\rOutput File: " + data_fname)
+            #sys.stdout.flush()
 
-        sys.stdout.write(ERASE_LINE + datetime.datetime.strftime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S - ") +
-                         "Processed Tile-%02d" % (tile + 1))
+        sys.stdout.write(ERASE_LINE + datetime.datetime.strftime(datetime.datetime.utcnow(), "\r%Y-%m-%d %H:%M:%S - ") +
+                         "Processed Tile-%02d\n" % (tile + 1))
         sys.stdout.flush()
 
 
