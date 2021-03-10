@@ -223,7 +223,7 @@ if __name__ == "__main__":
             #sys.stdout.flush()
 
         sys.stdout.write(ERASE_LINE + datetime.datetime.strftime(datetime.datetime.utcnow(), "\r%Y-%m-%d %H:%M:%S - ") +
-                         "Processed Tile-%02d\n" % (tile + 1))
+                         "Processed Tile-%02d in %s\n" % ((tile + 1), opath))
         sys.stdout.flush()
 
 
