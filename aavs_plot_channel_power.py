@@ -1,3 +1,21 @@
+#!/usr/bin/env python
+
+'''
+
+    AAVS plot channel power for a given month divided per time window (default 3 days)
+
+    Input data is 256 txt file (one for the dual pol antenna power) saved with
+    "aavs_read_channel_power.py" script
+
+'''
+
+__author__ = "Andrea Mattana"
+__copyright__ = "Copyright 2018, Istituto di RadioAstronomia, INAF, Italy"
+__credits__ = ["Andrea Mattana"]
+__license__ = "GPL"
+__version__ = "1.0"
+__maintainer__ = "Andrea Mattana"
+
 from optparse import OptionParser
 import sys
 import os
