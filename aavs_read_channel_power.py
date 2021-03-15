@@ -158,7 +158,7 @@ if __name__ == "__main__":
             dic = file_manager.get_metadata(tile_id=(tile))
             if dic:
                 #data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=tile,
-                data, timestamps = file_manager.read_data(tile_id=tile, n_samples=200000)
+                data, timestamps = file_manager.read_data(tile_id=tile, n_samples=2000000)
                 #print "LEN DATA: ", len(data)
                 cnt = 0
                 if timestamps[0] > t_stop:
