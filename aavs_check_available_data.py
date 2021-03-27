@@ -179,6 +179,9 @@ if __name__ == "__main__":
                         f.write("%6.3f\t%6.3f\n" % (np.sum(data[npol, ant, :].real), np.sum(data[npol, ant, :].imag)))
                         f.flush()
 
+                    for t in timestamps:
+                        print t, ts_to_datestring(t)
+
         if len(timestamps):
             if not t_start and not t_stop:
                 print " ", l[-21:-5], "\t", int(timestamps[0][0]), "\t", ts_to_datestring(timestamps[0][0]), "\t", \
