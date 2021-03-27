@@ -170,8 +170,7 @@ if __name__ == "__main__":
                         #for k in range(len(data[0, 0])/100):
                         #print ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S.%s")
                         f.write("%f\t%s\t" % (timestamps[0], ts_to_datestring(timestamps[0])))
-                                f.write("%6.3f\t%6.3f\n" % (np.sum(data[npol, ant, :].real), np.sum(data[npol, ant, :].imag)))
-                        f.write("\n")
+                        f.write("%6.3f\t%6.3f\n" % (np.sum(data[npol, ant, :].real), np.sum(data[npol, ant, :].imag)))
                         f.flush()
 
         if len(timestamps):
