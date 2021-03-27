@@ -166,6 +166,7 @@ if __name__ == "__main__":
             for ant in range(16):
                 for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
                     fname = l[:-5] + "_INPUT-%02d_%s.txt" % (ant+1, pol)
+                    print l
                     with open(fname, "w") as f:
                         #for k in range(len(data[0, 0])/100):
                         #print ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S.%s")
