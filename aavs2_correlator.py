@@ -124,8 +124,8 @@ if __name__ == "__main__":
     # Load configuration file
     station.load_configuration_file(opts.config)
     station_name = station.configuration['station']['name']
-    print "\nStation Name: ", station_name
-    print "Checking directory: ", opts.directory + "\n"
+    #print "\nStation Name: ", station_name
+    print "Processing directory: ", opts.directory,
 
     if opts.type == "channel":
         file_manager = ChannelFormatFileManager(root_path=opts.directory, daq_mode=modo)
@@ -134,8 +134,8 @@ if __name__ == "__main__":
     else:
         print "\n Please specify a data format (channel, raw)"
         exit()
-    print "\tFILE\t\t TIMESTAMP\t\tSTART\t\t\tSTOP\t\tSIZE (MB)\tBLOCKS"
-    print "---------------------+-----------------+------------------+--------------------------+--------------+-----------"
+    #print "\tFILE\t\t TIMESTAMP\t\tSTART\t\t\tSTOP\t\tSIZE (MB)\tBLOCKS"
+    #print "---------------------+-----------------+------------------+--------------------------+--------------+-----------"
     if opts.mode == "null":
         lista = sorted(glob.glob(opts.directory + "/" + opts.type + "_%d_*hdf5" % (int(opts.tile)-1)))
     else:
@@ -172,7 +172,7 @@ if __name__ == "__main__":
                 f.write("%f\t%s\t" % (timestamps[0][0], ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d %H:%M:%S")))
                 f.write("%f\t%f\n" % (np.sum(corrAB).real, np.sum(corrAB).imag))
                 f.flush()
-
+        print "found "+len(timestamps)+" samples..."
     #     if len(timestamps):
     #         if not t_start and not t_stop:
     #             print " ", l[-21:-5], "\t", int(timestamps[0][0]), "\t", ts_to_datestring(timestamps[0][0]), "\t", \
