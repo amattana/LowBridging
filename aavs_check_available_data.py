@@ -179,8 +179,8 @@ if __name__ == "__main__":
                     with open(fname, "a") as f:
                         for k in range(len(timestamps)):
                             #print ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S.%s")
-                            f.write("%f\t%s\t" % (timestamps[k][0], ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S.%s")))
-                            f.write("%6.3f\t%6.3f\n" % (data[npol, ant, k].real, data[npol, ant, k].imag))
+                            f.write("%f\t%s\t" % (timestamps[k][0], ts_to_datestring(timestamps[k][0], formato="%Y-%m-%d %H:%M:%S.%s")))
+                            f.write("%f\t%f\n" % (data[npol, ant, k].real, data[npol, ant, k].imag))
                             f.flush()
 
         if len(timestamps):
