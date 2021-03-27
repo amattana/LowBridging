@@ -69,7 +69,7 @@ if __name__ == "__main__":
     parser.add_option("--outfile", action="store", dest="outfile",
                       default="", help="Destination file")
     parser.add_option("--outpath", action="store", dest="outpath",
-                      default="/storage/monitor/cplx_data/", help="Destination folder")
+                      default="/storage/monitoring/cplx_data/", help="Destination folder")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -169,7 +169,6 @@ if __name__ == "__main__":
             for ant in range(16):
                 for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
                     fname = opts.outpath + "TILE-%02d_INPUT-%02d_%s.txt" % (opts.tile, ant + 1, pol)
-                    print fname
                     with open(fname, "a") as f:
                         #for k in range(len(data[0, 0])/100):
                         #print ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S.%s")
