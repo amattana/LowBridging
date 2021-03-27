@@ -9,7 +9,7 @@ from pyaavs import station
 import time
 import glob
 import datetime
-from aavs_utils import ts_to_datestring, tstamp_to_fname, dt_to_timestamp, fname_to_tstamp
+from aavs_utils import dt_to_timestamp, fname_to_tstamp
 import os
 
 complex_8t = np.dtype([('real', np.int8), ('imag', np.int8)])
@@ -17,6 +17,10 @@ complex_8t = np.dtype([('real', np.int8), ('imag', np.int8)])
 # Antenna mapping
 antenna_mapping = [0, 1, 2, 3, 12, 13, 14, 15, 4, 5, 6, 7, 8, 9, 11, 12]
 nof_samples = 20000000
+
+
+def ts_to_datestring(tstamp, formato="%Y-%m-%d %H:%M:%S.%s"):
+    return datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(tstamp), formato)
 
 
 def _connect_station(aavs_station):
