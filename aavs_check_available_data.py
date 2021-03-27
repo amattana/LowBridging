@@ -63,6 +63,8 @@ if __name__ == "__main__":
                       default="integ", help="FileDAQ Mode (integ, cont, burst, null)")
     parser.add_option("--save", action="store_true", dest="save",
                       default=False, help="Save txt data")
+    parser.add_option("--savecplx", action="store_true", dest="savecplx",
+                      default=False, help="Save Complex Values in txt files")
     parser.add_option("--outfile", action="store", dest="outfile",
                       default="", help="Destination file")
 
@@ -159,7 +161,18 @@ if __name__ == "__main__":
                     f.flush()
             else:
                 print "WARNING: Missing required argument 'outfile'..."
-        #print opts.tile, int(timestamps[0][0]), ts_to_datestring(timestamps[-1][0]), "Blocks:", len(timestamps)
+
+        if opts.savecplx:
+            for ant in range(16):
+                for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
+                    fname = l[:-4] + "_INPUT-%02d_%s.txt" % pol
+                    with open(fname, "w") as f:
+                        #for k in range(len(data[0, 0])/100):
+                        #print ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S.%s")
+                        f.write("%f\t%s\t" % (timestamps[0], ts_to_datestring(timestamps[0])))
+                                f.write("%6.3f\t%6.3f\n" % (np.sum(data[npol, ant, :].real), np.sum(data[npol, ant, :].imag)))
+                        f.write("\n")
+                        f.flush()
 
         if len(timestamps):
             if not t_start and not t_stop:
