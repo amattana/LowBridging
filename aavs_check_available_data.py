@@ -64,12 +64,14 @@ if __name__ == "__main__":
                       default="integ", help="FileDAQ Mode (integ, cont, burst, null)")
     parser.add_option("--save", action="store_true", dest="save",
                       default=False, help="Save txt data")
-    parser.add_option("--savecplx", action="store_true", dest="savecplx",
-                      default=False, help="Save Complex Values in txt files")
     parser.add_option("--outfile", action="store", dest="outfile",
                       default="", help="Destination file")
+    parser.add_option("--savecplx", action="store_true", dest="savecplx",
+                      default=False, help="Save Complex Values in txt files")
     parser.add_option("--outpath", action="store", dest="outpath",
                       default="/storage/monitoring/cplx_data/", help="Destination folder")
+    parser.add_option("--inputlist", action="store", dest="inputlist",
+                      default="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15", help="List of TPM input to save")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -166,7 +168,8 @@ if __name__ == "__main__":
                 print "WARNING: Missing required argument 'outfile'..."
 
         if opts.savecplx:
-            for ant in range(16):
+            for tpm_input in opts.inputlist.split(","):
+                ant = int(tpm_input)
                 for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
                     fname = opts.outpath + "TILE-%02d_INPUT-%02d_%s.txt" % (opts.tile, ant + 1, pol)
                     with open(fname, "a") as f:
