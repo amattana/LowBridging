@@ -177,14 +177,11 @@ if __name__ == "__main__":
                 for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
                     fname = opts.outpath + "TILE-%02d_INPUT-%02d_%s.txt" % (opts.tile, ant + 1, pol)
                     with open(fname, "a") as f:
-                        #for k in range(len(data[0, 0])/100):
-                        #print ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S.%s")
-                        f.write("%f\t%s\t" % (timestamps[0], ts_to_datestring(timestamps[0])))
-                        f.write("%6.3f\t%6.3f\n" % (np.sum(data[npol, ant, :].real), np.sum(data[npol, ant, :].imag)))
-                        f.flush()
-
-                    for t in timestamps:
-                        print t, ts_to_datestring(t)
+                        for k in range(len(timestamps)):
+                            #print ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S.%s")
+                            f.write("%f\t%s\t" % (timestamps[k][0], ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S.%s")))
+                            f.write("%6.3f\t%6.3f\n" % (data[npol, ant, :].real, data[npol, ant, :].imag))
+                            f.flush()
 
         if len(timestamps):
             if not t_start and not t_stop:
