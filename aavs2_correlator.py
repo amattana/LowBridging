@@ -80,8 +80,8 @@ if __name__ == "__main__":
                       default=False, help="Save Complex Values in txt files")
     parser.add_option("--outpath", action="store", dest="outpath",
                       default="/storage/monitoring/cplx_data/", help="Destination folder")
-    parser.add_option("--inputlist", action="store", dest="inputlist",
-                      default="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15", help="List of TPM input to save")
+    parser.add_option("--ab", action="store", dest="ab",
+                      default="13,15", help="index of the 2 antenna for correlation (def: 13,15)")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -160,8 +160,8 @@ if __name__ == "__main__":
         data = data[0, antenna_mapping, :, :].transpose((1, 0, 2))
         data = (data['real'] + 1j * data['imag']).astype(np.complex64)
 
-        a = int(opts.inputlist.split(",")[0])
-        b = int(opts.inputlist.split(",")[1])
+        a = int(opts.ab.split(",")[0])
+        b = int(opts.ab.split(",")[1])
         for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
             fname = opts.outpath + "CORR_TILE-%02d_INPUT-%02d_INPUT-%02d_%s.txt" % (opts.tile, a, b, pol)
             with open(fname, "a") as f:
