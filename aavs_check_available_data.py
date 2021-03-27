@@ -18,6 +18,7 @@ complex_8t = np.dtype([('real', np.int8), ('imag', np.int8)])
 antenna_mapping = [0, 1, 2, 3, 12, 13, 14, 15, 4, 5, 6, 7, 8, 9, 11, 12]
 nof_samples = 20000000
 
+
 def _connect_station(aavs_station):
     """ Return a connected station """
     # Connect to station and see if properly formed
@@ -67,6 +68,8 @@ if __name__ == "__main__":
                       default=False, help="Save Complex Values in txt files")
     parser.add_option("--outfile", action="store", dest="outfile",
                       default="", help="Destination file")
+    parser.add_option("--outpath", action="store", dest="outpath",
+                      default="/storage/monitor/cplx_data/", help="Destination folder")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -165,7 +168,7 @@ if __name__ == "__main__":
         if opts.savecplx:
             for ant in range(16):
                 for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
-                    fname = l[:l.rfind('/')-1] + l[l.rfind('/') + 1:-5] + "_INPUT-%02d_%s.txt" % (ant + 1, pol)
+                    fname = opts.outpath + "TILE-%02d_INPUT-%02d_%s.txt" % (opts.tile, ant + 1, pol)
                     print fname
                     with open(fname, "a") as f:
                         #for k in range(len(data[0, 0])/100):
