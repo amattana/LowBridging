@@ -172,7 +172,7 @@ if __name__ == "__main__":
                 f.write("%f\t%s\t" % (timestamps[0][0], ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d %H:%M:%S")))
                 f.write("%f\t%f\n" % (np.sum(corrAB).real, np.sum(corrAB).imag))
                 f.flush()
-        print "found "+len(timestamps)+" samples..."
+        print "found " + str(len(timestamps)) + " samples..."
     #     if len(timestamps):
     #         if not t_start and not t_stop:
     #             print " ", l[-21:-5], "\t", int(timestamps[0][0]), "\t", ts_to_datestring(timestamps[0][0]), "\t", \
