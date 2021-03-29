@@ -143,13 +143,13 @@ if __name__ == "__main__":
             total_samples = file_manager.n_samples * file_manager.n_blocks
         else:
             total_samples = file_manager.n_samples * file_manager.n_blocks * \
-                            (file_manager.file_partitions(tile_id=(int(opts.tile)-1)))
+                            (file_manager.file_partitions(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1)))
         nof_blocks = total_samples
         nof_antennas = file_manager.n_antennas * nof_tiles
 
         # Read data in antenna, pol, sample order
         #print l[-21:-7], fname_to_tstamp(l[-21:-7]), ts_to_datestring(fname_to_tstamp(l[-21:-7]))
-        data, timestamps = file_manager.read_data(n_samples=total_samples*100, tile_id=(int(opts.tile)-1))
+        data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), n_samples=total_samples, tile_id=(int(opts.tile)-1))
         # Fix antenna mapping, convert to complex and place in data placeholder
         data = data[0, antenna_mapping, :, :].transpose((1, 0, 2))
         data = (data['real'] + 1j * data['imag']).astype(np.complex64)
