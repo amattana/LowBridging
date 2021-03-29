@@ -149,12 +149,19 @@ if __name__ == "__main__":
 
         # Read data in antenna, pol, sample order
         #print l[-21:-7], fname_to_tstamp(l[-21:-7]), ts_to_datestring(fname_to_tstamp(l[-21:-7]))
-        data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), n_samples=total_samples, tile_id=(int(opts.tile)-1))
-
-        if modo == FileDAQModes.Continuous:
+        if modo == FileDAQModes.Burst:
+            data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), n_samples=total_samples,
+                                                      tile_id=(int(opts.tile) - 1))
+            # Fix antenna mapping, convert to complex and place in data placeholder
+            data = data[0, antenna_mapping, :, :].transpose((1, 0, 2))
+            timestamps = [[dic['timestamp']]]
+        else:
+            data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), n_samples=total_samples,
+                                                      tile_id=(int(opts.tile) - 1))
             # Fix antenna mapping, convert to complex and place in data placeholder
             data = data[0, antenna_mapping, :, :].transpose((1, 0, 2))
             data = (data['real'] + 1j * data['imag']).astype(np.complex64)
+
 
         #d = data[0, 0][:]
         #print "\n", 10 * np.log10(np.sum(np.sqrt(np.power(d.real, 2))))
