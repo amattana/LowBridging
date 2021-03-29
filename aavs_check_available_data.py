@@ -161,7 +161,7 @@ if __name__ == "__main__":
                 fname = opts.outfile
                 with open(fname, "a") as f:
                     #for k in range(len(data[0, 0])/100):
-                    print ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S.%s")
+                    print ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S")
                     f.write("%f\t%s\t" % (timestamps[0], ts_to_datestring(timestamps[0])))
                     for ant in range(16):
                         for pol in range(2):
@@ -185,8 +185,10 @@ if __name__ == "__main__":
 
         if len(timestamps):
             if not t_start and not t_stop:
-                print " ", l[-21:-5], "\t", int(timestamps[0][0]), "\t", ts_to_datestring(timestamps[0][0]), "\t", \
-                    ts_to_datestring(timestamps[-1][0]), "\t%6s"%(str(os.path.getsize(l)/1000000)), "\t\t", "%6s"%(str(len(timestamps)))
+                print " ", l[-21:-5], "\t", int(timestamps[0][0]), "\t", \
+                    ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d %H:%M:%S"), "\t", \
+                    ts_to_datestring(timestamps[-1][0], formato="%Y-%m-%d %H:%M:%S"), \
+                    "\t%6s" % (str(os.path.getsize(l)/1000000)), "\t\t", "%6s"%(str(len(timestamps)))
             else:
                 if timestamps[0] > t_stop:
                     break
@@ -198,11 +200,13 @@ if __name__ == "__main__":
                                 cnt = cnt + 1
                                 t_cnt = t_cnt + 1
                 if cnt:
-                    print " ", l[-21:-5], "\t", int(timestamps[0][0]), "\t", ts_to_datestring(timestamps[0][0]), "\t", \
-                        ts_to_datestring(timestamps[-1][0]), "\t%6s\t"%(str(os.path.getsize(l)/1000000)), "\t", "%6s"%(str(cnt))
+                    print " ", l[-21:-5], "\t", int(timestamps[0][0]), "\t", \
+                        ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d %H:%M:%S"), "\t", \
+                        ts_to_datestring(timestamps[-1][0], formato="%Y-%m-%d %H:%M:%S"), \
+                        "\t%6s\t" % (str(os.path.getsize(l)/1000000)), "\t", "%6s" % (str(cnt))
         else:
             print l[-21:-5], "\t", fname_to_tstamp(l[-21:-7]), "\t", \
-                ts_to_datestring(fname_to_tstamp(l[-21:-7])), "\t", ": no metadata available"
+                ts_to_datestring(fname_to_tstamp(l[-21:-7]), formato="%Y-%m-%d %H:%M:%S"), "\t", ": no metadata available"
     if t_cnt:
         print "\nFound %d measurements\n" % t_cnt
     print
