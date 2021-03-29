@@ -172,16 +172,17 @@ if __name__ == "__main__":
                 print "WARNING: Missing required argument 'outfile'..."
 
         if opts.savecplx:
-            for tpm_input in opts.inputlist.split(","):
-                ant = int(tpm_input)
-                for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
-                    fname = opts.outpath + "TILE-%02d_INPUT-%02d_%s.txt" % (opts.tile, ant + 1, pol)
-                    with open(fname, "a") as f:
-                        #for k in range(len(timestamps)):
-                            #print ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S.%s")
-                        f.write("%f\t%s\t" % (timestamps[0][0], ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d %H:%M:%S")))
-                        f.write("%f\t%f\n" % (np.sum(np.array(data[npol, ant, :]).real), np.sum(np.array(data[npol, ant, :]).imag)))
-                        f.flush()
+            if modo == FileDAQModes.Continuous:
+                for tpm_input in opts.inputlist.split(","):
+                    ant = int(tpm_input)
+                    for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
+                        fname = opts.outpath + "TILE-%02d_INPUT-%02d_%s.txt" % (opts.tile, ant + 1, pol)
+                        with open(fname, "a") as f:
+                            #for k in range(len(timestamps)):
+                                #print ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S.%s")
+                            f.write("%f\t%s\t" % (timestamps[0][0], ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d %H:%M:%S")))
+                            f.write("%d\t%d\n" % (int(np.sum(np.array(data[npol, ant, :]).real)), int(np.sum(np.array(data[npol, ant, :]).imag))))
+                            f.flush()
 
         if len(timestamps):
             if not t_start and not t_stop:
