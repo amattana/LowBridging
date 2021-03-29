@@ -140,8 +140,8 @@ if __name__ == "__main__":
     print "\nFound %d hdf5 files for Tile-%02d\n" % (len(lista), int(opts.tile))
 
     for nn, l in enumerate(lista):
-        if nn > 0:
-            break
+        # if nn > 0:
+        #     break
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         #file_manager.read_data(n_samples=1)
         #file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
