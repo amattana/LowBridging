@@ -138,8 +138,8 @@ if __name__ == "__main__":
     for l in lista:
         #dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         #file_manager.read_data(n_samples=1)
-        file_manager.get_metadata(tile_id=(int(opts.tile)-1))
-        if file_manager.file_partitions(tile_id=(int(opts.tile)-1)) == 0:
+        file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
+        if file_manager.file_partitions(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1)) == 0:
             total_samples = file_manager.n_samples * file_manager.n_blocks
         else:
             total_samples = file_manager.n_samples * file_manager.n_blocks * \
