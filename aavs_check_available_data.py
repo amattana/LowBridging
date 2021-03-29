@@ -3,7 +3,7 @@ import sys
 import matplotlib
 if not 'matplotlib.backends' in sys.modules:
     matplotlib.use('agg') # not to use X11from pydaq.persisters import ChannelFormatFileManager, FileDAQModes
-import matplotlib.pyplot as plt
+import struct
 import numpy as np
 from pyaavs import station
 import time
@@ -72,6 +72,8 @@ if __name__ == "__main__":
                       default="", help="Destination file")
     parser.add_option("--savecplx", action="store_true", dest="savecplx",
                       default=False, help="Save Complex Values in txt files")
+    parser.add_option("--saveraw", action="store_true", dest="saveraw",
+                      default=False, help="Save Raw data in files")
     parser.add_option("--outpath", action="store", dest="outpath",
                       default="/storage/monitoring/cplx_data/", help="Destination folder")
     parser.add_option("--inputlist", action="store", dest="inputlist",
@@ -135,7 +137,11 @@ if __name__ == "__main__":
     else:
         lista = sorted(glob.glob(opts.directory + "/" + opts.type + "_" + opts.mode + "_%d_*hdf5" % (int(opts.tile)-1)))
     nof_tiles = 16
-    for l in lista:
+    print "\nFound %d hdf5 files for Tile-%02d\n" % (len(lista), int(opts.tile))
+
+    for nn, l in enumerate(lista):
+        if nn > 2:
+            break
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         #file_manager.read_data(n_samples=1)
         #file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
@@ -189,6 +195,17 @@ if __name__ == "__main__":
                             f.write("%f\t%s\t" % (timestamps[0][0], ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d %H:%M:%S")))
                             f.write("%d\t%d\n" % (int(np.sum(np.array(data[npol, ant, :]).real)), int(np.sum(np.array(data[npol, ant, :]).imag))))
                             f.flush()
+
+        if opts.saveraw and modo == FileDAQModes.Burst:
+            for tpm_input in opts.inputlist.split(","):
+                ant = int(tpm_input)
+                for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
+                    fname = opts.outpath + "TILE-%02d_INPUT-%02d_%s_%s.raw" % \
+                            (opts.tile, ant + 1, pol, ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d_%H%M%S"))
+                    with open(fname, "wb") as f:
+                        f.write(struct.pack(">" + str(len(data[npol, ant, :])) + "b", *data[npol, ant, :]))
+                        f.flush()
+
 
         if len(timestamps):
             if not t_start and not t_stop:
