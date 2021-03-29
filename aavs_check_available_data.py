@@ -140,7 +140,7 @@ if __name__ == "__main__":
     print "\nFound %d hdf5 files for Tile-%02d\n" % (len(lista), int(opts.tile))
 
     for nn, l in enumerate(lista):
-        if nn > 2:
+        if nn > 0:
             break
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         #file_manager.read_data(n_samples=1)
@@ -159,7 +159,7 @@ if __name__ == "__main__":
             data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), n_samples=total_samples,
                                                       tile_id=(int(opts.tile) - 1))
             timestamps = [[dic['timestamp']]]
-            antenna_mapping = [0, 1, 2, 3, 15, 14, 13, 12, 4, 5, 6, 7, 11, 10, 9, 8]
+            #antenna_mapping = [0, 1, 2, 3, 15, 14, 13, 12, 4, 5, 6, 7, 11, 10, 9, 8]
             data = data[antenna_mapping, :, :].transpose((0, 1, 2))
         else:
             data, timestamps = file_manager.read_data(timestamp=fname_to_tstamp(l[-21:-7]), n_samples=total_samples,
