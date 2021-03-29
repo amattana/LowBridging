@@ -78,6 +78,8 @@ if __name__ == "__main__":
                       default="/storage/monitoring/saved_data/", help="Destination folder")
     parser.add_option("--inputlist", action="store", dest="inputlist",
                       default="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15", help="List of TPM input to save")
+    parser.add_option("--limit", action="store", dest="limit",
+                      default=0, help="Max number of iterations (0: No Limits)")
 
     (opts, args) = parser.parse_args(argv[1:])
 
@@ -140,8 +142,9 @@ if __name__ == "__main__":
     print "\nFound %d hdf5 files for Tile-%02d\n" % (len(lista), int(opts.tile))
 
     for nn, l in enumerate(lista):
-        # if nn > 0:
-        #     break
+        if opts.limit > 0:
+            if nn > opts.limit:
+                break
         dic = file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
         #file_manager.read_data(n_samples=1)
         #file_manager.get_metadata(timestamp=fname_to_tstamp(l[-21:-7]), tile_id=(int(opts.tile)-1))
