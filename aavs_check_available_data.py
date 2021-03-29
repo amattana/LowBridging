@@ -78,7 +78,7 @@ if __name__ == "__main__":
                       default="/storage/monitoring/saved_data/", help="Destination folder")
     parser.add_option("--inputlist", action="store", dest="inputlist",
                       default="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15", help="List of TPM input to save")
-    parser.add_option("--limit", action="store", dest="limit",
+    parser.add_option("--limit", action="store", dest="limit", type=int,
                       default=0, help="Max number of iterations (0: No Limits)")
 
     (opts, args) = parser.parse_args(argv[1:])
