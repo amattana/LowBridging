@@ -75,7 +75,7 @@ if __name__ == "__main__":
     parser.add_option("--saveraw", action="store_true", dest="saveraw",
                       default=False, help="Save Raw data in files")
     parser.add_option("--outpath", action="store", dest="outpath",
-                      default="/storage/monitoring/cplx_data/", help="Destination folder")
+                      default="/storage/monitoring/saved_data/", help="Destination folder")
     parser.add_option("--inputlist", action="store", dest="inputlist",
                       default="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15", help="List of TPM input to save")
 
