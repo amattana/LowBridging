@@ -203,7 +203,7 @@ if __name__ == "__main__":
                     fname = opts.outpath + "TILE-%02d_INPUT-%02d_%s_%s.raw" % \
                             (opts.tile, ant + 1, pol, ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d_%H%M%S"))
                     with open(fname, "wb") as f:
-                        f.write(struct.pack(">" + str(len(data[npol, ant, :])) + "b", *data[npol, ant, :]))
+                        f.write(struct.pack(">" + str(len(data[ant, npol, :])) + "b", *data[ant, npol, :]))
                         f.flush()
 
 
