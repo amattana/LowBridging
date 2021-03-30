@@ -198,7 +198,7 @@ if __name__ == "__main__":
                             #for k in range(len(timestamps)):
                                 #print ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S.%s")
                             f.write("%f\t%s\t" % (timestamps[0][0], ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d %H:%M:%S")))
-                            f.write("%d\t%d\n" % (int(np.sum(np.array(data[npol, ant, :]).real)), int(np.sum(np.array(data[npol, ant, :]).imag))))
+                            f.write("%d\t%d\n" % (int(np.array(data[npol, ant, 0]).real), int(np.array(data[npol, ant, 0]).imag)))
                             f.flush()
 
         if opts.saveraw and modo == FileDAQModes.Burst:
