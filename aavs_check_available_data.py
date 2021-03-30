@@ -208,7 +208,7 @@ if __name__ == "__main__":
                 ant = int(tpm_input)
                 for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
                     fname = opts.outpath + "TILE-%02d_INPUT-%02d_%s_%s.raw" % \
-                            (opts.tile, antenna_mapping[ant] + 1, pol, ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d_%H%M%S"))
+                            (opts.tile, ant + 1, pol, ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d_%H%M%S"))
                     with open(fname, "wb") as f:
                         f.write(struct.pack(">" + str(len(data[ant, npol, :])) + "b", *data[ant, npol, :]))
                         f.flush()
