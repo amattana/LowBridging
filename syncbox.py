@@ -28,6 +28,11 @@ if __name__ == "__main__":
                       default=False,
                       help="Save configuration on internal flash memory")
 
+    parser.add_option("--channel", action="store",
+                      dest="channel",
+                      default="A",
+                      help="Synth Channel (def: 'A')")
+
     (options, args) = parser.parse_args()
 
     try:
@@ -38,8 +43,10 @@ if __name__ == "__main__":
         exit(0)
 
     if not options.freq == 0:
-        sync.set_frequency(SYNTH_A, int(options.freq))
-        sync.set_frequency(SYNTH_B, int(options.freq))
+        if options.channel.upper() == "A":
+            sync.set_frequency(SYNTH_A, int(options.freq))
+        else:
+            sync.set_frequency(SYNTH_B, int(options.freq))
 
     if options.reference == "external":
         sync.set_ref_select(EXT_REF)
