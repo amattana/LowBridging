@@ -44,8 +44,10 @@ if __name__ == "__main__":
 
     if not options.freq == 0:
         if options.channel.upper() == "A":
+            print "Setting Synth A to " + str(options.freq) + " MHz"
             sync.set_frequency(SYNTH_A, int(options.freq))
         else:
+            print "Setting Synth B to " + str(options.freq) + " MHz"
             sync.set_frequency(SYNTH_B, int(options.freq))
 
     if options.reference == "external":
