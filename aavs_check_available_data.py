@@ -202,10 +202,10 @@ if __name__ == "__main__":
                             f.flush()
 
         if opts.saveraw and modo == FileDAQModes.Burst:
-            antenna_mapping = [0, 1, 2, 3, 4, 5, 6, 7, 15, 14, 13, 12, 11, 10, 9, 8]
+            #antenna_mapping = [0, 1, 2, 3, 4, 5, 6, 7, 15, 14, 13, 12, 11, 10, 9, 8]
             for tpm_input in opts.inputlist.split(","):
-                ant = antenna_mapping[int(tpm_input)]
-                #ant = int(tpm_input)
+                #ant = antenna_mapping[int(tpm_input)]
+                ant = int(tpm_input)
                 for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
                     fname = opts.outpath + "TILE-%02d_INPUT-%02d_%s_%s.raw" % \
                             (opts.tile, ant + 1, pol, ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d_%H%M%S"))
