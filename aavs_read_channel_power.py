@@ -170,12 +170,12 @@ if __name__ == "__main__":
                                 for sb_in in range(16):
                                     spettro_x = data[:, sb_in, 0, i]
                                     spettro_y = data[:, sb_in, 1, i]
-                                    #if not np.sum(spettro_x[20:50]) == 0:
-                                    if True: # syncbox patch
-                                        #if not np.sum(spettro_x[20:210]) == 0:
-                                        if True: # syncbox patch
-                                            #if not np.sum(spettro_x[300:350]) == 0:
-                                            if True: # syncbox patch
+                                    if not np.sum(spettro_x[20:50]) == 0:
+                                    #if True: # syncbox patch
+                                        if not np.sum(spettro_x[20:210]) == 0:
+                                        #if True: # syncbox patch
+                                            if not np.sum(spettro_x[300:350]) == 0:
+                                            #if True: # syncbox patch
                                                 t_stamps["ANT-%03d" % ant_map[(tile * 16) + sb_in][2]] += [t[0]]
                                                 with np.errstate(divide='ignore'):
                                                     acc_power_x["ANT-%03d" % ant_map[(tile * 16) + sb_in][2]] += \
