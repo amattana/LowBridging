@@ -139,7 +139,7 @@ if __name__ == "__main__":
         #                 "Processing Tile-%02d" % (tile + 1))
         #sys.stdout.flush()
         #print "Processing Tile-%02d" % (tile + 1)
-        lista = sorted(glob.glob(directory + "/channel_integ_%d_*hdf5" % (tile)))
+        lista = sorted(glob.glob(directory + "/channel_integ_%d_*_0.hdf5" % (tile)))
         t_stamps = {}
         acc_power_x = {}
         acc_power_y = {}
