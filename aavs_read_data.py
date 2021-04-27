@@ -313,7 +313,7 @@ if __name__ == "__main__":
         for en_tile, tile in enumerate(tiles):
 
             t_cnt = 0
-            lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile-1)))
+            lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d*_0.hdf5" % (tile-1)))
 
             ax_top_map.cla()
             ax_top_map.set_axis_off()
@@ -585,7 +585,7 @@ if __name__ == "__main__":
         yl, = ax_ypol.plot(range(512), range(512), color='g')
 
         if not opts.last:
-            lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
+            lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d*_0.hdf5" % (tile - 1)))
             t_cnt = 0
             for cnt_l, l in enumerate(lista):
                 if cnt_l < len(lista) - 1:
@@ -690,7 +690,7 @@ if __name__ == "__main__":
             ax_weather = fig.add_subplot(gs[-1, :])
 
         tile = find_ant_by_name(opts.antenna)[0]
-        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
+        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d*_0.hdf5" % (tile - 1)))
         t_cnt = 0
         orari = []
         t_stamps = []
@@ -1216,7 +1216,7 @@ if __name__ == "__main__":
         spectra_y = np.zeros(512)
 
         tile = find_ant_by_name(opts.antenna)[0]
-        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
+        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d*_0.hdf5" % (tile - 1)))
         t_cnt_x = 0
         t_cnt_y = 0
         orari = []
@@ -1515,7 +1515,7 @@ if __name__ == "__main__":
         date_path = da[:4] + "-" + da[4:6] + "-" + da[6:]
 
         tile = find_ant_by_name(opts.antenna)[0]
-        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
+        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d*_0.hdf5" % (tile - 1)))
         t_cnt_x = 0
         t_cnt_y = 0
         orari = []
@@ -1603,7 +1603,7 @@ if __name__ == "__main__":
             for sb_in in range(16):
                 station_rms_x[ants[sb_in + 16 * tile]] = []
                 station_rms_y[ants[sb_in + 16 * tile]] = []
-            lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile)))
+            lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d*_0.hdf5" % (tile)))
             t_cnt = 0
             orari = []
             t_stamps = []
