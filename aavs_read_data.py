@@ -129,6 +129,8 @@ if __name__ == "__main__":
                       default=False, help="Maximize Y axis ticks")
     parser.add_option("--yrange", action="store", dest="yrange",
                       default="", help="Comma separated Y range limits")
+    parser.add_option("--wclim", action="store", dest="wclim",
+                      default="10,35", help="Waterfall Color limits (def: 10,35)")
     parser.add_option("--rangetemp", action="store", dest="rangetemp",
                       default="10,70", help="min,max temperature range")
     parser.add_option("--rangepower", action="store", dest="rangepower",
@@ -754,6 +756,7 @@ if __name__ == "__main__":
 
         first_empty, dayspgramma = dayspgramma[:10], dayspgramma[10:]
         ax_water.cla()
+        wclim = (int(opts.wclim.split(",")[0]), int(opts.wclim.split(",")[1]))
         ax_water.imshow(np.rot90(dayspgramma), interpolation='none', aspect='auto', cmap='jet', clim=wclim)
         ax_water.set_title("Spectrogram of Ant-%03d"%(opts.antenna) + " Pol-" + opts.pol.upper() + " " + date_path, fontsize=14)
         ax_water.set_ylabel("MHz")
