@@ -995,7 +995,7 @@ if __name__ == "__main__":
                 ax_weather = ax_power.twinx()
 
         tile = find_ant_by_name(opts.antenna)[0]
-        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d_*hdf5" % (tile - 1)))
+        lista = sorted(glob.glob(opts.directory + station_name.lower() + "/channel_integ_%d*_0.hdf5" % (tile - 1)))
         t_cnt = 0
         orari = []
         t_stamps = []
