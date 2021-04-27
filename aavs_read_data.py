@@ -927,7 +927,8 @@ if __name__ == "__main__":
 
         scp_fname = SPGR_PATH + "/" + station_name + \
                 "/TILE-%02d_ANT-%03d/POL-%s/SPGR_"%(int(tile), int(opts.antenna), POL) + \
-                date_path + "_TILE-%02d_ANT-%03d_POL-%s.png"%(int(tile), int(opts.antenna), POL)
+                date_path + "_TILE-%02d_ANT-%03d_POL-%s_BAND-%03d-%03dMHz.png" % \
+                    (int(tile), int(opts.antenna), POL, int(opts.startfreq), int(opts.stopfreq))
 
         plt.savefig(scp_fname)
         sys.stdout.write(ERASE_LINE + "\nOutput File: " + scp_fname + "\n")
