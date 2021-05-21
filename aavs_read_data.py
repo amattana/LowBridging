@@ -1244,7 +1244,7 @@ if __name__ == "__main__":
                                 # POL-X
                                 for sb_in in antenne:
                                     spettro_x = np.array(data[:, sb_in, 0, i])
-                                if (not np.sum(spettro_x[120:150]) == 0) and \
+                                if (not np.sum(spettro_x[120:150]) == 0) or \
                                         (not np.sum(spettro_x[300:350]) == 0):
                                     spectra_x += spettro_x
                                     if not t_cnt_x:
@@ -1261,7 +1261,7 @@ if __name__ == "__main__":
                                 # POL-Y
                                 for sb_in in antenne:
                                     spettro_y = np.array(data[:, sb_in, 1, i])
-                                if (not np.sum(spettro_y[120:150]) == 0) and \
+                                if (not np.sum(spettro_y[120:150]) == 0) or \
                                         (not np.sum(spettro_y[300:350]) == 0):
                                     spectra_y += spettro_y
                                     if not t_cnt_y:
