@@ -211,14 +211,14 @@ if __name__ == "__main__":
     title = ""
     #l = sorted(glob.glob(path+"*bin"))
     dati = readfile(filepath[0])
-    spectrum, cplvect = calcolaspettro(readfile(filepath[0], tdd=".raw"), nsamples)
+    spectrum, cplvect = calcolaspettro(dati, nsamples)
     spettri=np.zeros(len(spectrum))
-    print( "")
+    print("")
     for f in filepath:
         dati=readfile(f)
         sys.stdout.write("\rProcessing file: " +f)
         sys.stdout.flush()
-        spectrum, cplvect = calcolaspettro(readfile(filepath[0], tdd=".raw"), nsamples)
+        spectrum, cplvect = calcolaspettro(dati, nsamples)
         spettri[:] += spectrum
     spettri /= len(filepath)
     # spettri += 10
