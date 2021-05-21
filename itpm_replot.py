@@ -46,7 +46,7 @@ def calcSpectra(vett):
     return np.real(spettro), cplx
 
 
-def calcolaspettro(dati, nsamples=131072):
+def calcolaspettro(dati, nsamples=32768):
     n = int(nsamples)  # split and average number, from 128k to 16 of 8k # aavs1 federico
     sp = [dati[x:x + n] for x in range(0, len(dati), n)]
     mediato = np.zeros(len(calcSpectra(sp[0])[0]))
@@ -56,7 +56,7 @@ def calcolaspettro(dati, nsamples=131072):
         mediato[:] += singolo
     #cpl[:] = cplx_val
     # singoli[:] /= 16 # originale
-    mediato[:] /= (2 ** 17 / nsamples)  # federico
+    mediato[:] /= (2 ** 15 / nsamples)  # federico
     with np.errstate(divide='ignore', invalid='ignore'):
         mediato[:] = 20 * np.log10(mediato / 127.0)
     return mediato, cplx_val
@@ -184,10 +184,10 @@ if __name__ == "__main__":
 
     (opts, args) = parser.parse_args()
 
-    resolutions = 2 ** np.array(range(16)) * (800000.0 / 2 ** 17)
+    resolutions = 2 ** np.array(range(16)) * (800000.0 / 2 ** 15)
     rbw = int(closest(resolutions, opts.resolution))
     avg = 2 ** rbw
-    nsamples = int(2 ** 17 / avg)
+    nsamples = int(2 ** 15 / avg)
     RBW = (avg * (400000.0 / 65536.0))
 
     if opts.file == "":
