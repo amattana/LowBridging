@@ -129,17 +129,17 @@ if __name__ == "__main__":
     ymin = 0
     ymax = 50
     if not os.path.isdir(opts.dir):
-        print "\nERROR: Cannot find path: ", opts.dir
+        print( "\nERROR: Cannot find path: ", opts.dir)
         exit()
     spectra = {}
     for rxn, rx in enumerate(opts.input.split(",")):
         if not os.path.isdir(opts.dir + "/RX-%02d" % int(rx)):
-            print "\nERROR: Cannot find acquisition for TPM Input #%02d " % int(rx)
+            print( "\nERROR: Cannot find acquisition for TPM Input #%02d " % int(rx))
             exit()
         data_dir = opts.dir + "/RX-%02d/" % int(rx)
         for pcolor, pol in enumerate(['Pol-X', 'Pol-Y']):
             serie = "RX-%02d_%s" % (int(rx), pol)
-            print "Processing %s" % pol
+            print( "Processing %s" % pol)
             files = sorted(glob.glob(data_dir + pol + "/*" + ftypes))
             t_stamps = []
             spectra[serie] = []
