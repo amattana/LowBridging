@@ -151,10 +151,10 @@ if __name__ == "__main__":
                     if not len(spectra[serie]):
                         spectra[serie] = np.zeros(len(spectrum))
                     spectra[serie][:] += dB2Linear(spectrum)
-                    if opts.tdd:
-                        t_stamps += [dt_to_timestamp(datetime.datetime.strptime(f[-21:-4], "%Y-%m-%d_%H%M%S"))]
-                    else:
-                        t_stamps += [dt_to_timestamp(datetime.datetime.strptime(f[-24:-4], "%Y-%m-%d_%H%M%S%f"))]
+                    #if opts.tdd:
+                    t_stamps += [dt_to_timestamp(datetime.datetime.strptime(f[-21:-4], "%Y-%m-%d_%H%M%S"))]
+                    #else:
+                    #    t_stamps += [dt_to_timestamp(datetime.datetime.strptime(f[-24:-4], "%Y-%m-%d_%H%M%S%f"))]
                 except:
                     pass
             sys.stdout.write(ERASE_LINE + "\rFound %d valid records.\n" % len(t_stamps))
