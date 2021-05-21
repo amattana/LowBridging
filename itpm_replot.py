@@ -188,7 +188,7 @@ if __name__ == "__main__":
     rbw = int(closest(resolutions, opts.resolution))
     avg = 2 ** rbw
     nsamples = int(2 ** 15 / avg)
-    RBW = (avg * (400000.0 / 65536.0))
+    RBW = (avg * (400000.0 / 16384.0))
 
     if opts.file == "":
         filepath = easygui.fileopenbox(msg='Please select the source files', multiple=True, default="/storage/monitoring/*")
