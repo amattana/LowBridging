@@ -246,11 +246,11 @@ def mro_daily_weather(fname="/storage/monitoring/weather/MRO_WEATHER.csv", date=
             t_start = int(time.mktime(datetime.datetime.strptime(start, "%Y-%m-%d_%H:%M:%S").timetuple())) + (60 * 60 * 8)  # Fix Weather data written in WA Local Time
             t_stop = int(time.mktime(datetime.datetime.strptime(stop, "%Y-%m-%d_%H:%M:%S").timetuple())) + (60 * 60 * 8)  # Fix Weather data written in WA Local Time
         else:
-            print "Missing time argument (date | start,stop)"
+            print("Missing time argument (date | start,stop)")
             return units, records
 
     except ValueError:
-        print "Wrong date format, expected %Y-%m-%d"
+        print("Wrong date format, expected %Y-%m-%d")
         return units, records
 
     #print "Looking for data between", t_start, "and", t_stop
@@ -296,5 +296,5 @@ def get_sbtemp(start=0, stop=2585699200):
                 tempi += [int(d.split()[0])]
                 dati += [float(d.split()[3])]
     else:
-        print "Unable to find the Data Logger file (/storage/monitoring/data_logger/AAVS2_Data_Logger.txt)"
+        print("Unable to find the Data Logger file (/storage/monitoring/data_logger/AAVS2_Data_Logger.txt)")
     return tempi, dati

@@ -107,39 +107,39 @@ if __name__ == "__main__":
         if opts.start:
             try:
                 t_start = dt_to_timestamp(datetime.datetime.strptime(opts.start, "%Y-%m-%d_%H:%M:%S"))
-                print( "Start Time:  " + ts_to_datestring(t_start))
+                print("Start Time:  " + ts_to_datestring(t_start))
             except:
-                print( "Bad t_start time format detected (must be YYYY-MM-DD_HH:MM:SS)")
+                print("Bad t_start time format detected (must be YYYY-MM-DD_HH:MM:SS)")
         if opts.stop:
             try:
                 t_stop = dt_to_timestamp(datetime.datetime.strptime(opts.stop, "%Y-%m-%d_%H:%M:%S"))
-                print( "Stop  Time:  " + ts_to_datestring(t_stop))
+                print("Stop  Time:  " + ts_to_datestring(t_stop))
             except:
-                print( "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)")
+                print("Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)")
 
     #print t_date, t_start, t_stop
 
     # Load configuration file
     station.load_configuration_file(opts.config)
     station_name = station.configuration['station']['name']
-    print( "\nStation Name: ", station_name)
-    print( "Checking directory: ", opts.directory + "\n")
+    print("\nStation Name: ", station_name)
+    print("Checking directory: ", opts.directory + "\n")
 
     if opts.type == "channel":
         file_manager = ChannelFormatFileManager(root_path=opts.directory, daq_mode=modo)
     elif opts.type == "raw":
         file_manager = RawFormatFileManager(root_path=opts.directory, daq_mode=modo)
     else:
-        print( "\n Please specify a data format (channel, raw)")
+        print("\n Please specify a data format (channel, raw)")
         exit()
-    print( "\tFILE\t\t TIMESTAMP\t\tSTART\t\t\tSTOP\t\tSIZE (MB)\tBLOCKS")
-    print( "---------------------+-----------------+------------------+--------------------------+--------------+-----------")
+    print("\tFILE\t\t TIMESTAMP\t\tSTART\t\t\tSTOP\t\tSIZE (MB)\tBLOCKS")
+    print("---------------------+-----------------+------------------+--------------------------+--------------+-----------")
     if opts.mode == "null":
         lista = sorted(glob.glob(opts.directory + "/" + opts.type + "_%d_*hdf5" % (int(opts.tile)-1)))
     else:
         lista = sorted(glob.glob(opts.directory + "/" + opts.type + "_" + opts.mode + "_%d_*hdf5" % (int(opts.tile)-1)))
     nof_tiles = 16
-    print( "\nFound %d hdf5 files for Tile-%02d\n" % (len(lista), int(opts.tile)))
+    print("\nFound %d hdf5 files for Tile-%02d\n" % (len(lista), int(opts.tile)))
 
     for nn, l in enumerate(lista):
         if opts.limit > 0:
@@ -178,7 +178,7 @@ if __name__ == "__main__":
                 fname = opts.outfile
                 with open(fname, "a") as f:
                     #for k in range(len(data[0, 0])/100):
-                    print( ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S"))
+                    print(ts_to_datestring(timestamps[0], formato="%Y-%m-%d %H:%M:%S"))
                     f.write("%f\t%s\t" % (timestamps[0], ts_to_datestring(timestamps[0])))
                     for ant in range(16):
                         for pol in range(2):
@@ -186,7 +186,7 @@ if __name__ == "__main__":
                     f.write("\n")
                     f.flush()
             else:
-                print( "WARNING: Missing required argument 'outfile'...")
+                print("WARNING: Missing required argument 'outfile'...")
 
         if opts.savecplx:
             if modo == FileDAQModes.Continuous:
@@ -217,7 +217,7 @@ if __name__ == "__main__":
 
         if len(timestamps):
             if not t_start and not t_stop:
-                print( " ", l[-21:-5], "\t", int(timestamps[0][0]), "\t", \
+                print(" ", l[-21:-5], "\t", int(timestamps[0][0]), "\t", \
                     ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d %H:%M:%S"), "\t", \
                     ts_to_datestring(timestamps[-1][0], formato="%Y-%m-%d %H:%M:%S"), \
                     "\t%6s" % (str(os.path.getsize(l)/1000000)), "\t\t", "%6s"%(str(len(timestamps))))
@@ -232,16 +232,16 @@ if __name__ == "__main__":
                                 cnt = cnt + 1
                                 t_cnt = t_cnt + 1
                 if cnt:
-                    print( " ", l[-21:-5], "\t", int(timestamps[0][0]), "\t", \
+                    print(" ", l[-21:-5], "\t", int(timestamps[0][0]), "\t", \
                         ts_to_datestring(timestamps[0][0], formato="%Y-%m-%d %H:%M:%S"), "\t", \
                         ts_to_datestring(timestamps[-1][0], formato="%Y-%m-%d %H:%M:%S"), \
                         "\t%6s\t" % (str(os.path.getsize(l)/1000000)), "\t", "%6s" % (str(cnt)))
         else:
-            print( l[-21:-5], "\t", fname_to_tstamp(l[-21:-7]), "\t", \
+            print(l[-21:-5], "\t", fname_to_tstamp(l[-21:-7]), "\t", \
                 ts_to_datestring(fname_to_tstamp(l[-21:-7]), formato="%Y-%m-%d %H:%M:%S"), "\t", ": no metadata available")
     if t_cnt:
-        print( "\nFound %d measurements\n" % t_cnt)
-    print("")
+        print("\nFound %d measurements\n" % t_cnt)
+    print(" ")
 
 
 
