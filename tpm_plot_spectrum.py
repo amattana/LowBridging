@@ -64,7 +64,7 @@ def calcSpectra(vett):
 
 
 def calcolaspettro(dati, nsamples=131072):
-    n = nsamples  # split and average number, from 128k to 16 of 8k # aavs1 federico
+    n = int(nsamples)  # split and average number, from 128k to 16 of 8k # aavs1 federico
     sp = [dati[x:x + n] for x in range(0, len(dati), n)]
     mediato = np.zeros(len(calcSpectra(sp[0])[0]))
     #cpl = np.zeros(len(mediato))
