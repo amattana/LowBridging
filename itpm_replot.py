@@ -21,21 +21,42 @@ import glob, struct, sys, os
 import numpy as np
 from optparse import OptionParser
 
-def readfile(filename):
+
+def readfile(filename, tdd=False):
     with open(filename,"rb") as f:
+        if tdd:
+            l = f.read(8)
         vettore = f.read()
-    vett=struct.unpack(str(len(vettore))+'b',vettore)
+    vett=struct.unpack(str(len(vettore))+'b', vettore)
     return vett
+
 
 def calcSpectra(vett):
     window = np.hanning(len(vett))
-    spettro = np.fft.rfft(vett*window)
+    spettro = np.fft.rfft(vett * window)
     N = len(spettro)
-    acf = 2  #amplitude correction factor
-    spettro[:] = abs((acf*spettro)/N)
+    acf = 2  # amplitude correction factor
+    cplx = ((acf * spettro) / N)
+    spettro[:] = abs((acf * spettro) / N)
+    # print len(vett), len(spettro), len(np.real(spettro))
+    return np.real(spettro), cplx
+
+
+def calcolaspettro(dati, nsamples=131072):
+    n = int(nsamples)  # split and average number, from 128k to 16 of 8k # aavs1 federico
+    sp = [dati[x:x + n] for x in range(0, len(dati), n)]
+    mediato = np.zeros(len(calcSpectra(sp[0])[0]))
+    #cpl = np.zeros(len(mediato))
+    for k in sp:
+        singolo, cplx_val = calcSpectra(k)
+        mediato[:] += singolo
+    #cpl[:] = cplx_val
+    # singoli[:] /= 16 # originale
+    mediato[:] /= (2 ** 17 / nsamples)  # federico
     with np.errstate(divide='ignore', invalid='ignore'):
-        spettro[:] = 20*np.log10(spettro/127.0)
-    return (np.real(spettro))
+        mediato[:] = 20 * np.log10(mediato / 127.0)
+    return mediato, cplx_val
+
 
 def plotta_spettro(ax1, spettri, title):
     x = np.linspace(0, 400, len(spettri))
@@ -154,7 +175,16 @@ if __name__ == "__main__":
                       dest="file",
                       default="",
                       help="Input File")
+    parser.add_option("--resolution", dest="resolution", default=1000, type="int",
+                      help="Frequency resolution in KHz (it will be truncated to the closest possible)")
+
     (opts, args) = parser.parse_args()
+
+    resolutions = 2 ** np.array(range(16)) * (800000.0 / 2 ** 17)
+    rbw = int(closest(resolutions, opts.resolution))
+    avg = 2 ** rbw
+    nsamples = 2 ** 17 / avg
+    RBW = (avg * (400000.0 / 65536.0))
 
     if opts.file == "":
         filepath = easygui.fileopenbox(msg='Please select the source files', multiple=True, default="/storage/monitoring/*")
@@ -177,13 +207,15 @@ if __name__ == "__main__":
     title = ""
     #l = sorted(glob.glob(path+"*bin"))
     dati = readfile(filepath[0])
-    spettri=np.zeros(len(calcSpectra(dati)))
+    spectrum, cplvect = calcolaspettro(readfile(filepath[0], tdd=".raw"), nsamples)
+    spettri=np.zeros(len(spectrum))
     print( "")
     for f in filepath:
         dati=readfile(f)
         sys.stdout.write("\rProcessing file: " +f)
         sys.stdout.flush()
-        spettri[:] += calcSpectra(dati)
+        spectrum, cplvect = calcolaspettro(readfile(filepath[0], tdd=".raw"), nsamples)
+        spettri[:] += spectrum
     spettri /= len(filepath)
     # spettri += 10
     ax1.cla()
