@@ -22,6 +22,10 @@ import numpy as np
 from optparse import OptionParser
 
 
+def closest(serie, num):
+    return serie.tolist().index(min(serie.tolist(), key=lambda z: abs(z - num)))
+
+
 def readfile(filename, tdd=False):
     with open(filename,"rb") as f:
         if tdd:
