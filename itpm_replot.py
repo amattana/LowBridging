@@ -189,6 +189,7 @@ if __name__ == "__main__":
     avg = 2 ** rbw
     nsamples = int(2 ** 15 / avg)
     RBW = (avg * (400000.0 / 16384.0))
+    print("Frequency resolution set %3.1f KHz" % resolutions[rbw])
 
     if opts.file == "":
         filepath = easygui.fileopenbox(msg='Please select the source files', multiple=True, default="/storage/monitoring/*")
