@@ -103,9 +103,9 @@ def mark_armonics(ax1,spettri,num):
             ax1.annotate("Tone", xy=(fr*400./(len(spettri)-1), spettri[fr]), xytext=((fr*400./len(spettri))+2, spettri[fr]), fontsize=10)
         else:
             ax1.annotate(str(i), xy=(fr * 400. / (len(spettri)-1), spettri[fr]), xytext=((fr * 400. / len(spettri))+2, spettri[fr]), fontsize=10)
-    print
+    print("")
     for xa in hds:
-        print x[xa]
+        print( x[xa])
     return hds
 
 MAP = [["Fiber #1","Y"],
@@ -163,7 +163,7 @@ if __name__ == "__main__":
     else:
         filepath = [opts.file]
     path = filepath[0][:filepath[0].rfind("/") + 1]
-    print "\nOpening files from path:", path, "(%s,...)" % (filepath[0][filepath[0].rfind("/") + 1:])
+    print( "\nOpening files from path:", path, "(%s,...)" % (filepath[0][filepath[0].rfind("/") + 1:]))
     gs = gridspec.GridSpec(2, 1, height_ratios=[6,1])
     fig = plt.figure(figsize=(12, 7), facecolor='w')
     #plt.ion()
@@ -178,7 +178,7 @@ if __name__ == "__main__":
     #l = sorted(glob.glob(path+"*bin"))
     dati = readfile(filepath[0])
     spettri=np.zeros(len(calcSpectra(dati)))
-    print ""
+    print( "")
     for f in filepath:
         dati=readfile(f)
         sys.stdout.write("\rProcessing file: " +f)
