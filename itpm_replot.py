@@ -187,7 +187,7 @@ if __name__ == "__main__":
     resolutions = 2 ** np.array(range(16)) * (800000.0 / 2 ** 17)
     rbw = int(closest(resolutions, opts.resolution))
     avg = 2 ** rbw
-    nsamples = 2 ** 17 / avg
+    nsamples = int(2 ** 17 / avg)
     RBW = (avg * (400000.0 / 65536.0))
 
     if opts.file == "":
