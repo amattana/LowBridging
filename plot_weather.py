@@ -68,36 +68,43 @@ if __name__ == "__main__":
     p.add_option("--start", action="store", dest="start", default="", help="Start time for filter (YYYY-mm-DD_HH:MM:SS)")
     p.add_option("--stop", action="store", dest="stop", default="", help="Stop time for filter (YYYY-mm-DD_HH:MM:SS)")
     p.add_option("--date", action="store", dest="date", default="", help="Day to be processed (YYYY-mm-dd)")
+    p.add_option("--noline", action="store_true", dest="noline", default=False, help="Plot just markers")
     opts, args = p.parse_args(sys.argv[1:])
+
+    linew = 1.5
+    mark = ''
+    if opts.noline:
+        linew = 0
+        mark = '.'
 
     if opts.date:
         try:
             t_date = datetime.datetime.strptime(opts.date, "%Y-%m-%d")
             t_start = dt_to_timestamp(t_date)
             t_stop = dt_to_timestamp(t_date) + (60 * 60 * 24)
-            print "Start Time:  " + ts_to_datestring(t_start) + "    Timestamp: " + str(t_start)
-            print "Stop  Time:  " + ts_to_datestring(t_stop) + "    Timestamp: " + str(t_stop)
+            sys.stdout.write("Start Time:  " + ts_to_datestring(t_start) + "    Timestamp: " + str(t_start))
+            sys.stdout.write("Stop  Time:  " + ts_to_datestring(t_stop) + "    Timestamp: " + str(t_stop))
         except:
-            print "Bad date format detected (must be YYYY-MM-DD)"
+            sys.stdout.write("Bad date format detected (must be YYYY-MM-DD)")
     else:
         if opts.start:
             try:
                 t_start = dt_to_timestamp(datetime.datetime.strptime(opts.start, "%Y-%m-%d_%H:%M:%S"))
-                print "Start Time:  " + ts_to_datestring(t_start) + "    Timestamp: " + str(t_start)
+                sys.stdout.write("Start Time:  " + ts_to_datestring(t_start) + "    Timestamp: " + str(t_start))
             except:
-                print "Bad t_start time format detected (must be YYYY-MM-DD_HH:MM:SS)"
+                sys.stdout.write("Bad t_start time format detected (must be YYYY-MM-DD_HH:MM:SS)")
         if opts.stop:
             try:
                 t_stop = dt_to_timestamp(datetime.datetime.strptime(opts.stop, "%Y-%m-%d_%H:%M:%S"))
-                print "Stop  Time:  " + ts_to_datestring(t_stop) + "    Timestamp: " + str(t_stop)
+                sys.stdout.write("\nStop  Time:  " + ts_to_datestring(t_stop) + "    Timestamp: " + str(t_stop))
             except:
-                print "Bad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)"
+                sys.stdout.write("\nBad t_stop time format detected (must be YYYY-MM-DD_HH:MM:SS)")
 
     gs = GridSpec(1, 1, left=0.08, top=0.935, bottom=0.12, right=0.86)
     fig = plt.figure(figsize=(14, 9), facecolor='w')
     ax = fig.add_subplot(gs[0, 0])
 
-    delta_h = (t_stop - t_start) / 3600
+    delta_h = int((t_stop - t_start) / 3600)
     x = np.array(range(t_stop - t_start + 100)) + t_start
 
     xticks = np.array(range(delta_h)) * 3600 + t_start
@@ -106,7 +113,7 @@ if __name__ == "__main__":
             (datetime.datetime.utcfromtimestamp(t_start).hour + n) / 24), "%Y-%m-%d") for n, f in
                    enumerate((np.array(range(delta_h)) + datetime.datetime.utcfromtimestamp(t_start).hour) % 24)]
 
-    decimation = 3
+    decimation = 24
     xticks = xticks[::decimation]
     xticklabels = xticklabels[::decimation]
     ax.set_xticks(xticks)
@@ -118,7 +125,8 @@ if __name__ == "__main__":
     ax.set_title("MRO Weather")
     ax.set_ylabel("External Temperature")
 
-    print "Loading Temperature data...",
+    sys.stdout.flush()
+    sys.stdout.write("\nLoading Temperature data...")
     with open("/storage/monitoring/weather/MRO_TEMPERATURE.csv") as s:
         data = s.readlines()
     temp_time = []
@@ -131,9 +139,9 @@ if __name__ == "__main__":
                 temp_data += [float(s.split(",")[2])]
             if tstamp > t_stop:
                 break
-    print "done! Found %d records" % len(temp_data)
-
-    print "Loading Rain data...",
+    sys.stdout.write("done! Found %d records" % len(temp_data))
+    sys.stdout.flush()
+    sys.stdout.write("\nLoading Rain data...")
     with open("/storage/monitoring/weather/MRO_RAIN.csv") as s:
         data = s.readlines()
     rain_time = []
@@ -146,9 +154,9 @@ if __name__ == "__main__":
                 rain_data += [float(s.split(",")[2])]
             if tstamp > t_stop:
                 break
-    print "done! Found %d records" % len(rain_data)
-
-    print "Loading Wind data...",
+    sys.stdout.write("done! Found %d records" % len(rain_data))
+    sys.stdout.flush()
+    sys.stdout.write("\nLoading Wind data...")
     wind_files = sorted(glob.glob("/storage/monitoring/weather/MRO_WINDSPEED_20*.csv"))
     wind_time = []
     wind_data = []
@@ -171,9 +179,9 @@ if __name__ == "__main__":
                                 break
                         except:
                             pass
-    print "done! Found %d records" % len(wind_data)
-
-    print "Loading Solar data...",
+    sys.stdout.write("done! Found %d records" % len(wind_data))
+    sys.stdout.flush()
+    sys.stdout.write("\nLoading Solar data...")
     with open("/storage/monitoring/weather/MRO_SOLAR.csv") as s:
         data = s.readlines()
     sun_time = []
@@ -186,18 +194,21 @@ if __name__ == "__main__":
                 sun_data += [float(s.split(",")[2])]
             if tstamp > t_stop:
                 break
-    print "done! Found %d records" % len(sun_data)
+    sys.stdout.write("done! Found %d records\n" % len(sun_data))
+    sys.stdout.flush()
 
     if len(temp_data):
-        ax.plot(temp_time, temp_data, color='r', lw=1.5)
+        #ax.plot(temp_time, temp_data, color='r', lw=1.5)
+        ax.plot(temp_time, temp_data, color='r', lw=linew, marker=mark)
         ax.set_yticks(range(0, 201, 5))
-        ax.set_ylim(0, 70)
+        ax.set_ylim(0, 50)
         ax.set_ylabel('Temperature (Celsius degrees)', color='r')
         ax.tick_params(axis='y', labelcolor='r')
 
     if len(wind_data):
         ax_wind = ax.twinx()
-        ax_wind.plot(wind_time, wind_data, color='orange', lw=1.5)
+        #ax_wind.plot(wind_time, wind_data, color='orange', lw=1.5)
+        ax_wind.plot(wind_time, wind_data, color='orange', lw=linew, marker=mark)
         ax_wind.set_yticks(range(0, 201, 5))
         ax_wind.set_ylim(0, 100)
         ax_wind.set_ylabel('WindSpeed (mm)', color='orange')
@@ -206,22 +217,49 @@ if __name__ == "__main__":
 
     if len(rain_data):
         ax_rain = ax.twinx()
-        ax_rain.plot(rain_time, rain_data, color='steelblue', lw=1.5)
-        ax_rain.set_ylim(0, 20)
+        #ax_rain.plot(rain_time, rain_data, color='steelblue', lw=1.5)
+        ax_rain.plot(rain_time, rain_data, color='steelblue', lw=linew, marker=mark)
+        ax_rain.set_ylim(0, 40)
         ax_rain.set_ylabel('Rain (mm)', color='steelblue')
         ax_rain.tick_params(axis='y', labelcolor='steelblue')
         ax_rain.spines["right"].set_position(("axes", 1.06))
 
     if len(sun_data):
         ax_sun = ax.twinx()
-        ax_sun.plot(sun_time, sun_data, color='k', lw=1.5)
+        #ax_sun.plot(sun_time, sun_data, color='k', lw=1.5)
+        ax_sun.plot(sun_time, sun_data, color='k', lw=linew, marker=mark)
         ax_sun.set_ylim(0, 2000)
         ax_sun.set_ylabel('Solar Radiation (W/m^2)', color='k')
         ax_sun.tick_params(axis='y', labelcolor='k')
         ax_sun.spines["right"].set_position(("axes", 1))
 
     if len(temp_data):
-        ax.plot(temp_time, temp_data, color='r', lw=1.5)
+        #ax.plot(temp_time, temp_data, color='r', lw=1.5)
+        ax.plot(temp_time, temp_data, color='r', lw=linew, marker=mark)
 
     plt.show()
+
+    with open("/storage/monitoring/weather_wind.txt", "w") as f:
+        for n, d in enumerate(wind_data):
+            data_ora = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(wind_time[n]),"%Y-%m-%d\t%H:%M:%S")
+            f.write("%d\t%s\t%3.1f\n" % (wind_time[n], data_ora, d))
+            f.flush()
+
+    with open("/storage/monitoring/weather_solar.txt", "w") as f:
+        for n, d in enumerate(sun_data):
+            data_ora = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(sun_time[n]), "%Y-%m-%d\t%H:%M:%S")
+            f.write("%d\t%s\t%3.1f\n" % (sun_time[n], data_ora, d))
+            f.flush()
+
+    with open("/storage/monitoring/weather_temperature.txt", "w") as f:
+        for n, d in enumerate(temp_data):
+            data_ora = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(temp_time[n]),"%Y-%m-%d\t%H:%M:%S")
+            f.write("%d\t%s\t%3.1f\n" % (temp_time[n], data_ora, d))
+            f.flush()
+
+    with open("/storage/monitoring/weather_rain.txt", "w") as f:
+        for n, d in enumerate(rain_data):
+            data_ora = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(rain_time[n]),"%Y-%m-%d\t%H:%M:%S")
+            f.write("%d\t%s\t%3.1f\n" % (rain_time[n], data_ora, d))
+            f.flush()
 
