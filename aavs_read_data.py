@@ -1569,8 +1569,8 @@ if __name__ == "__main__":
         xmax = closest(asse_x, int(opts.stopfreq))
         ax_xpol.set_xlim(xmin, xmax)
         ax_ypol.set_xlim(xmin, xmax)
-        scp_fname = OPLOT_PATH + "/" + station_name + "/" + date_path + \
-                "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d.png"%(int(tile), int(skala_name), int(tile), int(skala_name))
+        scp_fname = OPLOT_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d/" % (int(tile), int(skala_name)) + \
+                    date_path + "_TILE-%02d_ANT-%03d.png" % (int(tile), int(skala_name))
 
         plt.savefig(scp_fname)
         print "\nSaved file: " + scp_fname
