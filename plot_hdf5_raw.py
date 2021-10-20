@@ -98,7 +98,7 @@ if __name__ == "__main__":
     parser.add_option("--date", action="store", dest="date",
                       default="", help="Stop time for filter (YYYY-mm-DD)")
     parser.add_option("--inputlist", action="store", dest="inputlist",
-                      default="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15", help="List of TPM input to save")
+                      default="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16", help="List of TPM input to save")
     parser.add_option("--resolution", dest="resolution", default=1000, type="int",
                       help="Frequency resolution in KHz (it will be truncated to the closest possible)")
     parser.add_option("--power", dest="power", default="",
@@ -107,6 +107,8 @@ if __name__ == "__main__":
                       default=False, help="Plot Spectrograms")
     parser.add_option("--average", action="store_true", dest="average",
                       default=False, help="Compute the averaged Spectrum")
+    parser.add_option("--adcraw", action="store_true", dest="adcraw",
+                      default=False, help="Plot ADC Raw values of the first dataset")
     parser.add_option("--yticks", action="store_true", dest="yticks",
                       default=False, help="Maximize Y Ticks in Spectrograms")
     parser.add_option("--pol", action="store", dest="pol",
@@ -186,6 +188,11 @@ if __name__ == "__main__":
         fig = plt.figure(figsize=(14, 9), facecolor='w')
 
         meas = {}
+        for num, tpm_input in enumerate(opts.inputlist.split(",")):
+            ant = int(tpm_input) - 1
+            for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
+                meas["Input-%02d_%s_adc-clip" % (ant, pol)] = False
+
         if opts.spectrogram:
             p = 0
             if opts.pol.lower() == "y":
@@ -211,31 +218,40 @@ if __name__ == "__main__":
             allspgram = []
             ax = []
             for num, tpm_input in enumerate(opts.inputlist.split(",")):
-                ant = int(tpm_input)
+                ant = int(tpm_input) - 1
                 ax += [fig.add_subplot(gs[num])]
                 allspgram += [[]]
                 allspgram[num] = np.empty((10, xmax - xmin + 1,))
                 allspgram[num][:] = np.nan
 
                 ax[num].cla()
-                ax[num].set_title("Input-%02d" % (ant), fontsize=12)
+                ax[num].set_title("Input-%02d" % (ant + 1), fontsize=12)
                 ax[num].imshow(allspgram[num], interpolation='none', aspect='auto', extent=[xmin, xmax, 60, 0], cmap='jet', clim=wclim)
                 ax[num].set_ylabel("MHz")
                 ax[num].set_xlabel('time')
 
         else:
             if opts.power == "":
-                fig.suptitle("Tile-%02d Spectra (RBW: %3.1f KHz)" % (int(opts.tile), RBW), fontsize=16)
+                if opts.adcraw:
+                    fig.suptitle("Tile-%02d ADC Values" % (int(opts.tile)), fontsize=16)
+                else:
+                    fig.suptitle("Tile-%02d Spectra (RBW: %3.1f KHz)" % (int(opts.tile), RBW), fontsize=16)
                 ax = []
                 for num, tpm_input in enumerate(opts.inputlist.split(",")):
-                    ant = int(tpm_input)
+                    ant = int(tpm_input) - 1
                     ax += [fig.add_subplot(gs[num])]
-                    ax[num].set_title("Input-%02d" % (ant), fontsize=12)
-                    ax[num].set_xlim(asse_x[closest(asse_x, float(opts.startfreq))],
-                                     asse_x[closest(asse_x, float(opts.stopfreq))])
-                    ax[num].set_ylim(-100, 20)
-                    ax[num].set_ylabel("dB", fontsize=10)
-                    ax[num].set_xlabel("MHz", fontsize=10)
+                    ax[num].set_title("Input-%02d" % (ant + 1), fontsize=12)
+                    if opts.adcraw:
+                        ax[num].set_ylim(-150, 150)
+                        ax[num].set_ylabel("ADC values", fontsize=14)
+                        ax[num].set_xlabel("samples", fontsize=12)
+                        ax[num].set_xlim(0, 1024*32)
+                    else:
+                        ax[num].set_ylim(-100, 20)
+                        ax[num].set_ylabel("dB", fontsize=10)
+                        ax[num].set_xlabel("MHz", fontsize=10)
+                        ax[num].set_xlim(asse_x[closest(asse_x, float(opts.startfreq))],
+                                         asse_x[closest(asse_x, float(opts.stopfreq))])
                     ax[num].tick_params(axis='both', which='major', labelsize=8)
                     ax[num].grid()
 
@@ -247,9 +263,9 @@ if __name__ == "__main__":
                              fontsize=14)
                 ax = []
                 for num, tpm_input in enumerate(opts.inputlist.split(",")):
-                    ant = int(tpm_input)
+                    ant = int(tpm_input) - 1
                     ax += [fig.add_subplot(gs[num])]
-                    ax[num].set_title("Input-%02d" % (ant), fontsize=12)
+                    ax[num].set_title("Input-%02d" % (ant + 1), fontsize=12)
                     ax[num].set_ylim(-20, 20)
                     ax[num].set_xlim(0, len(lista))
                     ax[num].set_ylabel("dB", fontsize=10)
@@ -279,39 +295,56 @@ if __name__ == "__main__":
             if opts.spectrogram:
                 for num, tpm_input in enumerate(opts.inputlist.split(",")):
                     ant = int(tpm_input) - 1
-                    print("%s Processing Input-%02d" % (dtimestamp, ant))
+                    print("%s Processing Input-%02d" % (dtimestamp, ant + 1))
                     spettro, rms = calcolaspettro(data[remap[ant], p, :], nsamples)
                     allspgram[num] = np.concatenate((allspgram[num], [spettro[xmin:xmax + 1]]), axis=0)
             else:
                 if opts.power == "":
                     for num, tpm_input in enumerate(opts.inputlist.split(",")):
                         ant = int(tpm_input) - 1
-                        print("%s Processing Input-%02d" % (dtimestamp, ant))
-                        for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
-                            if opts.average:
-                                spettro, rms = calcolaspettro(data[remap[ant], npol, :], nsamples)
-                                if not nn:
-                                    meas["Input-%02d_%s" % (ant, pol)] = dB2Linear(spettro)
+                        print("%s Processing Input-%02d" % (dtimestamp, ant + 1))
+                        if opts.adcraw:
+                            if not nn:
+                                if opts.pol.lower() == "x":
+                                    ax[num].plot(data[remap[ant], 0, :], color=COLORE[0])
                                 else:
-                                    meas["Input-%02d_%s" % (ant, pol)][:] += dB2Linear(spettro)
-                            else:
-                                meas["Input-%02d_%s" % (ant, pol)], rms = calcolaspettro(data[remap[ant], npol, :], nsamples)
-                                ax[num].plot(asse_x[3:], meas["Input-%02d_%s" % (ant, pol)][3:], color=COLORE[npol])
-                                if (nn == (len(lista)-1)):
-                                    if cols == 1:
-                                        if rows == 1:
-                                            ax[num].annotate("RF Power: %3.1f dBm" % rms, (300, 15 - (npol * 5)), fontsize=16,
-                                                        color=COLORE[npol])
-                                        else:
-                                            ax[num].annotate("RF Power: %3.1f dBm" % rms, (300, 10 - (npol * 10)), fontsize=16,
-                                                        color=COLORE[npol])
+                                    ax[num].plot(data[remap[ant], 1, :], color=COLORE[0])
+                                ax[num].plot(np.arange(len(data[remap[ant], 0, :])),
+                                             np.zeros(len(data[remap[ant], 0, :])) + 127, color='r', lw=1.5)
+                                ax[num].plot(np.arange(len(data[remap[ant], 0, :])),
+                                             np.zeros(len(data[remap[ant], 0, :])) - 128, color='r', lw=1.5)
+                                ax[num].set_ylim(-150, 150)
+                        else:
+                            for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
+                                spettro, rms = calcolaspettro(data[remap[ant], npol, :], nsamples)
+                                if 127 in data[remap[ant], npol, :] or -128 in data[remap[ant], npol, :]:
+                                    meas["Input-%02d_%s_adc-clip" % (ant, pol)] = True
+                                if opts.average:
+                                    if not nn:
+                                        meas["Input-%02d_%s" % (ant, pol)] = dB2Linear(spettro)
+                                        meas["Input-%02d_%s_RMS" % (ant, pol)] = rms
                                     else:
-                                        ax[num].annotate("RF Power: %3.1f dBm" % rms, (180 - cols * 7, 5 - (npol * 15)),
-                                                         fontsize=14 - cols, color=COLORE[npol])
+                                        meas["Input-%02d_%s" % (ant, pol)][:] += dB2Linear(spettro)
+                                        meas["Input-%02d_%s_RMS" % (ant, pol)] += rms
+                                else:
+                                    meas["Input-%02d_%s" % (ant, pol)] = spettro
+                                    ax[num].plot(asse_x[3:], meas["Input-%02d_%s" % (ant, pol)][3:], color=COLORE[npol])
+                                    if (nn == (len(lista)-1)):
+                                        if cols == 1:
+                                            if rows == 1:
+                                                ax[num].annotate("RF Power: %3.1f dBm" % rms, (300, 15 - (npol * 5)), fontsize=16,
+                                                            color=COLORE[npol])
+                                            else:
+                                                ax[num].annotate("RF Power: %3.1f dBm" % rms, (300, 10 - (npol * 10)), fontsize=16,
+                                                            color=COLORE[npol])
+                                        else:
+                                            ax[num].annotate("RF Power: %3.1f dBm" % rms, (180 - cols * 7, 5 - (npol * 15)),
+                                                             fontsize=14 - cols, color=COLORE[npol])
+
                 else:
                     for num, tpm_input in enumerate(opts.inputlist.split(",")):
                         ant = int(tpm_input) - 1
-                        print("%s Processing Input-%02d" % (dtimestamp, ant))
+                        print("%s Processing Input-%02d" % (dtimestamp, ant + 1))
                         for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
                             spettro, rms = calcolaspettro(data[remap[ant], npol, :], nsamples)
                             if not nn:
@@ -336,10 +369,33 @@ if __name__ == "__main__":
         if opts.average:
             for num, tpm_input in enumerate(opts.inputlist.split(",")):
                 ant = int(tpm_input) - 1
-                print("%s Processing Input-%02d" % (dtimestamp, ant))
+                #print("%s Processing Input-%02d" % (dtimestamp, ant + 1))
                 for npol, pol in enumerate(["Pol-X", "Pol-Y"]):
                     meas["Input-%02d_%s" % (ant, pol)] /= len(lista)
+                    meas["Input-%02d_%s_RMS" % (ant, pol)] /= len(lista)
                     ax[num].plot(asse_x[3:], linear2dB(meas["Input-%02d_%s" % (ant, pol)])[3:], color=COLORE[npol])
+                    if cols == 1:
+                        if rows == 1:
+                            ax[num].annotate("RF Power: %3.1f dBm" % meas["Input-%02d_%s_RMS" % (ant, pol)],
+                                             (300, 15 - (npol * 5)), fontsize=16 - cols, color=COLORE[npol])
+                            if meas["Input-%02d_%s_adc-clip" % (ant, pol)]:
+                                ax[num].annotate("ADC CLIP", (10, 15 - (npol * 5)), fontsize=16 - cols,
+                                                 color=COLORE[npol])
+                        else:
+                            ax[num].annotate("RF Power: %3.1f dBm" % meas["Input-%02d_%s_RMS" % (ant, pol)],
+                                             (300, 10 - (npol * 10)), fontsize=16 - cols, color=COLORE[npol])
+                            if meas["Input-%02d_%s_adc-clip" % (ant, pol)]:
+                                ax[num].annotate("ADC CLIP", (10, 10 - (npol * 10)), fontsize=16 - cols, color=COLORE[npol])
+                    elif cols == 2:
+                        ax[num].annotate("RF Power: %3.1f dBm" % meas["Input-%02d_%s_RMS" % (ant, pol)],
+                                         (220, 10 - (npol * 10)), fontsize=16 - cols, color=COLORE[npol])
+                        if meas["Input-%02d_%s_adc-clip" % (ant, pol)]:
+                            ax[num].annotate("ADC CLIP", (10, 10 - (npol * 10)), fontsize=16 - cols, color=COLORE[npol])
+                    else:
+                        ax[num].annotate("RF Power: %3.1f dBm" % meas["Input-%02d_%s_RMS" % (ant, pol)],
+                                         (180 - cols * 7, 5 - (npol * 15)), fontsize=14 - cols, color=COLORE[npol])
+                        if meas["Input-%02d_%s_adc-clip" % (ant, pol)]:
+                            ax[num].annotate("ADC CLIP", (10, 5 - (npol * 15)), fontsize=14 - cols, color=COLORE[npol])
 
         plt.show()
 
