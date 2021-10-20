@@ -1540,22 +1540,35 @@ if __name__ == "__main__":
                     if not t_stop <= timestamps[0]:
                         for i, t in enumerate(timestamps):
                             if t_start <= t[0] <= t_stop:
+
                                 # POL-X
                                 for sb_in in antenne:
                                     spettro = np.array(data[:, sb_in, 0, i])
-                                if (not np.sum(spettro[120:150]) == 0) and \
-                                        (not np.sum(spettro[300:350]) == 0):
+                                if not opts.syncbox:
+                                    if (not np.sum(spettro[120:150]) == 0) and \
+                                            (not np.sum(spettro[300:350]) == 0):
+                                        with np.errstate(divide='ignore'):
+                                            spettro = 10 * np.log10(spettro)
+                                            ax_xpol.plot(spettro)
+                                else:
                                     with np.errstate(divide='ignore'):
                                         spettro = 10 * np.log10(spettro)
                                         ax_xpol.plot(spettro)
+
                                 # POL-Y
                                 for sb_in in antenne:
                                     spettro = np.array(data[:, sb_in, 1, i])
-                                if (not np.sum(spettro[120:150]) == 0) and \
-                                        (not np.sum(spettro[300:350]) == 0):
+                                if not opts.syncbox:
+                                    if (not np.sum(spettro[120:150]) == 0) and \
+                                            (not np.sum(spettro[300:350]) == 0):
+                                        with np.errstate(divide='ignore'):
+                                            spettro = 10 * np.log10(spettro)
+                                            ax_ypol.plot(spettro)
+                                else:
                                     with np.errstate(divide='ignore'):
                                         spettro = 10 * np.log10(spettro)
                                         ax_ypol.plot(spettro)
+
                                 msg = "\rProcessing " + ts_to_datestring(t[0])
                                 sys.stdout.write(ERASE_LINE + msg)
                                 sys.stdout.flush()
@@ -1569,8 +1582,8 @@ if __name__ == "__main__":
         xmax = closest(asse_x, int(opts.stopfreq))
         ax_xpol.set_xlim(xmin, xmax)
         ax_ypol.set_xlim(xmin, xmax)
-        scp_fname = OPLOT_PATH + "/" + station_name + "/" + date_path + \
-                "/TILE-%02d_ANT-%03d/TILE-%02d_ANT-%03d.png"%(int(tile), int(skala_name), int(tile), int(skala_name))
+        scp_fname = OPLOT_PATH + "/" + station_name + "/" + date_path + "/TILE-%02d_ANT-%03d/" % (int(tile), int(skala_name)) + \
+                    date_path + "_TILE-%02d_ANT-%03d.png" % (int(tile), int(skala_name))
 
         plt.savefig(scp_fname)
         print "\nSaved file: " + scp_fname

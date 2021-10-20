@@ -81,7 +81,7 @@ def fname_to_tstamp(date_time_string):
     time_parts = date_time_string.split('_')
     d = datetime.datetime.strptime(time_parts[0], "%Y%m%d")  # "%d/%m/%Y %H:%M:%S"
     timestamp = calendar.timegm(d.timetuple())
-    timestamp += int(time_parts[1])# - (60 * 60 * 8) australia
+    timestamp += int(time_parts[1]) - (60 * 60 * 8)  # Australian Time
     return timestamp
 
 
